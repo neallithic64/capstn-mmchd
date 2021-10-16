@@ -1,0 +1,30 @@
+{
+  "name": "capstn-mmchd",
+  "version": "1.0.0",
+  "description": "Capstone project for the Metro Manila Center for Health Development",
+  "main": "main.js",
+  "scripts": {
+    "test": "npx nodemon",
+	"start": "node main"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/neallithic64/capstn-mmchd.git"
+  },
+  "author": "Captain Stone",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/neallithic64/capstn-mmchd/issues"
+  },
+  "homepage": "https://github.com/neallithic64/capstn-mmchd#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "express-session": "^1.17.2",
+    "mysql2": "^2.3.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.13"
+  }
+}
