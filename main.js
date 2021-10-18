@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+require("dotenv").config();
 const db = require("./models/db");
 const PORT = process.env.PORT || 3000;
 
@@ -11,8 +12,11 @@ app.get("/", (req, res) => {
 });
 
 app.get("/mkdata", async (req, res) => {
-	await db.populateTest("");
-	res.send("ehhhhh");
+	"CREATE TABLE mmchddb.test(id int, name VARCHAR(100), PRIMARY KEY(id));";
+	"";
+	"";
+	await db.findAll("mmchddb.test");
+	res.send("exec done");
 });
 
 app.listen(PORT, () => {
