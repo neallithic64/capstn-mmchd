@@ -27,6 +27,23 @@ function makeWhereClause(obj) {
 	return entriesArr.join(" AND ") + ";";
 }
 
+function makeSetClause(obj) {
+	/* Expected input:
+			Object {
+				column1: "value1",
+				column2: "value2"
+			}
+			Expected output:
+			String "column1 = 'value1', column2 = 'value2'"
+		NOTE: this only performs string matching for the moment
+	*/
+	let entriesArr = [];
+	for (let [key, value] of Object.entries(obj)) {
+		entriesArr.push(key + " = " + "'" + value + "'");
+	}
+	return entriesArr.join(", ");
+}
+
 const database = {
 	testConn: function(callback) {
 		pool.getConnection((err, conn) => {
@@ -50,7 +67,6 @@ const database = {
 	
 	insertOne: async function(table, object) {
 		let statement = "INSERT INTO " + table + " SET ?";
-		// TODO: find a way to set the object details here
 		let [rows, fields] = await pool.query(statement, object);
 		console.log(rows);
 		console.log(fields);
@@ -69,15 +85,22 @@ const database = {
 	},
 	
 	updateOne: async function(table, query, update) {
-		
+		let statement = "UPDATE " + table + " SET " + makeSetClause(update) + " WHERE " + makeWhereClause(query);
+//		c.query('UPDATE users SET foo = ?, bar = ?, baz = ? WHERE id = ?', ['a', 'b', 'c', userId], function (err, results, fields) {
+//			if (err) throw err;
+//		});
+		let [rows, fields] = await pool.query(statement);
+		console.log(rows);
+		console.log(fields);
 	},
 	
 	deleteOne: async function(table, query) {
-		let statement = "DELETE FROM " + table + " WHERE ";
+		let statement = "DELETE FROM " + table + " WHERE " + makeWhereClause(query);
+		let [rows, fields] = await pool.query(statement);
+		console.log(rows);
+		console.log(fields);
 	}
 	
-	// TODO: insert dummy data
-	// TODO: I was thinking of implementing methods to convert sql output to json
 	// TODO: determine if JOINs are possible to generify
 };
 
