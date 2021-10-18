@@ -2,7 +2,13 @@
 A capstone project for the Metro Manila Center for Health Development
 
 # On Contributing to the Codebase
-// text here
+### Branches
+
+### Commits
 
 # On Opening Issues in the Repository
-// text here
+### Detailing
+
+### Template
+
+### Assignment
