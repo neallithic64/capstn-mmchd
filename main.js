@@ -1,8 +1,44 @@
 const express = require("express");
+const exphbs = require("express-handlebars");
+const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
 const app = express();
 require("dotenv").config();
+
 const db = require("./models/db");
 const PORT = process.env.PORT || 3000;
+app.use(express.static(__dirname + "/"));
+
+app.use(cookieParser());
+app.use(session({
+	secret: process.env.SECRET,
+	name: "sessionId",
+	resave: false,
+	saveUninitialized: true,
+	cookie: {
+		secure: true,
+		samesite: "lax"
+	}
+}));
+
+app.set("views", path.join(__dirname, "/views/"));
+app.engine("hbs", exphbs.create({
+	extname: "hbs",
+	defaultLayout: "main",
+	runtimeOptions: {
+		allowProtoPropertiesByDefault: true,
+		allowProtoMethodsByDefault: true
+	},
+	partialsDir: "views/partials",
+	layoutsDir: "views/layouts",
+	helpers: {
+		//
+	}
+}).engine);
+app.set("view engine", "hbs");
+
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json());
 
 app.get("/", (req, res) => {
 	db.testConn(state => {
