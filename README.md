@@ -19,6 +19,7 @@ You should also tag issues that are associated with the commit you're making, si
 To ensure that debugging and fixes are done efficiently, please try to include comprehensive details, including:
 - Feature and Module
 - Steps to reproduce the bug
+- Lines of code where the problem may be originating (you can do that by opening the file in question, then clicking or shift-clicking the line numbers at the left, then copying the permalink from there)
 
 ### Assignment and Tagging
 Don't forget to assign the issues with the appropriate contributor/s and tag them with the appropriate tags.
