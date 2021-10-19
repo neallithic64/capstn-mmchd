@@ -59,7 +59,7 @@ const database = {
 		});
 	},
 	
-	execTest: async function(sql) {
+	exec: async function(sql) {
 		let [rows, fields] = await pool.execute(sql);
 		console.log(rows);
 		console.log(fields);
@@ -100,8 +100,6 @@ const database = {
 		console.log(rows);
 		console.log(fields);
 	}
-	
-	// TODO: determine if JOINs are possible to generify
 };
 
 module.exports = database;
