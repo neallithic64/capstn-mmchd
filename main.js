@@ -5,9 +5,12 @@ const cookieParser = require("cookie-parser");
 const app = express();
 require("dotenv").config();
 
-const db = require("./models/db");
 const PORT = process.env.PORT || 3000;
 app.use(express.static(__dirname + "/"));
+
+const db = require("./models/db");
+// const router = require("./routers/router");
+// app.use("/", router);
 
 app.use(cookieParser());
 app.use(session({
@@ -21,6 +24,8 @@ app.use(session({
 	}
 }));
 
+/* UNSET ONCE VIEWS ARE CREATED!
+
 app.set("views", path.join(__dirname, "/views/"));
 app.engine("hbs", exphbs.create({
 	extname: "hbs",
@@ -32,10 +37,12 @@ app.engine("hbs", exphbs.create({
 	partialsDir: "views/partials",
 	layoutsDir: "views/layouts",
 	helpers: {
-		//
+		// helpers go here!
 	}
 }).engine);
 app.set("view engine", "hbs");
+
+*/
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
@@ -48,13 +55,12 @@ app.get("/", (req, res) => {
 });
 
 app.get("/mkdata", async (req, res) => {
-	"CREATE TABLE mmchddb.test(id int, name VARCHAR(100), PRIMARY KEY(id));";
-	"";
-	"";
 	await db.findAll("mmchddb.test");
 	res.send("exec done");
 });
 
-app.listen(PORT, () => {
-	console.log("listening");
+app.get("*", function(req, res) {
+	res.send("page not found!");
 });
+
+app.listen(PORT, () => console.log("listening at " + PORT));
