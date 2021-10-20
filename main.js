@@ -1,5 +1,5 @@
 const express = require("express");
-const exphbs = require("express-handlebars");
+const session = require('express-session');
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const app = express();
@@ -23,26 +23,6 @@ app.use(session({
 		samesite: "lax"
 	}
 }));
-
-/* UNSET ONCE VIEWS ARE CREATED!
-
-app.set("views", path.join(__dirname, "/views/"));
-app.engine("hbs", exphbs.create({
-	extname: "hbs",
-	defaultLayout: "main",
-	runtimeOptions: {
-		allowProtoPropertiesByDefault: true,
-		allowProtoMethodsByDefault: true
-	},
-	partialsDir: "views/partials",
-	layoutsDir: "views/layouts",
-	helpers: {
-		// helpers go here!
-	}
-}).engine);
-app.set("view engine", "hbs");
-
-*/
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
