@@ -38,7 +38,7 @@ Don't forget to assign the issues with the appropriate contributor/s and tag the
 Most of the work (pulling, committing, staging, pushing) are done through VSC, then making a PR, like what was mentioned earlier, would be done over at GitHub.
 
 ### Pulling and Merging
-
+When there are changes in the `master` branch that you would like to sync with your branch, it is preferred that you sync these changes first before making any commits. Otherwise, please ensure first that any changes in your branch are committed. Then, simply go to the Git section of the left sidebar, open the kebab menu, and select "Pull from...". Then, select master or origin/master, whichever is available. Merge the branches if needed.
 
 ### Committing, Staging, and Pushing
-
+Making commits and pushing them is pretty simple. There is a checkmark icon at the top of the sidebar in the Git section, which is clickable if there is a blue badge on the Git icon itself. Enter your commit message (that is compliant with the description made above), then click on the said checkmark. This should push your changes to your respective branch.
