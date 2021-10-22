@@ -13,6 +13,13 @@ To make sure your commits are organised, best you label your commits on what fea
 - F3: Cleaned up logic in so-and-so function
 You should also tag issues that are associated with the commit you're making, simply include `#x` in the commit message, replacing `x` with the issue number.
 
+### Pull Requests
+Once your commits are pushed to your branch, create a pull request (PR) through your respective branch repository page on GitHub. There, it should have a green button at the top saying `Compare & pull request`. Click on it, and it should automatically generate most of the details for you. The only missing detail would be the name of the PR.  
+Likewise as with commits, the pull request must include:
+- the module the commits belong to, and
+- a short description of the pull request
+
+
 ## On Opening Issues in the Repository
 
 ### Detailing
