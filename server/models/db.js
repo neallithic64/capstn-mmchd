@@ -86,51 +86,78 @@ const database = {
 	 * return is also void.
 	 */
 	insertOne: async function(table, object) {
-		let statement = "INSERT INTO " + table + " SET ?";
-		let [rows, fields] = await pool.query(statement, object);
-		console.log(rows);
-		console.log(fields);
+		try {
+			let statement = "INSERT INTO " + table + " SET ?";
+			let [rows, fields] = await pool.query(statement, object);
+			console.log(rows);
+			console.log(fields);
+		} catch (e) {
+			console.log(e);
+			return false;
+		}
 	},
 	
-	/** 
-	 * 
+	/** Returns rows belonging to the specified table that satisfy the given WHERE
+	 * condition. Currently, the WHERE clause supports string types; integers are
+	 * not yet taken into account.
 	 */
-	findOne: async function(table, query) {
-		let statement = "SELECT * FROM " + table + " WHERE " + makeWhereClause(query);
-		let [rows, fields] = await pool.execute(statement);
-		console.log(rows);
+	findRows: async function(table, query) {
+		try {
+			let statement = "SELECT * FROM " + table + " WHERE " + makeWhereClause(query);
+			let [rows, fields] = await pool.execute(statement);
+			return rows;
+		} catch (e) {
+			console.log(e);
+			return false;
+		}
 	},
 	
-	/** 
-	 * 
+	/** Returns all rows belonging to the specified table. Perhaps useful for
+	 * reports or table queries.
 	 */
 	findAll: async function(table) {
-		let statement = "SELECT * FROM " + table;
-		let [rows, fields] = await pool.execute(statement);
-		console.log(rows);
+		try {
+			let statement = "SELECT * FROM " + table;
+			let [rows, fields] = await pool.execute(statement);
+			return rows;
+		} catch (e) {
+			console.log(e);
+			return false;
+		}
 	},
 	
-	/** 
-	 * 
+	/** (Currently WIP) Updates all matches in a specified table with the given
+	 * SET specifications. This needs to be tested first for typecasting and
+	 * general functionality.
 	 */
-	updateOne: async function(table, query, update) {
-		let statement = "UPDATE " + table + " SET " + makeSetClause(update) + " WHERE " + makeWhereClause(query);
-//		c.query('UPDATE users SET foo = ?, bar = ?, baz = ? WHERE id = ?', ['a', 'b', 'c', userId], function (err, results, fields) {
-//			if (err) throw err;
-//		});
-		let [rows, fields] = await pool.query(statement);
-		console.log(rows);
-		console.log(fields);
+	updateRows: async function(table, query, update) {
+		try {
+			let statement = "UPDATE " + table + " SET " + makeSetClause(update) + " WHERE " + makeWhereClause(query);
+			// c.query("UPDATE users SET foo = ?, bar = ?, baz = ? WHERE id = ?", ['a', 'b', 'c', userId], function (err, results, fields));
+			let [rows, fields] = await pool.query(statement);
+			console.log(rows);
+			console.log(fields);
+			// RETURN
+		} catch (e) {
+			console.log(e);
+			return false;
+		}
 	},
 	
-	/** 
-	 * 
+	/** (Currently WIP) Deletes all matches in a specified table. This needs to be
+	 * tested first for general functionality.
 	 */
-	deleteOne: async function(table, query) {
-		let statement = "DELETE FROM " + table + " WHERE " + makeWhereClause(query);
-		let [rows, fields] = await pool.query(statement);
-		console.log(rows);
-		console.log(fields);
+	deleteRows: async function(table, query) {
+		try {
+			let statement = "DELETE FROM " + table + " WHERE " + makeWhereClause(query);
+			let [rows, fields] = await pool.query(statement);
+			console.log(rows);
+			console.log(fields);
+			// RETURN
+		} catch (e) {
+			console.log(e);
+			return false;
+		}
 	}
 };
 
