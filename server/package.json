@@ -1,11 +1,11 @@
 {
-  "name": "capstn-mmchd",
+  "name": "capstn-api",
   "version": "1.0.0",
   "description": "Capstone project for the Metro Manila Center for Health Development",
-  "main": "main.js",
+  "main": "server.js",
   "scripts": {
     "test": "npx nodemon",
-    "start": "node main"
+    "start": "node server"
   },
   "repository": {
     "type": "git",
@@ -27,6 +27,6 @@
     "mysql2": "^2.3.2"
   },
   "devDependencies": {
-    "nodemon": "^2.0.13"
+    "nodemon": "^2.0.14"
   }
 }
