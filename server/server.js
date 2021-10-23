@@ -9,8 +9,8 @@ const PORT = process.env.PORT || 3000;
 app.use(express.static(__dirname + "/"));
 
 const db = require("./models/db");
-// const router = require("./routers/router");
-// app.use("/", router);
+const router = require("./routers/router");
+app.use("/", router);
 
 app.use(cookieParser());
 app.use(session({
