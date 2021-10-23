@@ -69,7 +69,6 @@ const database = {
 		try {
 			let [rows, fields] = await pool.execute(sql);
 			console.log(rows);
-			console.log(fields);
 			return rows;
 		} catch (e) {
 			console.log(e);
@@ -130,11 +129,8 @@ const database = {
 	updateRows: async function(table, query, update) {
 		try {
 			let statement = "UPDATE " + table + " SET " + makeSetClause(update) + " WHERE " + makeWhereClause(query);
-			// c.query("UPDATE users SET foo = ?, bar = ?, baz = ? WHERE id = ?", ['a', 'b', 'c', userId], function (err, results, fields));
 			let [rows, fields] = await pool.query(statement);
-			console.log(rows);
-			console.log(fields);
-			// console.log("Updated " + n + " rows");
+			console.log("Updated " + rows.changedRows + " rows");
 			return true;
 		} catch (e) {
 			console.log(e);
