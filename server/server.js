@@ -27,15 +27,14 @@ app.use(session({
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
-app.get("/", (req, res) => {
-	db.testConn(state => {
-		if (state) res.send("works fine!");
-		else res.send("oh no!");
-	});
+app.get("/", async (req, res) => {
+	let state = await db.testConn();
+	if (state) res.send("works fine!");
+	else res.send("oh no!");
 });
 
 app.get("/mkdata", async (req, res) => {
-	await db.findAll("mmchddb.test");
+	// await db.findAll("mmchddb.test");
 	res.send("exec done");
 });
 

@@ -49,18 +49,15 @@ const database = {
 	 * However, it basically returns a callback function with a bool on the test
 	 * result. Nothing else, really.
 	 */
-	testConn: function(callback) {
-		pool.getConnection((err, conn) => {
-			if (err) {
-				console.log("error! :: " + err.stack);
-				return callback(false);
-			} else {
-				console.log("connected! :: " + conn.threadId);
-				conn.release();
-				console.log("released!");
-				return callback(true);
-			}
-		});
+	testConn: async function() {
+		try {
+			let conn = await pool.getConnection();
+			console.log(conn.threadId);
+			return true;
+		} catch (e) {
+			console.log(conn.stack);
+			return false;
+		}
 	},
 	
 	/** A general/generic wrapper function to execute any SQL query. Basically used
