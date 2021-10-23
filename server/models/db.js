@@ -46,13 +46,13 @@ function makeSetClause(obj) {
 
 const database = {
 	/** Not really a useful function, it was used for sandboxing on initial test.
-	 * However, it basically returns a callback function with a bool on the test
-	 * result. Nothing else, really.
+	 * However, it basically returns a bool on the test result. Nothing else, really.
 	 */
 	testConn: async function() {
 		try {
 			let conn = await pool.getConnection();
-			console.log(conn.threadId);
+			console.log("loaded db, threadId " + conn.threadId);
+			conn.release();
 			return true;
 		} catch (e) {
 			console.log(conn.stack);
@@ -85,9 +85,8 @@ const database = {
 		try {
 			let statement = "INSERT INTO " + table + " SET ?";
 			let [rows, fields] = await pool.query(statement, object);
-			console.log(rows);
-			console.log(fields);
-			// console.log("Inserted " + n + " rows");
+			console.log("Inserted " + rows.affectedRows + " rows");
+			// if (rows.serverStatus === 2)
 			return true;
 		} catch (e) {
 			console.log(e);

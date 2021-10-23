@@ -34,7 +34,8 @@ app.get("/", async (req, res) => {
 });
 
 app.get("/mkdata", async (req, res) => {
-	// await db.findAll("mmchddb.test");
+	let r = await db.findAll("mmchddb.TARGETS_REF");
+	console.log(r);
 	res.send("exec done");
 });
 
