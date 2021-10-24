@@ -10,19 +10,16 @@ const pool = mysql.createPool({
 	queueLimit: 0
 });
 
-/** 
- * 
+/** Expected input:
+	Object {
+		column1: "value1",
+		column2: "value2"
+	}
+ * Expected output:
+ * String "column1 = 'value1' AND column2 = 'value2';"
+ * NOTE: this only performs string matching for the moment
  */
 function makeWhereClause(obj) {
-	/* Expected input:
-			Object {
-				column1: "value1",
-				column2: "value2"
-			}
-			Expected output:
-			String "column1 = 'value1' AND column2 = 'value2';"
-		NOTE: this only performs string matching for the moment
-	*/
 	let entriesArr = [];
 	for (let [key, value] of Object.entries(obj)) {
 		entriesArr.push(key + " = " + "'" + value + "'");
@@ -30,19 +27,16 @@ function makeWhereClause(obj) {
 	return entriesArr.join(" AND ") + ";";
 }
 
-/** 
- * 
+/** Expected input:
+	Object {
+		column1: "value1",
+		column2: "value2"
+	}
+ * Expected output:
+ * String "column1 = 'value1', column2 = 'value2'"
+ * NOTE: this only performs string matching for the moment
  */
 function makeSetClause(obj) {
-	/* Expected input:
-			Object {
-				column1: "value1",
-				column2: "value2"
-			}
-			Expected output:
-			String "column1 = 'value1', column2 = 'value2'"
-		NOTE: this only performs string matching for the moment
-	*/
 	let entriesArr = [];
 	for (let [key, value] of Object.entries(obj)) {
 		entriesArr.push(key + " = " + "'" + value + "'");
@@ -52,21 +46,18 @@ function makeSetClause(obj) {
 
 const database = {
 	/** Not really a useful function, it was used for sandboxing on initial test.
-	 * However, it basically returns a callback function with a bool on the test
-	 * result. Nothing else, really.
+	 * However, it basically returns a bool on the test result. Nothing else, really.
 	 */
-	testConn: function(callback) {
-		pool.getConnection((err, conn) => {
-			if (err) {
-				console.log("error! :: " + err.stack);
-				return callback(false);
-			} else {
-				console.log("connected! :: " + conn.threadId);
-				conn.release();
-				console.log("released!");
-				return callback(true);
-			}
-		});
+	testConn: async function() {
+		try {
+			let conn = await pool.getConnection();
+			console.log("loaded db, threadId " + conn.threadId);
+			conn.release();
+			return true;
+		} catch (e) {
+			console.log(conn.stack);
+			return false;
+		}
 	},
 	
 	/** A general/generic wrapper function to execute any SQL query. Basically used
@@ -75,10 +66,14 @@ const database = {
 	 * to be returned.
 	 */
 	exec: async function(sql) {
-		let [rows, fields] = await pool.execute(sql);
-		console.log(rows);
-		console.log(fields);
-		return rows;
+		try {
+			let [rows, fields] = await pool.execute(sql);
+			console.log(rows);
+			return rows;
+		} catch (e) {
+			console.log(e);
+			return false;
+		}
 	},
 	
 	/** Inserts a row of data into the specified table. Accepts a string for the
@@ -89,8 +84,9 @@ const database = {
 		try {
 			let statement = "INSERT INTO " + table + " SET ?";
 			let [rows, fields] = await pool.query(statement, object);
-			console.log(rows);
-			console.log(fields);
+			console.log("Inserted " + rows.affectedRows + " rows");
+			// if (rows.serverStatus === 2)
+			return true;
 		} catch (e) {
 			console.log(e);
 			return false;
@@ -133,11 +129,9 @@ const database = {
 	updateRows: async function(table, query, update) {
 		try {
 			let statement = "UPDATE " + table + " SET " + makeSetClause(update) + " WHERE " + makeWhereClause(query);
-			// c.query("UPDATE users SET foo = ?, bar = ?, baz = ? WHERE id = ?", ['a', 'b', 'c', userId], function (err, results, fields));
 			let [rows, fields] = await pool.query(statement);
-			console.log(rows);
-			console.log(fields);
-			// RETURN
+			console.log("Updated " + rows.changedRows + " rows");
+			return true;
 		} catch (e) {
 			console.log(e);
 			return false;
@@ -153,7 +147,8 @@ const database = {
 			let [rows, fields] = await pool.query(statement);
 			console.log(rows);
 			console.log(fields);
-			// RETURN
+			// console.log("Deleted " + n + " rows");
+			return true;
 		} catch (e) {
 			console.log(e);
 			return false;
