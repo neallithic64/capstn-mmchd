@@ -13,7 +13,7 @@ router.get("/mkdata", m1Cont.mkData);
 
 
 // POST Routes
-
+router.get("/newUser",m1Cont.postRegUser); // change to post when forms are received
 
 
 // 404 PAGE
