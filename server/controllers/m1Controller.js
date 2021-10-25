@@ -51,13 +51,13 @@ const indexFunctions = {
 		// let{
 		// 	email, password
 		// } = req.body;
-		let email = "testuser@someEmail.com";
+		let email = "testuser@gmail.com";
 		let password = "password";
 		try {
 			let match = await db.findRows("mmchddb.USERS", {email: email});
 			console.log(match);
 			if (match.length > 0) {
-				bcrypt.compare(password,match[0].password, function(err,result) {
+				bcrypt.compare(password, match[0].password, function(err,result) {
 					if (result) {
 						// insert user type checking
 						res.send("Login successful");
