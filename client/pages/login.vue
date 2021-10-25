@@ -1,47 +1,75 @@
 <template>
-    <div id="login">
-        <img class="center" id="login-logo" src="./assets/logo.png">
-        <form id="user-login" type="submit"> 
-            <div class="center" id="login-form">
-                <h2 id="login-header"> Login </h2>
-                <div class="login-field">
-                    <label> Email </label>
-                    <input v-model="email" id="username" class="login-form-field" type="email">
-                    <!-- to do -->
-                    <p class="error-message" v-if="validation-func-here"> Invalid email. </p> 
-                </div>
-                <div class="login-field">
-                    <label> Password </label>
-                    <input v-model="password" id="password" class="login-form-field" type="password">
-                    <!-- to do -->
-                    <p class="error-message" v-if="validation-func-here"> Email or password is incorrect. </p>
-                    <!-- to do -->
-                    <button v-on:click="forgot-func-here" id="forgot-pass" type="submit" > Forgot password? </button>
-                </div>
-                <!-- to do -->
-                <button v-on:click="submit-func-here" class="positive-button center" id="login-submit" type="submit" > Login </button>
-            </div>
-        </form>
-    </div>
+  <div id="login">
+    <img id="login-logo" class="center" src="~/assets/img/logo.png" />
+    <form id="user-login" type="submit">
+      <div id="login-form" class="center">
+        <h2 id="login-header">Login</h2>
+        <div class="login-field">
+          <label> Email </label>
+          <input
+            id="username"
+            v-model="email"
+            class="login-form-field"
+            type="email"
+          />
+          <!-- TODO: v-if -->
+          <p class="error-message">
+            Invalid email.
+          </p>
+        </div>
+        <div class="login-field">
+          <label> Password </label>
+          <input
+            id="password"
+            v-model="password"
+            class="login-form-field"
+            type="password"
+          />
+          <!-- TODO: v-if -->
+          <p class="error-message">
+            Email or password is incorrect.
+          </p>
+          <!-- to do -->
+          <button id="forgot-pass" type="submit">
+            Forgot password?
+          </button>
+        </div>
+        <!-- to do -->
+        <button
+          id="login-submit"
+          class="positive-button center"
+          type="submit"
+        >
+          Login
+        </button>
+      </div>
+    </form>
+    <nuxt-link to='/'> Go to index </nuxt-link>
+  </div>
 </template>
 
 <script>
-    export default {
-        name: 'login',
-        components: {
-
-        },
-        methods: {
-            /* to do: form validation here */
-            /* to do: submit func here */
-            /* to do: forgot pass func here */
-        }
-    }
+export default {
+  header: {
+      title: 'Login'
+  },
+  data() {
+      return {
+          email: '',
+          password: ''
+      }
+  },
+  methods: {
+    /* to do: form validation here */
+    /* to do: submit func here */
+    /* to do: forgot pass func here */
+  },
+}
 </script>
 
 <style>
     body {
-        background-image: url('./assets/login-vector.png');
+        background-image: url('~/assets/img/login-vector.png');
         background-repeat: no-repeat;
         background-attachment: fixed;
         background-size: cover;
@@ -66,9 +94,19 @@
         padding-bottom: 30px;
     }
 
+
+    @media only screen and (max-width: 600px) {
+    #login-form {
+        margin-top: 25%;
+        width: 80%;
+    }
+    }
+
     #login-header {
         padding-top: 30px;
         text-align: center;
+        font-weight: 600;
+        font-size: 20px;
         background-color: #008D41;
         color: transparent;
         text-shadow: 1px 1px, -1px -1px rgba(0, 0, 0, 0.25);
@@ -92,6 +130,7 @@
         font-family: 'Work Sans', sans-serif;
         padding-right: 5px;
         padding-left: 5px;
+        border: 1px solid rgba(0, 0, 0, 0.25);
     }
 
     .positive-button {
