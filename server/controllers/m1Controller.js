@@ -48,9 +48,21 @@ const indexFunctions = {
 	 * POST METHODS 
 	 */
 	postLogin : async function(req,res){
-		let{
-			email, password
-		} = req.body;
+		// let{
+		// 	email, password
+		// } = req.body;
+		let email = "testuser@gmail.com";
+		let password = "password";
+
+		try{
+			let result = await db.findAll("mmchddb.TARGETS_REF");
+			console.log(result);
+			res.send("success");
+			
+		}catch(e){
+			res.send(e);
+		}
+		
 	},
 
 
@@ -73,7 +85,7 @@ const indexFunctions = {
 
 			let user = new User(userID, "testuser", "testuser@gmail.com", password, "sample", addressID,
 			"Garcia", "Andre Emmanuel", "Servillon");
-			
+
 			// let user = User(userID, userName, email, password, userType, addressID,
 			// 	lastName,firstName, midName);
 
