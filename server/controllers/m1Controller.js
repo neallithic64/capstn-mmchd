@@ -39,8 +39,8 @@ const indexFunctions = {
 	
 	mkData: async function(req, res) {
     	// let r = await db.findAll("mmchddb.TARGETS_REF");
-		let r = await db.updateRows("mmchddb.TARGETS_REF", {targetDesc: "desc1"}, {targetDesc: "desc999"});
-		console.log(r);
+		// let r = await db.updateRows("mmchddb.TARGETS_REF", {targetDesc: "desc1"}, {targetDesc: "desc999"});
+		// console.log(r);
 		res.send("exec done");
 	},
 
