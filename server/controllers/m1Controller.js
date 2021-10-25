@@ -39,8 +39,8 @@ const indexFunctions = {
 	
 	mkData: async function(req, res) {
     	// let r = await db.findAll("mmchddb.TARGETS_REF");
-		// let r = await db.updateRows("mmchddb.TARGETS_REF", {targetDesc: "desc1"}, {targetDesc: "desc999"});
-		// console.log(r);
+		let r = await db.updateRows("mmchddb.TARGETS_REF", {targetDesc: "desc1"}, {targetDesc: "desc999"});
+		console.log(r);
 		res.send("exec done");
 	},
 
@@ -53,12 +53,27 @@ const indexFunctions = {
 		// } = req.body;
 		let email = "testuser@gmail.com";
 		let password = "password";
-
 		try{
-			let result = await db.findAll("mmchddb.TARGETS_REF");
-			console.log(result);
+			// let match = await db.findRows("mmchddb.USERS",{email:email});
+			let match = await db.findAll("mmchddb.TARGETS_REF");
+			// console.log(match);
+			console.log(match);
+			// if(match)
+			// {
+			// 	bcrypt.compare(password,match[0].password, function(err,result){
+			// 		if(result)
+			// 		{
+			// 			// insert user type checking
+			// 			res.send("Login successful")
+			// 		}
+			// 		else
+			// 			res.send("Incorrect Password");
+			// 	});
+			// }
+			// else
+			// 	res.send("No user found")
+			// res.send("Something went wrong");
 			res.send("success");
-			
 		}catch(e){
 			res.send(e);
 		}
@@ -90,6 +105,7 @@ const indexFunctions = {
 			// 	lastName,firstName, midName);
 
 			let result = await db.insertOne("mmchddb.USERS",user);
+			console.log(result);
 			if (result)
 				res.send("success");
 			else
