@@ -48,25 +48,28 @@ const indexFunctions = {
 	 * POST METHODS 
 	 */
 	postLogin: async function(req, res) {
-		// let{
-		// 	email, password
-		// } = req.body;
-		let email = "testuser@gmail.com";
-		let password = "password";
+		let { user, password } = req.body;
+		let match;
 		try {
-			let match = await db.findRows("mmchddb.USERS", {email: email});
+			// checking if email or username
+			if (user.indexOf("@") != -1) {
+				match = await db.findRows("mmchddb.USERS", {email: user});
+			} else {
+				match = await db.findRows("mmchddb.USERS", {username: user});
+			}
 			console.log(match);
 			if (match.length > 0) {
-				bcrypt.compare(password, match[0].password, function(err,result) {
+				bcrypt.compare(password, match[0].password, function(err, result) {
 					if (result) {
 						// insert user type checking
-						res.send("Login successful");
-					}
-					else res.send("Incorrect Password");
+						req.session.user = match[0];
+						res.status(200).send("Login successful.");
+					} else res.status(403).send("Incorrect password.");
 				});
-			} else res.send("No user found");
+			} else res.status(403).send("No user found.");
 		} catch(e) {
-			res.send(e);
+			console.log(e);
+			res.status(500).send("Server error.");
 		}
 	},
 
