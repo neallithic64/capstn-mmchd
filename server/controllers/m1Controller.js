@@ -89,7 +89,7 @@ const indexFunctions = {
 			let user = new User(userID, userName, email, password, userType, addressID,
 					lastName, firstName, midName);
 					
-			let result = await db.insertOne("mmchddb.USERS",user);
+			let result = await db.insertOne("mmchddb.USERS", user);
 			console.log(result);
 			if (result) res.send("success");
 			else res.send("failed");
@@ -103,7 +103,12 @@ const indexFunctions = {
 		
 		try {
 			// let newCaseId = await genCaseID();
-			
+			let newCase = {
+				caseId: newCaseId
+			};
+			let result = awaiat db.insertOne("mmchddb.CASES", newCase);
+			if (result) res.status(200).send("");
+			else res.status(500).send("");
 		} catch (e) {
 			
 		}
