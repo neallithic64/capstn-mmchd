@@ -27,6 +27,10 @@ function Address(addressID, houseNo, streetName, brgy, city, province, region, c
 	this.country = country;
 }
 
+/** ON ID CREATION, AND FORMAT:
+	- 
+*/
+
 const indexFunctions = {
 	/*
 	 * GET METHODS
@@ -75,15 +79,12 @@ const indexFunctions = {
 
 
 	postRegUser : async function(req,res){
-		// let{
-		// 	userName, email, password, userType, addressID,
-		// 	lastName,firstName, midName
-		// } = req.body;
-		
-		var pass
+		let { userName, email, password, userType, addressID,
+				lastName,firstName, midName
+				} = req.body;
 		try {
 			// TODO: Generate userID and create address table row
-			// let userID = await generateuserID();
+			// let userID = await generateUserID();
 			// let addressID = await createAddress();
 
 			let userID = "User-00000001"; 
