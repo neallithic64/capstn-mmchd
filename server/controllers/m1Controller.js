@@ -78,37 +78,36 @@ const indexFunctions = {
 	},
 
 
-	postRegUser : async function(req,res){
+	postRegUser: async function(req, res) {
 		let { userName, email, password, userType, addressID,
-				lastName,firstName, midName
-				} = req.body;
+				lastName,firstName, midName } = req.body;
 		try {
 			// TODO: Generate userID and create address table row
 			// let userID = await generateUserID();
 			// let addressID = await createAddress();
-
-			let userID = "User-00000001"; 
-			let addressID = null;
-			let password = await bcrypt.hash("password",saltRounds);
-			console.log(password);
-
-			let user = new User(userID, "testuser", "testuser@gmail.com", password, "sample", addressID,
-			"Garcia", "Andre Emmanuel", "Servillon");
-
-			// let user = User(userID, userName, email, password, userType, addressID,
-			// 	lastName,firstName, midName);
-
+			let password = await bcrypt.hash("password", saltRounds);
+			let user = new User(userID, userName, email, password, userType, addressID,
+					lastName, firstName, midName);
+					
 			let result = await db.insertOne("mmchddb.USERS",user);
 			console.log(result);
-			if (result)
-				res.send("success");
-			else
-				res.send("failed");
+			if (result) res.send("success");
+			else res.send("failed");
 		} catch (e) {
 			res.send(e);
 		}
 	},
-
+	
+	postNewCase: async function(req, res) {
+		let {  } = req.body;
+		
+		try {
+			// let newCaseId = await genCaseID();
+			
+		} catch (e) {
+			
+		}
+	}
 };
 
 module.exports = indexFunctions;
