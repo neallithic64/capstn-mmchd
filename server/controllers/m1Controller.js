@@ -58,7 +58,8 @@ function getPrefix(table){
 		case "mmchddb.PROGRAM_EVAL":
 			return "PE-";
 	}
-} 
+}
+ 
 async function generateID(table){
 	try {
 		let rowcount = await db.findRowCount(table);
