@@ -44,7 +44,6 @@
         </button>
       </div>
     </form>
-    <nuxt-link to='/'> Go to index </nuxt-link>
   </div>
 </template>
 
