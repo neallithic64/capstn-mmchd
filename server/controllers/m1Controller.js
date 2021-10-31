@@ -16,7 +16,7 @@ function User(userID, userName, email, password, userType, addressID,
 	this.midName = midName;
 }
 
-function Address(addressID, houseNo, streetName, brgy, city, province, region, country){
+function Address(addressID, houseNo, streetName, brgy, city, province, region, country) {
 	this.addressID = addressID;
 	this.houseNo = houseNo;
 	this.streetName = streetName;
@@ -124,8 +124,7 @@ const indexFunctions = {
 			res.status(500).send("Server error.");
 		}
 	},
-
-
+	
 	postRegUser: async function(req, res) {
 		let { userName, email, password, userType, addressID,
 				lastName,firstName, midName } = req.body;
@@ -160,6 +159,19 @@ const indexFunctions = {
 		} catch (e) {
 			
 		}
+	},
+	
+	postUpdateCaseStatus: async function(req, res) {
+		let { caseId, newStatus } = req.body;
+		let caseAudit = {
+			caseId: caseId,
+			dateModified: new Date(),
+			fieldName: "",
+			prevValue: /*  */,
+			modifiedBy: req.session.user.userId
+		};
+		console.table(causeAudit);
+		
 	}
 };
 
