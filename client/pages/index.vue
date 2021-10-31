@@ -1,5 +1,5 @@
 <template>
-  <Tutorial/>
+  <TopNav/>
 </template>
 
 <script>
