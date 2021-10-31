@@ -27,6 +27,55 @@ function Address(addressID, houseNo, streetName, brgy, city, province, region, c
 	this.country = country;
 }
 
+function getPrefix(table){
+	switch(table) {
+		case "mmchddb.USERS":
+			return "US-";
+		case "mmchddb.DISEASES":
+			return "DI-";
+		case "mmchddb.EVENTS":
+			return "EV-";
+		case "mmchddb.PATIENTS":
+			return "PA-";
+		case "mmchddb.CASES":
+			return "CA-";
+		case "mmchddb.NOTIFICATIONS":
+			return "NO-";
+		case "mmchddb.REPORTS":
+			return "RE-";
+		case "mmchddb.TARGETS":
+			return "TA-";
+		case "mmchddb.PROGRAMS":
+			return "PR-";
+		case "mmchddb.AGE_RANGE_REF":
+			return "AR-";
+		case "mmchddb.ADDRESSES":
+			return "AD-";
+		case "mmchddb.OUTBREAKS":
+			return "OU-";
+		case "mmchddb.SURVEILLANCE_EVAL":
+			return "SE-";
+		case "mmchddb.PROGRAM_EVAL":
+			return "PE-";
+	}
+}
+ 
+async function generateID(table){
+	try {
+		let rowcount = await db.findRowCount(table);
+		console.log(rowcount);
+	
+		let id = getPrefix(table);
+		for(let i = 0; i < 13 - rowcount; i++)
+			id += '0';
+		id += rowcount.toString();
+		
+		return id;	
+	} catch (e) {
+		throw e
+	}
+}
+
 const indexFunctions = {
 	/*
 	 * GET METHODS
@@ -41,6 +90,8 @@ const indexFunctions = {
 		// let r = await db.findAll("mmchddb.TARGETS_REF");
 		// let r = await db.updateRows("mmchddb.TARGETS_REF", {targetDesc: "desc1"}, {targetDesc: "desc999"});
 		// console.log(r);
+		let r = await generateID("mmchddb.PROGRAMS");
+		console.log(r);
 		res.send("exec done");
 	},
 
