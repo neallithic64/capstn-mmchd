@@ -5,7 +5,7 @@
 
       <div class="field-row">
         <div class="name-field">
-          <label class="required"> Last Name </label>
+          <label for="lastname" class="required"> Last Name </label>
           <input
             id="lastname"
             v-model="lastname"
@@ -14,7 +14,7 @@
           />
         </div>
         <div class="name-field">
-          <label class="required"> First Name </label>
+          <label for="firstname" class="required"> First Name </label>
           <input
             id="firstname"
             v-model="firstname"
@@ -23,7 +23,7 @@
           />
         </div>
         <div class="name-field">
-          <label class="required"> Middle Name </label>
+          <label for="middlename" class="required"> Middle Name </label>
           <input
             id="middlename"
             v-model="middlename"
@@ -33,89 +33,95 @@
         </div>
       </div>
 
-      <div class="field-row">
-        <div class="name-field">
-          <label class="required"> Date of Birth </label>
-          <input
-            id="birthdate"
-            v-model="birthdate"
-            class="input-form-field"
-            type="date"
-          />
-        </div>
-        <div class="name-field">
-          <label class="required"> Age </label>
-          <input
-            id="age"
-            v-model="age"
-            class="input-form-field"
-            type="number"
-          />
-        </div>
-        <div class="name-field">
-          <label class="required"> Sex </label>
-          <div style="display: inline-flex">
+      <div class="field-row" style="display: inline-flex">
+        <div class="half-half" style="width: 45%">
+          <div class="birthday-field field">
+            <label for="birthdate" class="required"> Date of Birth </label>
             <input
-              id="female"
-              v-model="sex"
-              value="female"
-              class="input-radio"
-              name="sex"
-              type="radio"
+              id="birthdate"
+              v-model="birthdate"
+              class="input-form-field"
+              type="date"
             />
-            Female
           </div>
-          <div style="display: inline-flex">
+          <div class="age-field field">
+            <label for="age" class="required"> Age </label>
             <input
-              id="male"
-              v-model="sex"
-              value="male"
-              class="input-radio"
-              name="sex"
-              type="radio"
-            />
-            Male
-          </div>
-        </div>
-        <div class="name-field">
-          <label class="required"> Pregnancy </label>
-          <div style="display: inline-flex">
-            <input
-              id="Not Pregnant"
-              v-model="pregnancy"
-              value="Not Pregnant"
-              class="input-radio"
-              name="pregnancy"
-              type="radio"
-            />
-            Not Pregnant
-          </div>
-
-          <div style="display: inline-flex">
-            <input
-              id="Pregnant"
-              v-model="pregnancy"
-              value="pregnant"
-              class="input-radio"
-              name="pregnancy"
-              type="radio"
-            />
-            <input
-              id="pregnancy"
-              v-model="pregnancy"
+              id="age"
+              v-model="age"
               class="input-form-field"
               type="number"
             />
-            Weeks Pregnant
           </div>
         </div>
+
+        <div class="half-half" style="width: 55%">
+          <div class="sex-field field">
+            <label class="required"> Sex </label>
+            <div style="display: inline-flex; align-items: center">
+              <input
+                id="female"
+                v-model="sex"
+                value="female"
+                class="input-radio"
+                name="sex"
+                type="radio"
+              />
+              <label for="female"> Female </label>
+            </div>
+            <div style="display: inline-flex; align-items: center">
+              <input
+                id="male"
+                v-model="sex"
+                value="male"
+                class="input-radio"
+                name="sex"
+                type="radio"
+              />
+              <label for="male"> Male </label>
+            </div>
+          </div>
+          <div class="pregnancy-field field">
+            <label class="required"> Pregnancy </label>
+            <div style="display: inline-flex; align-items: center">
+              <input
+                id="Not Pregnant"
+                v-model="pregnancy"
+                value="Not Pregnant"
+                class="input-radio"
+                name="pregnancy"
+                type="radio"
+              />
+              <label for="Not Pregnant"> Not Pregnant </label>
+            </div>
+
+            <div style="display: inline-flex; align-items: center">
+              <input
+                id="Pregnant"
+                value="pregnant"
+                class="input-radio"
+                name="pregnancy"
+                type="radio"
+              />
+              <div style="display: inline-flex">
+                <input
+                  id="pregnancy"
+                  v-model="pregnancy"
+                  class="input-form-field"
+                  type="number"
+                  style="width: 50px; height: 20px; margin: 0 2px"
+                />
+                Weeks Pregnant
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- to do -->
       </div>
-
-      All info: {{ lastname }}, {{ firstname }}, {{ middlename }}.
-      {{ birthdate }}, {{ age }}, {{ sex }}, {{ pregnancy }}
-
-      <!-- to do -->
     </div>
+    All info: {{ lastname }}, {{ firstname }}, {{ middlename }}.
+    {{ birthdate }}, {{ age }}, {{ sex }}, {{ pregnancy }}
   </form>
 </template>
 
@@ -171,7 +177,7 @@ export default {
 @media only screen and (max-width: 950px) {
   .field-row {
     flex-direction: column;
-    margin: 0;
+    margin: 0 0 10px;
   }
 }
 
@@ -184,10 +190,18 @@ export default {
   padding-bottom: 5px;
 }
 
+.field {
+  width: 100%;
+  padding: 0px 7px;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 5px;
+}
+
 @media only screen and (max-width: 950px) {
   .name-field {
-    width: 97%;
-    margin: 0px 7.5px;
+    width: 98%;
   }
 }
 
@@ -215,6 +229,46 @@ export default {
   border: 1px solid #a3a3a3;
   box-sizing: border-box;
   border-radius: 9px;
+}
+
+.half-half {
+  display: inline-flex;
+}
+
+.birthday-field {
+  /* width: 30%; */
+  width: 66.67%;
+}
+.age-field {
+  /* width: 15%; */
+  width: 33.33%;
+}
+.sex-field {
+  /* width: 15%; */
+  width: 27.27%;
+}
+.pregnancy-field {
+  /* width: 40%; */
+  width: 72.73%;
+}
+
+@media only screen and (max-width: 950px) {
+  .half-half {
+    width: 100;
+  }
+
+  .birthday-field {
+    width: 59%;
+  }
+  .age-field {
+    width: 39%;
+  }
+  .sex-field {
+    width: 39%;
+  }
+  .pregnancy-field {
+    width: 59%;
+  }
 }
 
 .required:after {
