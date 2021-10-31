@@ -31,6 +31,18 @@
             <div class="formnum">5. Lab Tests</div>
           </div>
         </div>
+        <div>
+          All info: {{ lastname }}, {{ firstname }}, {{ middlename }}. <br />
+          {{ birthdate }}, {{ age }}, {{ sex }}, {{ pregnancy }}. <br />
+          {{ currentAddress }}, {{ permanentAddress }} <br />
+          {{ patientAdmitted }}, {{ dateAdmitted }}, {{ indigenousGroup }}
+          <br />
+          {{ contactperson }}, {{ contactpersonNum }} {{ reportDate }} <br />
+          {{ reporter }}, {{ reportContact }} <br />
+          {{ investigationDate }}, {{ investigator }},
+          {{ investigatorContact }}
+          <br />
+        </div>
       </div>
 
       <!--Everything in the right-->
@@ -90,9 +102,6 @@ export default {
     }
   },
   methods: {
-    /* to do: form validation here */
-    /* to do: submit func here */
-    /* to do: forgot pass func here */
     formpart(disease, pageNum) {
       if (pageNum === 1) this.formPart = 'PatientInfo'
       else this.formPart = disease + pageNum
