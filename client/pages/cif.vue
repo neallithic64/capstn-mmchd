@@ -54,7 +54,7 @@
         </div>
 
         <!--Next back button-->
-        <div style="margin: -10px 0; float: right">
+        <div style="margin: -10px 0 5px; float: right">
           <button class="back-button" type="submit" @click="backPage()">
             Cancel
           </button>
@@ -69,7 +69,7 @@
 </template>
 
 <script>
-import Disease1 from '../components/Disease1.vue'
+import PatientInfo from '../components/PatientInfo.vue'
 import Disease2 from '../components/Disease2.vue'
 
 export default {
@@ -77,7 +77,7 @@ export default {
     title: 'Case Investigation Form',
   },
   components: {
-    Disease1,
+    PatientInfo,
     Disease2,
   },
   data() {
@@ -86,7 +86,7 @@ export default {
       disease: 'Disease',
       pageNum: 1,
       // formPart: formpart(disease, pageNum),
-      formPart: 'Disease1',
+      formPart: 'PatientInfo',
     }
   },
   methods: {
@@ -94,7 +94,8 @@ export default {
     /* to do: submit func here */
     /* to do: forgot pass func here */
     formpart(disease, pageNum) {
-      this.formPart = disease + pageNum
+      if (pageNum === 1) this.formPart = 'PatientInfo'
+      else this.formPart = disease + pageNum
     },
     nextPage() {
       if (this.pageNum < 5) {
@@ -109,7 +110,7 @@ export default {
       }
     },
     formStatus(pageNum, currPage) {
-      if ((pageNum = currPage)) return 'formnumcurr'
+      if (pageNum === currPage) return 'formnumcurr'
       else if (currPage < pageNum) return 'formnumdone'
     },
   },
@@ -156,6 +157,9 @@ body {
   .case-container {
     width: 100%;
     flex-direction: column;
+    align-items: center;
+    margin: 0px;
+    margin-top: 85px;
   }
 }
 
@@ -173,7 +177,7 @@ body {
 }
 @media only screen and (max-width: 800px) {
   .form-summary {
-    width: 99%;
+    width: 100%;
     position: unset;
     height: fit-content;
     z-index: 3;
@@ -258,8 +262,8 @@ body {
 
 @media only screen and (max-width: 800px) {
   .form-section-container {
-    left: -5px;
-    width: 94%;
+    left: 0px;
+    width: 95%;
   }
 }
 
