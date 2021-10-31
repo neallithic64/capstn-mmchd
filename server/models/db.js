@@ -153,6 +153,20 @@ const database = {
 			console.log(e);
 			return false;
 		}
+	},
+
+	/** Returns rows belonging to the specified table as an integer.
+	 */
+	findRowCount: async function(table){
+		try {
+			let statement = "SELECT COUNT(*) AS 'rowcount' FROM " + table;
+			let [rows, fields] = await pool.query(statement);
+			console.log(rows);
+			return rows[0].rowcount;
+		} catch (e) {
+			console.log(e);
+			return false;
+		}
 	}
 };
 
