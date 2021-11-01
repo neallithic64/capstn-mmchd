@@ -163,15 +163,19 @@ const indexFunctions = {
 	
 	postUpdateCaseStatus: async function(req, res) {
 		let { caseId, newStatus } = req.body;
-		let caseAudit = {
-			caseId: caseId,
-			dateModified: new Date(),
-			fieldName: "",
-			prevValue: /*  */,
-			modifiedBy: req.session.user.userId
-		};
-		console.table(causeAudit);
-		
+		try {
+			let caseAudit = {
+				caseId: caseId,
+				dateModified: new Date(),
+				fieldName: "",
+				prevValue: /*  */,
+				modifiedBy: req.session.user.userId
+			};
+			console.table(causeAudit);
+			res.status().send();
+		} catch (e) {
+			
+		}
 	}
 };
 
