@@ -13,7 +13,8 @@ export default {
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-      { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700&display=swap'}
+      { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700&display=swap'},
+      { rel: 'stylesheet', href: 'http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css'}
     ]
   },
 
@@ -40,8 +41,12 @@ export default {
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     // https://go.nuxtjs.dev/axios
-    '@nuxtjs/axios',
+    '@nuxtjs/axios'
   ],
+
+  auth: {
+
+  },
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {},
