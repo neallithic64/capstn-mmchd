@@ -212,7 +212,7 @@ const indexFunctions = {
 	postRegUser: async function(req, res) {
 		let { userName, email, password, userType, addressID,
 				lastName,firstName, midName } = req.body;
-    try {
+		try {
 			let userID = await generateID("mmchddb.USERS"); 
 			let addressID = "AD-0000000000000";
 			let password = await bcrypt.hash("password",saltRounds);
@@ -230,7 +230,7 @@ const indexFunctions = {
 		}
 	},
 
-	postAddDisease : async function(req, res){
+	postAddDisease : async function(req, res) {
 		// let{ 
 			// diseaseName, 
 			// symptomDefinition, 
@@ -244,22 +244,20 @@ const indexFunctions = {
 		try {
 			let diseaseID = await generateID("mmchddb.DISEASES"); 
 
-			let disease = new Disease(diseaseID, "Sample Disease", "Insert symptoms here", "Insert Suspected here", 
-										"Insert Probable here", "Insert Confirmed here", true, 100);
-
+			let disease = new Disease(diseaseID, "Sample Disease", "Insert symptoms here",
+										"Insert Suspected here", "Insert Probable here",
+										"Insert Confirmed here", true, 100);
 			let result = await db.insertOne("mmchddb.DISEASES", disease);
 			console.log(result);
-			if (result)
-				res.send("success");
-			else
-				res.send("failed");
+			if (result) res.send("success");
+			else res.send("failed");
 		} catch (e) {
 			res.send(e);
 		}
 	}, 
 
-	postAddPatient : async function(req, res){
-		// let{ 
+	postAddPatient : async function(req, res) {
+		// let{
 			// patientID, epiID, lastName, firstName, midName, caddressID, paddressID, sex,
 			// 		birthDate, ageNo, ageType, admitStatus, civilStatus, occupation, companyName,
 			// 		comaddressID, schoolName, schaddressID, guardianName, indigenous, indGroup,
@@ -276,10 +274,8 @@ const indexFunctions = {
 
 			let result = await db.insertOne("mmchddb.PATIENTS", patient);
 			console.log(result);
-			if (result)
-				res.send("success");
-			else
-				res.send("failed");
+			if (result) res.send("success");
+			else res.send("failed");
 		} catch (e) {
 			res.send(e);
 		}
@@ -319,7 +315,8 @@ const indexFunctions = {
 			console.table(causeAudit);
 			res.status().send();
 		} catch (e) {
-			//
+			console.log(e);
+			res.status(500).send("Server error.");
 		}
 	}
 };
