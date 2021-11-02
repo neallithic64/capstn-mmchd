@@ -1,9 +1,7 @@
 <template>
   <div id="cif">
     <!--Top Bar of the screen-->
-    <div class="topbar">
-      <nav role="navigation"></nav>
-    </div>
+    <TopNav />
 
     <!--Everything below = main screen-->
     <div class="case-container">
@@ -20,27 +18,46 @@
           </button>
 
           <div v-if="isOpen" class="form-contents">
-            <button class="formnum formnumdone" @click="formpart(disease, 1)">
+            <button
+              id="form1"
+              class="formnum formnumdone"
+              @click="formpart(disease, 1)"
+            >
               1. Patient Information
             </button>
-            <button class="formnum formnumcurr" @click="formpart(disease, 2)">
+            <button
+              id="form2"
+              class="formnum formnumcurr"
+              @click="formpart(disease, 2)"
+            >
               2. Clinical Data
             </button>
-            <div class="formnum">3. Vaccination History</div>
-            <div class="formnum">4. Exposure History</div>
-            <div class="formnum">5. Lab Tests</div>
+            <div id="form3" class="formnum">3. Vaccination History</div>
+            <div id="form4" class="formnum">4. Exposure History</div>
+            <div id="form5" class="formnum">5. Lab Tests</div>
           </div>
         </div>
         <div>
-          All info: {{ lastname }}, {{ firstname }}, {{ middlename }}. <br />
-          {{ birthdate }}, {{ age }}, {{ sex }}, {{ pregnancy }}. <br />
-          {{ currentAddress }}, {{ permanentAddress }} <br />
-          {{ patientAdmitted }}, {{ dateAdmitted }}, {{ indigenousGroup }}
+          All info:
+          {{ patientInfoData.lastname }}, {{ patientInfoData.firstname }},
+          {{ patientInfoData.middlename }}.
           <br />
-          {{ contactperson }}, {{ contactpersonNum }} {{ reportDate }} <br />
-          {{ reporter }}, {{ reportContact }} <br />
-          {{ investigationDate }}, {{ investigator }},
-          {{ investigatorContact }}
+          {{ patientInfoData.birthdate }}, {{ patientInfoData.age }},
+          {{ patientInfoData.sex }}, {{ patientInfoData.pregnancy }}. <br />
+          {{ patientInfoData.currentAddress }},
+          {{ patientInfoData.permanentAddress }} <br />
+          {{ patientInfoData.patientAdmitted }},
+          {{ patientInfoData.dateAdmitted }},
+          {{ patientInfoData.indigenousGroup }}
+          <br />
+          {{ patientInfoData.contactperson }},
+          {{ patientInfoData.contactpersonNum }}
+          {{ patientInfoData.reportDate }} <br />
+          {{ patientInfoData.reporter }}, {{ patientInfoData.reportContact }}
+          <br />
+          {{ patientInfoData.investigationDate }},
+          {{ patientInfoData.investigator }},
+          {{ patientInfoData.investigatorContact }}
           <br />
         </div>
       </div>
@@ -61,6 +78,7 @@
         <div class="form-component">
           <keep-alive>
             <component :is="formPart"></component>
+            <patient-info ref="patientForm" />
             <!-- <componentForm /> -->
           </keep-alive>
         </div>
@@ -71,7 +89,14 @@
             Cancel
           </button>
 
-          <button class="next-button" type="submit" @click="nextPage()">
+          <button
+            class="next-button"
+            type="submit"
+            @click="
+              nextPage()
+              save()
+            "
+          >
             Next
           </button>
         </div>
@@ -99,12 +124,40 @@ export default {
       pageNum: 1,
       // formPart: formpart(disease, pageNum),
       formPart: 'PatientInfo',
+      laast: '',
+      patientInfoData: {
+        firstname: '',
+        lastname: '',
+        middlename: '',
+        birthdate: '',
+        age: '',
+        sex: '',
+        pregnancy: '',
+        currentAddress: '',
+        permanentAddress: '',
+        patientAdmitted: '',
+        dateAdmitted: '',
+        indigenousGroup: '',
+        contactperson: '',
+        contactpersonNum: '',
+        reportDate: '',
+        reporter: '',
+        reportContact: '',
+        investigationDate: '',
+        investigator: '',
+        investigatorContact: '',
+      },
     }
+  },
+
+  mounted() {
+    console.log(this.$refs.patientInfoData)
   },
   methods: {
     formpart(disease, pageNum) {
       if (pageNum === 1) this.formPart = 'PatientInfo'
       else this.formPart = disease + pageNum
+      this.formStatus(5, pageNum)
     },
     nextPage() {
       if (this.pageNum < 5) {
@@ -119,8 +172,22 @@ export default {
       }
     },
     formStatus(pageNum, currPage) {
-      if (pageNum === currPage) return 'formnumcurr'
-      else if (currPage < pageNum) return 'formnumdone'
+      for (let i = 1; i < pageNum; i++) {
+        const formnum = 'form' + i
+        if (i === currPage)
+          document.getElementById(formnum).className = 'formnum formnumcurr'
+        else if (i < currPage)
+          document.getElementById(formnum).className = 'formnum formnumdone'
+        else if (i > currPage)
+          document.getElementById(formnum).className = 'formnum'
+      }
+    },
+    onChildClick(value) {
+      this.fromChild = value
+    },
+    save() {
+      this.patientInfoData = this.$refs.patientInfoData.send()
+      alert(this.patientInfoData)
     },
   },
 }
@@ -139,19 +206,6 @@ body {
   font-weight: 300;
   padding: 0px;
   margin: 0px;
-}
-
-.topbar {
-  position: fixed;
-  width: 100%;
-  height: 75px;
-  left: 0px;
-  top: 0px;
-  z-index: 5;
-
-  background: #ffffff;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
-  border-radius: 0px 0px 10px 10px;
 }
 
 .case-container {

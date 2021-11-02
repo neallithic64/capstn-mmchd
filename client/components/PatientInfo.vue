@@ -1,5 +1,5 @@
 <template>
-  <form id="PatientInfo" type="submit">
+  <form id="PatientInfo" type="submit" @submit="send">
     <div id="case-investigation-form" class="center">
       <h2 id="form-header">Patient Information</h2>
 
@@ -8,7 +8,7 @@
           <label for="lastname" class="required"> Last Name </label>
           <input
             id="lastname"
-            v-model="lastname"
+            v-model="patientInfoData.lastname"
             class="input-form-field"
             type="text"
           />
@@ -17,7 +17,7 @@
           <label for="firstname" class="required"> First Name </label>
           <input
             id="firstname"
-            v-model="firstname"
+            v-model="patientInfoData.firstname"
             class="input-form-field"
             type="text"
           />
@@ -26,20 +26,20 @@
           <label for="middlename" class="required"> Middle Name </label>
           <input
             id="middlename"
-            v-model="middlename"
+            v-model="patientInfoData.middlename"
             class="input-form-field"
             type="text"
           />
         </div>
       </div>
-
+      <!--
       <div class="field-row" style="display: inline-flex; margin-bottom: -1 px">
         <div class="half-half half-half1">
           <div class="birthday-field field">
             <label for="birthdate" class="required"> Date of Birth </label>
             <input
               id="birthdate"
-              v-model="birthdate"
+              v-model="patientInfoData.birthdate"
               class="input-form-field"
               type="date"
             />
@@ -48,7 +48,7 @@
             <label for="age" class="required"> Age </label>
             <input
               id="age"
-              v-model="age"
+              v-model="patientInfoData.age"
               class="input-form-field"
               type="number"
             />
@@ -61,7 +61,7 @@
             <div style="display: inline-flex; align-items: center">
               <input
                 id="female"
-                v-model="sex"
+                v-model="patientInfoData.sex"
                 value="female"
                 class="input-radio"
                 name="sex"
@@ -72,7 +72,7 @@
             <div style="display: inline-flex; align-items: center">
               <input
                 id="male"
-                v-model="sex"
+                v-model="patientInfoData.sex"
                 value="male"
                 class="input-radio"
                 name="sex"
@@ -86,7 +86,7 @@
             <div style="display: inline-flex; align-items: center">
               <input
                 id="Not Pregnant"
-                v-model="pregnancy"
+                v-model="patientInfoData.pregnancy"
                 value="Not Pregnant"
                 class="input-radio"
                 name="pregnancy"
@@ -106,7 +106,7 @@
               <div style="display: inline-flex">
                 <input
                   id="pregnancy"
-                  v-model="pregnancy"
+                  v-model="patientInfoData.pregnancy"
                   class="input-form-field"
                   type="number"
                   style="width: 50px; height: 20px; margin: 0 2px"
@@ -116,8 +116,6 @@
             </div>
           </div>
         </div>
-
-        <!-- to do -->
       </div>
 
       <div class="field-row">
@@ -125,7 +123,7 @@
           <label for="currentAddress" class="required"> Current Address </label>
           <input
             id="currentAddress"
-            v-model="currentAddress"
+            v-model="patientInfoData.currentAddress"
             class="input-form-field"
             type="text"
           />
@@ -134,12 +132,10 @@
 
       <div class="field-row">
         <div class="field">
-          <label for="permanentAddress" class="required">
-            Permanent Address
-          </label>
+          <label for="permanentAddress"> Permanent Address </label>
           <input
             id="permanentAddress"
-            v-model="permanentAddress"
+            v-model="patientInfoData.permanentAddress"
             class="input-form-field"
             type="text"
           />
@@ -156,7 +152,7 @@
             <div style="display: inline-flex; align-items: center">
               <input
                 id="yes"
-                v-model="patientAdmitted"
+                v-model="patientInfoData.patientAdmitted"
                 value="yes"
                 class="input-radio"
                 name="patientAdmitted"
@@ -167,7 +163,7 @@
             <div style="display: inline-flex; align-items: center">
               <input
                 id="no"
-                v-model="patientAdmitted"
+                v-model="patientInfoData.patientAdmitted"
                 value="no"
                 class="input-radio"
                 name="patientAdmitted"
@@ -182,7 +178,7 @@
             </label>
             <input
               id="dateAdmitted"
-              v-model="dateAdmitted"
+              v-model="patientInfoData.dateAdmitted"
               class="input-form-field"
               type="date"
             />
@@ -192,7 +188,7 @@
           <label for="indigenousGroup"> Indigenous Group </label>
           <input
             id="indigenousGroup"
-            v-model="indigenousGroup"
+            v-model="patientInfoData.indigenousGroup"
             class="input-form-field"
             type="text"
           />
@@ -206,7 +202,7 @@
           </label>
           <input
             id="contactperson"
-            v-model="contactperson"
+            v-model="patientInfoData.contactperson"
             class="input-form-field"
             type="text"
           />
@@ -215,7 +211,7 @@
           <label for="contactpersonNum" class="required"> Contact No. </label>
           <input
             id="contactpersonNum"
-            v-model="contactpersonNum"
+            v-model="patientInfoData.contactpersonNum"
             class="input-form-field"
             type="number"
           />
@@ -227,7 +223,7 @@
           <label for="reportDate" class="required"> Date Reported </label>
           <input
             id="reportDate"
-            v-model="reportDate"
+            v-model="patientInfoData.reportDate"
             class="input-form-field"
             type="date"
           />
@@ -236,7 +232,7 @@
           <label for="reporter" class="required"> Reporter </label>
           <input
             id="reporter"
-            v-model="reporter"
+            v-model="patientInfoData.reporter"
             class="input-form-field"
             type="text"
           />
@@ -245,7 +241,7 @@
           <label for="reporterNum" class="required"> Contact No. </label>
           <input
             id="reporterNum"
-            v-model="reportContact"
+            v-model="patientInfoData.reportContact"
             class="input-form-field"
             type="number"
           />
@@ -259,7 +255,7 @@
           </label>
           <input
             id="investigationDate"
-            v-model="investigationDate"
+            v-model="patientInfoData.investigationDate"
             class="input-form-field"
             type="date"
           />
@@ -268,7 +264,7 @@
           <label for="investigator" class="required"> Investigator </label>
           <input
             id="investigator"
-            v-model="investigator"
+            v-model="patientInfoData.investigator"
             class="input-form-field"
             type="text"
           />
@@ -279,42 +275,69 @@
           </label>
           <input
             id="investigatorContact"
-            v-model="investigatorContact"
+            v-model="patientInfoData.investigatorContact"
             class="input-form-field"
             type="number"
           />
         </div>
       </div>
+-->
     </div>
+    <button class="next-button" type="submit" @click="save()"></button>
   </form>
 </template>
-
 
 <script>
 export default {
   data() {
     return {
-      firstname: '',
-      lastname: '',
-      middlename: '',
-      birthdate: '',
-      age: '',
-      sex: '',
-      pregnancy: '',
-      currentAddress: '',
-      permanentAddress: '',
-      patientAdmitted: '',
-      dateAdmitted: '',
-      indigenousGroup: '',
-      contactperson: '',
-      contactpersonNum: '',
-      reportDate: '',
-      reporter: '',
-      reportContact: '',
-      investigationDate: '',
-      investigator: '',
-      investigatorContact: '',
+      patientInfoData: {
+        firstname: '',
+        lastname: 'last',
+        middlename: '',
+        birthdate: '',
+        age: '',
+        sex: '',
+        pregnancy: '',
+        currentAddress: '',
+        permanentAddress: '',
+        patientAdmitted: '',
+        dateAdmitted: '',
+        indigenousGroup: '',
+        contactperson: '',
+        contactpersonNum: '',
+        reportDate: '',
+        reporter: '',
+        reportContact: '',
+        investigationDate: '',
+        investigator: '',
+        investigatorContact: '',
+      },
     }
+  },
+  methods: {
+    /*
+    changeUsername() {
+      this.$emit('changeUsername')
+    },
+    update() {
+      // this.$emit('update')
+      const values = Object.values(this.patientInfoData)
+      // console.log(values)
+      return values
+    },
+    
+    emitToParent(event) {
+      this.$emit('childToParent', this.childMessage)
+    },
+    
+    send() {
+      return this.$emit(this.patientInfoData.hatdog)
+    },
+    */
+    send() {
+      this.$emit(this.patientInfoData)
+    },
   },
 }
 </script>

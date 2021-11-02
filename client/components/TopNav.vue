@@ -1,9 +1,10 @@
 <template>
   <div id="myTopnav" class="topnav">
-    <img id="logo" src="~/assets/img/doh-logo.png"/>
+    <img id="logo" src="~/assets/img/doh-logo.png" />
     <nuxt-link to="/"> Home </nuxt-link>
     <div class="dropdown">
-      <button class="dropbtn">Disease Surveillance
+      <button class="dropbtn">
+        Disease Surveillance
         <i class="fa fa-caret-down"></i>
       </button>
       <div class="dropdown-content">
@@ -12,7 +13,8 @@
       </div>
     </div>
     <div class="dropdown">
-      <button class="dropbtn">Program Surveillance
+      <button class="dropbtn">
+        Program Surveillance
         <i class="fa fa-caret-down"></i>
       </button>
       <div class="dropdown-content">
@@ -23,7 +25,8 @@
     <nuxt-link to="/analysis"> Analysis and Visualization </nuxt-link>
     <nuxt-link to="/bulletin"> Feedback Bulletin </nuxt-link>
     <div class="dropdown">
-      <button class="dropbtn">ESR
+      <button class="dropbtn">
+        ESR
         <i class="fa fa-caret-down"></i>
       </button>
       <div class="dropdown-content">
@@ -32,12 +35,28 @@
       </div>
     </div>
     <nuxt-link to="/evaluation"> Evaluation </nuxt-link>
+
+    <div class="topnav-right-inside">
+      <nuxt-link to="/notification"> Notification </nuxt-link>
+      <div class="dropdown">
+        <button class="dropbtn">
+          My Account
+          <i class="fa fa-caret-down"></i>
+        </button>
+        <div class="dropdown-content">
+          <nuxt-link to="/myprofile"> My Profile </nuxt-link>
+          <nuxt-link to="/settings"> Settings </nuxt-link>
+          <nuxt-link to="/logout"> Logout </nuxt-link>
+        </div>
+      </div>
+    </div>
+
     <a href="javascript:void(0);" class="icon" @click="myFunction()">&#9776;</a>
 
     <div class="topnav-right">
       <button class="notification">
-          <i class="fa fa-bell fa-sm"></i>
-          <span id="notif-num" class="badge">10+</span>
+        <i class="fa fa-bell fa-sm"></i>
+        <span id="notif-num" class="badge">10+</span>
       </button>
       <div class="dropdown">
         <button id="profile-dropbtn">
@@ -57,18 +76,22 @@
 export default {
   methods: {
     myFunction() {
-      const x = document.getElementById("myTopnav");
-      if (x.className === "topnav") {
-        x.className += " responsive";
+      const x = document.getElementById('myTopnav')
+      if (x.className === 'topnav') {
+        x.className += ' responsive'
       } else {
-        x.className = "topnav";
+        x.className = 'topnav'
       }
-    }
-  }
+    },
+  },
 }
 </script>
 
 <style>
+#myTopnav {
+  z-index: 10;
+  position: fixed;
+}
 
 #logo {
   width: 45px;
@@ -85,16 +108,20 @@ export default {
   justify-content: flex-end;
 }
 
+.topnav-right-inside {
+  display: none;
+}
+
 .topnav {
-    position: absolute;
-    width: 100%;
-    height: 65fcxc  vvpx;
-    left: 0px;
-    top: 0px;
-    background: #ffffff;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
-    border-radius: 0px 0px 10px 10px;
-    font-family: 'Work Sans', sans-serif;
+  position: absolute;
+  width: 100%;
+  height: 65fcxc vvpx;
+  left: 0px;
+  top: 0px;
+  background: #ffffff;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 0px 0px 10px 10px;
+  font-family: 'Work Sans', sans-serif;
 }
 
 /* Style the links inside the navigation bar */
@@ -110,7 +137,7 @@ export default {
 
 /* Add an active class to highlight the current page */
 .active {
-  background-color: #04AA6D;
+  background-color: #04aa6d;
   color: white;
 }
 
@@ -144,7 +171,7 @@ export default {
   width: 45px;
   height: 45px;
   padding: 8px;
-  background-color: #008D41;
+  background-color: #008d41;
   border-radius: 50%;
   font-family: inherit;
   margin-top: 7px;
@@ -159,7 +186,7 @@ export default {
   position: absolute;
   background-color: #f9f9f9;
   min-width: 180px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 1;
 }
 
@@ -168,10 +195,9 @@ export default {
   position: absolute;
   background-color: #f9f9f9;
   min-width: 180px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 1;
 }
-
 
 /* Style the links inside the dropdown */
 .dropdown-content a {
@@ -193,7 +219,8 @@ export default {
 }
 
 /* Add a dark background on topnav links and the dropdown button on hover */
-.topnav a:hover, .dropdown:hover .dropbtn {
+.topnav a:hover,
+.dropdown:hover .dropbtn {
   background-color: #555;
   color: white;
 }
@@ -225,8 +252,10 @@ export default {
 }
 
 /* When the screen is less than 600 pixels wide, hide all links, except for the first one ("Home"). Show the link that contains should open and close the topnav (.icon) */
-@media screen and (max-width: 1024px) {
-  .topnav a:not(:first-child), .dropdown .dropbtn {
+@media screen and (max-width: 1111px) {
+  .topnav a:not(:first-child),
+  .topnav-right-inside a:not(:last-child),
+  .dropdown .dropbtn {
     display: none;
   }
   .topnav a.icon {
@@ -236,9 +265,16 @@ export default {
 }
 
 /* The "responsive" class is added to the topnav with JavaScript when the user clicks on the icon. This class makes the topnav look good on small screens (display the links vertically instead of horizontally) */
-@media screen and (max-width: 1024px) {
-  .topnav.responsive {position: relative;}
-  .topnav-right {display: none;}
+@media screen and (max-width: 1111px) {
+  .topnav.responsive {
+    position: relative;
+  }
+  .topnav-right {
+    display: none;
+  }
+  .topnav-right-inside {
+    display: inherit;
+  }
   .topnav.responsive a.icon {
     position: absolute;
     right: 0;
@@ -249,14 +285,17 @@ export default {
     display: block;
     text-align: left;
   }
-  .topnav.responsive .dropdown {float: none;}
-  .topnav.responsive .dropdown-content {position: relative;}
+  .topnav.responsive .dropdown {
+    float: none;
+  }
+  .topnav.responsive .dropdown-content {
+    position: relative;
+  }
   .topnav.responsive .dropdown .dropbtn {
     display: block;
     width: 100%;
     text-align: left;
   }
-  
 }
 
 .notification {
@@ -283,5 +322,4 @@ export default {
   color: white;
   font-size: 8px;
 }
-
 </style>
