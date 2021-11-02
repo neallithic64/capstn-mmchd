@@ -18,48 +18,22 @@
           </button>
 
           <div v-if="isOpen" class="form-contents">
-            <button
+            <div v-for="(value, name, i) in disease[0]" :key="i">
+              <div v-if="i == 2" :id="name" class="formnum formnumcurr">
+                {{ value }}
+              </div>
+              <div v-if="i > 2" :id="name" class="formnum">{{ value }}</div>
+            </div>
+            <!-- <button
               id="form1"
               class="formnum formnumdone"
               @click="formpart(disease, 1)"
             >
               1. Patient Information
-            </button>
-            <button
-              id="form2"
-              class="formnum formnumcurr"
-              @click="formpart(disease, 2)"
-            >
-              2. Clinical Data
-            </button>
-            <div id="form3" class="formnum">3. Vaccination History</div>
-            <div id="form4" class="formnum">4. Exposure History</div>
-            <div id="form5" class="formnum">5. Lab Tests</div>
+            </button> -->
           </div>
         </div>
-        <div>
-          All info:
-          {{ patientInfoData.lastname }}, {{ patientInfoData.firstname }},
-          {{ patientInfoData.middlename }}.
-          <br />
-          {{ patientInfoData.birthdate }}, {{ patientInfoData.age }},
-          {{ patientInfoData.sex }}, {{ patientInfoData.pregnancy }}. <br />
-          {{ patientInfoData.currentAddress }},
-          {{ patientInfoData.permanentAddress }} <br />
-          {{ patientInfoData.patientAdmitted }},
-          {{ patientInfoData.dateAdmitted }},
-          {{ patientInfoData.indigenousGroup }}
-          <br />
-          {{ patientInfoData.contactperson }},
-          {{ patientInfoData.contactpersonNum }}
-          {{ patientInfoData.reportDate }} <br />
-          {{ patientInfoData.reporter }}, {{ patientInfoData.reportContact }}
-          <br />
-          {{ patientInfoData.investigationDate }},
-          {{ patientInfoData.investigator }},
-          {{ patientInfoData.investigatorContact }}
-          <br />
-        </div>
+        <div>All info: {{ formdata }}</div>
       </div>
 
       <!--Everything in the right-->
@@ -67,7 +41,7 @@
         <!--Name of form-->
         <div class="disease-name">
           <h1 style="margin: 0; font-weight: 600; font-size: 24px">
-            {{ disease }}
+            {{ disease[0].name }}
           </h1>
           <p style="margin: 0 5px 5px 5px; font-size: 16px">
             Please fill up the form with complete and correct information
@@ -77,28 +51,11 @@
         <!--Form itself-->
         <div class="form-component">
           <keep-alive>
-            <component :is="formPart"></component>
-            <patient-info ref="patientForm" />
+            <component :is="formPart" @update="updateForm($event)" />
+            <!-- <patient-info ref="patientForm" @click="doSomething" /> -->
+            <!-- <patient-info @changeTitle="ChangeT($event)" /> -->
             <!-- <componentForm /> -->
           </keep-alive>
-        </div>
-
-        <!--Next back button-->
-        <div style="margin: -10px 0 5px; float: right">
-          <button class="back-button" type="submit" @click="backPage()">
-            Cancel
-          </button>
-
-          <button
-            class="next-button"
-            type="submit"
-            @click="
-              nextPage()
-              save()
-            "
-          >
-            Next
-          </button>
         </div>
       </div>
     </div>
@@ -107,7 +64,7 @@
 
 <script>
 import PatientInfo from '../components/PatientInfo.vue'
-import Disease2 from '../components/Disease2.vue'
+import Measles2 from '../components/Measles2.vue'
 
 export default {
   header: {
@@ -115,64 +72,40 @@ export default {
   },
   components: {
     PatientInfo,
-    Disease2,
+    Measles2,
   },
   data() {
     return {
       isOpen: true,
-      disease: 'Disease',
       pageNum: 1,
       // formPart: formpart(disease, pageNum),
       formPart: 'PatientInfo',
       laast: '',
-      patientInfoData: {
-        firstname: '',
-        lastname: '',
-        middlename: '',
-        birthdate: '',
-        age: '',
-        sex: '',
-        pregnancy: '',
-        currentAddress: '',
-        permanentAddress: '',
-        patientAdmitted: '',
-        dateAdmitted: '',
-        indigenousGroup: '',
-        contactperson: '',
-        contactpersonNum: '',
-        reportDate: '',
-        reporter: '',
-        reportContact: '',
-        investigationDate: '',
-        investigator: '',
-        investigatorContact: '',
-      },
+      formdata: [],
+      disease: [
+        {
+          filename: 'Measles',
+          name: 'Measles/Rubella',
+          form1: '1. Patient Information',
+          form2: '2. Clinical Data',
+          form3: '3. Vaccination History',
+          form4: '4. Exposure History',
+          form5: '5. Laboratory Tests',
+          form6: '6. Final Classification',
+          form7: '7. Source of Information',
+          form8: '8. Outcome',
+        },
+      ],
     }
-  },
-
-  mounted() {
-    console.log(this.$refs.patientInfoData)
   },
   methods: {
     formpart(disease, pageNum) {
       if (pageNum === 1) this.formPart = 'PatientInfo'
       else this.formPart = disease + pageNum
-      this.formStatus(5, pageNum)
+      this.formStatus(pageNum)
     },
-    nextPage() {
-      if (this.pageNum < 5) {
-        this.pageNum++
-        this.formpart(this.disease, this.pageNum)
-      }
-    },
-    backPage() {
-      if (this.pageNum > 1) {
-        this.pageNum--
-        this.formpart(this.disease, this.pageNum)
-      }
-    },
-    formStatus(pageNum, currPage) {
-      for (let i = 1; i < pageNum; i++) {
+    formStatus(currPage) {
+      for (let i = 1; i < Object.keys(this.disease[0]).length - 1; i++) {
         const formnum = 'form' + i
         if (i === currPage)
           document.getElementById(formnum).className = 'formnum formnumcurr'
@@ -182,12 +115,11 @@ export default {
           document.getElementById(formnum).className = 'formnum'
       }
     },
-    onChildClick(value) {
-      this.fromChild = value
-    },
-    save() {
-      this.patientInfoData = this.$refs.patientInfoData.send()
-      alert(this.patientInfoData)
+    updateForm(value) {
+      this.formdata[this.pageNum - 1] = value[1]
+      this.pageNum += value[0]
+      this.formpart(this.disease[0].filename, this.pageNum)
+      console.log(this.formdata)
     },
   },
 }
@@ -209,7 +141,7 @@ body {
 }
 
 .case-container {
-  margin: 85px 20px 5px 20px;
+  margin: 70px 20px 5px 20px;
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
@@ -292,11 +224,10 @@ body {
   display: flex;
 }
 
-.formnum:hover {
-  /* background: white; */
+/* .formnum:hover {
   color: #000000;
   font-weight: 800;
-}
+} */
 
 @media only screen and (max-width: 800px) {
   .formnum {
@@ -368,7 +299,7 @@ body {
   height: 38px;
   max-width: 100%;
   font-size: 16px;
-  margin-top: 20px;
+  margin-top: 40px;
   font-family: 'Work Sans', sans-serif;
   font-weight: 600;
   background-color: #346083;
@@ -380,7 +311,7 @@ body {
   height: 38px;
   max-width: 100%;
   font-size: 16px;
-  margin-top: 20px;
+  margin-top: 40px;
   font-family: 'Work Sans', sans-serif;
   font-weight: 600;
   background-color: white;
