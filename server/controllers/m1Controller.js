@@ -27,6 +27,79 @@ function Address(addressID, houseNo, streetName, brgy, city, province, region, c
 	this.country = country;
 }
 
+function Disease(diseaseID, diseaseName, symptomDefinition, suspectedDefinition, probableDefinition,
+					confirmedDefinition, notifiable, caseThreshold) {
+	this.diseaseID = diseaseID;
+	this.diseaseName = diseaseName;
+	this.symptomDefinition = symptomDefinition;
+	this.suspectedDefinition = suspectedDefinition;
+	this.probableDefinition = probableDefinition;
+	this.confirmedDefinition = confirmedDefinition;
+	this.notifiable = notifiable;
+	this.caseThreshold = caseThreshold;
+}
+
+function Patient(patientID, epiID, lastName, firstName, midName, caddressID, paddressID, sex,
+					birthDate, ageNo, ageType, admitStatus, civilStatus, occupation, companyName,
+					comaddressID, schoolName, schaddressID, guardianName, indigeneous, indGroup,
+					pregnant, pregMonths, HCPN, ILHZ ) {
+	this.patientID = patientID;
+	this.epiID = epiID;
+	this.lastName = lastName;
+	this.firstName = firstName;
+	this.midName = midName;
+	this.caddressID = caddressID;
+	this.paddressID = paddressID;
+	this.sex = sex;
+	this.birthDate = birthDate;
+	this.ageNo = ageNo;
+	this.ageType = ageType;
+	this.admitStatus = admitStatus;
+	this.civilStatus = civilStatus;
+	this.occupation = occupation;
+	this.companyName = companyName;
+	this.comaddressID = comaddressID;
+	this.schoolName = schoolName;
+	this.schaddressID = schaddressID;
+	this.guardianName = guardianName;
+	this.indigeneous = indigeneous;
+	this.indGroup = indGroup;
+	this.pregnant = pregnant;
+	this.pregMonths = pregMonths;
+	this.HCPN = HCPN;
+	this.ILHZ = ILHZ;
+}
+
+function Case(caseID, patientID, diseaseID, reportedBy, caseLevel, reportDate, investigationDate,
+				dateAdmitted, dateOnset, reporterName, reporterContact, investigatorName, investigatorContact) {
+	this.caseID = caseID;
+	this.patientID = patientID;
+	this.diseaseID = diseaseID;
+	this.reportedBy = reportedBy;
+	this.caseLevel = caseLevel;
+	this.reportDate = reportDate;
+	this.investigationDate = investigationDate;
+	this.dateAdmitted = dateAdmitted;
+	this.dateOnset = dateOnset;
+	this.reporterName = reporterName;
+	this.reporterContact = reporterContact;
+	this.investigatorName = investigatorName;
+	this.investigatorContact = investigatorContact;
+}
+
+function Case_Data(caseID, value, diseaseID, fieldName) {
+	this.caseID = caseID;
+	this.value = value;
+	this.diseaseID = diseaseID;
+	this.fieldName = fieldName;
+}
+
+function Case_Data_Ref(diseaseID, fieldName, dataType) {
+	this.diseaseID = diseaseID;
+	this.fieldName = fieldName;
+	this.dataType = dataType;
+}
+
 function getPrefix(table){
 	switch(table) {
 		case "mmchddb.USERS":
@@ -63,7 +136,7 @@ function getPrefix(table){
 async function generateID(table){
 	try {
 		let rowcount = await db.findRowCount(table);
-		console.log(rowcount);
+		// console.log(rowcount);
 	
 		let id = getPrefix(table);
 		for(let i = 0; i < 13 - rowcount; i++)
@@ -72,7 +145,17 @@ async function generateID(table){
 		
 		return id;	
 	} catch (e) {
-		throw e
+		throw e;
+	}
+}
+
+async function createAddress(address){
+	try {
+		address.addressID = await generateID("mmchddb.ADDRESSES");
+		let r = await db.insertOne("mmchddb.ADDRESSES", address);
+		return r;
+	} catch(e) {
+		throw e;
 	}
 }
 
@@ -90,7 +173,8 @@ const indexFunctions = {
 		// let r = await db.findAll("mmchddb.TARGETS_REF");
 		// let r = await db.updateRows("mmchddb.TARGETS_REF", {targetDesc: "desc1"}, {targetDesc: "desc999"});
 		// console.log(r);
-		let r = await generateID("mmchddb.PROGRAMS");
+		let r = await createAddress(new Address(null, '40', 'Basilio Street', 'Barangay Acacia', 'Malabon City',
+										'Metro Manila', 'NCR', 'Philippines'));
 		console.log(r);
 		res.send("exec done");
 	},
@@ -121,7 +205,6 @@ const indexFunctions = {
 		}
 	},
 
-
 	postRegUser : async function(req,res){
 		// let{
 		// 	userName, email, password, userType, addressID,
@@ -134,8 +217,8 @@ const indexFunctions = {
 			// let userID = await generateuserID();
 			// let addressID = await createAddress();
 
-			let userID = "User-00000001"; 
-			let addressID = null;
+			let userID = await generateID("mmchddb.USERS"); 
+			let addressID = "AD-0000000000000";
 			let password = await bcrypt.hash("password",saltRounds);
 			console.log(password);
 
@@ -156,6 +239,60 @@ const indexFunctions = {
 		}
 	},
 
+	postAddDisease : async function(req, res){
+		// let{ 
+			// diseaseName, 
+			// symptomDefinition, 
+			// suspectedDefinition, 
+			// probableDefinition,
+			// confirmedDefinition, 
+			// notifiable, 
+			// caseThreshold
+		// } = req.body;
+
+		try {
+			let diseaseID = await generateID("mmchddb.DISEASES"); 
+
+			let disease = new Disease(diseaseID, "Sample Disease", "Insert symptoms here", "Insert Suspected here", 
+										"Insert Probable here", "Insert Confirmed here", true, 100);
+
+			let result = await db.insertOne("mmchddb.DISEASES", disease);
+			console.log(result);
+			if (result)
+				res.send("success");
+			else
+				res.send("failed");
+		} catch (e) {
+			res.send(e);
+		}
+	}, 
+
+	postAddPatient : async function(req, res){
+		// let{ 
+			// patientID, epiID, lastName, firstName, midName, caddressID, paddressID, sex,
+			// 		birthDate, ageNo, ageType, admitStatus, civilStatus, occupation, companyName,
+			// 		comaddressID, schoolName, schaddressID, guardianName, indigenous, indGroup,
+			// 		pregnant, pregMonths, HCPN, ILHZ
+		// } = req.body;
+
+		try {
+			let patientID = await generateID("mmchddb.PATIENTS"); 
+
+			let patient = new Patient(patientID, "EPI-121312", "Garcia", "Benjamin", "Estepa", "AD-0000000000000", "AD-0000000000000",
+										"Male", '1982-02-27 00:00:00', 39, "years", 'yes', "Married", "Working", "Globe", 
+										"AD-0000000000000", "De La Salle University", "AD-0000000000000", null,
+										false, null, false, null, 'Medicare', "Malabon ILHZ");
+
+			let result = await db.insertOne("mmchddb.PATIENTS", patient);
+			console.log(result);
+			if (result)
+				res.send("success");
+			else
+				res.send("failed");
+		} catch (e) {
+			res.send(e);
+		}
+	}
 };
 
 module.exports = indexFunctions;
