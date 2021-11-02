@@ -145,7 +145,8 @@ async function generateID(table){
 		
 		return id;	
 	} catch (e) {
-		throw e;
+		console.log(e);
+		return false;
 	}
 }
 
@@ -155,7 +156,8 @@ async function createAddress(address){
 		let r = await db.insertOne("mmchddb.ADDRESSES", address);
 		return r;
 	} catch(e) {
-		throw e;
+		console.log(e);
+		return false;
 	}
 }
 
