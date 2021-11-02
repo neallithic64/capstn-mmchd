@@ -109,7 +109,7 @@ const indexFunctions = {
 			} else {
 				match = await db.findRows("mmchddb.USERS", {username: user});
 			}
-			console.log(match);
+			console.log(match.length);
 			if (match.length > 0) {
 				bcrypt.compare(password, match[0].password, function(err, result) {
 					if (result) {
@@ -135,14 +135,19 @@ const indexFunctions = {
 			let password = await bcrypt.hash("password", saltRounds);
 			let user = new User(userID, userName, email, password, userType, addressID,
 					lastName, firstName, midName);
-					
 			let result = await db.insertOne("mmchddb.USERS", user);
 			console.log(result);
-			if (result) res.send("success");
-			else res.send("failed");
+			if (result) res.status(200).send("Register success");
+			else res.status(500).send("Registr failed");
 		} catch (e) {
-			res.send(e);
+			console.log(e);
+			res.status(500).send("Server error");
 		}
+	},
+	
+	postLogout: async function(req, res) {
+		req.session.destroy();
+		res.status(200).send("Logged out.");
 	},
 	
 	postNewCase: async function(req, res) {
