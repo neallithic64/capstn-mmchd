@@ -1,5 +1,5 @@
 <template>
-  <form id="PatientInfo" type="submit" @submit="send">
+  <form id="PatientInfo" type="submit">
     <div id="case-investigation-form" class="center">
       <h2 id="form-header">Patient Information</h2>
 
@@ -32,7 +32,7 @@
           />
         </div>
       </div>
-      <!--
+
       <div class="field-row" style="display: inline-flex; margin-bottom: -1 px">
         <div class="half-half half-half1">
           <div class="birthday-field field">
@@ -281,9 +281,15 @@
           />
         </div>
       </div>
--->
     </div>
-    <button class="next-button" type="submit" @click="save()"></button>
+    <!-- <button class="next-button" type="submit" @click="send()"></button> -->
+    <!-- <button type="button" @click="update">NEXT</button> -->
+    <!--Next back button-->
+    <div style="margin: -10px 0 5px; float: right">
+      <button class="back-button" type="button" @click="back">Cancel</button>
+
+      <button class="next-button" type="button" @click="next">Next</button>
+    </div>
   </form>
 </template>
 
@@ -291,9 +297,10 @@
 export default {
   data() {
     return {
+      pageAction: '',
       patientInfoData: {
         firstname: '',
-        lastname: 'last',
+        lastname: '',
         middlename: '',
         birthdate: '',
         age: '',
@@ -316,27 +323,14 @@ export default {
     }
   },
   methods: {
-    /*
-    changeUsername() {
-      this.$emit('changeUsername')
+    back() {
+      this.$emit('update', [-1, this.patientInfoData])
+    },
+    next() {
+      this.$emit('update', [1, this.patientInfoData])
     },
     update() {
-      // this.$emit('update')
-      const values = Object.values(this.patientInfoData)
-      // console.log(values)
-      return values
-    },
-    
-    emitToParent(event) {
-      this.$emit('childToParent', this.childMessage)
-    },
-    
-    send() {
-      return this.$emit(this.patientInfoData.hatdog)
-    },
-    */
-    send() {
-      this.$emit(this.patientInfoData)
+      this.$emit('update', [this.pageAction, this.patientInfoData])
     },
   },
 }
