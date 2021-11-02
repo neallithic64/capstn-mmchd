@@ -151,7 +151,7 @@ const indexFunctions = {
 	},
 	
 	postNewCase: async function(req, res) {
-		let {  } = req.body;
+		// let {  } = req.body;
 		
 		try {
 			// let newCaseId = await genCaseID();
@@ -173,7 +173,7 @@ const indexFunctions = {
 				caseId: caseId,
 				dateModified: new Date(),
 				fieldName: "",
-				prevValue: /*  */,
+				prevValue: "",
 				modifiedBy: req.session.user.userId
 			};
 			console.table(causeAudit);
