@@ -13,8 +13,10 @@ router.get("/mkdata", m1Cont.mkData);
 
 
 // POST Routes
-router.get("/newUser",m1Cont.postRegUser); // change to post when forms are received
-router.get("/login", m1Cont.postLogin);
+router.get("/newUser", m1Cont.postRegUser); // change to post when forms are received
+router.post("/login", m1Cont.postLogin);
+router.get("/newDisease", m1Cont.postAddDisease);
+router.get("/newPatient", m1Cont.postAddPatient);
 
 // 404 PAGE
 router.get("*", function(req, res) {

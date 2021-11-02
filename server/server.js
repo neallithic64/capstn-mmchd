@@ -8,10 +8,6 @@ require("dotenv").config();
 const PORT = process.env.PORT || 8080;
 app.use(express.static(__dirname + "/"));
 
-const db = require("./models/db");
-const router = require("./routers/indexRouter");
-app.use("/", router);
-
 app.use(cookieParser());
 app.use(session({
 	secret: process.env.SECRET,
@@ -26,5 +22,9 @@ app.use(session({
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
+
+const db = require("./models/db");
+const router = require("./routers/indexRouter");
+app.use("/", router);
 
 app.listen(PORT, () => console.log("listening at " + PORT));
