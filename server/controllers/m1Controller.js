@@ -107,11 +107,11 @@ const indexFunctions = {
 			if (user.indexOf("@") != -1) {
 				match = await db.findRows("mmchddb.USERS", {email: user});
 			} else {
-				match = await db.findRows("mmchddb.USERS", {username: user});
+				match = await db.findRows("mmchddb.USERS", {userName: user});
 			}
-			console.log(match.length);
 			if (match.length > 0) {
 				bcrypt.compare(password, match[0].password, function(err, result) {
+					console.log(result);
 					if (result) {
 						// insert user type checking
 						req.session.user = match[0];
@@ -151,14 +151,14 @@ const indexFunctions = {
 	},
 	
 	postNewCase: async function(req, res) {
-		// let {  } = req.body;
+		let {  } = req.body;
 		
 		try {
 			// let newCaseId = await genCaseID();
 			let newCase = {
 				caseId: newCaseId
 			};
-			let result = awaiat db.insertOne("mmchddb.CASES", newCase);
+			let result = await db.insertOne("mmchddb.CASES", newCase);
 			if (result) res.status(200).send("");
 			else res.status(500).send("");
 		} catch (e) {
