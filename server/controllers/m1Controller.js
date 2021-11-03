@@ -184,14 +184,14 @@ const indexFunctions = {
 	 * POST METHODS 
 	 */
 	postLogin: async function(req, res) {
-		let { user, password } = req.body;
+		let { email, password } = req.body;
 		let match;
 		try {
 			// checking if email or username
-			if (user.indexOf("@") != -1) {
-				match = await db.findRows("mmchddb.USERS", {email: user});
+			if (email.indexOf("@") != -1) {
+				match = await db.findRows("mmchddb.USERS", {email: email});
 			} else {
-				match = await db.findRows("mmchddb.USERS", {userName: user});
+				match = await db.findRows("mmchddb.USERS", {userName: email});
 			}
 			if (match.length > 0) {
 				bcrypt.compare(password, match[0].password, function(err, result) {
