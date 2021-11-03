@@ -19,8 +19,10 @@ router.get("/newDisease", m1Cont.postAddDisease);
 router.get("/newPatient", m1Cont.postAddPatient);
 
 // 404 PAGE
+/*
 router.get("*", function(req, res) {
 	res.send("page not found!");
 });
+*/
 
 module.exports = router;
