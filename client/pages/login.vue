@@ -1,20 +1,19 @@
 <template>
   <div id="login">
     <img id="login-logo" class="center" src="~/assets/img/logo.png" />
-    <form id="user-login" type="submit">
+    <form id="user-login" type="submit" novalidate="true" method="post" @submit="submitForm">
       <div id="login-form" class="center">
         <h2 id="login-header">Login</h2>
         <div class="login-field">
-          <label> Email </label>
+          <label> Email or Username </label>
           <input
             id="username"
             v-model="email"
             class="login-form-field"
-            type="email"
           />
-          <!-- TODO: v-if -->
-          <p class="error-message">
-            Invalid email.
+          <p id="email-error" class="error-message" >
+            {{ emailError }}
+            {{ genError }}
           </p>
         </div>
         <div class="login-field">
@@ -26,12 +25,13 @@
             type="password"
           />
           <!-- TODO: v-if -->
-          <p class="error-message">
-            Email or password is incorrect.
+          <p id="password-error" class="error-message">
+            {{ passError }}
+            {{ genError }}
           </p>
           <!-- to do -->
-          <button id="forgot-pass" type="submit">
-            Forgot password?
+          <button id="forgot-pass" type="button">
+            <nuxt-link to="/forgotpassword"> Forgot password? </nuxt-link>
           </button>
         </div>
         <!-- to do -->
@@ -48,6 +48,9 @@
 </template>
 
 <script>
+
+const axios = require('axios');
+
 export default {
   header: {
       title: 'Login'
@@ -55,14 +58,72 @@ export default {
   data() {
       return {
           email: '',
-          password: ''
+          password: '', 
+          genError: '',
+          emailError: '',
+          passError: ''
       }
   },
   methods: {
-    /* to do: form validation here */
-    /* to do: submit func here */
-    /* to do: forgot pass func here */
-  },
+    checkForm(e) {
+      let error = false;
+      if (this.email === "") {
+        this.emailError = "Email or Username is required.";
+        error = true;
+      }
+      else if (this.email.includes("@")) {
+        const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        if (re.test(this.email) === false) {
+          this.emailError = "Invalid email.";
+          error = true;
+        }
+        else this.emailError = "";
+      }
+      else this.emailError = "";
+
+      if (this.password === "") {
+        this.passError = "Password is required.";
+        error = true;
+      }
+      else this.passError = "";
+
+      return error;
+      
+      // e.preventDefault();
+    },
+    submitForm(e) {
+      if (!this.checkForm()) {
+        axios.post('http://localhost:8080/login', {
+          email: this.email,
+          password: this.password
+        })
+        .then((response) => {
+          // eslint-disable-next-line no-console
+          console.log(response);
+          // this.$router.push({name: 'login'})
+        })
+        .catch((error) => {
+          // eslint-disable-next-line no-console
+          console.log(error);
+        });
+      }
+      e.preventDefault();
+    }
+
+      // e.preventDefault();
+
+      // this.axios.post('https://localhost:3000/login', this.input).then((result) => {
+      //   // eslint-disable-next-line no-console
+      //   console.log(result.data)
+      //   this.$indexRouter.push({name: 'login'})
+      // }).catch((error)=> {
+      //   // eslint-disable-next-line no-console
+      //   console.log(error)
+      //   this.genError = "User not found."
+      // })
+    /* TODO: submit func here */
+    /* TODO: forgot pass func here */
+  }
 }
 </script>
 
@@ -114,6 +175,12 @@ export default {
                 background-clip: text;
     }
 
+    @media only screen and (max-width: 300px) {
+    #login-header {
+      font-size: 15px;
+    }
+    }
+
     .login-field {
         font-size: 14px;
         display: flex;
@@ -121,6 +188,12 @@ export default {
         padding-right: 5%;
         padding-left: 5%;
         padding-bottom: 2%;
+    }
+
+    @media only screen and (max-width: 300px) {
+    .login-field {
+      font-size: 10px;
+    }
     }
 
     .login-form-field {
@@ -144,13 +217,30 @@ export default {
         color: white;
     }
 
+    @media only screen and (max-width: 600px) {
+    .positive-button {
+        width: 70%;
+        font-size: 14px;
+    }
+    }
+
     #forgot-pass {
-        text-align: end;
-        font-family: 'Work Sans', sans-serif;
-        font-weight: 500;
-        color: #346083;
-        border: none;
-        background-color: transparent;
+      position: relative;
+      align-self: flex-end;
+      text-align: end;
+      font-family: 'Work Sans', sans-serif;
+      font-weight: 500;
+      color: #346083;
+      border: none;
+      background-color: transparent;
+      width: 130px;
+      max-width: 100%;
+    }
+
+    @media only screen and (max-width: 300px) {
+    #forgot-pass {
+      font-size: 10px;
+    }
     }
 
     .error-message {
