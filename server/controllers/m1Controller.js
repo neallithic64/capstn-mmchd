@@ -320,8 +320,8 @@ const indexFunctions = {
 				console.table(caseAudit);
 				let newCaseAudit = await db.insertOne("mmchddb.CASE_AUDIT", caseAudit);
 				let updateCase = await db.updateRows("mmchddb.CASES",
-						{caseID: caseId}/*,
-						{}*/);
+						{caseID: caseId},
+						{caseLevel: newStatus});
 				res.status(200).send("Case has been updated!");
 			} else res.status(404).send("No case with such ID found.");
 		} catch (e) {
