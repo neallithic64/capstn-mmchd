@@ -319,11 +319,15 @@ const indexFunctions = {
 					modifiedBy: req.session.user.userId
 				};
 				console.table(caseAudit);
+				// inserting the case audit object to the db
 				let newCaseAudit = await db.insertOne("mmchddb.CASE_AUDIT", caseAudit);
+				// then updating the case object itself
 				let updateCase = await db.updateRows("mmchddb.CASES",
 						{caseID: caseId},
 						{caseLevel: newStatus});
-				res.status(200).send("Case has been updated!");
+				if (newCaseAudit && updateCase) {
+					res.status(200).send("Case has been updated!");
+				} else res.status(500).send("Error making db transaction.");
 			} else res.status(404).send("No case with such ID found.");
 		} catch (e) {
 			console.log(e);
