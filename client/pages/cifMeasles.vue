@@ -389,23 +389,25 @@
                           type="checkbox"
                         />
                         <div class="checkbox-options">
-                          Fever
+                          <label for="fever">
+                            Fever
 
-                          <input
-                            id="fever"
-                            v-model="formData.caseData.symptoms.fever"
-                            class="input-form-field"
-                            type="date"
-                            style="width: 175px; height: 20px; margin: 0 2px"
-                          />
-                          <img
-                            id="infofever"
-                            class="info-icon-img"
-                            src="~/assets/img/infoicon.png"
-                          />
-                          <div class="info-desc infodesc-outside">
-                            {{ info.symptoms.fever }}
-                          </div>
+                            <input
+                              id="fever"
+                              v-model="formData.caseData.symptoms.fever"
+                              class="input-form-field"
+                              type="date"
+                              style="width: 175px; height: 20px; margin: 0 2px"
+                            />
+                            <img
+                              id="infofever"
+                              class="info-icon-img"
+                              src="~/assets/img/infoicon.png"
+                            />
+                            <div class="info-desc infodesc-outside">
+                              {{ info.symptoms.fever }}
+                            </div>
+                          </label>
                         </div>
                       </div>
 
@@ -418,7 +420,7 @@
                           type="checkbox"
                         />
                         <div class="checkbox-options">
-                          Rash
+                          <label for="rash"> Rash 
 
                           <input
                             id="rash"
@@ -435,6 +437,7 @@
                           <div class="info-desc infodesc-outside">
                             {{ info.symptoms.rash }}
                           </div>
+                          </label>
                         </div>
                       </div>
 
