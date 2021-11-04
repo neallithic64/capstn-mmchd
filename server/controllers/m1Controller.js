@@ -184,14 +184,14 @@ const indexFunctions = {
 	 * POST METHODS 
 	 */
 	postLogin: async function(req, res) {
-		let { user, password } = req.body;
+		let { email, password } = req.body;
 		let match;
 		try {
 			// checking if email or username
-			if (user.indexOf("@") != -1) {
-				match = await db.findRows("mmchddb.USERS", {email: user});
+			if (email.indexOf("@") != -1) {
+				match = await db.findRows("mmchddb.USERS", {email: email});
 			} else {
-				match = await db.findRows("mmchddb.USERS", {userName: user});
+				match = await db.findRows("mmchddb.USERS", {userName: email});
 			}
 			if (match.length > 0) {
 				bcrypt.compare(password, match[0].password, function(err, result) {
@@ -305,15 +305,25 @@ const indexFunctions = {
 	postUpdateCaseStatus: async function(req, res) {
 		let { caseId, newStatus } = req.body;
 		try {
-			let caseAudit = {
-				caseId: caseId,
-				dateModified: new Date(),
-				fieldName: "",
-				prevValue: "",
-				modifiedBy: req.session.user.userId
-			};
-			console.table(causeAudit);
-			res.status().send();
+			// retrieve the case (that hopefully exists)
+			let caseData = await db.findRows("mmchddb.CASES", {caseID: caseId});
+			if (caseData.length > 0) {
+				// constructing the case audit object
+				let caseAudit = {
+					caseID: caseId,
+					diseaseID: caseData[0].diseaseID,
+					dateModified: new Date(),
+					fieldName: "caseLevel",
+					prevValue: caseData[0].status,
+					modifiedBy: req.session.user.userId
+				};
+				console.table(caseAudit);
+				let newCaseAudit = await db.insertOne("mmchddb.CASE_AUDIT", caseAudit);
+				let updateCase = await db.updateRows("mmchddb.CASES",
+						{caseID: caseId},
+						{caseLevel: newStatus});
+				res.status(200).send("Case has been updated!");
+			} else res.status(404).send("No case with such ID found.");
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error.");
