@@ -167,6 +167,23 @@ const database = {
 			console.log(e);
 			return false;
 		}
+	},
+
+	/** Inserts mutiple rows into CaseData
+	 *  TODO : Convert function into a more generalized function
+	 */
+	insertCaseData : async function(object){
+		try {
+			console.log(object);
+			let statement = "INSERT INTO mmchddb.CASE_DATA (fieldName, value, caseID, diseaseID) VALUES ?";
+			let [rows, fields] = await pool.query(statement, [object]);
+			console.log("Inserted " + rows.affectedRows + " rows");
+			// if (rows.serverStatus === 2)
+			return true;
+		} catch (e) {
+			console.log(e);
+			return false;
+		}
 	}
 };
 
