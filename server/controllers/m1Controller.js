@@ -205,22 +205,23 @@ const indexFunctions = {
 	 * POST METHODS 
 	 */
 	postLogin: async function(req, res) {
-		let { user, password } = req.body;
+		let { email, password } = req.body;
 		let match;
 		try {
 			// checking if email or username
-			if (user.indexOf("@") != -1) {
-				match = await db.findRows("mmchddb.USERS", {email: user});
+			if (email.indexOf("@") != -1) {
+				match = await db.findRows("mmchddb.USERS", {email: email});
 			} else {
-				match = await db.findRows("mmchddb.USERS", {userName: user});
+				match = await db.findRows("mmchddb.USERS", {userName: email});
 			}
 			if (match.length > 0) {
 				bcrypt.compare(password, match[0].password, function(err, result) {
 					console.log(result);
 					if (result) {
-						// insert user type checking
 						req.session.user = match[0];
 						res.status(200).send("Login successful.");
+						// ALTERNATIVE (to reconsider user type checking):
+						// res.status(200).send({user: match[0]});
 					} else res.status(403).send("Incorrect password.");
 				});
 			} else res.status(403).send("No user found.");
@@ -233,7 +234,7 @@ const indexFunctions = {
 	postRegUser: async function(req, res) {
 		let { userName, email, password, userType, addressID,
 				lastName,firstName, midName } = req.body;
-    try {
+		try {
 			let userID = await generateID("mmchddb.USERS"); 
 			let addressID = "AD-0000000000000";
 			let password = await bcrypt.hash("password",saltRounds);
@@ -251,7 +252,7 @@ const indexFunctions = {
 		}
 	},
 
-	postAddDisease : async function(req, res){
+	postAddDisease : async function(req, res) {
 		// let{ 
 			// diseaseName, 
 			// symptomDefinition, 
@@ -265,11 +266,12 @@ const indexFunctions = {
 		try {
 			let diseaseID = await generateID("mmchddb.DISEASES"); 
 
-			let disease = new Disease(diseaseID, "Sample Disease", "Insert symptoms here", "Insert Suspected here", 
-										"Insert Probable here", "Insert Confirmed here", true, 100);
-
+			let disease = new Disease(diseaseID, "Sample Disease", "Insert symptoms here",
+										"Insert Suspected here", "Insert Probable here",
+										"Insert Confirmed here", true, 100);
 			let result = await db.insertOne("mmchddb.DISEASES", disease);
 			console.log(result);
+      
 			if (result)
 				res.status(200).send("Add disease success");
 			else
@@ -280,8 +282,8 @@ const indexFunctions = {
 		}
 	}, 
 
-	postAddPatient : async function(req, res){
-		// let{ 
+	postAddPatient : async function(req, res) {
+		// let{
 			// patientID, epiID, lastName, firstName, midName, caddressID, paddressID, sex,
 			// 		birthDate, ageNo, ageType, admitStatus, civilStatus, occupation, companyName,
 			// 		comaddressID, schoolName, schaddressID, guardianName, indigenous, indGroup,
@@ -298,10 +300,12 @@ const indexFunctions = {
 
 			let result = await db.insertOne("mmchddb.PATIENTS", patient);
 			console.log(result);
+
 			if (result)
 				res.status(200).send("Add patient success");
 			else
 				res.status(500).send("Add patient failed");
+
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
@@ -412,17 +416,32 @@ const indexFunctions = {
 	postUpdateCaseStatus: async function(req, res) {
 		let { caseId, newStatus } = req.body;
 		try {
-			let caseAudit = {
-				caseId: caseId,
-				dateModified: new Date(),
-				fieldName: "",
-				prevValue: "",
-				modifiedBy: req.session.user.userId
-			};
-			console.table(causeAudit);
-			res.status().send();
+			// retrieve the case (that hopefully exists)
+			let caseData = await db.findRows("mmchddb.CASES", {caseID: caseId});
+			if (caseData.length > 0) {
+				// constructing the case audit object
+				let caseAudit = {
+					caseID: caseId,
+					diseaseID: caseData[0].diseaseID,
+					dateModified: new Date(),
+					fieldName: "caseLevel",
+					prevValue: caseData[0].status,
+					modifiedBy: req.session.user.userId
+				};
+				console.table(caseAudit);
+				// inserting the case audit object to the db
+				let newCaseAudit = await db.insertOne("mmchddb.CASE_AUDIT", caseAudit);
+				// then updating the case object itself
+				let updateCase = await db.updateRows("mmchddb.CASES",
+						{caseID: caseId},
+						{caseLevel: newStatus});
+				if (newCaseAudit && updateCase) {
+					res.status(200).send("Case has been updated!");
+				} else res.status(500).send("Error making db transaction.");
+			} else res.status(404).send("No case with such ID found.");
 		} catch (e) {
-			//
+			console.log(e);
+			res.status(500).send("Server error.");
 		}
 	}
 };
