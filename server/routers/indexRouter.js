@@ -9,7 +9,7 @@ router.get("/", m1Cont.testConn);
 router.get("/mkdata", m1Cont.mkData);
 
 // GET Routes
-
+router.get("/getDisease", m1Cont.getDisease);
 
 
 // POST Routes
