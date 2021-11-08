@@ -201,6 +201,29 @@ const indexFunctions = {
 		res.send("exec done");
 	},
 
+	getDisease: async function(req,res) {
+		// let{
+		// 	query
+		// } = req.body;
+
+		try {
+
+			let query = {
+				diseaseID :"DI-000000000000"
+			};
+
+			let match = await db.findRows("mmchddb.DISEASES", query);
+
+			if (match.length > 0)
+				res.status(200).send(match);
+			else
+				res.status(500).send("No disease found");
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
+
 	/*
 	 * POST METHODS 
 	 */
@@ -477,7 +500,6 @@ const indexFunctions = {
 			};
 
 			let result = await db.updateRows("mmchddb.DISEASES", query, disease);
-			console.log(result);
       
 			if (result)
 				res.status(200).send("Update disease success");
