@@ -436,6 +436,9 @@ const indexFunctions = {
 						{caseID: caseId},
 						{caseLevel: newStatus});
 				if (newCaseAudit && updateCase) {
+					// TODO: sending of notification as well to the bodies involved
+					// another insert, but this time at the NOTIFS table!
+					// await db.insertOne("mmchddb.NOTIFS", { something something });
 					res.status(200).send("Case has been updated!");
 				} else res.status(500).send("Error making db transaction.");
 			} else res.status(404).send("No case with such ID found.");
