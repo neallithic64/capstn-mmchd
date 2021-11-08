@@ -443,6 +443,47 @@ const indexFunctions = {
 			console.log(e);
 			res.status(500).send("Server error.");
 		}
+	},
+
+	postUpdateCaseDef: async function(req, res){
+		// let{ 
+			// disease
+		// } = req.body;
+
+		try {
+
+			let disease = new Disease(null, null, "Insert update symptoms here",
+										"Insert update Suspected here", "Insert update Probable here",
+										null, true, 50);
+			
+			// Removes null properties from object
+			Object.keys(disease).forEach(key => {
+				let value = disease[key];
+				let hasProperties = value && Object.keys(value).length > 0;
+				if (value === null) {
+					delete disease[key];
+				}
+				else if ((typeof value !== "string") && hasProperties) {
+					removeNullProperties(value);
+				}
+				});
+
+			let query = {
+				diseaseID : "DI-0000000000000"
+				// diseaseID : disease.diseaseID
+			};
+
+			let result = await db.updateRows("mmchddb.DISEASES", query, disease);
+			console.log(result);
+      
+			if (result)
+				res.status(200).send("Update disease success");
+			else
+				res.status(500).send("Update disease failed");
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
 	}
 };
 
