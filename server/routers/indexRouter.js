@@ -19,6 +19,8 @@ router.post("/newDisease", m1Cont.postAddDisease);
 router.post("/newPatient", m1Cont.postAddPatient);
 router.post("/newEvent", m1Cont.postAddEvent);
 router.post("/newCase", m1Cont.postNewCase);
+
+router.post("/updateDisease", m1Cont.postUpdateCaseDef);
 // 404 PAGE
 /*
 router.get("*", function(req, res) {
