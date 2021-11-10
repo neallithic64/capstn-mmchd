@@ -13,7 +13,6 @@
           />
           <p id="email-error" class="error-message" >
             {{ emailError }}
-            {{ genError }}
           </p>
         </div>
         <div class="login-field">
@@ -24,7 +23,6 @@
             class="login-form-field"
             type="password"
           />
-          <!-- TODO: v-if -->
           <p id="password-error" class="error-message">
             {{ passError }}
             {{ genError }}
@@ -34,7 +32,6 @@
             <nuxt-link to="/forgotpassword"> Forgot password? </nuxt-link>
           </button>
         </div>
-        <!-- to do -->
         <button
           id="login-submit"
           class="positive-button center"
@@ -100,28 +97,15 @@ export default {
         .then((response) => {
           // eslint-disable-next-line no-console
           console.log(response);
-          // this.$router.push({name: 'login'})
         })
         .catch((error) => {
           // eslint-disable-next-line no-console
-          console.log(error);
+          console.log(error.response);
+          this.genError = error.response.data;
         });
       }
       e.preventDefault();
     }
-
-      // e.preventDefault();
-
-      // this.axios.post('https://localhost:3000/login', this.input).then((result) => {
-      //   // eslint-disable-next-line no-console
-      //   console.log(result.data)
-      //   this.$indexRouter.push({name: 'login'})
-      // }).catch((error)=> {
-      //   // eslint-disable-next-line no-console
-      //   console.log(error)
-      //   this.genError = "User not found."
-      // })
-    /* TODO: submit func here */
     /* TODO: forgot pass func here */
   }
 }
