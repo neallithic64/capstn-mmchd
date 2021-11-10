@@ -33,6 +33,23 @@ function makeWhereClause(obj) {
 		column2: "value2"
 	}
  * Expected output:
+ * String "column1 LIKE '%value1%' AND column2 = '%value2%';"
+ * NOTE: this only performs string matching for the moment
+ */
+	function makeWhereLikeClause(obj) {
+		let entriesArr = [];
+		for (let [key, value] of Object.entries(obj)) {
+			entriesArr.push(key + " LIKE " + "'" + value + "%'");
+		}
+		return entriesArr.join(" AND ") + ";";
+	}
+	
+/** Expected input:
+	Object {
+		column1: "value1",
+		column2: "value2"
+	}
+ * Expected output:
  * String "column1 = 'value1', column2 = 'value2'"
  * NOTE: this only performs string matching for the moment
  */
@@ -108,6 +125,21 @@ const database = {
 		}
 	},
 	
+	/** Returns rows belonging to the specified table that satisfy the given WHERE
+	 *  column Like '%value%'condition. Currently, the WHERE clause supports string types; integers are
+	 * not yet taken into account.
+	 */
+	 findRowsLike: async function(table, query) {
+		try {
+			let statement = "SELECT * FROM " + table + " WHERE " + makeWhereLikeClause(query);
+			let [rows, fields] = await pool.execute(statement);
+			return rows;
+		} catch (e) {
+			console.log(e);
+			return false;
+		}
+	},
+
 	/** Returns all rows belonging to the specified table. Perhaps useful for
 	 * reports or table queries.
 	 */
@@ -163,6 +195,23 @@ const database = {
 			let [rows, fields] = await pool.query(statement);
 			console.log(rows);
 			return rows[0].rowcount;
+		} catch (e) {
+			console.log(e);
+			return false;
+		}
+	},
+
+	/** Inserts mutiple rows into CaseData
+	 *  TODO : Convert function into a more generalized function
+	 */
+	insertCaseData : async function(object){
+		try {
+			console.log(object);
+			let statement = "INSERT INTO mmchddb.CASE_DATA (fieldName, value, caseID, diseaseID) VALUES ?";
+			let [rows, fields] = await pool.query(statement, [object]);
+			console.log("Inserted " + rows.affectedRows + " rows");
+			// if (rows.serverStatus === 2)
+			return true;
 		} catch (e) {
 			console.log(e);
 			return false;
