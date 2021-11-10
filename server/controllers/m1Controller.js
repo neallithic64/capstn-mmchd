@@ -224,6 +224,30 @@ const indexFunctions = {
 		}
 	},
 
+	getPatientAutofill: async function(req,res){
+		// let{
+		// 	query
+		// } = req.body;
+		
+		try {
+
+			let query = {
+				firstName: '',
+				lastName : 'Garcia',
+				midName : 'Este'
+			};
+
+			let match = await db.findRowsLike("mmchddb.PATIENTS", query);
+			console.log(match);
+			if (match.length > 0)
+				res.status(200).send(match);
+			else
+				res.status(500).send("No Patients found");
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
 	/*
 	 * POST METHODS 
 	 */

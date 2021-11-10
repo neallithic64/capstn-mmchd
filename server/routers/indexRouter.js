@@ -10,7 +10,7 @@ router.get("/mkdata", m1Cont.mkData);
 
 // GET Routes
 router.get("/getDisease", m1Cont.getDisease);
-
+router.get("/getPatientAutofill", m1Cont.getPatientAutofill);
 
 // POST Routes
 router.post("/newUser", m1Cont.postRegUser); // change to post when forms are received
