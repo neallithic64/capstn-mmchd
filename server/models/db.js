@@ -39,7 +39,7 @@ function makeWhereClause(obj) {
 	function makeWhereLikeClause(obj) {
 		let entriesArr = [];
 		for (let [key, value] of Object.entries(obj)) {
-			entriesArr.push(key + " LIKE " + "'%" + value + "%'");
+			entriesArr.push(key + " LIKE " + "'" + value + "%'");
 		}
 		return entriesArr.join(" AND ") + ";";
 	}
