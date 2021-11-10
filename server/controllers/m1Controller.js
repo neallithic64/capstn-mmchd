@@ -135,18 +135,27 @@ function Case_Data_Ref(diseaseID, fieldName, dataType) {
 	this.dataType = dataType;
 }
 
+function Event(eventID, userID, addressID, remarks, caseStatus, dateSubmitted){
+	this.eventID = eventID;
+	this.userID = userID;
+	this.addressID = addressID;
+	this.remarks = remarks;
+	this.caseStatus = caseStatus;
+	this.dateSubmitted = dateSubmitted;
+}
 
 async function generateID(table) {
 	try {
 		let rowcount = await db.findRowCount(table);
 		// console.log(rowcount);
 		let id = getPrefix(table);
-		for (let i = 0; i < 13 - rowcount; i++)
+		for (let i = 0; i < 13 - rowcount.toString.length; i++)
 			id += '0';
 		id += rowcount.toString();
 		return id;	
 	} catch (e) {
-		throw e;
+		console.log(e);
+		return false;
 	}
 }
 
@@ -156,7 +165,19 @@ async function createAddress(address) {
 		let r = await db.insertOne("mmchddb.ADDRESSES", address);
 		return r;
 	} catch(e) {
-		throw e;
+		console.log(e);
+		return false;
+	}
+}
+
+async function createCase(cases){
+	try {
+		cases.caseID = await generateID("mmchddb.CASES");
+		let r = await db.insertOne("mmchddb.CASES", cases);
+		return r;
+	} catch(e) {
+		console.log(e);
+		return false;
 	}
 }
 
@@ -180,6 +201,53 @@ const indexFunctions = {
 		res.send("exec done");
 	},
 
+	getDisease: async function(req,res) {
+		// let{
+		// 	query
+		// } = req.body;
+
+		try {
+
+			let query = {
+				diseaseID :"DI-000000000000"
+			};
+
+			let match = await db.findRows("mmchddb.DISEASES", query);
+
+			if (match.length > 0)
+				res.status(200).send(match);
+			else
+				res.status(500).send("No disease found");
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
+
+	getPatientAutofill: async function(req,res){
+		// let{
+		// 	query
+		// } = req.body;
+		
+		try {
+
+			let query = {
+				firstName: '',
+				lastName : 'Garcia',
+				midName : 'Este'
+			};
+
+			let match = await db.findRowsLike("mmchddb.PATIENTS", query);
+			console.log(match);
+			if (match.length > 0)
+				res.status(200).send(match);
+			else
+				res.status(500).send("No Patients found");
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
 	/*
 	 * POST METHODS 
 	 */
@@ -197,9 +265,10 @@ const indexFunctions = {
 				bcrypt.compare(password, match[0].password, function(err, result) {
 					console.log(result);
 					if (result) {
-						// insert user type checking
 						req.session.user = match[0];
 						res.status(200).send("Login successful.");
+						// ALTERNATIVE (to reconsider user type checking):
+						// res.status(200).send({user: match[0]});
 					} else res.status(403).send("Incorrect password.");
 				});
 			} else res.status(403).send("No user found.");
@@ -249,10 +318,14 @@ const indexFunctions = {
 										"Insert Confirmed here", true, 100);
 			let result = await db.insertOne("mmchddb.DISEASES", disease);
 			console.log(result);
-			if (result) res.send("success");
-			else res.send("failed");
+      
+			if (result)
+				res.status(200).send("Add disease success");
+			else
+				res.status(500).send("Add disease failed");
 		} catch (e) {
-			res.send(e);
+			console.log(e);
+			res.status(500).send("Server error");
 		}
 	}, 
 
@@ -274,31 +347,116 @@ const indexFunctions = {
 
 			let result = await db.insertOne("mmchddb.PATIENTS", patient);
 			console.log(result);
-			if (result) res.send("success");
-			else res.send("failed");
+
+			if (result)
+				res.status(200).send("Add patient success");
+			else
+				res.status(500).send("Add patient failed");
+
 		} catch (e) {
-			res.send(e);
+			console.log(e);
+			res.status(500).send("Server error");
 		}
 	},
-		
+	
+	postAddEvent : async function(req,res){
+		// let{
+		// 	eventID, userID, addressID, remarks, caseStatus, dateSubmitted
+		// } = req.body;
+
+		try {
+			let eventID = await generateID("mmchddb.EVENTS"); 
+
+			let event = new Event(eventID, 'US-0000000000000', 'AD-0000000000000', 'Insert Remarks here', 'Ongoing', '2021-11-01 00:00:00')
+
+			let result = await db.insertOne("mmchddb.EVENTS", event);
+			console.log(result);
+			if (result)
+				res.status(200).send("Add patient success");
+			else
+				res.status(500).send("Add patient failed");
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
+
 	postLogout: async function(req, res) {
 		req.session.destroy();
 		res.status(200).send("Logged out.");
 	},
 	
 	postNewCase: async function(req, res) {
-		let {  } = req.body;
-		
+		// let {  formData } = req.body;
+			let formData = {
+				cases: {
+					caseID: '',
+					patientID: 'PA-0000000000000',
+					diseaseID: 'DI-0000000000000',
+					reportedBy: 'US-0000000000000',
+					caseLevel: 'Suspected',
+					reportDate: '2021-11-01 00:00:00',
+					investigationDate: '2021-11-01 00:00:00',
+					dateAdmitted: '2021-11-01 00:00:00',
+					dateOnset: '2021-11-01 00:00:00',
+					reporterName: 'Andre Garcia',
+					reporterContact: '09173131333',
+					investigatorName: 'Shannon Ho',
+					investigatorContact: '09171234567',
+				  },
+				  caseData: {
+					// firstname: 'Andre',
+					// lastname: 'Garcia',
+					// middlename: 'Servillon',
+					// birthdate: '2021-08-08 00:00:00',
+					// age: '14',
+					// sex: '',
+					// pregnancy: '',
+					// currentAddress: '',
+					// permanentAddress: '',
+					// patientAdmitted: '',
+					// indigenousGroup: '',
+					contactperson: 'Daisy S. Garcia',
+					contactpersonNum: '09178311218',
+					// symptoms: {
+					  fever: true,
+					  rash: true,
+					  lymph: false,
+					  cough: false,
+					  koplik: false,
+					  runnynose: false,
+					  redeye: false,
+					  arthrisis: false,
+					// },
+					complications: null,
+					otherSymptoms: null,
+					diagnosis: 'Insert Diagnosis here',
+				  }
+			}
+
 		try {
-			// let newCaseId = await genCaseID();
-			let newCase = {
-				caseId: newCaseId
-			};
-			let result = await db.insertOne("mmchddb.CASES", newCase);
-			if (result) res.status(200).send("");
-			else res.status(500).send("");
-		} catch (e) {
+			formData.cases.caseID = await generateID("mmchddb.CASES"); 
+			let result = await createCase(formData.cases);
 			
+			if (result){
+				let newCaseData = Object.entries(formData.caseData);
+
+				newCaseData.forEach(function (element) {
+					element.push(formData.cases.caseID);				
+					element.push(formData.cases.diseaseID);
+				  });
+				
+				//   console.log(newCaseData);
+
+				let result = await db.insertCaseData(newCaseData);
+				if(result)
+					res.status(200).send("Add case successful");
+				else res.status(500).send("Add case data failed")
+			} 
+			else res.status(500).send("Add case failed");
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
 		}
 	},
 	
@@ -318,15 +476,62 @@ const indexFunctions = {
 					modifiedBy: req.session.user.userId
 				};
 				console.table(caseAudit);
+				// inserting the case audit object to the db
 				let newCaseAudit = await db.insertOne("mmchddb.CASE_AUDIT", caseAudit);
+				// then updating the case object itself
 				let updateCase = await db.updateRows("mmchddb.CASES",
 						{caseID: caseId},
 						{caseLevel: newStatus});
-				res.status(200).send("Case has been updated!");
+				if (newCaseAudit && updateCase) {
+					// TODO: sending of notification as well to the bodies involved
+					// another insert, but this time at the NOTIFS table!
+					// await db.insertOne("mmchddb.NOTIFS", { something something });
+					res.status(200).send("Case has been updated!");
+				} else res.status(500).send("Error making db transaction.");
 			} else res.status(404).send("No case with such ID found.");
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error.");
+		}
+	},
+
+	postUpdateCaseDef: async function(req, res){
+		// let{ 
+			// disease
+		// } = req.body;
+
+		try {
+
+			let disease = new Disease(null, null, "Insert update symptoms here",
+										"Insert update Suspected here", "Insert update Probable here",
+										null, true, 50);
+			
+			// Removes null properties from object
+			Object.keys(disease).forEach(key => {
+				let value = disease[key];
+				let hasProperties = value && Object.keys(value).length > 0;
+				if (value === null) {
+					delete disease[key];
+				}
+				else if ((typeof value !== "string") && hasProperties) {
+					removeNullProperties(value);
+				}
+				});
+
+			let query = {
+				diseaseID : "DI-0000000000000"
+				// diseaseID : disease.diseaseID
+			};
+
+			let result = await db.updateRows("mmchddb.DISEASES", query, disease);
+      
+			if (result)
+				res.status(200).send("Update disease success");
+			else
+				res.status(500).send("Update disease failed");
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
 		}
 	}
 };
