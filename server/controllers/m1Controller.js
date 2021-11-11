@@ -199,17 +199,8 @@ const indexFunctions = {
 	},
 
 	getDisease: async function(req,res) {
-		// let{
-		// 	query
-		// } = req.body;
-
 		try {
-
-			let query = {
-				diseaseID :"DI-000000000000"
-			};
-
-			let match = await db.findRows("mmchddb.DISEASES", query);
+			let match = await db.findRows("mmchddb.DISEASES", req.query.diseaseID);
 
 			if (match.length > 0)
 				res.status(200).send(match);
@@ -222,24 +213,10 @@ const indexFunctions = {
 	},
 
 	getPatientAutofill: async function(req,res) {
-		// let{
-		// 	query
-		// } = req.body;
-		
 		try {
-
-			let query = {
-				firstName: '',
-				lastName : 'Garcia',
-				midName : 'Este'
-			};
-
-			let match = await db.findRowsLike("mmchddb.PATIENTS", query);
+			let match = await db.findPatientAutofill(req.query.name);
 			console.log(match);
-			if (match.length > 0)
-				res.status(200).send(match);
-			else
-				res.status(500).send("No Patients found");
+			res.status(200).send(match);
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
@@ -278,15 +255,11 @@ const indexFunctions = {
 	},
 	
 	postRegUser: async function(req, res) {
-		let { userName, email, password, userType, addressID,
-				lastName,firstName, midName } = req.body;
+		let { user } = req.body;
 		try {
-			let userID = await generateID("mmchddb.USERS"); 
-			let addressID = "AD-0000000000000";
-			let password = await bcrypt.hash("password",saltRounds);
-			console.log(password);
-			let user = new User(userID, "testuser", "testuser@gmail.com", password, "sample", addressID,
-			"Garcia", "Andre Emmanuel", "Servillon");
+			user.userID = await generateID("mmchddb.USERS"); 
+			user.addressID = "AD-0000000000000";
+			user.password = await bcrypt.hash(user.password,saltRounds);
 
 			let result = await db.insertOne("mmchddb.USERS", user);
 			console.log(result);
@@ -299,22 +272,13 @@ const indexFunctions = {
 	},
 
 	postAddDisease: async function(req, res) {
-		// let{ 
-			// diseaseName, 
-			// symptomDefinition, 
-			// suspectedDefinition, 
-			// probableDefinition,
-			// confirmedDefinition, 
-			// notifiable, 
-			// caseThreshold
-		// } = req.body;
+		let { disease } = req.body;
 
 		try {
-			let diseaseID = await generateID("mmchddb.DISEASES"); 
-
-			let disease = new Disease(diseaseID, "Sample Disease", "Insert symptoms here",
-										"Insert Suspected here", "Insert Probable here",
-										"Insert Confirmed here", true, 100);
+			disease.diseaseID = await generateID("mmchddb.DISEASES"); 
+			// let disease = new Disease(diseaseID, "Sample Disease", "Insert symptoms here",
+			// 							"Insert Suspected here", "Insert Probable here",
+			// 							"Insert Confirmed here", true, 100);
 			let result = await db.insertOne("mmchddb.DISEASES", disease);
 			console.log(result);
 
@@ -334,7 +298,7 @@ const indexFunctions = {
 		} = req.body;
 
 		try {
-			let formData.patient.patientID = await generateID("mmchddb.PATIENTS"); 
+			formData.patient.patientID = await generateID("mmchddb.PATIENTS"); 
 
 			// let patient = new Patient(patientID, "EPI-121312", "Garcia", "Benjamin", "Estepa", "AD-0000000000000", "AD-0000000000000",
 			// 							"Male", '1982-02-27 00:00:00', 39, "years", 'yes', "Married", "Working", "Globe", 
@@ -356,14 +320,12 @@ const indexFunctions = {
 	},
 	
 	postAddEvent: async function(req,res) {
-		// let{
-		// 	eventID, userID, addressID, remarks, caseStatus, dateSubmitted
-		// } = req.body;
+		let { event } = req.body;
 
 		try {
-			let eventID = await generateID("mmchddb.EVENTS"); 
+			event.eventID = await generateID("mmchddb.EVENTS"); 
 
-			let event = new Event(eventID, 'US-0000000000000', 'AD-0000000000000', 'Insert Remarks here', 'Ongoing', '2021-11-01 00:00:00')
+			// let event = new Event(eventID, 'US-0000000000000', 'AD-0000000000000', 'Insert Remarks here', 'Ongoing', '2021-11-01 00:00:00')
 
 			let result = await db.insertOne("mmchddb.EVENTS", event);
 			console.log(result);
@@ -434,17 +396,9 @@ const indexFunctions = {
 	},
 
 	postUpdateCaseDef: async function(req, res) {
-		// let{ 
-			// disease
-		// } = req.body;
+		let  { disease, query } = req.body;
 
 		try {
-
-			let disease = new Disease(null, null, "Insert update symptoms here",
-										"Insert update Suspected here", "Insert update Probable here",
-										null, true, 50);
-			
-			// Removes null properties from object
 			Object.keys(disease).forEach(key => {
 				let value = disease[key];
 				let hasProperties = value && Object.keys(value).length > 0;
@@ -456,10 +410,6 @@ const indexFunctions = {
 				}
 				});
 
-			let query = {
-				diseaseID : "DI-0000000000000"
-				// diseaseID : disease.diseaseID
-			};
 
 			let result = await db.updateRows("mmchddb.DISEASES", query, disease);
 

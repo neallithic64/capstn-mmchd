@@ -216,6 +216,21 @@ const database = {
 			console.log(e);
 			return false;
 		}
+	},
+
+	/**
+	 * Returns rows from patients that matches the pattern of the name
+	 */
+	findPatientAutofill : async function(name) {
+		try {
+			let statement = "SELECT * FROM mmchddb.PATIENTS WHERE CONCAT_WS(' ',firstName, midName, lastName) LIKE '%" + name 
+							+"%' OR CONCAT(lastName, ', ', firstName, ' ', midName) LIKE '%" + name + "%';";
+			let [rows, fields] = await pool.execute(statement);
+			return rows;
+		} catch (e) {
+			console.log(e);
+			return false;
+		}
 	}
 };
 
