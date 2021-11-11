@@ -266,6 +266,11 @@ const indexFunctions = {
 		}
 	},
 
+	postLogout: async function(req, res) {
+		req.session.destroy();
+		res.status(200).send("Logged out.");
+	},
+	
 	postAddDisease: async function(req, res) {
 		let { disease } = req.body;
 
@@ -288,9 +293,7 @@ const indexFunctions = {
 	}, 
 
 	postAddPatient: async function(req, res) {
-		let{
-			formData
-		} = req.body;
+		let { formData } = req.body;
 
 		try {
 			formData.patient.patientID = await generateID("mmchddb.PATIENTS");
@@ -333,11 +336,6 @@ const indexFunctions = {
 		}
 	},
 
-	postLogout: async function(req, res) {
-		req.session.destroy();
-		res.status(200).send("Logged out.");
-	},
-	
 	/**	RiskFactors 
 			- L : LifeStyle
 			- C : Current Health Condition
@@ -369,7 +367,7 @@ const indexFunctions = {
 
 					if (result) {
 						formData.riskFactors.caseID = formData.cases.caseID;
-						result = await db.insertOne("mmchddb.RISK_FACTORS",formData.riskFactors);
+						result = await db.insertOne("mmchddb.RISK_FACTORS", formData.riskFactors);
 
 						if (result) {
 							res.status(200).send("Add case success");
@@ -388,7 +386,7 @@ const indexFunctions = {
 	},
 
 	postUpdateCaseDef: async function(req, res) {
-		let { caseDef, diseaseID} = req.body;
+		let { caseDef, diseaseID } = req.body;
 
 		try {
 			caseDef.forEach(function (element) {

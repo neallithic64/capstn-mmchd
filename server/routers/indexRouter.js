@@ -13,16 +13,19 @@ router.get("/getDisease", m1Cont.getDisease);
 router.get("/getPatientAutofill", m1Cont.getPatientAutofill);
 
 // POST Routes
-router.post("/newUser", m1Cont.postRegUser); // change to post when forms are received
 router.post("/login", m1Cont.postLogin);
+router.post("/newUser", m1Cont.postRegUser);
+router.post("/logout", m1Cont.postLogout);
 router.post("/newDisease", m1Cont.postAddDisease);
 router.post("/newPatient", m1Cont.postAddPatient);
 router.post("/newEvent", m1Cont.postAddEvent);
 router.post("/newCase", m1Cont.postNewCase);
 
 router.post("/updateDisease", m1Cont.postUpdateCaseDef);
-// 404 PAGE
-/*
+router.post("/updateCaseStatus", m1Cont.postUpdateCaseStatus);
+
+
+/* 404 PAGE
 router.get("*", function(req, res) {
 	res.send("page not found!");
 });
