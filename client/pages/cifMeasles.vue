@@ -67,7 +67,7 @@
                   <label for="lastname" class="required"> Last Name </label>
                   <input
                     id="lastname"
-                    v-model="formData.caseData.lastname"
+                    v-model="formData.patient.lastName"
                     class="input-form-field"
                     type="text"
                   />
@@ -76,7 +76,7 @@
                   <label for="firstname" class="required"> First Name </label>
                   <input
                     id="firstname"
-                    v-model="formData.caseData.firstname"
+                    v-model="formData.patient.firstName"
                     class="input-form-field"
                     type="text"
                   />
@@ -85,7 +85,7 @@
                   <label for="middlename" class="required"> Middle Name </label>
                   <input
                     id="middlename"
-                    v-model="formData.caseData.middlename"
+                    v-model="formData.patient.midName"
                     class="input-form-field"
                     type="text"
                   />
@@ -103,7 +103,7 @@
                     </label>
                     <input
                       id="birthdate"
-                      v-model="formData.caseData.birthdate"
+                      v-model="formData.patient.birthDate"
                       class="input-form-field"
                       type="date"
                     />
@@ -112,7 +112,7 @@
                     <label for="age" class="required"> Age </label>
                     <input
                       id="age"
-                      v-model="formData.caseData.age"
+                      v-model="formData.patient.ageNo"
                       class="input-form-field"
                       type="number"
                     />
@@ -125,7 +125,7 @@
                     <div style="display: inline-flex; align-items: center">
                       <input
                         id="female"
-                        v-model="formData.caseData.sex"
+                        v-model="formData.patient.sex"
                         value="female"
                         class="input-radio"
                         name="sex"
@@ -136,7 +136,7 @@
                     <div style="display: inline-flex; align-items: center">
                       <input
                         id="male"
-                        v-model="formData.caseData.sex"
+                        v-model="formData.patient.sex"
                         value="male"
                         class="input-radio"
                         name="sex"
@@ -170,7 +170,7 @@
                       <div style="display: inline-flex">
                         <input
                           id="pregnancy"
-                          v-model="formData.caseData.pregnancy"
+                          v-model="formData.patient.pregMonths"
                           class="input-form-field"
                           type="number"
                           style="width: 50px; height: 20px; margin: 0 2px"
@@ -189,7 +189,7 @@
                   </label>
                   <input
                     id="currentAddress"
-                    v-model="formData.caseData.currentAddress"
+                    v-model="formData.patient.caddressID"
                     class="input-form-field"
                     type="text"
                   />
@@ -201,7 +201,7 @@
                   <label for="permanentAddress"> Permanent Address </label>
                   <input
                     id="permanentAddress"
-                    v-model="formData.caseData.permanentAddress"
+                    v-model="formData.patient.paddressID"
                     class="input-form-field"
                     type="text"
                   />
@@ -254,7 +254,7 @@
                   <label for="indigenousGroup"> Indigenous Group </label>
                   <input
                     id="indigenousGroup"
-                    v-model="formData.caseData.indigenousGroup"
+                    v-model="formData.patient.indGroup"
                     class="input-form-field"
                     type="text"
                   />
@@ -268,7 +268,7 @@
                   </label>
                   <input
                     id="contactperson"
-                    v-model="formData.caseData.contactperson"
+                    v-model="formData.patient.guardianName"
                     class="input-form-field"
                     type="text"
                   />
@@ -279,7 +279,7 @@
                   </label>
                   <input
                     id="contactpersonNum"
-                    v-model="formData.caseData.contactpersonNum"
+                    v-model="formData.patient.guardianContact"
                     class="input-form-field"
                     type="number"
                   />
@@ -357,7 +357,9 @@
               </div>
             </div>
           </form>
-          <hr />
+
+          <hr v-if="pageNum == Object.keys(disease).length - 2" />
+
           <form
             v-if="pageNum == 2 || pageNum == Object.keys(disease).length - 2"
             id="measles2"
@@ -374,7 +376,14 @@
                   <label class="required">
                     Select the following symptoms shown by patient
                   </label>
-
+                  <img
+                    id="infofever"
+                    class="info-icon-img"
+                    src="~/assets/img/infoicon.png"
+                  />
+                  <div class="info-desc infodesc-outside">
+                    {{ info.symptoms.rash }}
+                  </div>
                   <div style="margin-left: 5px">
                     <div class="symptoms-half">
                       <div
@@ -420,23 +429,24 @@
                           type="checkbox"
                         />
                         <div class="checkbox-options">
-                          <label for="rash"> Rash 
+                          <label for="rash">
+                            Rash
 
-                          <input
-                            id="rash"
-                            v-model="formData.caseData.symptoms.rash"
-                            class="input-form-field"
-                            type="date"
-                            style="width: 175px; height: 20px; margin: 0 2px"
-                          />
-                          <img
-                            id="infofever"
-                            class="info-icon-img"
-                            src="~/assets/img/infoicon.png"
-                          />
-                          <div class="info-desc infodesc-outside">
-                            {{ info.symptoms.rash }}
-                          </div>
+                            <input
+                              id="rash"
+                              v-model="formData.caseData.symptoms.rash"
+                              class="input-form-field"
+                              type="date"
+                              style="width: 175px; height: 20px; margin: 0 2px"
+                            />
+                            <img
+                              id="infofever"
+                              class="info-icon-img"
+                              src="~/assets/img/infoicon.png"
+                            />
+                            <div class="info-desc infodesc-outside">
+                              {{ info.symptoms.rash }}
+                            </div>
                           </label>
                         </div>
                       </div>
@@ -447,7 +457,7 @@
                           v-model="formData.caseData.symptoms.lymph"
                           value="lymph"
                           class="input-checkbox"
-                          name="pregnancy"
+                          name="lymph"
                           type="checkbox"
                         />
                         <label for="lymph">
@@ -468,7 +478,7 @@
                       <div class="checkbox-options">
                         <input
                           id="cough"
-                          v-model="formData.caseData.symptoms.cough"
+                          v-model="formData.caseData.sympCough"
                           value="cough"
                           class="input-checkbox"
                           name="cough"
@@ -490,7 +500,7 @@
                       <div class="checkbox-options">
                         <input
                           id="koplik"
-                          v-model="formData.caseData.symptoms.koplik"
+                          v-model="formData.caseData.sympKoplik"
                           value="koplik"
                           class="input-checkbox"
                           name="koplik"
@@ -512,7 +522,7 @@
                       <div class="checkbox-options">
                         <input
                           id="runnynose"
-                          v-model="formData.caseData.symptoms.runnynose"
+                          v-model="formData.caseData.sympRunnynose"
                           value="runnynose"
                           class="input-checkbox"
                           name="runnynose"
@@ -534,7 +544,7 @@
                       <div class="checkbox-options">
                         <input
                           id="redeye"
-                          v-model="formData.caseData.symptoms.edeye"
+                          v-model="formData.caseData.sympRedeye"
                           value="redeye"
                           class="input-checkbox"
                           name="redeye"
@@ -556,7 +566,7 @@
                       <div class="checkbox-options">
                         <input
                           id="arthritis"
-                          v-model="formData.caseData.symptoms.arthritis"
+                          v-model="formData.caseData.sympArthritis"
                           value="arthritis"
                           class="input-checkbox"
                           name="arthritis"
@@ -647,15 +657,94 @@
             </div>
           </form>
 
+          <hr v-if="pageNum == Object.keys(disease).length - 2" />
+
           <form
             v-if="pageNum == 3 || pageNum == Object.keys(disease).length - 2"
             id="measles3"
             type="submit"
           >
             <div id="case-investigation-form" class="center">
-              <h2 id="form-header">{{ disease[pageNum] }}</h2>
+              <h2 id="form-header">{{ disease.form3 }}</h2>
+            </div>
+            <div>
+              <div
+                class="vaccine-field field"
+                style="display: inline-flex; flex-direction: row"
+              >
+                <label class="required">
+                  Has the patient received Measles-Containing Vaccine (MCV)?
+                  <img
+                    id="infofever"
+                    class="info-icon-img"
+                    src="~/assets/img/infoicon.png"
+                  />
+                  <div class="info-desc infodesc-outside">
+                    {{ info.MCVaccine }}
+                  </div>
+                </label>
+                <div
+                  style="
+                    display: inline-flex;
+                    align-items: center;
+                    margin: 0 15px;
+                  "
+                >
+                  <input
+                    id="no"
+                    v-model="formData.caseData.MCVaccine"
+                    value="no"
+                    class="input-radio"
+                    name="mcv"
+                    type="radio"
+                  />
+                  <label for="no"> No </label>
+                </div>
+                <div style="display: inline-flex; align-items: center">
+                  <input
+                    id="yes"
+                    v-model="formData.caseData.MCVaccine"
+                    value="yes"
+                    class="input-radio"
+                    name="mcv"
+                    type="radio"
+                  />
+                  <label for="yes"> Yes </label>
+                </div>
+              </div>
+
+              <div>
+                <div
+                  class="vaccine-field field"
+                  style="display: inline-flex; flex-direction: row"
+                >
+                  <label class="required">
+                    Indicate the number of doses whichever is applicable
+
+                    <input
+                      id="rash"
+                      v-model="formData.caseData.sympRash"
+                      class="input-form-field"
+                      type="number"
+                      style="width: 95px; height: 20px; margin: 0 2px"
+                    />
+                    <img
+                      id="infofever"
+                      class="info-icon-img"
+                      src="~/assets/img/infoicon.png"
+                    />
+                    <div class="info-desc infodesc-outside">
+                      {{ info.symptoms.rash }}
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <div></div>
             </div>
           </form>
+
+          <hr v-if="pageNum == Object.keys(disease).length - 2" />
 
           <form
             v-if="pageNum == 4 || pageNum == Object.keys(disease).length - 2"
@@ -667,6 +756,8 @@
             </div>
           </form>
 
+          <hr v-if="pageNum == Object.keys(disease).length - 2" />
+
           <form
             v-if="pageNum == 5 || pageNum == Object.keys(disease).length - 2"
             id="measles5"
@@ -676,6 +767,8 @@
               <h2 id="form-header">{{ disease[pageNum] }}</h2>
             </div>
           </form>
+
+          <hr v-if="pageNum == Object.keys(disease).length - 2" />
 
           <form
             v-if="pageNum == 6 || pageNum == Object.keys(disease).length - 2"
@@ -687,6 +780,8 @@
             </div>
           </form>
 
+          <hr v-if="pageNum == Object.keys(disease).length - 2" />
+
           <form
             v-if="pageNum == 7 || pageNum == Object.keys(disease).length - 2"
             id="measles7"
@@ -696,7 +791,7 @@
               <h2 id="form-header">{{ disease[pageNum] }}</h2>
             </div>
           </form>
-
+          <hr v-if="pageNum == Object.keys(disease).length - 2" />
           <form
             v-if="pageNum == 8 || pageNum == Object.keys(disease).length - 2"
             id="measles8"
@@ -765,12 +860,11 @@ export default {
   data() {
     return {
       isOpen: true,
-      pageNum: 2,
-      formPart: 'Measles2',
+      pageNum: 0,
+      formPart: 'Measles0',
       formData: {
         cases: {
           caseID: '',
-          patientID: '',
           diseaseID: '',
           reportedBy: '',
           caseLevel: '',
@@ -783,33 +877,60 @@ export default {
           investigatorName: '',
           investigatorContact: '',
         },
-        caseData: {
-          firstname: '',
-          lastname: '',
-          middlename: '',
-          birthdate: '',
-          age: '',
+        patient: {
+          patientID: '',
+          epiID: '',
+          lastName: '',
+          firstName: '',
+          midName: '',
+          caddressID: '',
+          paddressID: '',
           sex: '',
-          pregnancy: '',
-          currentAddress: '',
-          permanentAddress: '',
+          birthDate: '',
+          ageNo: '',
+          ageType: '',
+          admitStatus: '',
+          civilStatus: '',
+          occupation: '',
+          companyName: '',
+          comaddressID: '',
+          schoolName: '',
+          schaddressID: '',
+          guardianName: '',
+          guardianContact: '',
+          indGroup: '',
+          pregMonths: '',
+          HCPN: '',
+          ILHZ: '',
+        },
+        caseData: {
           patientAdmitted: '',
-          indigenousGroup: '',
-          contactperson: '',
-          contactpersonNum: '',
-          symptoms: {
-            fever: '',
-            rash: '',
-            lymph: false,
-            cough: false,
-            koplik: false,
-            runnynose: false,
-            redeye: false,
-            arthrisis: false,
-          },
+          // page 2
+          sympFever: '',
+          sympRash: '',
+          sympLymph: false,
+          sympCough: false,
+          sympKoplik: false,
+          sympRunnynose: false,
+          sympRedeye: false,
+          sympArthrisis: false,
           complications: '',
           otherSymptoms: '',
           diagnosis: '',
+          // page 3
+          MCVaccine: '',
+          mcvTrue: {
+            doseMV: '',
+            doseMR: '',
+            doseMMR: '',
+            lastdoseDate: '',
+            vaccineValidation: '',
+            vaccineSpecialCampaign: '',
+          },
+          mcvFalse: {
+            noVaccineReasons: '',
+          },
+          vitA: '',
         },
       },
       info: {
@@ -826,6 +947,20 @@ export default {
         complications: 'i',
         otherSymptoms: 'j',
         diagnosis: 'k',
+        // page 3
+        MCVaccine: '',
+        mcvTrue: {
+          doseMV: '',
+          doseMR: '',
+          doseMMR: '',
+          lastdoseDate: '',
+          vaccineValidation: '',
+          vaccineSpecialCampaign: '',
+        },
+        mcvFalse: {
+          noVaccineReasons: '',
+        },
+        vitA: '',
       },
       disease: {
         idname: 'Measles',
@@ -1315,6 +1450,11 @@ label {
   font-weight: 600;
   background-color: #346083;
   color: white;
+  border: #346083 solid 0.75px;
+}
+
+.next-button:hover {
+  background-color: #346083;
 }
 
 .back-button {
@@ -1327,6 +1467,14 @@ label {
   font-weight: 600;
   background-color: white;
   color: #346083;
+}
+
+.back-button:hover {
+  border: #346083 solid 1px;
+}
+
+hr {
+  margin: 20px 0;
 }
 
 .show {

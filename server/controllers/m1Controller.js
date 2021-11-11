@@ -135,7 +135,7 @@ function Case_Data_Ref(diseaseID, fieldName, dataType) {
 	this.dataType = dataType;
 }
 
-function Event(eventID, userID, addressID, remarks, caseStatus, dateSubmitted){
+function Event(eventID, userID, addressID, remarks, caseStatus, dateSubmitted) {
 	this.eventID = eventID;
 	this.userID = userID;
 	this.addressID = addressID;
@@ -170,7 +170,7 @@ async function createAddress(address) {
 	}
 }
 
-async function createCase(cases){
+async function createCase(cases) {
 	try {
 		cases.caseID = await generateID("mmchddb.CASES");
 		let r = await db.insertOne("mmchddb.CASES", cases);
@@ -185,6 +185,7 @@ const indexFunctions = {
 	/*
 	 * GET METHODS
 	 */
+	
 	testConn: async function(req, res) {
 		let state = await db.testConn();
 		if (state) res.send("works fine!");
@@ -224,7 +225,7 @@ const indexFunctions = {
 		}
 	},
 
-	getPatientAutofill: async function(req,res){
+	getPatientAutofill: async function(req,res) {
 		// let{
 		// 	query
 		// } = req.body;
@@ -248,9 +249,11 @@ const indexFunctions = {
 			res.status(500).send("Server error");
 		}
 	},
+	
 	/*
 	 * POST METHODS 
 	 */
+	
 	postLogin: async function(req, res) {
 		let { email, password } = req.body;
 		let match;
@@ -299,7 +302,7 @@ const indexFunctions = {
 		}
 	},
 
-	postAddDisease : async function(req, res) {
+	postAddDisease: async function(req, res) {
 		// let{ 
 			// diseaseName, 
 			// symptomDefinition, 
@@ -329,7 +332,7 @@ const indexFunctions = {
 		}
 	}, 
 
-	postAddPatient : async function(req, res) {
+	postAddPatient: async function(req, res) {
 		// let{
 			// patientID, epiID, lastName, firstName, midName, caddressID, paddressID, sex,
 			// 		birthDate, ageNo, ageType, admitStatus, civilStatus, occupation, companyName,
@@ -359,7 +362,7 @@ const indexFunctions = {
 		}
 	},
 	
-	postAddEvent : async function(req,res){
+	postAddEvent: async function(req,res) {
 		// let{
 		// 	eventID, userID, addressID, remarks, caseStatus, dateSubmitted
 		// } = req.body;
@@ -459,43 +462,8 @@ const indexFunctions = {
 			res.status(500).send("Server error");
 		}
 	},
-	
-	postUpdateCaseStatus: async function(req, res) {
-		let { caseId, newStatus } = req.body;
-		try {
-			// retrieve the case (that hopefully exists)
-			let caseData = await db.findRows("mmchddb.CASES", {caseID: caseId});
-			if (caseData.length > 0) {
-				// constructing the case audit object
-				let caseAudit = {
-					caseID: caseId,
-					diseaseID: caseData[0].diseaseID,
-					dateModified: new Date(),
-					fieldName: "caseLevel",
-					prevValue: caseData[0].status,
-					modifiedBy: req.session.user.userId
-				};
-				console.table(caseAudit);
-				// inserting the case audit object to the db
-				let newCaseAudit = await db.insertOne("mmchddb.CASE_AUDIT", caseAudit);
-				// then updating the case object itself
-				let updateCase = await db.updateRows("mmchddb.CASES",
-						{caseID: caseId},
-						{caseLevel: newStatus});
-				if (newCaseAudit && updateCase) {
-					// TODO: sending of notification as well to the bodies involved
-					// another insert, but this time at the NOTIFS table!
-					// await db.insertOne("mmchddb.NOTIFS", { something something });
-					res.status(200).send("Case has been updated!");
-				} else res.status(500).send("Error making db transaction.");
-			} else res.status(404).send("No case with such ID found.");
-		} catch (e) {
-			console.log(e);
-			res.status(500).send("Server error.");
-		}
-	},
 
-	postUpdateCaseDef: async function(req, res){
+	postUpdateCaseDef: async function(req, res) {
 		// let{ 
 			// disease
 		// } = req.body;
@@ -532,6 +500,62 @@ const indexFunctions = {
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
+		}
+	},
+	
+	postUpdateCaseStatus: async function(req, res) {
+		let { caseId, newStatus } = req.body;
+		try {
+			// retrieve the case (that hopefully exists)
+			let caseData = await db.findRows("mmchddb.CASES", {caseID: caseId});
+			if (caseData.length > 0) {
+				// constructing the case audit object
+				let caseAudit = {
+					caseID: caseId,
+					diseaseID: caseData[0].diseaseID,
+					dateModified: new Date(),
+					fieldName: "caseLevel",
+					prevValue: caseData[0].status,
+					modifiedBy: req.session.user.userId
+				};
+				console.table(caseAudit);
+				// inserting the case audit object to the db
+				let newCaseAudit = await db.insertOne("mmchddb.CASE_AUDIT", caseAudit);
+				// then updating the case object itself
+				let updateCase = await db.updateRows("mmchddb.CASES",
+						{caseID: caseId},
+						{caseLevel: newStatus});
+				if (newCaseAudit && updateCase) {
+					// TODO: sending of notification as well to the bodies involved
+					// another insert, but this time at the NOTIFS table!
+					// await db.insertOne("mmchddb.NOTIFS", { something something });
+					res.status(200).send("Case has been updated!");
+				} else res.status(500).send("Error making db transaction.");
+			} else res.status(404).send("No case with such ID found.");
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error.");
+		}
+	},
+	
+	postSubmitCases: async function(req, res) {
+		try {
+			// let {} = req.body;
+			/* MORBIDITY (monthly and quarterly, 62) (after cases are done)
+					FK: LGU/userID 
+					FK: diseaseID
+					Month/Quarter
+					Year
+					FK: Age range ID ("0-6 days")
+					City/Location
+					Sex
+					Count
+					dateCreated
+			*/
+			// let morbid = await db.insertOne("mmchddb.MORBIDITY", );
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error.");
 		}
 	}
 };
