@@ -135,7 +135,7 @@ function Case_Data_Ref(diseaseID, fieldName, dataType) {
 	this.dataType = dataType;
 }
 
-function Event(eventID, userID, addressID, remarks, caseStatus, dateSubmitted){
+function Event(eventID, userID, addressID, remarks, caseStatus, dateSubmitted) {
 	this.eventID = eventID;
 	this.userID = userID;
 	this.addressID = addressID;
@@ -170,7 +170,7 @@ async function createAddress(address) {
 	}
 }
 
-async function createCase(cases){
+async function createCase(cases) {
 	try {
 		cases.caseID = await generateID("mmchddb.CASES");
 		let r = await db.insertOne("mmchddb.CASES", cases);
@@ -185,6 +185,7 @@ const indexFunctions = {
 	/*
 	 * GET METHODS
 	 */
+	
 	testConn: async function(req, res) {
 		let state = await db.testConn();
 		if (state) res.send("works fine!");
@@ -201,9 +202,58 @@ const indexFunctions = {
 		res.send("exec done");
 	},
 
+	getDisease: async function(req,res) {
+		// let{
+		// 	query
+		// } = req.body;
+
+		try {
+
+			let query = {
+				diseaseID :"DI-000000000000"
+			};
+
+			let match = await db.findRows("mmchddb.DISEASES", query);
+
+			if (match.length > 0)
+				res.status(200).send(match);
+			else
+				res.status(500).send("No disease found");
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
+
+	getPatientAutofill: async function(req,res) {
+		// let{
+		// 	query
+		// } = req.body;
+		
+		try {
+
+			let query = {
+				firstName: '',
+				lastName : 'Garcia',
+				midName : 'Este'
+			};
+
+			let match = await db.findRowsLike("mmchddb.PATIENTS", query);
+			console.log(match);
+			if (match.length > 0)
+				res.status(200).send(match);
+			else
+				res.status(500).send("No Patients found");
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
+	
 	/*
 	 * POST METHODS 
 	 */
+	
 	postLogin: async function(req, res) {
 		let { email, password } = req.body;
 		let match;
@@ -252,7 +302,7 @@ const indexFunctions = {
 		}
 	},
 
-	postAddDisease : async function(req, res) {
+	postAddDisease: async function(req, res) {
 		// let{ 
 			// diseaseName, 
 			// symptomDefinition, 
@@ -282,7 +332,7 @@ const indexFunctions = {
 		}
 	}, 
 
-	postAddPatient : async function(req, res) {
+	postAddPatient: async function(req, res) {
 		// let{
 			// patientID, epiID, lastName, firstName, midName, caddressID, paddressID, sex,
 			// 		birthDate, ageNo, ageType, admitStatus, civilStatus, occupation, companyName,
@@ -312,7 +362,7 @@ const indexFunctions = {
 		}
 	},
 	
-	postAddEvent : async function(req,res){
+	postAddEvent: async function(req,res) {
 		// let{
 		// 	eventID, userID, addressID, remarks, caseStatus, dateSubmitted
 		// } = req.body;
@@ -407,6 +457,46 @@ const indexFunctions = {
 				else res.status(500).send("Add case data failed")
 			} 
 			else res.status(500).send("Add case failed");
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
+
+	postUpdateCaseDef: async function(req, res) {
+		// let{ 
+			// disease
+		// } = req.body;
+
+		try {
+
+			let disease = new Disease(null, null, "Insert update symptoms here",
+										"Insert update Suspected here", "Insert update Probable here",
+										null, true, 50);
+			
+			// Removes null properties from object
+			Object.keys(disease).forEach(key => {
+				let value = disease[key];
+				let hasProperties = value && Object.keys(value).length > 0;
+				if (value === null) {
+					delete disease[key];
+				}
+				else if ((typeof value !== "string") && hasProperties) {
+					removeNullProperties(value);
+				}
+				});
+
+			let query = {
+				diseaseID : "DI-0000000000000"
+				// diseaseID : disease.diseaseID
+			};
+
+			let result = await db.updateRows("mmchddb.DISEASES", query, disease);
+      
+			if (result)
+				res.status(200).send("Update disease success");
+			else
+				res.status(500).send("Update disease failed");
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
