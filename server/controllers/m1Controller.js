@@ -16,15 +16,11 @@ function User(userID, userName, email, password, userType, addressID,
 	this.midName = midName;
 }
 
-function Address(addressID, houseNo, streetName, brgy, city, province, region, country) {
+function Address(addressID, houseStreet, brgy, city) {
 	this.addressID = addressID;
-	this.houseNo = houseNo;
-	this.streetName = streetName;
+	this.houseStreet = houseStreet;
 	this.brgy = brgy;
 	this.city = city;
-	this.province = province;
-	this.region = region;
-	this.country = country;
 }
 
 /** ON ID CREATION, AND FORMAT:
@@ -62,21 +58,17 @@ function getPrefix(table) {
 			return "PE-";
 	}
 }
-function Disease(diseaseID, diseaseName, symptomDefinition, suspectedDefinition, probableDefinition,
-					confirmedDefinition, notifiable, caseThreshold) {
+function Disease(diseaseID, diseaseName, notifiable, caseThreshold) {
 	this.diseaseID = diseaseID;
 	this.diseaseName = diseaseName;
-	this.symptomDefinition = symptomDefinition;
-	this.suspectedDefinition = suspectedDefinition;
-	this.probableDefinition = probableDefinition;
-	this.confirmedDefinition = confirmedDefinition;
 	this.notifiable = notifiable;
 	this.caseThreshold = caseThreshold;
 }
 
 function Patient(patientID, epiID, lastName, firstName, midName, caddressID, paddressID, sex,
-					birthDate, ageNo, ageType, admitStatus, civilStatus, occupation, companyName,
-					comaddressID, schoolName, schaddressID, guardianName, indigeneous, indGroup,
+					birthDate, ageNo, ageType, admitStatus, civilStatus, occupation, 
+					occuLoc, occuAddrID, guardianName, guardianContact, 
+					indigeneous, indGroup,
 					pregnant, pregMonths, HCPN, ILHZ ) {
 	this.patientID = patientID;
 	this.epiID = epiID;
@@ -92,12 +84,10 @@ function Patient(patientID, epiID, lastName, firstName, midName, caddressID, pad
 	this.admitStatus = admitStatus;
 	this.civilStatus = civilStatus;
 	this.occupation = occupation;
-	this.companyName = companyName;
-	this.comaddressID = comaddressID;
-	this.schoolName = schoolName;
-	this.schaddressID = schaddressID;
+	this.occuLoc = occuLoc;
+	this.occuAddrID = occuAddrID;
 	this.guardianName = guardianName;
-	this.indigeneous = indigeneous;
+	this.guardianContact = guardianContact;
 	this.indGroup = indGroup;
 	this.pregnant = pregnant;
 	this.pregMonths = pregMonths;
@@ -143,6 +133,7 @@ function Event(eventID, userID, addressID, remarks, caseStatus, dateSubmitted) {
 	this.caseStatus = caseStatus;
 	this.dateSubmitted = dateSubmitted;
 }
+
 
 async function generateID(table) {
 	try {
@@ -203,17 +194,8 @@ const indexFunctions = {
 	},
 
 	getDisease: async function(req,res) {
-		// let{
-		// 	query
-		// } = req.body;
-
 		try {
-
-			let query = {
-				diseaseID :"DI-000000000000"
-			};
-
-			let match = await db.findRows("mmchddb.DISEASES", query);
+			let match = await db.findRows("mmchddb.DISEASES", req.query.diseaseID);
 
 			if (match.length > 0)
 				res.status(200).send(match);
@@ -226,24 +208,10 @@ const indexFunctions = {
 	},
 
 	getPatientAutofill: async function(req,res) {
-		// let{
-		// 	query
-		// } = req.body;
-		
 		try {
-
-			let query = {
-				firstName: '',
-				lastName : 'Garcia',
-				midName : 'Este'
-			};
-
-			let match = await db.findRowsLike("mmchddb.PATIENTS", query);
+			let match = await db.findPatientAutofill(req.query.name);
 			console.log(match);
-			if (match.length > 0)
-				res.status(200).send(match);
-			else
-				res.status(500).send("No Patients found");
+			res.status(200).send(match);
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
@@ -282,15 +250,11 @@ const indexFunctions = {
 	},
 	
 	postRegUser: async function(req, res) {
-		let { userName, email, password, userType, addressID,
-				lastName,firstName, midName } = req.body;
+		let { user } = req.body;
 		try {
-			let userID = await generateID("mmchddb.USERS"); 
-			let addressID = "AD-0000000000000";
-			let password = await bcrypt.hash("password",saltRounds);
-			console.log(password);
-			let user = new User(userID, "testuser", "testuser@gmail.com", password, "sample", addressID,
-			"Garcia", "Andre Emmanuel", "Servillon");
+			user.userID = await generateID("mmchddb.USERS"); 
+			user.addressID = "AD-0000000000000";
+			user.password = await bcrypt.hash(user.password,saltRounds);
 
 			let result = await db.insertOne("mmchddb.USERS", user);
 			console.log(result);
@@ -303,25 +267,16 @@ const indexFunctions = {
 	},
 
 	postAddDisease: async function(req, res) {
-		// let{ 
-			// diseaseName, 
-			// symptomDefinition, 
-			// suspectedDefinition, 
-			// probableDefinition,
-			// confirmedDefinition, 
-			// notifiable, 
-			// caseThreshold
-		// } = req.body;
+		let { disease } = req.body;
 
 		try {
-			let diseaseID = await generateID("mmchddb.DISEASES"); 
-
-			let disease = new Disease(diseaseID, "Sample Disease", "Insert symptoms here",
-										"Insert Suspected here", "Insert Probable here",
-										"Insert Confirmed here", true, 100);
+			disease.diseaseID = await generateID("mmchddb.DISEASES"); 
+			// let disease = new Disease(diseaseID, "Sample Disease", "Insert symptoms here",
+			// 							"Insert Suspected here", "Insert Probable here",
+			// 							"Insert Confirmed here", true, 100);
 			let result = await db.insertOne("mmchddb.DISEASES", disease);
 			console.log(result);
-      
+
 			if (result)
 				res.status(200).send("Add disease success");
 			else
@@ -333,22 +288,19 @@ const indexFunctions = {
 	}, 
 
 	postAddPatient: async function(req, res) {
-		// let{
-			// patientID, epiID, lastName, firstName, midName, caddressID, paddressID, sex,
-			// 		birthDate, ageNo, ageType, admitStatus, civilStatus, occupation, companyName,
-			// 		comaddressID, schoolName, schaddressID, guardianName, indigenous, indGroup,
-			// 		pregnant, pregMonths, HCPN, ILHZ
-		// } = req.body;
+		let{
+			formData
+		} = req.body;
 
 		try {
-			let patientID = await generateID("mmchddb.PATIENTS"); 
+			formData.patient.patientID = await generateID("mmchddb.PATIENTS"); 
 
-			let patient = new Patient(patientID, "EPI-121312", "Garcia", "Benjamin", "Estepa", "AD-0000000000000", "AD-0000000000000",
-										"Male", '1982-02-27 00:00:00', 39, "years", 'yes', "Married", "Working", "Globe", 
-										"AD-0000000000000", "De La Salle University", "AD-0000000000000", null,
-										false, null, false, null, 'Medicare', "Malabon ILHZ");
+			// let patient = new Patient(patientID, "EPI-121312", "Garcia", "Benjamin", "Estepa", "AD-0000000000000", "AD-0000000000000",
+			// 							"Male", '1982-02-27 00:00:00', 39, "years", 'yes', "Married", "Working", "Globe", 
+			// 							"AD-0000000000000", "De La Salle University", "AD-0000000000000", null,
+			// 							false, null, false, null, 'Medicare', "Malabon ILHZ");
 
-			let result = await db.insertOne("mmchddb.PATIENTS", patient);
+			let result = await db.insertOne("mmchddb.PATIENTS", formData.patient);
 			console.log(result);
 
 			if (result)
@@ -363,14 +315,12 @@ const indexFunctions = {
 	},
 	
 	postAddEvent: async function(req,res) {
-		// let{
-		// 	eventID, userID, addressID, remarks, caseStatus, dateSubmitted
-		// } = req.body;
+		let { event } = req.body;
 
 		try {
-			let eventID = await generateID("mmchddb.EVENTS"); 
+			event.eventID = await generateID("mmchddb.EVENTS"); 
 
-			let event = new Event(eventID, 'US-0000000000000', 'AD-0000000000000', 'Insert Remarks here', 'Ongoing', '2021-11-01 00:00:00')
+			// let event = new Event(eventID, 'US-0000000000000', 'AD-0000000000000', 'Insert Remarks here', 'Ongoing', '2021-11-01 00:00:00')
 
 			let result = await db.insertOne("mmchddb.EVENTS", event);
 			console.log(result);
@@ -389,74 +339,51 @@ const indexFunctions = {
 		res.status(200).send("Logged out.");
 	},
 	
+	/*
+	*  	RiskFactors 
+			- L : LifeStyle
+			- C : Current Health Condition
+			- H : Historical Health Data
+			- O : Others
+	*/
 	postNewCase: async function(req, res) {
-		// let {  formData } = req.body;
-			let formData = {
-				cases: {
-					caseID: '',
-					patientID: 'PA-0000000000000',
-					diseaseID: 'DI-0000000000000',
-					reportedBy: 'US-0000000000000',
-					caseLevel: 'Suspected',
-					reportDate: '2021-11-01 00:00:00',
-					investigationDate: '2021-11-01 00:00:00',
-					dateAdmitted: '2021-11-01 00:00:00',
-					dateOnset: '2021-11-01 00:00:00',
-					reporterName: 'Andre Garcia',
-					reporterContact: '09173131333',
-					investigatorName: 'Shannon Ho',
-					investigatorContact: '09171234567',
-				  },
-				  caseData: {
-					// firstname: 'Andre',
-					// lastname: 'Garcia',
-					// middlename: 'Servillon',
-					// birthdate: '2021-08-08 00:00:00',
-					// age: '14',
-					// sex: '',
-					// pregnancy: '',
-					// currentAddress: '',
-					// permanentAddress: '',
-					// patientAdmitted: '',
-					// indigenousGroup: '',
-					contactperson: 'Daisy S. Garcia',
-					contactpersonNum: '09178311218',
-					// symptoms: {
-					  fever: true,
-					  rash: true,
-					  lymph: false,
-					  cough: false,
-					  koplik: false,
-					  runnynose: false,
-					  redeye: false,
-					  arthrisis: false,
-					// },
-					complications: null,
-					otherSymptoms: null,
-					diagnosis: 'Insert Diagnosis here',
-				  }
-			}
+		let { formData } = req.body;
 
 		try {
-			formData.cases.caseID = await generateID("mmchddb.CASES"); 
-			let result = await createCase(formData.cases);
+			formData.patient.patientID = await generateID("mmchddb.PATIENTS"); 
+
+			let result = await db.insertOne("mmchddb.PATIENTS", formData.patient);
+
+			if (result) {
+				formData.cases.caseID = await generateID("mmchddb.CASES"); 
+				formData.cases.patientID = formData.patient.patientID;
+				result = await createCase(formData.cases);
 			
-			if (result){
-				let newCaseData = Object.entries(formData.caseData);
+				if (result) {
+					let newCaseData = Object.entries(formData.caseData);
 
-				newCaseData.forEach(function (element) {
-					element.push(formData.cases.caseID);				
-					element.push(formData.cases.diseaseID);
-				  });
-				
-				//   console.log(newCaseData);
+					newCaseData.forEach(function (element) {
+						element.push(formData.cases.caseID);				
+						element.push(formData.cases.diseaseID);
+					});
+					
+				 	result = await db.insertCaseData(newCaseData);
 
-				let result = await db.insertCaseData(newCaseData);
-				if(result)
-					res.status(200).send("Add case successful");
-				else res.status(500).send("Add case data failed")
-			} 
-			else res.status(500).send("Add case failed");
+					if(result) {
+						formData.riskFactors.caseID = formData.cases.caseID;
+						result = await db.insertOne("mmchddb.RISK_FACTORS",formData.riskFactors);
+
+						if (result) {
+							res.status(200).send("Add case success");
+						}
+						else res.status(500).send("Add risk factor failed");
+					}
+					else res.status(500).send("Add case data failed");
+				} 
+				else res.status(500).send("Add case failed");
+			}
+			else
+				res.status(500).send("Add patient failed");
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
@@ -464,39 +391,39 @@ const indexFunctions = {
 	},
 
 	postUpdateCaseDef: async function(req, res) {
-		// let{ 
-			// disease
-		// } = req.body;
+		let  { caseDef, diseaseID} = req.body;
 
 		try {
-
-			let disease = new Disease(null, null, "Insert update symptoms here",
-										"Insert update Suspected here", "Insert update Probable here",
-										null, true, 50);
-			
-			// Removes null properties from object
-			Object.keys(disease).forEach(key => {
-				let value = disease[key];
-				let hasProperties = value && Object.keys(value).length > 0;
-				if (value === null) {
-					delete disease[key];
-				}
-				else if ((typeof value !== "string") && hasProperties) {
-					removeNullProperties(value);
-				}
+			caseDef.forEach(function (element) {
+				Object.keys(element).forEach(key => {
+					let value = element[key];
+					let hasProperties = value && Object.keys(value).length > 0;
+					if (value === null) {
+						delete element[key];
+					}
+					else if ((typeof value !== "string") && hasProperties) {
+						removeNullProperties(value);
+					}
+					});
 				});
 
+			let i = 0;
 			let query = {
-				diseaseID : "DI-0000000000000"
-				// diseaseID : disease.diseaseID
+				diseaseID : diseaseID,
+				class : null
 			};
 
-			let result = await db.updateRows("mmchddb.DISEASES", query, disease);
-      
-			if (result)
+			while(result && caseDef.length < i) {
+				query.class = caseDef[i].class;
+				result = await db.updateRows("mmchddb.CASE_DEFINITIONS", query, caseDef[i]);
+				i++;
+			}
+
+			if(result)
 				res.status(200).send("Update disease success");
-			else
-				res.status(500).send("Update disease failed");
+			else 
+				res.status(500).send("Update Case Definition");
+
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
