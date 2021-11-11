@@ -386,7 +386,8 @@ const indexFunctions = {
 	*  	RiskFactors 
 			- L : LifeStyle
 			- C : Current Health Condition
-			- H :
+			- H : Historical Health Data
+			- O : Others
 	*/
 	postNewCase: async function(req, res) {
 		let { formData } = req.body;
@@ -411,8 +412,15 @@ const indexFunctions = {
 					
 				 	result = await db.insertCaseData(newCaseData);
 
-					if(result) 
-						res.status(200).send("Add case successful");
+					if(result) {
+						formData.riskFactors.caseID = formData.cases.caseID;
+						result = await db.insertOne("mmchddb.RISK_FACTORS",formData.riskFactors);
+
+						if (result) {
+							res.status(200).send("Add case success");
+						}
+						else res.status(500).send("Add risk factor failed");
+					}
 					else res.status(500).send("Add case data failed");
 				} 
 				else res.status(500).send("Add case failed");
