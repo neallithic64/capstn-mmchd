@@ -58,14 +58,9 @@ function getPrefix(table) {
 			return "PE-";
 	}
 }
-function Disease(diseaseID, diseaseName, symptomDefinition, suspectedDefinition, probableDefinition,
-					confirmedDefinition, notifiable, caseThreshold) {
+function Disease(diseaseID, diseaseName, notifiable, caseThreshold) {
 	this.diseaseID = diseaseID;
 	this.diseaseName = diseaseName;
-	this.symptomDefinition = symptomDefinition;
-	this.suspectedDefinition = suspectedDefinition;
-	this.probableDefinition = probableDefinition;
-	this.confirmedDefinition = confirmedDefinition;
 	this.notifiable = notifiable;
 	this.caseThreshold = caseThreshold;
 }
@@ -396,27 +391,39 @@ const indexFunctions = {
 	},
 
 	postUpdateCaseDef: async function(req, res) {
-		let  { disease, query } = req.body;
+		let  { caseDef, diseaseID} = req.body;
 
 		try {
-			Object.keys(disease).forEach(key => {
-				let value = disease[key];
-				let hasProperties = value && Object.keys(value).length > 0;
-				if (value === null) {
-					delete disease[key];
-				}
-				else if ((typeof value !== "string") && hasProperties) {
-					removeNullProperties(value);
-				}
+			caseDef.forEach(function (element) {
+				Object.keys(element).forEach(key => {
+					let value = element[key];
+					let hasProperties = value && Object.keys(value).length > 0;
+					if (value === null) {
+						delete element[key];
+					}
+					else if ((typeof value !== "string") && hasProperties) {
+						removeNullProperties(value);
+					}
+					});
 				});
 
+			let i = 0;
+			let query = {
+				diseaseID : diseaseID,
+				class : null
+			};
 
-			let result = await db.updateRows("mmchddb.DISEASES", query, disease);
+			while(result && caseDef.length < i) {
+				query.class = caseDef[i].class;
+				result = await db.updateRows("mmchddb.CASE_DEFINITIONS", query, caseDef[i]);
+				i++;
+			}
 
-			if (result)
+			if(result)
 				res.status(200).send("Update disease success");
-			else
-				res.status(500).send("Update disease failed");
+			else 
+				res.status(500).send("Update Case Definition");
+
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
