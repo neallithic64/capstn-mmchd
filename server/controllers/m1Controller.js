@@ -446,6 +446,27 @@ const indexFunctions = {
 			console.log(e);
 			res.status(500).send("Server error.");
 		}
+	},
+	
+	postSubmitCases: async function(req, res) {
+		try {
+			// let {} = req.body;
+			/* MORBIDITY (monthly and quarterly, 62) (after cases are done)
+					FK: LGU/userID 
+					FK: diseaseID
+					Month/Quarter
+					Year
+					FK: Age range ID ("0-6 days")
+					City/Location
+					Sex
+					Count
+					dateCreated
+			*/
+			// let morbid = await db.insertOne("mmchddb.MORBIDITY", );
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error.");
+		}
 	}
 };
 
