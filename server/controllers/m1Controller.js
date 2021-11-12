@@ -193,9 +193,9 @@ const indexFunctions = {
 		res.send("exec done");
 	},
 
-	getDisease: async function(req,res) {
+	getDisease: async function(req, res) {
 		try {
-			let match = await db.findRows("mmchddb.DISEASES", req.query.diseaseID);
+			let match = await db.findRows("mmchddb.DISEASES", {diseaseID: req.query.diseaseID});
 
 			if (match.length > 0)
 				res.status(200).send(match);
@@ -207,11 +207,22 @@ const indexFunctions = {
 		}
 	},
 
-	getPatientAutofill: async function(req,res) {
+	getPatientAutofill: async function(req, res) {
 		try {
 			let match = await db.findPatientAutofill(req.query.name);
 			console.log(match);
 			res.status(200).send(match);
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
+	
+	getCaseDefinitions: async function(req, res) {
+		try {
+			let rows = await db.findRows("mmchddb.CASE_DEFINITIONS", {diseaseID: req.query.diseaseID});
+			console.log(rows);
+			res.status(200).send(rows);
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
@@ -316,7 +327,7 @@ const indexFunctions = {
 		}
 	},
 	
-	postAddEvent: async function(req,res) {
+	postAddEvent: async function(req, res) {
 		let { event } = req.body;
 
 		try {

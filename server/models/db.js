@@ -36,13 +36,13 @@ function makeWhereClause(obj) {
  * String "column1 LIKE '%value1%' AND column2 = '%value2%';"
  * NOTE: this only performs string matching for the moment
  */
-	function makeWhereLikeClause(obj) {
-		let entriesArr = [];
-		for (let [key, value] of Object.entries(obj)) {
-			entriesArr.push(key + " LIKE " + "'" + value + "%'");
-		}
-		return entriesArr.join(" AND ") + ";";
+function makeWhereLikeClause(obj) {
+	let entriesArr = [];
+	for (let [key, value] of Object.entries(obj)) {
+		entriesArr.push(key + " LIKE " + "'" + value + "%'");
 	}
+	return entriesArr.join(" AND ") + ";";
+}
 	
 /** Expected input:
 	Object {

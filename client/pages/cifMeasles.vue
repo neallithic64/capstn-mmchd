@@ -48,6 +48,7 @@
               <h2 id="form-header">
                 {{ Object.values(disease.formNames)[0] }}
               </h2>
+              <p v-html="getCaseDefs"></p>
             </div>
           </form>
 
@@ -1834,6 +1835,8 @@
 
 <script>
 // import infoicon from '../static/infoicon.png'
+const axios = require('axios');
+
 export default {
   header: {
     title: 'Case Investigation Form - Measles',
@@ -1844,6 +1847,8 @@ export default {
       isDisabled: false,
       pageNum: 9,
       formPart: 'Measles9',
+	  diseaseID: 'DI-0000000000000',
+	  caseDefs: [],
       formData: {
         cases: {
           caseID: '',
@@ -1977,6 +1982,13 @@ export default {
       },
     }
   },
+  async fetch() {
+    const rows = (await axios.get('http://localhost:8080/getCaseDefs?diseaseID=' + this.diseaseID)).data;
+    for (let i = 0; i < rows.length; i++) {
+      delete rows[i].diseaseID;
+    }
+    this.caseDefs = rows;
+  },
   methods: {
     formpart(disease, pageNum) {
       this.formPart = disease + pageNum
@@ -2018,6 +2030,15 @@ export default {
         // }
         return true
       } else return false
+    },
+  },
+  computed: {
+    getCaseDefs() {
+      let defs = "";
+      for (let i = 0; i < this.caseDefs.length; i++) {
+        defs += "<h2><b>" + this.caseDefs[i].class + "</b></h2><br>- " + this.caseDefs[i].definition + "<br><br>";
+      }
+      return defs;
     },
   },
 }

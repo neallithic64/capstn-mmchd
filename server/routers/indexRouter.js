@@ -11,6 +11,7 @@ router.get("/mkdata", m1Cont.mkData);
 // GET Routes
 router.get("/getDisease", m1Cont.getDisease);
 router.get("/getPatientAutofill", m1Cont.getPatientAutofill);
+router.get("/getCaseDefs", m1Cont.getCaseDefinitions);
 
 // POST Routes
 router.post("/login", m1Cont.postLogin);
