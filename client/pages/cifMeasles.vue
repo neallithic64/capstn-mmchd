@@ -2464,6 +2464,7 @@ export default {
     },
     submit() {
       alert('DONE')
+      // eslint-disable-next-line no-console
       console.log(this.formData)
     },
     move(page) {

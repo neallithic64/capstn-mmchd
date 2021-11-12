@@ -1,7 +1,7 @@
 <template>
   <div id="login">
     <img id="login-logo" class="center" src="~/assets/img/logo.png" />
-    <form id="user-login" type="submit" novalidate="true" method="post" @submit="submitForm">
+    <form id="user-login" type="submit" novalidate="true" method="post" @submit.stop.prevent="submitForm">
       <div id="login-form" class="center">
         <h2 id="login-header">Login</h2>
         <div class="login-field">
@@ -46,7 +46,7 @@
 
 <script>
 
-const axios = require('axios');
+// const axios = require('axios');
 
 export default {
   header: {
@@ -85,27 +85,24 @@ export default {
       else this.passError = "";
 
       return error;
-      
-      // e.preventDefault();
     },
-    submitForm(e) {
+    async submitForm(e) {
       if (!this.checkForm()) {
-        axios.post('http://localhost:8080/login', {
-          email: this.email,
-          password: this.password
-        })
-        .then((response) => {
+        try {
+          const user = (await this.$axios.post('http://localhost:8080/login', {
+            email: this.email,
+            password: this.password
+          })).data.user
+          await this.$auth.setUser(user);
+          this.$router.push('/');
+        } catch (e) {
           // eslint-disable-next-line no-console
-          console.log(response);
-        })
-        .catch((error) => {
-          // eslint-disable-next-line no-console
-          console.log(error.response);
-          this.genError = error.response.data;
-        });
+            console.log(e.response);
+            this.genError = e.response.data;
+        }
       }
       e.preventDefault();
-    }
+    },
     /* TODO: forgot pass func here */
   }
 }
