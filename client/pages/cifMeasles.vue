@@ -48,6 +48,7 @@
               <h2 id="form-header">
                 {{ Object.values(disease.formNames)[0] }}
               </h2>
+              <!-- TODO -->
               <p v-html="getCaseDefs"></p>
               <p style="margin: 20px 0 20px 20px">Search for Patient:</p>
 
@@ -2456,6 +2457,15 @@ export default {
     }
     this.caseDefs = rows;
   },
+  computed: {
+    getCaseDefs() {
+      let defs = "";
+      for (let i = 0; i < this.caseDefs.length; i++) {
+        defs += "<h2><b>" + this.caseDefs[i].class + "</b></h2><br>- " + this.caseDefs[i].definition + "<br><br>";
+      }
+      return defs;
+    },
+  },
   methods: {
     formpart(disease, pageNum) {
       this.formPart = disease + pageNum
@@ -2498,15 +2508,6 @@ export default {
         // }
         return true
       } else return false
-    },
-  },
-  computed: {
-    getCaseDefs() {
-      let defs = "";
-      for (let i = 0; i < this.caseDefs.length; i++) {
-        defs += "<h2><b>" + this.caseDefs[i].class + "</b></h2><br>- " + this.caseDefs[i].definition + "<br><br>";
-      }
-      return defs;
     },
   },
 }
