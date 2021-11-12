@@ -9,7 +9,7 @@
       </button>
       <div class="dropdown-content">
         <nuxt-link to="/allcases"> View Cases </nuxt-link>
-        <nuxt-link to="/newcase"> Add Case </nuxt-link>
+        <nuxt-link to="/cifMeasles"> Add Case </nuxt-link>
       </div>
     </div>
     <div class="dropdown">
@@ -51,7 +51,7 @@
       </div>
     </div>
 
-    <a href="javascript:void(0);" class="icon" @click="myFunction()">&#9776;</a>
+    <a href="javascript:void(0);" class="icon" @click="responsive()">&#9776;</a>
 
     <div class="topnav-right">
       <button class="notification">
@@ -60,7 +60,7 @@
       </button>
       <div class="dropdown">
         <button id="profile-dropbtn">
-          <span id="user-initials">JE</span>
+          <span id="user-initials"> JE </span>
         </button>
         <div class="dropdown-content-profile">
           <nuxt-link to="/myprofile"> My Profile </nuxt-link>
@@ -75,7 +75,7 @@
 <script>
 export default {
   methods: {
-    myFunction() {
+    responsive() {
       const x = document.getElementById('myTopnav')
       if (x.className === 'topnav') {
         x.className += ' responsive'
@@ -83,6 +83,11 @@ export default {
         x.className = 'topnav'
       }
     },
+    getUserInfo() {
+      // eslint-disable-next-line no-console
+      // console.log(this.$store.state);
+      return this.$store.getters.getUserInfo;
+    }
   },
 }
 </script>

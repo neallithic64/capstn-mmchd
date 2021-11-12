@@ -989,6 +989,7 @@ export default {
         this.formData[this.pageNum - 1] = value[1]
         this.pageNum += value[0]
         this.formpart(this.disease.idname, this.pageNum)
+        // eslint-disable-next-line no-console
         console.log(this.formData)
       }
     },
@@ -1001,6 +1002,7 @@ export default {
     },
     submit() {
       alert('DONE')
+      // eslint-disable-next-line no-console
       console.log(this.formData)
     },
     move(page) {

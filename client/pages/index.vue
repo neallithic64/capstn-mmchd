@@ -1,7 +1,16 @@
 <template>
-  <TopNav/>
+  <div>
+    <TopNav/>
+    
+  </div>
 </template>
 
 <script>
 export default {}
 </script>
+
+<style>
+body {
+  background: white;
+}
+</style>
