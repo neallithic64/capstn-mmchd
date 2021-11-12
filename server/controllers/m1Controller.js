@@ -248,9 +248,9 @@ const indexFunctions = {
 					console.log(result);
 					if (result) {
 						req.session.user = match[0];
-						res.status(200).send("Login successful.");
-						// ALTERNATIVE (to reconsider user type checking):
-						// res.status(200).send({user: match[0]});
+						// res.status(200).send("Login successful.");
+						// // ALTERNATIVE (to reconsider user type checking):
+						res.status(200).send({user: match[0]});
 					} else res.status(403).send("Incorrect password.");
 				});
 			} else res.status(403).send("No user found.");
