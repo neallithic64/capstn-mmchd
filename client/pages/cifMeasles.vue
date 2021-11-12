@@ -48,6 +48,31 @@
               <h2 id="form-header">
                 {{ Object.values(disease.formNames)[0] }}
               </h2>
+
+              <div>
+                <!--TO DO Case Definition -->
+              </div>
+
+              <p style="margin: 20px 0 20px 20px">Search for Patient:</p>
+
+              <div class="container">
+                <div class="bar">
+                  <input
+                    id="input"
+                    class="searchbar"
+                    type="search"
+                    autocomplete="off"
+                    spellcheck="false"
+                    role="combobox"
+                    aria-live="off"
+                    placeholder="Search Patient"
+                  />
+                  <div class="values">
+                    <div>AAAA</div>
+                    <div>AAAA</div>
+                  </div>
+                </div>
+              </div>
             </div>
           </form>
 
@@ -3031,5 +3056,59 @@ hr {
 
 .hide {
   display: none;
+}
+
+/* SEARCH BAR ALL BELOW */
+
+.searchbar {
+  background: #ffffff;
+  border: 1px solid #a3a3a3;
+  box-sizing: border-box;
+  border-radius: 40px;
+  width: 100%;
+  height: 40px;
+  padding: 10px 20px 10px 40px;
+
+  height: 45px;
+  border: none;
+  font-size: 16px;
+  outline: none;
+  margin-top: -1px;
+
+  /* background-image: url(../assets/img/search.svg); */
+  background-image: url(https://cdn1.iconfinder.com/data/icons/hawcons/32/698956-icon-111-search-512.png);
+  background-size: 20px;
+  background-repeat: no-repeat;
+  background-position: 15px 12.5px;
+}
+
+.bar {
+  margin: 0 auto;
+  width: 100%;
+  height: 45px;
+  border-radius: 40px;
+  /* border: 1px solid #dcdcdc; */
+}
+.bar:hover {
+  box-shadow: 1px 1px 8px 1px #dcdcdc;
+}
+.bar:focus-within {
+  box-shadow: 1px 1px 8px 1px #dcdcdc;
+  outline: none;
+}
+
+.container {
+  background: white;
+  border-radius: 40px;
+  width: 60%;
+  margin: 0 auto;
+}
+
+#input_img {
+  position: absolute;
+  bottom: 8px;
+  left: 10px;
+  width: 30px;
+  height: 30px;
 }
 </style>
