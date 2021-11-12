@@ -26,7 +26,7 @@
             </div>
           </div>
         </div>
-        <div>All info: {{ formData }}</div>
+        <!-- <div>All info: {{ formData }}</div> -->
       </div>
 
       <!--Everything in the right-->
@@ -68,8 +68,8 @@
                     placeholder="Search Patient"
                   />
                   <div class="values">
-                    <div>AAAA</div>
-                    <div>AAAA</div>
+                    <!-- <div>AAAA</div>
+                    <div>AAAA</div> -->
                   </div>
                 </div>
               </div>
@@ -2237,9 +2237,8 @@
             v-if="pageNum == 0"
             class="back-button"
             type="button"
-            @click="move(0)"
           >
-            Cancel
+            <nuxt-link to="/"> Cancel </nuxt-link>
           </button>
           <button
             v-if="pageNum != 0"
