@@ -189,7 +189,7 @@ const database = {
 
 	/** Returns rows belonging to the specified table as an integer.
 	 */
-	findRowCount: async function(table){
+	findRowCount: async function(table) {
 		try {
 			let statement = "SELECT COUNT(*) AS 'rowcount' FROM " + table;
 			let [rows, fields] = await pool.query(statement);
@@ -204,7 +204,7 @@ const database = {
 	/** Inserts mutiple rows into CaseData
 	 *  TODO : Convert function into a more generalized function
 	 */
-	insertCaseData : async function(object){
+	insertCaseData: async function(object) {
 		try {
 			console.log(object);
 			let statement = "INSERT INTO mmchddb.CASE_DATA (fieldName, value, caseID, diseaseID) VALUES ?";
@@ -221,7 +221,7 @@ const database = {
 	/**
 	 * Returns rows from patients that matches the pattern of the name
 	 */
-	findPatientAutofill : async function(name) {
+	findPatientAutofill: async function(name) {
 		try {
 			let statement = "SELECT * FROM mmchddb.PATIENTS WHERE CONCAT_WS(' ',firstName, midName, lastName) LIKE '%" + name 
 							+"%' OR CONCAT(lastName, ', ', firstName, ' ', midName) LIKE '%" + name + "%';";

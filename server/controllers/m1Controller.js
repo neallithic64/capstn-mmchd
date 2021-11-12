@@ -252,7 +252,7 @@ const indexFunctions = {
 	postRegUser: async function(req, res) {
 		let { user } = req.body;
 		try {
-			user.userID = await generateID("mmchddb.USERS"); 
+			user.userID = await generateID("mmchddb.USERS");
 			user.addressID = "AD-0000000000000";
 			user.password = await bcrypt.hash(user.password,saltRounds);
 
@@ -270,7 +270,7 @@ const indexFunctions = {
 		let { disease } = req.body;
 
 		try {
-			disease.diseaseID = await generateID("mmchddb.DISEASES"); 
+			disease.diseaseID = await generateID("mmchddb.DISEASES");
 			// let disease = new Disease(diseaseID, "Sample Disease", "Insert symptoms here",
 			// 							"Insert Suspected here", "Insert Probable here",
 			// 							"Insert Confirmed here", true, 100);
@@ -293,7 +293,7 @@ const indexFunctions = {
 		} = req.body;
 
 		try {
-			formData.patient.patientID = await generateID("mmchddb.PATIENTS"); 
+			formData.patient.patientID = await generateID("mmchddb.PATIENTS");
 
 			// let patient = new Patient(patientID, "EPI-121312", "Garcia", "Benjamin", "Estepa", "AD-0000000000000", "AD-0000000000000",
 			// 							"Male", '1982-02-27 00:00:00', 39, "years", 'yes', "Married", "Working", "Globe", 
@@ -307,7 +307,6 @@ const indexFunctions = {
 				res.status(200).send("Add patient success");
 			else
 				res.status(500).send("Add patient failed");
-
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
@@ -318,7 +317,7 @@ const indexFunctions = {
 		let { event } = req.body;
 
 		try {
-			event.eventID = await generateID("mmchddb.EVENTS"); 
+			event.eventID = await generateID("mmchddb.EVENTS");
 
 			// let event = new Event(eventID, 'US-0000000000000', 'AD-0000000000000', 'Insert Remarks here', 'Ongoing', '2021-11-01 00:00:00')
 
@@ -339,8 +338,7 @@ const indexFunctions = {
 		res.status(200).send("Logged out.");
 	},
 	
-	/*
-	*  	RiskFactors 
+	/**	RiskFactors 
 			- L : LifeStyle
 			- C : Current Health Condition
 			- H : Historical Health Data
@@ -350,12 +348,12 @@ const indexFunctions = {
 		let { formData } = req.body;
 
 		try {
-			formData.patient.patientID = await generateID("mmchddb.PATIENTS"); 
+			formData.patient.patientID = await generateID("mmchddb.PATIENTS");
 
 			let result = await db.insertOne("mmchddb.PATIENTS", formData.patient);
 
 			if (result) {
-				formData.cases.caseID = await generateID("mmchddb.CASES"); 
+				formData.cases.caseID = await generateID("mmchddb.CASES");
 				formData.cases.patientID = formData.patient.patientID;
 				result = await createCase(formData.cases);
 			
@@ -369,7 +367,7 @@ const indexFunctions = {
 					
 				 	result = await db.insertCaseData(newCaseData);
 
-					if(result) {
+					if (result) {
 						formData.riskFactors.caseID = formData.cases.caseID;
 						result = await db.insertOne("mmchddb.RISK_FACTORS",formData.riskFactors);
 
@@ -382,8 +380,7 @@ const indexFunctions = {
 				} 
 				else res.status(500).send("Add case failed");
 			}
-			else
-				res.status(500).send("Add patient failed");
+			else res.status(500).send("Add patient failed");
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
@@ -391,7 +388,7 @@ const indexFunctions = {
 	},
 
 	postUpdateCaseDef: async function(req, res) {
-		let  { caseDef, diseaseID} = req.body;
+		let { caseDef, diseaseID} = req.body;
 
 		try {
 			caseDef.forEach(function (element) {
@@ -400,13 +397,11 @@ const indexFunctions = {
 					let hasProperties = value && Object.keys(value).length > 0;
 					if (value === null) {
 						delete element[key];
-					}
-					else if ((typeof value !== "string") && hasProperties) {
+					} else if ((typeof value !== "string") && hasProperties) {
 						removeNullProperties(value);
 					}
-					});
 				});
-
+			});
 			let i = 0;
 			let query = {
 				diseaseID : diseaseID,
@@ -418,12 +413,10 @@ const indexFunctions = {
 				result = await db.updateRows("mmchddb.CASE_DEFINITIONS", query, caseDef[i]);
 				i++;
 			}
-
-			if(result)
+			if (result)
 				res.status(200).send("Update disease success");
 			else 
 				res.status(500).send("Update Case Definition");
-
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
