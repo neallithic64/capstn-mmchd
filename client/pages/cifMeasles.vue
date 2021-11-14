@@ -63,6 +63,7 @@
                     role="combobox"
                     aria-live="off"
                     placeholder="Search Patient"
+                    @keyup="searchPatient"
                   />
                   <div class="values">
                     <!-- <div>AAAA</div>
@@ -2508,6 +2509,15 @@ export default {
         // }
         return true
       } else return false
+    },
+    async searchPatient(event) {
+      if (event.target.value !== "") {
+        const rows = (await axios.get('http://localhost:8080/getPatientAutofill?name=' + event.target.value)).data;
+        // console.log(rows);
+        for (let i = 0; i < rows.length; i++) {
+          
+        }
+	  }
     },
   },
 }
