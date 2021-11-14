@@ -2570,9 +2570,9 @@ export default {
     async searchPatient(event) {
       if (event.target.value !== "") {
         const rows = (await axios.get('http://localhost:8080/getPatientAutofill?name=' + event.target.value)).data;
-        // console.log(rows);
         for (let i = 0; i < rows.length; i++) {
           console.log(rows[i]);
+          // construct rows[i].name and rows[i].address then append();
         }
 	  }
     },

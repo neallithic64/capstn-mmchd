@@ -210,7 +210,6 @@ const indexFunctions = {
 	getPatientAutofill: async function(req, res) {
 		try {
 			let match = await db.findPatientAutofill(req.query.name);
-			console.log(match);
 			res.status(200).send(match);
 		} catch (e) {
 			console.log(e);
