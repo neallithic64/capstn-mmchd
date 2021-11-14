@@ -9,7 +9,7 @@
       </button>
       <div class="dropdown-content">
         <nuxt-link to="/allcases"> View Cases </nuxt-link>
-        <nuxt-link to="/cifMeasles"> Add Case </nuxt-link>
+        <nuxt-link to="/addCase"> Add Case </nuxt-link>
       </div>
     </div>
     <div class="dropdown">
@@ -86,8 +86,8 @@ export default {
     getUserInfo() {
       // eslint-disable-next-line no-console
       // console.log(this.$store.state);
-      return this.$store.getters.getUserInfo;
-    }
+      return this.$store.getters.getUserInfo
+    },
   },
 }
 </script>
