@@ -20,7 +20,7 @@
         <div class="cases-component">
           <div id="CIF" class="center formTypeDiv">
             <!-- CASE DEFINITION -->
-            <h2 class="formTypeH">Case Investigation Form</h2>
+            <h2 id="formTypeH">Case Investigation Form</h2>
 
             <div
               v-for="(value, name, i) in diseases.cif"
@@ -45,7 +45,7 @@
 
           <div id="CRF" class="center formTypeDiv">
             <!-- CASE DEFINITION -->
-            <h2 class="formTypeH">Case Report Form</h2>
+            <h2 id="formTypeH">Case Report Form</h2>
           </div>
         </div>
       </div>
@@ -154,65 +154,16 @@ h3 {
   padding: 10px;
 }
 
-h2 {
+#formTypeH {
   text-align: center;
   font-weight: 600;
   font-size: 20px;
   background-color: #008d41;
   color: transparent;
-  text-shadow: 1px 1px, -1px -1px rgb(0 0 0 / 25%);
+  text-shadow: 1px 1px, -1px -1px rgba(0, 0, 0, 0.25);
   -webkit-background-clip: text;
-}
-
-.field-row {
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  margin: 0 7px 6px 5px;
-}
-
-@media only screen and (max-width: 950px) {
-  .field-row {
-    flex-direction: column;
-    margin: 0 0 10px;
-  }
-}
-
-.field {
-  width: 100%;
-  padding: 0px 7px;
-  font-size: 14px;
-  display: flex;
-  flex-direction: column;
-  padding-bottom: 5px;
-}
-
-.input-form-field,
-select {
-  width: 100%;
-  height: 30px;
-  font-size: 16px;
-  font-family: 'Work Sans', sans-serif;
-  padding-right: 5px;
-  padding-left: 5px;
-  /* border: 1p x solid rgba(0, 0, 0, 0.25); */
-  border: 1px solid #a3a3a3;
-  box-sizing: border-box;
-  border-radius: 9px;
-}
-
-.input-checkbox {
-  /* width: 10%; */
-  height: 15px;
-  font-size: 16px;
-  font-family: 'Work Sans', sans-serif;
-  padding-right: 5px;
-  padding-left: 5px;
-  /* border: 1p x solid rgba(0, 0, 0, 0.25); */
-  border: 1px solid #a3a3a3;
-  box-sizing: border-box;
-  border-radius: 9px;
-  margin: 0 5px;
+  -moz-background-clip: text;
+  background-clip: text;
 }
 
 h3 {

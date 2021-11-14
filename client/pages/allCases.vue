@@ -11,28 +11,125 @@
           <h1 style="margin: 0; font-weight: 600; font-size: 24px">All Case</h1>
         </div>
 
-        <!--Form itself-->
+        <!--Table-->
         <div class="cases-component">
-          <div id="CIF" class="center formTypeDiv">
-            <!-- CASE DEFINITION -->
-            <h2 class="formTypeH">Case Investigation Form</h2>
-
-            <div
-              v-for="(value, name, i) in diseases.cif"
-              :key="i"
-              style="width: 100%; align-content: center"
-            >
-              <!-- <div v-if="i > 1" :id="name" :class="formColor(i - 1)"> -->
-              <a :href="value" style="margin: auto"
-                ><div class="cases-disease-name">{{ name }}</div></a
-              >
-            </div>
-          </div>
-
-          <div id="CRF" class="center formTypeDiv">
-            <!-- CASE DEFINITION -->
-            <h2 class="formTypeH">Case Report Form</h2>
-          </div>
+          <table class="table table-hover table-bordered results">
+            <thead>
+              <tr>
+                <th class="col-md-5 col-xs-5">Name / Surname</th>
+                <th class="col-md-4 col-xs-4">Job</th>
+                <th class="col-md-3 col-xs-3">City</th>
+              </tr>
+              <tr class="warning no-result">
+                <td colspan="4"><i class="fa fa-warning"></i> No result</td>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <div id="accordion" class="accordion">
+                    <div class="card">
+                      <div id="headingTwo" class="card-header">
+                        <h5 class="mb-0">
+                          <button
+                            class="btn btn-link collapsed"
+                            type="button"
+                            data-toggle="collapse"
+                            data-target="#collapseTwo"
+                            aria-expanded="false"
+                            aria-controls="collapseTwo"
+                          >
+                            Collapsible Group Item #2
+                          </button>
+                        </h5>
+                      </div>
+                      <div
+                        id="collapseTwo"
+                        class="collapse"
+                        aria-labelledby="headingTwo"
+                        data-parent="#accordion"
+                      >
+                        <div class="card-body">
+                          Anim pariatur cliche reprehenderit, enim eiusmod high
+                          life accusamus terry richardson ad squid. 3 wolf moon
+                          officia aute, non cupidatat skateboard dolor brunch.
+                          Food truck quinoa nesciunt laborum eiusmod. Brunch 3
+                          wolf moon tempor, sunt aliqua put a bird on it squid
+                          single-origin coffee nulla assumenda shoreditch et.
+                          Nihil anim keffiyeh helvetica, craft beer labore wes
+                          anderson cred nesciunt sapiente ea proident. Ad vegan
+                          excepteur butcher vice lomo. Leggings occaecat craft
+                          beer farm-to-table, raw denim aesthetic synth nesciunt
+                          you probably haven't heard of them accusamus labore
+                          sustainable VHS.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td>UI and UX</td>
+                <td>Istanbul</td>
+              </tr>
+              <tr>
+                <th scope="row">2</th>
+                <td>
+                  <div id="accordion" class="accordion">
+                    <div class="card">
+                      <div id="headingThree" class="card-header">
+                        <h5 class="mb-0">
+                          <button
+                            class="btn btn-link collapsed"
+                            type="button"
+                            data-toggle="collapse"
+                            data-target="#collapse3"
+                            aria-expanded="false"
+                            aria-controls="collapse3"
+                          >
+                            Collapsible Group Item #2
+                          </button>
+                        </h5>
+                      </div>
+                      <div
+                        id="collapse3"
+                        class="collapse"
+                        aria-labelledby="heading3"
+                        data-parent="#accordion"
+                      >
+                        <div class="card-body">
+                          Anim pariatur cliche reprehenderit, enim eiusmod high
+                          life accusamus terry richardson ad squid. 3 wolf moon
+                          officia aute, non cupidatat skateboard dolor brunch.
+                          Food truck quinoa nesciunt laborum eiusmod. Brunch 3
+                          wolf moon tempor, sunt aliqua put a bird on it squid
+                          single-origin coffee nulla assumenda shoreditch et.
+                          Nihil anim keffiyeh helvetica, craft beer labore wes
+                          anderson cred nesciunt sapiente ea proident. Ad vegan
+                          excepteur butcher vice lomo. Leggings occaecat craft
+                          beer farm-to-table, raw denim aesthetic synth nesciunt
+                          you probably haven't heard of them accusamus labore
+                          sustainable VHS.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td>Software Developer</td>
+                <td>Istanbul</td>
+              </tr>
+              <tr>
+                <th scope="row">3</th>
+                <td>Egemen Özbeyli</td>
+                <td>Purchasing</td>
+                <td>Kocaeli</td>
+              </tr>
+              <tr>
+                <th scope="row">4</th>
+                <td>Engin Kızıl</td>
+                <td>Sales</td>
+                <td>Bozuyük</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -60,7 +157,9 @@ export default {
       },
     }
   },
-  methods: {},
+  methods: {
+    function: {},
+  },
 }
 </script>
 
@@ -140,65 +239,30 @@ h3 {
   padding: 10px;
 }
 
-h2 {
+/* h2 {
   text-align: center;
   font-weight: 600;
   font-size: 20px;
   background-color: #008d41;
   color: transparent;
-  text-shadow: 1px 1px, -1px -1px rgb(0 0 0 / 25%);
+  text-shadow: 1px 1px, -1px -1px rgba(0, 0, 0, 0.25);
   -webkit-background-clip: text;
+  -moz-background-clip: text;
+  background-clip: text;
+} */
+
+.results tr[visible='false'],
+.no-result {
+  display: none;
 }
 
-.field-row {
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  margin: 0 7px 6px 5px;
+.results tr[visible='true'] {
+  display: table-row;
 }
 
-@media only screen and (max-width: 950px) {
-  .field-row {
-    flex-direction: column;
-    margin: 0 0 10px;
-  }
-}
-
-.field {
-  width: 100%;
-  padding: 0px 7px;
-  font-size: 14px;
-  display: flex;
-  flex-direction: column;
-  padding-bottom: 5px;
-}
-
-.input-form-field,
-select {
-  width: 100%;
-  height: 30px;
-  font-size: 16px;
-  font-family: 'Work Sans', sans-serif;
-  padding-right: 5px;
-  padding-left: 5px;
-  /* border: 1p x solid rgba(0, 0, 0, 0.25); */
-  border: 1px solid #a3a3a3;
-  box-sizing: border-box;
-  border-radius: 9px;
-}
-
-.input-checkbox {
-  /* width: 10%; */
-  height: 15px;
-  font-size: 16px;
-  font-family: 'Work Sans', sans-serif;
-  padding-right: 5px;
-  padding-left: 5px;
-  /* border: 1p x solid rgba(0, 0, 0, 0.25); */
-  border: 1px solid #a3a3a3;
-  box-sizing: border-box;
-  border-radius: 9px;
-  margin: 0 5px;
+.counter {
+  padding: 8px;
+  color: #ccc;
 }
 
 h3 {
