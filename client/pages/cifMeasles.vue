@@ -2572,7 +2572,7 @@ export default {
         const rows = (await axios.get('http://localhost:8080/getPatientAutofill?name=' + event.target.value)).data;
         // console.log(rows);
         for (let i = 0; i < rows.length; i++) {
-          
+          console.log(rows[i]);
         }
 	  }
     },
