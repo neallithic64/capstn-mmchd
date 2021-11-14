@@ -50,7 +50,29 @@
               </h2>
               <!-- CASE DEFINITION -->
               <p v-html="getCaseDefs"></p>
-              <p style="margin: 20px 0 20px 20px">Search for Patient:</p>
+              <div>
+                <!-- <div
+                    v-for="(value, name, i) in classification"
+                    :key="i"
+                    class="checkbox-options"
+                  > </div>-->
+
+                <div class="collpaseWrapper">
+                  <ul v-for="(value, name, i) in classification" :key="i">
+                    <li>
+                      <input type="checkbox" class="collapseInput" :id="name" />
+                      <label :for="name" class="collapseLabel">{{
+                        name
+                      }}</label>
+                      <ul>
+                        <li>{{ value }}</li>
+                      </ul>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <p style="margin-bottom: -20px">Search for Patient:</p>
 
               <div class="container">
                 <div class="bar">
@@ -65,9 +87,21 @@
                     placeholder="Search Patient"
                     @keyup="searchPatient"
                   />
-                  <div class="values">
-                    <!-- <div>AAAA</div>
-                    <div>AAAA</div> -->
+                  <div v-if="hasResult" class="searchPatientValues">
+                    <div class="searchResult">
+                      <!-- <img class="searchPersonIcon" /> -->
+                      <div class="searchResultInfo">
+                        <div class="searchPerson">PERSON</div>
+                        <div class="searchAddress">Address</div>
+                      </div>
+                    </div>
+                    <div class="searchResult">
+                      <!-- <img class="searchPersonIcon" /> -->
+                      <div class="searchResultInfo">
+                        <div class="searchPerson">PERSON</div>
+                        <div class="searchAddress">Address</div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -418,7 +452,7 @@
                     />
                   </div>
                 </div>
-                <div class="indigenousGroup-field field">
+                <div class="indigenousGroup-field field" style="width: 40%">
                   <label for="indigenousGroup"> Indigenous Group </label>
                   <input
                     id="indigenousGroup"
@@ -1215,7 +1249,10 @@
                 </div>
               </div>
 
-              <div v-if="formData.caseData.MCVaccine == 'yes'">
+              <div
+                v-if="formData.caseData.MCVaccine == 'yes'"
+                style="padding-left: 7px"
+              >
                 <div class="field" style="display: block">
                   <label style="margin-right: 50px">
                     Indicate the number of doses whichever is applicable
@@ -1392,7 +1429,10 @@
                 </div>
               </div>
 
-              <div v-if="formData.caseData.MCVaccine == 'no'">
+              <div
+                v-if="formData.caseData.MCVaccine == 'no'"
+                style="padding-left: 7px"
+              >
                 <div class="field" style="display: block">
                   <label class="required"> Please state the reason/s: </label>
                   <div style="flex-direction: column; align-items: center">
@@ -2041,22 +2081,39 @@
                   </label>
                   <div>
                     <div style="display: inline-flex; flex-direction: column">
-                      <div class="checkbox-options">
+                      <div
+                        v-for="(value, name, i) in classification"
+                        :key="i"
+                        class="checkbox-options"
+                      >
                         <input
-                          id="Laboratory Confirmed Measles"
+                          :id="i"
                           v-model="formData.caseData.finalClassification"
-                          value="Laboratory Confirmed Measles"
+                          :value="name"
                           class="input-checkbox"
                           name="finalClassification"
                           type="radio"
                           :disabled="inputEdit()"
                         />
-                        <label for="Laboratory Confirmed Measles">
-                          Laboratory Confirmed Measles
+                        <label :for="i">
+                          {{ name }}
+
+                          <div class="tooltip">
+                            <img
+                              id="infofever"
+                              class="info-icon-img"
+                              src="~/assets/img/infoicon.png"
+                            />
+                            <span
+                              class="tooltipText"
+                              style="width: 800px; margin-left: 70px"
+                              >{{ value }}</span
+                            >
+                          </div>
                         </label>
                       </div>
 
-                      <div class="checkbox-options">
+                      <!-- <div class="checkbox-options">
                         <input
                           id="Epi-linked Confirmed Measles"
                           v-model="formData.caseData.finalClassification"
@@ -2129,7 +2186,7 @@
                         <label for="Discarded Non Measles/Rubella">
                           Discarded Non Measles/Rubella
                         </label>
-                      </div>
+                      </div> -->
                     </div>
                   </div>
                 </div>
@@ -2282,7 +2339,7 @@
         <!-- Bottom 2 buttons -->
         <div style="margin: -10px 0 5px; float: right">
           <button v-if="pageNum == 0" class="back-button" type="button">
-            <nuxt-link to="/"> Cancel </nuxt-link>
+            <nuxt-link to="/addCase"> Cancel </nuxt-link>
           </button>
           <button
             v-if="pageNum != 0"
@@ -2312,7 +2369,7 @@
             v-if="pageNum == Object.keys(disease.formNames).length"
             class="next-button"
             type="button"
-            @click="submit"
+            @click="submit;"
           >
             Submit
           </button>
@@ -2333,6 +2390,8 @@ export default {
   data() {
     return {
       isOpen: true,
+      hasResult: false,
+      openCollapse: '',
       isDisabled: false,
       diseaseID: 'DI-0000000000000',
       caseDefs: [],
@@ -2497,6 +2556,22 @@ export default {
           form9: 'Outcome',
         },
       },
+      classification: {
+        'Clinically Compatible Measles':
+          'A suspected measles case, for which no adequate clinical specimen was taken and the case has not been linked epidemiologically to a laboratory-confirmed case of measles or other communicable disease OR laboratory confirmation is still pending',
+        'Epidemiologically Linked Confirmed Measles':
+          'A suspected measles case that has not been confirmed by a laboratory but was geographically and temporally related with dates of rash onset occurring between 7 and 23 days apart from a laboratory-confirmed case or another epidemiologically confirmed measles case',
+        'Epidemiologically Linked Confirmed Rubella':
+          'A suspected case who has direct contact with another laboratory confirmed rubella case with rash onset occurred 12-23 days before the present case',
+        'Laboratory-Confirmed Measles':
+          'A suspected measles case that has been confirmed by a proficient laboratory as positive for Measles IgM antibodies and/or positive for measles virus isolation or Polymerase Chain Reaction (PCR)',
+        'Laboratory-Confirmed Rubella':
+          'A suspected measles case with a positive laboratory test results for rubella-specific IgM antibodies or other laboratory test method',
+        'Non-Measles/Rubella Discarded Case':
+          'A suspected case that has been investigated and discarded as a non-measles (and non-rubella) when anyofthe following are true: negative laboratory testing in a proficient laboratory on an adequate specimen collected during the proper time period after rash onset; epidemiological linkage to a laboratory confirmed outbreak of another communicable disease that is not measles/rubella; confirmation of another etiology',
+        'Suspected Case':
+          'Any individual, regardless of age, with the following signs and symptoms: fever (38°C or more) or hot to touch; and Maculo-papular rash (non-vesicular) AND at least one of the following: cough, coryza (runny nose), or conjunctivitis (red eyes)',
+      },
     }
   },
   async fetch() {
@@ -2540,6 +2615,7 @@ export default {
       alert('DONE')
       // eslint-disable-next-line no-console
       console.log(this.formData)
+      window.location.href = '/allcases'
     },
     move(page) {
       if (
@@ -2730,7 +2806,7 @@ body {
 
 .form-component {
   position: relative;
-  height: max-content;
+  height: fit-content;
   width: 100%;
   top: -3px;
 
@@ -3142,6 +3218,70 @@ hr {
   display: none;
 }
 
+/* COLLAPSE EME BELOW */
+
+.collpaseWrapper {
+  margin: 15px 0;
+  padding: 15px auto;
+  width: 100%;
+}
+
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.collapseLabel {
+  display: block;
+  cursor: pointer;
+  padding: 10px;
+  /* border: 1px solid #fff; */
+  border-bottom: none;
+  font-weight: 400;
+}
+
+.collapseLabel:hover {
+  background: #346083;
+  opacity: 0.85;
+  color: white;
+  font-weight: 600;
+}
+
+.collapseLabel.last {
+  border-bottom: 1px solid #fff;
+}
+
+ul ul li {
+  padding: 10px;
+  background: white;
+}
+
+.collapseInput[type='checkbox'] {
+  position: absolute;
+  left: -9999px;
+}
+
+.collapseInput[type='checkbox'] ~ ul {
+  height: 0;
+  transform: scaleY(0);
+}
+
+.collapseInput[type='checkbox']:checked ~ ul {
+  height: 100%;
+  transform-origin: top;
+  transition: transform 0.2s ease-out;
+  transform: scaleY(1);
+}
+
+.collapseInput[type='checkbox']:checked + label {
+  background: #346083;
+  opacity: 0.85;
+  color: white;
+  font-weight: 500;
+  border-bottom: 1px solid #fff;
+}
+
 /* SEARCH BAR ALL BELOW */
 
 .searchbar {
@@ -3172,6 +3312,8 @@ hr {
   height: 45px;
   border-radius: 40px;
   /* border: 1px solid #dcdcdc; */
+
+  position: relative;
 }
 .bar:hover {
   box-shadow: 1px 1px 8px 1px #dcdcdc;
@@ -3194,5 +3336,54 @@ hr {
   left: 10px;
   width: 30px;
   height: 30px;
+}
+
+.searchPatientValues {
+  background: white;
+  margin-top: -20px;
+  height: fit-content;
+  /* border-radius: 0 0 25px 25px; */
+  border-radius: 25px 25px 0 0;
+  padding: 10px;
+  padding-bottom: 15px;
+  display: grid;
+  width: 100%;
+
+  position: absolute;
+  bottom: 30px;
+}
+
+.searchResult {
+  padding: 5px 10px;
+  border-bottom: 1px solid lightgray;
+  display: inline-flex;
+  flex-direction: row;
+}
+
+.searchResult:hover {
+  background: #eeeeee;
+}
+
+.searchResultInfo {
+  display: inline-flex;
+  flex-direction: column;
+}
+
+.searchPerson {
+  font-size: 16px;
+  margin-bottom: -5px;
+  font-weight: 400;
+}
+
+.searchAddress {
+  font-size: 12px;
+  font-weight: 200;
+}
+
+.searchPersonIcon {
+  content: url('~/assets/img/personIcon.png');
+  height: 25px;
+  width: 25px;
+  margin: auto 5px auto 0;
 }
 </style>
