@@ -210,7 +210,6 @@ const indexFunctions = {
 	getPatientAutofill: async function(req, res) {
 		try {
 			let match = await db.findPatientAutofill(req.query.name);
-			console.log(match);
 			res.status(200).send(match);
 		} catch (e) {
 			console.log(e);
@@ -228,6 +227,18 @@ const indexFunctions = {
 			res.status(500).send("Server error");
 		}
 	},
+
+	getUser: async function(req, res) {
+		try {
+			if (!req.session || !req.session.user) {
+				return res.status(403).send();
+			}
+			return res.status(200).send({user: req.session.user})
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	}, 
 	
 	/*
 	 * POST METHODS 

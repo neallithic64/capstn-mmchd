@@ -61,10 +61,10 @@
       </button>
       <div class="dropdown">
         <button id="profile-dropbtn">
-          <span id="user-initials"> JE </span>
+          <span v-if="$auth.loggedIn" id="user-initials"> {{ $auth.user.firstName.charAt(0) }} {{ $auth.user.lastName.charAt(0) }} </span>
         </button>
         <div class="dropdown-content-profile">
-          <nuxt-link to="/myprofile"> My Profile </nuxt-link>
+          <nuxt-link v-if="$auth.loggedIn" to="/myprofile"> {{ $auth.user.email }} </nuxt-link>
           <nuxt-link to="/settings"> Settings </nuxt-link>
           <nuxt-link to="/logout"> Logout </nuxt-link>
         </div>
@@ -83,11 +83,6 @@ export default {
       } else {
         x.className = 'topnav'
       }
-    },
-    getUserInfo() {
-      // eslint-disable-next-line no-console
-      // console.log(this.$store.state);
-      return this.$store.getters.getUserInfo
     },
   },
 }

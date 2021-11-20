@@ -85,7 +85,7 @@
                     role="combobox"
                     aria-live="off"
                     placeholder="Search Patient"
-                    @click="hasResult = !hasResult"
+                    @keyup="searchPatient"
                   />
                   <div v-if="hasResult" class="searchPatientValues">
                     <div class="searchResult">
@@ -2387,6 +2387,7 @@
 const axios = require('axios')
 
 export default {
+  middleware: 'is-auth',
   header: {
     title: 'Case Investigation Form - Measles',
   },
@@ -2645,6 +2646,15 @@ export default {
         // }
         return true
       } else return false
+    },
+    async searchPatient(event) {
+      if (event.target.value !== "") {
+        const rows = (await axios.get('http://localhost:8080/getPatientAutofill?name=' + event.target.value)).data;
+        for (let i = 0; i < rows.length; i++) {
+          console.log(rows[i]);
+          // construct rows[i].name and rows[i].address then append();
+        }
+	  }
     },
   },
 }

@@ -9,6 +9,7 @@ require("dotenv").config();
 const PORT = process.env.PORT || 8080;
 app.use(express.static(__dirname + "/"));
 
+app.use(require('morgan')('dev'));
 app.use(cors({ 
 	credentials: true,
 	origin: true,
@@ -21,7 +22,8 @@ app.use(session({
 	resave: false,
 	saveUninitialized: true,
 	cookie: {
-		secure: true,
+		secure: false,
+		httpOnly: true,
 		samesite: "lax"
 	}
 }));
@@ -31,6 +33,6 @@ app.use(bodyParser.json());
 
 const db = require("./models/db");
 const router = require("./routers/indexRouter");
-app.use("/", router);
+app.use("/api", router);
 
 app.listen(PORT, () => console.log("listening at " + PORT));
