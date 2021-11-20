@@ -14,7 +14,10 @@
     "@nuxtjs/auth-next": "5.0.0-1624817847.21691f1",
     "@nuxtjs/axios": "^5.13.6",
     "core-js": "^3.15.1",
-    "nuxt": "^2.15.7"
+    "nuxt": "^2.15.7",
+    "vue-data-tables": "^3.4.5",
+    "vuejs-datatable": "^2.0.0-alpha.7",
+    "vuejs-simple-datatable": "^1.0.2"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.14.7",

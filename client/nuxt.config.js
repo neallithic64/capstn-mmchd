@@ -13,18 +13,19 @@ export default {
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-      { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700&display=swap'},
-      { rel: 'stylesheet', href: 'http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css'}
+      { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700&display=swap' },
+      { rel: 'stylesheet', href: 'http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css' }
     ]
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
-    
+
   ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
+    '~/plugins/vue-datatable.js'
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -58,13 +59,13 @@ export default {
     redirect: false,
     strategies: {
       local: {
-        user: { 
+        user: {
           property: false,
           autoFetch: false
         },
         endpoints: {
-          login: {url: 'login', method: 'post'},
-          user: {url: '/', method: 'get'}
+          login: { url: 'login', method: 'post' },
+          user: { url: '/', method: 'get' }
         }
       }
     }

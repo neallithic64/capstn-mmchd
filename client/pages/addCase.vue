@@ -17,7 +17,7 @@
         </div>
 
         <!--Form itself-->
-        <div class="cases-component">
+        <div class="addcases-component">
           <div id="CIF" class="center formTypeDiv">
             <!-- CASE DEFINITION -->
             <h2 id="formTypeH">Case Investigation Form</h2>
@@ -125,7 +125,7 @@ h3 {
   }
 }
 
-.cases-component {
+.addcases-component {
   position: relative;
   display: inline-flex;
   flex-direction: row;
@@ -141,7 +141,8 @@ h3 {
   min-height: calc(100vh - 220px);
 }
 @media only screen and (max-width: 800px) {
-  .cases-component {
+  .addcases-component {
+    flex-direction: column;
     position: relative;
     top: 0px;
     min-height: fit-content;
@@ -157,13 +158,40 @@ h3 {
 #formTypeH {
   text-align: center;
   font-weight: 600;
-  font-size: 20px;
+  font-size: 30px;
   background-color: #008d41;
   color: transparent;
   text-shadow: 1px 1px, -1px -1px rgba(0, 0, 0, 0.25);
   -webkit-background-clip: text;
   -moz-background-clip: text;
   background-clip: text;
+}
+
+#CIF {
+  border: none;
+  border-right: black 0.5px solid;
+}
+
+#CRF {
+  border: none;
+  border-left: black 0.5px solid;
+}
+
+@media only screen and (max-width: 800px) {
+  .formTypeDiv {
+    width: 100%;
+    padding: 30px;
+  }
+
+  #CIF {
+    border: none;
+    border-bottom: black 0.5px solid;
+  }
+
+  #CRF {
+    border: none;
+    border-top: black 0.5px solid;
+  }
 }
 
 h3 {
