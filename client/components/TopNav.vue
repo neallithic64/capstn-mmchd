@@ -9,7 +9,7 @@
       </button>
       <div class="dropdown-content">
         <nuxt-link to="/allcases"> View Cases </nuxt-link>
-        <nuxt-link to="/cifMeasles"> Add Case </nuxt-link>
+        <nuxt-link to="/addCase"> Add Case </nuxt-link>
       </div>
     </div>
     <div class="dropdown">
