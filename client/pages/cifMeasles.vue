@@ -2384,6 +2384,7 @@
 const axios = require('axios')
 
 export default {
+  middleware: 'is-auth',
   header: {
     title: 'Case Investigation Form - Measles',
   },
