@@ -89,11 +89,17 @@ export default {
     async submitForm(e) {
       if (!this.checkForm()) {
         try {
-          const user = (await this.$axios.post('http://localhost:8080/login', {
-            email: this.email,
-            password: this.password
-          })).data.user
-          await this.$auth.setUser(user);
+          // const user = (await this.$axios.post('http://localhost:8080/login', {
+          //   email: this.email,
+          //   password: this.password
+          // })).data.user
+          await this.$auth.loginWith('cookie', { 
+            data: {
+              email: this.email,
+              password: this.password
+            },
+          })
+          // this.$auth.setUser(user);
           this.$router.push('/');
         } catch (e) {
           // eslint-disable-next-line no-console

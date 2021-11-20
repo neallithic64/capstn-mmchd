@@ -46,25 +46,27 @@ export default {
   ],
 
   router: {
-    middleware: ['auth']
+    // middleware: ['auth']
   },
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
-    baseURL: "http://localhost:8080"
+    baseURL: "http://localhost:8080",
+    credentials: true
   },
 
   auth: {
-    redirect: false,
+    redirect: {
+      login: '/',
+      logout: '/login',
+      callback: '/',
+      home: '/'
+    },
     strategies: {
-      local: {
-        user: { 
-          property: false,
-          autoFetch: false
-        },
+      cookie: {
         endpoints: {
-          login: {url: 'login', method: 'post'},
-          user: {url: '/', method: 'get'}
+          login: {url: '/api/login', method: 'POST'},
+          user: {url: '/api/getUser', method: 'GET', propertyName: false}
         }
       }
     }
