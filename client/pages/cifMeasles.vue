@@ -60,7 +60,7 @@
                 <div class="collpaseWrapper">
                   <ul v-for="(value, name, i) in classification" :key="i">
                     <li>
-                      <input type="checkbox" class="collapseInput" :id="name" />
+                      <input :id="name" type="checkbox"  class="collapseInput" />
                       <label :for="name" class="collapseLabel">{{
                         name
                       }}</label>
@@ -1136,8 +1136,10 @@
                     <div class="info-desc infodesc-outside">
                       {{ info.complications }}
                     </div> -->
-                    <div class="tooltip">
-                      <span class="tooltipText">{{ info.complications }}</span>
+                    <div class="tooltip shorttooltip">
+                      <span class="tooltipText shorttooltipText">{{
+                        info.complications
+                      }}</span>
                       <img
                         id="infofever"
                         class="info-icon-img"
@@ -1159,8 +1161,10 @@
                 <div class="field">
                   <label for="otherSymptoms">
                     Other symptoms
-                    <div class="tooltip">
-                      <span class="tooltipText">{{ info.otherSymptoms }}</span>
+                    <div class="tooltip shorttooltip">
+                      <span class="tooltipText shorttooltipText">{{
+                        info.otherSymptoms
+                      }}</span>
                       <img
                         id="infofever"
                         class="info-icon-img"
@@ -1182,8 +1186,10 @@
                 <div class="field">
                   <label for="diagnosis">
                     Working/Final Diagnosis
-                    <div class="tooltip">
-                      <span class="tooltipText">{{ info.diagnosis }}</span>
+                    <div class="tooltip shorttooltip">
+                      <span class="tooltipText shorttooltipText">{{
+                        info.diagnosis
+                      }}</span>
                       <img
                         id="infofever"
                         class="info-icon-img"
@@ -2097,20 +2103,17 @@
                         />
                         <label :for="i">
                           {{ name }}
-
-                          <div class="tooltip">
-                            <img
-                              id="infofever"
-                              class="info-icon-img"
-                              src="~/assets/img/infoicon.png"
-                            />
-                            <span
-                              class="tooltipText"
-                              style="width: 800px; margin-left: 70px"
-                              >{{ value }}</span
-                            >
-                          </div>
                         </label>
+                        <div class="tooltip">
+                          <img
+                            id="infofever"
+                            class="info-icon-img"
+                            src="~/assets/img/infoicon.png"
+                          />
+                          <span class="tooltipText" style="width: 500px">{{
+                            value
+                          }}</span>
+                        </div>
                       </div>
 
                       <!-- <div class="checkbox-options">
@@ -2796,7 +2799,7 @@ body {
 .disease-name {
   position: relative;
   top: -3px;
-  z-index: 3;
+  z-index: 2;
 }
 @media only screen and (max-width: 800px) {
   .disease-name {
@@ -3082,6 +3085,7 @@ select {
   width: 10px;
   height: 10px;
   margin: 0 5px;
+  z-index: 1;
 }
 
 .tooltip {
@@ -3096,17 +3100,26 @@ select {
 .tooltipText {
   background-color: #fff;
   position: absolute;
+  margin-left: 40px;
   bottom: 130%;
   padding: 10px 15px;
   border-radius: 5px;
   font-size: 14px;
   opacity: 0;
   transition: all 0.5s;
+  z-index: -2;
 }
 
-.tooltip:hover .tooltipText {
+.shorttooltip:hover .shorttooltipText {
   opacity: 1;
   transform: translateY(-10px);
+  margin: 0;
+}
+
+#infofever:hover ~ .tooltipText {
+  opacity: 1;
+  transform: translateY(-10px);
+  z-index: 3;
 }
 
 .tooltipText::after {
@@ -3151,6 +3164,7 @@ label {
   display: inline-flex;
   flex-direction: row;
   align-items: center;
+  z-index: 1;
 }
 
 .required:after {

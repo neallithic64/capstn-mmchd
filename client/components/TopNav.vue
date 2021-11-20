@@ -1,7 +1,8 @@
 <template>
   <div id="myTopnav" class="topnav">
-    <img id="logo" src="~/assets/img/doh-logo.png" />
-    <nuxt-link to="/"> Home </nuxt-link>
+    <nuxt-link to="/" style="padding: 0px; padding-bottom: 9px">
+      <img id="logo" src="~/assets/img/doh-logo.png" />
+    </nuxt-link>
     <div class="dropdown">
       <button class="dropbtn">
         Disease Surveillance
