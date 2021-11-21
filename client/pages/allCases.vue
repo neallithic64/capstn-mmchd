@@ -5,23 +5,21 @@
     <div class="viewcases-container">
       <div class="viewcases-component">
         <div id="vue-root">
-          <vuejs-simple-datatable
-            :options="tableOptions"
-            :datavalues="rowData"
-          />
+          <dataTable :options="tableOptions" :datavalues="rowData" />
         </div>
       </div>
     </div>
   </div>
 </template>
 
-// <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.4.2/vue.js" defer></script> 
-<script src="~/plugin/vuejs-datatable.js" defer></script>
-
 <script>
+import dataTable from './dataTable.vue'
 export default {
   header: {
     title: 'Add Case',
+  },
+  components: {
+    dataTable,
   },
   compute: {},
   data() {
@@ -42,17 +40,21 @@ export default {
             key: 'disease',
             type: 'text',
             source: 'cases',
+            uniqueField: 'id',
+            sortable: true,
           },
           {
             title: 'City',
             key: 'city',
             type: 'text',
             source: 'cases',
+            uniqueField: 'id',
+            sortable: true,
           },
           {
             title: 'Patient',
             key: 'patientNo',
-            type: 'text',
+            type: 'number',
             source: 'cases',
           },
           {
@@ -62,7 +64,7 @@ export default {
             dateFormat: true,
             currentFormat: 'YYYY-MM-DD',
             expectFormat: 'DD MMM YYYY',
-            sortable: true,
+            // sortable: true,
           },
           {
             title: 'Last updated',
@@ -78,6 +80,7 @@ export default {
             key: 'status',
             type: 'text',
             source: 'cases',
+            uniqueField: 'id',
             sortable: true,
           },
         ],
@@ -86,22 +89,103 @@ export default {
       },
       rowData: [
         {
-          caseID: 1234,
+          caseID: 19,
           disease: 'Measles',
           city: 'Manila',
-          patientNo: '123',
+          patientNo: 123,
+          submittedDate: '2020-12-10',
+          updatedDate: '2020-1-10',
+          status: 'IDK',
+        },
+        {
+          caseID: 10,
+          disease: 'Dengue',
+          city: 'PH',
+          patientNo: 223,
+          submittedDate: '2020-11-30',
+          updatedDate: '2020-1-12',
+          status: 'IDK',
+        },
+        {
+          caseID: 20,
+          disease: 'Measles',
+          city: 'Manila',
+          patientNo: 123,
+          submittedDate: '2020-12-10',
+          updatedDate: '2020-2-12',
+          status: 'IDK',
+        },
+        {
+          caseID: 21,
+          disease: 'Dengue',
+          city: 'PH',
+          patientNo: 223,
+          submittedDate: '2021-11-10',
+          updatedDate: '2021-12-10',
+          status: 'IDK',
+        },
+        {
+          caseID: 29,
+          disease: 'Dengue',
+          city: 'PH',
+          patientNo: 223,
+          submittedDate: '2020-11-10',
+          updatedDate: '2020-11-10',
+          status: 'IDK',
+        },
+        {
+          caseID: 30,
+          disease: 'Measles',
+          city: 'Manila',
+          patientNo: 123,
           submittedDate: '2020-10-10',
           updatedDate: '2020-10-10',
           status: 'IDK',
         },
         {
-          caseID: 3456,
+          caseID: 31,
           disease: 'Dengue',
           city: 'PH',
-          patientNo: '223',
+          patientNo: 223,
           submittedDate: '2020-11-10',
           updatedDate: '2020-11-10',
           status: 'IDK',
+        },
+        {
+          caseID: 32,
+          disease: 'Measles',
+          city: 'Manila',
+          patientNo: 123,
+          submittedDate: '2020-10-10',
+          updatedDate: '2020-10-10',
+          status: 'IDK',
+        },
+        {
+          caseID: 33,
+          disease: 'Dengue',
+          city: 'earth',
+          patientNo: 223,
+          submittedDate: '2020-11-10',
+          updatedDate: '2020-11-10',
+          status: 'IDK',
+        },
+        {
+          caseID: 34,
+          disease: 'cries',
+          city: 'Manila',
+          patientNo: 123,
+          submittedDate: '2020-10-10',
+          updatedDate: '2020-10-10',
+          status: 'dd',
+        },
+        {
+          caseID: 35,
+          disease: 'hatdog',
+          city: 'PH',
+          patientNo: 223,
+          submittedDate: '2020-11-10',
+          updatedDate: '2020-11-10',
+          status: 'e',
         },
       ],
       diseases: {
