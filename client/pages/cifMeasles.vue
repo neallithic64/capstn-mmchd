@@ -49,7 +49,6 @@
                 {{ Object.values(disease.formNames)[0] }}
               </h2>
               <!-- CASE DEFINITION -->
-              <p v-html="getCaseDefs"></p>
               <div>
                 <!-- <div
                     v-for="(value, name, i) in classification"
@@ -2390,7 +2389,6 @@ export default {
       openCollapse: '',
       isDisabled: false,
       diseaseID: 'DI-0000000000000',
-      caseDefs: [],
       patients: [],
       patientResult: [],
       pageNum: 0,
@@ -2554,46 +2552,18 @@ export default {
           form9: 'Outcome',
         },
       },
-      classification: {
-        'Clinically Compatible Measles':
-          'A suspected measles case, for which no adequate clinical specimen was taken and the case has not been linked epidemiologically to a laboratory-confirmed case of measles or other communicable disease OR laboratory confirmation is still pending',
-        'Epidemiologically Linked Confirmed Measles':
-          'A suspected measles case that has not been confirmed by a laboratory but was geographically and temporally related with dates of rash onset occurring between 7 and 23 days apart from a laboratory-confirmed case or another epidemiologically confirmed measles case',
-        'Epidemiologically Linked Confirmed Rubella':
-          'A suspected case who has direct contact with another laboratory confirmed rubella case with rash onset occurred 12-23 days before the present case',
-        'Laboratory-Confirmed Measles':
-          'A suspected measles case that has been confirmed by a proficient laboratory as positive for Measles IgM antibodies and/or positive for measles virus isolation or Polymerase Chain Reaction (PCR)',
-        'Laboratory-Confirmed Rubella':
-          'A suspected measles case with a positive laboratory test results for rubella-specific IgM antibodies or other laboratory test method',
-        'Non-Measles/Rubella Discarded Case':
-          'A suspected case that has been investigated and discarded as a non-measles (and non-rubella) when anyofthe following are true: negative laboratory testing in a proficient laboratory on an adequate specimen collected during the proper time period after rash onset; epidemiological linkage to a laboratory confirmed outbreak of another communicable disease that is not measles/rubella; confirmation of another etiology',
-        'Suspected Case':
-          'Any individual, regardless of age, with the following signs and symptoms: fever (38°C or more) or hot to touch; and Maculo-papular rash (non-vesicular) AND at least one of the following: cough, coryza (runny nose), or conjunctivitis (red eyes)',
-      },
+      classification: {},
     }
   },
   async fetch() {
     let rows = (await axios.get('http://localhost:8080/api/getCaseDefs?diseaseID=' + this.diseaseID)).data;
     for (let i = 0; i < rows.length; i++) {
-      delete rows[i].diseaseID;
+      this.classification[rows[i].class] = rows[i].definition;
     }
-    // this.caseDefs = rows;
     rows = (await axios.get('http://localhost:8080/api/getPatients')).data;
     this.patients = rows;
   },
   computed: {
-    getCaseDefs() {
-      let defs = ''
-      for (let i = 0; i < this.caseDefs.length; i++) {
-        defs +=
-          '<h2><b>' +
-          this.caseDefs[i].class +
-          '</b></h2><br>- ' +
-          this.caseDefs[i].definition +
-          '<br><br>'
-      }
-      return defs
-    },
   },
   methods: {
     formpart(disease, pageNum) {
@@ -2640,7 +2610,7 @@ export default {
       } else return false
     },
     autoFillPatient(patient) {
-      // something
+	  alert(patient.patientID);
     },
     searchPatient(event) {
       this.patientResult = [];
