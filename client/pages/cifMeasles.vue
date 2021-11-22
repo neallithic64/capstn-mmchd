@@ -2610,7 +2610,7 @@ export default {
       } else return false
     },
     autoFillPatient(patient) {
-	  alert(patient.patientID);
+      alert(patient.patientID);
     },
     searchPatient(event) {
       this.patientResult = [];
