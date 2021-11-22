@@ -206,6 +206,17 @@ const indexFunctions = {
 			res.status(500).send("Server error");
 		}
 	},
+	
+	getPatients: async function(req, res) {
+		try {
+			let match = await db.exec("SELECT * FROM mmchddb.PATIENTS p INNER JOIN mmchddb.ADDRESSES a ON p.caddressID = a.addressID;");
+			// console.log(match);
+			res.status(200).send(match);
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
 
 	getPatientAutofill: async function(req, res) {
 		try {

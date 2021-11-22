@@ -87,19 +87,12 @@
                     placeholder="Search Patient"
                     @keyup="searchPatient"
                   />
-                  <div v-if="hasResult" class="searchPatientValues">
-                    <div class="searchResult">
+                  <div v-if="patientResult.length" class="searchPatientValues">
+                    <div v-for="(patient, i) in patientResult" :key="i" class="searchResult">
                       <!-- <img class="searchPersonIcon" /> -->
-                      <div class="searchResultInfo">
-                        <div class="searchPerson">PERSON</div>
-                        <div class="searchAddress">Address</div>
-                      </div>
-                    </div>
-                    <div class="searchResult">
-                      <!-- <img class="searchPersonIcon" /> -->
-                      <div class="searchResultInfo">
-                        <div class="searchPerson">PERSON</div>
-                        <div class="searchAddress">Address</div>
+                      <div class="searchResultInfo" @click="autoFillPatient(patient)">
+                        <div class="searchPerson">{{ patient.firstName + " " + patient.midName + " " + patient.lastName }}</div>
+                        <div class="searchAddress">{{ patient.houseStreet + ", " + patient.brgy + ", " + patient.city }}</div>
                       </div>
                     </div>
                   </div>
@@ -2394,11 +2387,12 @@ export default {
   data() {
     return {
       isOpen: true,
-      hasResult: false,
       openCollapse: '',
       isDisabled: false,
       diseaseID: 'DI-0000000000000',
       caseDefs: [],
+      patients: [],
+      patientResult: [],
       pageNum: 0,
       formPart: 'Measles0',
       formData: {
@@ -2579,15 +2573,13 @@ export default {
     }
   },
   async fetch() {
-    const rows = (
-      await axios.get(
-        'http://localhost:8080/getCaseDefs?diseaseID=' + this.diseaseID
-      )
-    ).data
+    let rows = (await axios.get('http://localhost:8080/api/getCaseDefs?diseaseID=' + this.diseaseID)).data;
     for (let i = 0; i < rows.length; i++) {
-      delete rows[i].diseaseID
+      delete rows[i].diseaseID;
     }
-    this.caseDefs = rows
+    // this.caseDefs = rows;
+    rows = (await axios.get('http://localhost:8080/api/getPatients')).data;
+    this.patients = rows;
   },
   computed: {
     getCaseDefs() {
@@ -2647,14 +2639,22 @@ export default {
         return true
       } else return false
     },
-    async searchPatient(event) {
+    autoFillPatient(patient) {
+      // something
+    },
+    searchPatient(event) {
+      this.patientResult = [];
       if (event.target.value !== "") {
-        const rows = (await axios.get('http://localhost:8080/getPatientAutofill?name=' + event.target.value)).data;
-        for (let i = 0; i < rows.length; i++) {
-          console.log(rows[i]);
-          // construct rows[i].name and rows[i].address then append();
+        let ctr = 0;
+        for (let i = 0; i < this.patients.length && ctr < 5; i++) {
+          // eslint-disable-next-line no-useless-escape
+          const reg = new RegExp("^" + event.target.value + "\w*", "i");
+          if ((this.patients[i].firstName + " " + this.patients[i].midName + " " + this.patients[i].lastName).match(reg)) {
+            this.patientResult.push(this.patients[i]);
+            ctr++;
+          }
         }
-	  }
+      }
     },
   },
 }
