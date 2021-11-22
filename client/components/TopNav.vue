@@ -36,6 +36,7 @@
       </div>
     </div>
     <nuxt-link to="/evaluation"> Evaluation </nuxt-link>
+    <nuxt-link to="/addUser"> Accounts </nuxt-link>
 
     <div class="topnav-right-inside">
       <nuxt-link to="/notification"> Notification </nuxt-link>
@@ -61,12 +62,12 @@
       </button>
       <div class="dropdown">
         <button id="profile-dropbtn">
-          <span v-if="$auth.loggedIn" id="user-initials"> {{ $auth.user.firstName.charAt(0) }} {{ $auth.user.lastName.charAt(0) }} </span>
+          <span v-if="$auth.loggedIn" id="user-initials"> {{$auth.user.firstName.charAt(0)}} </span>
         </button>
         <div class="dropdown-content-profile">
-          <nuxt-link v-if="$auth.loggedIn" to="/myprofile"> {{ $auth.user.email }} </nuxt-link>
+          <nuxt-link v-if="$auth.loggedIn" to="/myprofile"> My Profile </nuxt-link>
           <nuxt-link to="/settings"> Settings </nuxt-link>
-          <nuxt-link to="/logout"> Logout </nuxt-link>
+          <nuxt-link to="/"> <span v-if="$auth.loggedIn" @click="$auth.logout()"> Logout </span> </nuxt-link>
         </div>
       </div>
     </div>
@@ -89,6 +90,10 @@ export default {
 </script>
 
 <style>
+body {
+  background-image: none;
+}
+
 #myTopnav {
   z-index: 10;
   position: fixed;
