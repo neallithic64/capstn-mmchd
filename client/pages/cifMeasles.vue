@@ -49,7 +49,6 @@
                 {{ Object.values(disease.formNames)[0] }}
               </h2>
               <!-- CASE DEFINITION -->
-              <p v-html="getCaseDefs"></p>
               <div>
                 <!-- <div
                     v-for="(value, name, i) in classification"
@@ -60,7 +59,7 @@
                 <div class="collpaseWrapper">
                   <ul v-for="(value, name, i) in classification" :key="i">
                     <li>
-                      <input type="checkbox" class="collapseInput" :id="name" />
+                      <input :id="name" type="checkbox"  class="collapseInput" />
                       <label :for="name" class="collapseLabel">{{
                         name
                       }}</label>
@@ -87,19 +86,12 @@
                     placeholder="Search Patient"
                     @keyup="searchPatient"
                   />
-                  <div v-if="hasResult" class="searchPatientValues">
-                    <div class="searchResult">
+                  <div v-if="patientResult.length" class="searchPatientValues">
+                    <div v-for="(patient, i) in patientResult" :key="i" class="searchResult">
                       <!-- <img class="searchPersonIcon" /> -->
-                      <div class="searchResultInfo">
-                        <div class="searchPerson">PERSON</div>
-                        <div class="searchAddress">Address</div>
-                      </div>
-                    </div>
-                    <div class="searchResult">
-                      <!-- <img class="searchPersonIcon" /> -->
-                      <div class="searchResultInfo">
-                        <div class="searchPerson">PERSON</div>
-                        <div class="searchAddress">Address</div>
+                      <div class="searchResultInfo" @click="autoFillPatient(patient)">
+                        <div class="searchPerson">{{ patient.firstName + " " + patient.midName + " " + patient.lastName }}</div>
+                        <div class="searchAddress">{{ patient.houseStreet + ", " + patient.brgy + ", " + patient.city }}</div>
                       </div>
                     </div>
                   </div>
@@ -1136,8 +1128,10 @@
                     <div class="info-desc infodesc-outside">
                       {{ info.complications }}
                     </div> -->
-                    <div class="tooltip">
-                      <span class="tooltipText">{{ info.complications }}</span>
+                    <div class="tooltip shorttooltip">
+                      <span class="tooltipText shorttooltipText">{{
+                        info.complications
+                      }}</span>
                       <img
                         id="infofever"
                         class="info-icon-img"
@@ -1159,8 +1153,10 @@
                 <div class="field">
                   <label for="otherSymptoms">
                     Other symptoms
-                    <div class="tooltip">
-                      <span class="tooltipText">{{ info.otherSymptoms }}</span>
+                    <div class="tooltip shorttooltip">
+                      <span class="tooltipText shorttooltipText">{{
+                        info.otherSymptoms
+                      }}</span>
                       <img
                         id="infofever"
                         class="info-icon-img"
@@ -1182,8 +1178,10 @@
                 <div class="field">
                   <label for="diagnosis">
                     Working/Final Diagnosis
-                    <div class="tooltip">
-                      <span class="tooltipText">{{ info.diagnosis }}</span>
+                    <div class="tooltip shorttooltip">
+                      <span class="tooltipText shorttooltipText">{{
+                        info.diagnosis
+                      }}</span>
                       <img
                         id="infofever"
                         class="info-icon-img"
@@ -2097,20 +2095,17 @@
                         />
                         <label :for="i">
                           {{ name }}
-
-                          <div class="tooltip">
-                            <img
-                              id="infofever"
-                              class="info-icon-img"
-                              src="~/assets/img/infoicon.png"
-                            />
-                            <span
-                              class="tooltipText"
-                              style="width: 800px; margin-left: 70px"
-                              >{{ value }}</span
-                            >
-                          </div>
                         </label>
+                        <div class="tooltip">
+                          <img
+                            id="infofever"
+                            class="info-icon-img"
+                            src="~/assets/img/infoicon.png"
+                          />
+                          <span class="tooltipText" style="width: 500px">{{
+                            value
+                          }}</span>
+                        </div>
                       </div>
 
                       <!-- <div class="checkbox-options">
@@ -2391,11 +2386,11 @@ export default {
   data() {
     return {
       isOpen: true,
-      hasResult: false,
       openCollapse: '',
       isDisabled: false,
       diseaseID: 'DI-0000000000000',
-      caseDefs: [],
+      patients: [],
+      patientResult: [],
       pageNum: 0,
       formPart: 'Measles0',
       formData: {
@@ -2557,48 +2552,18 @@ export default {
           form9: 'Outcome',
         },
       },
-      classification: {
-        'Clinically Compatible Measles':
-          'A suspected measles case, for which no adequate clinical specimen was taken and the case has not been linked epidemiologically to a laboratory-confirmed case of measles or other communicable disease OR laboratory confirmation is still pending',
-        'Epidemiologically Linked Confirmed Measles':
-          'A suspected measles case that has not been confirmed by a laboratory but was geographically and temporally related with dates of rash onset occurring between 7 and 23 days apart from a laboratory-confirmed case or another epidemiologically confirmed measles case',
-        'Epidemiologically Linked Confirmed Rubella':
-          'A suspected case who has direct contact with another laboratory confirmed rubella case with rash onset occurred 12-23 days before the present case',
-        'Laboratory-Confirmed Measles':
-          'A suspected measles case that has been confirmed by a proficient laboratory as positive for Measles IgM antibodies and/or positive for measles virus isolation or Polymerase Chain Reaction (PCR)',
-        'Laboratory-Confirmed Rubella':
-          'A suspected measles case with a positive laboratory test results for rubella-specific IgM antibodies or other laboratory test method',
-        'Non-Measles/Rubella Discarded Case':
-          'A suspected case that has been investigated and discarded as a non-measles (and non-rubella) when anyofthe following are true: negative laboratory testing in a proficient laboratory on an adequate specimen collected during the proper time period after rash onset; epidemiological linkage to a laboratory confirmed outbreak of another communicable disease that is not measles/rubella; confirmation of another etiology',
-        'Suspected Case':
-          'Any individual, regardless of age, with the following signs and symptoms: fever (38°C or more) or hot to touch; and Maculo-papular rash (non-vesicular) AND at least one of the following: cough, coryza (runny nose), or conjunctivitis (red eyes)',
-      },
+      classification: {},
     }
   },
   async fetch() {
-    const rows = (
-      await axios.get(
-        'http://localhost:8080/getCaseDefs?diseaseID=' + this.diseaseID
-      )
-    ).data
+    let rows = (await axios.get('http://localhost:8080/api/getCaseDefs?diseaseID=' + this.diseaseID)).data;
     for (let i = 0; i < rows.length; i++) {
-      delete rows[i].diseaseID
+      this.classification[rows[i].class] = rows[i].definition;
     }
-    this.caseDefs = rows
+    rows = (await axios.get('http://localhost:8080/api/getPatients')).data;
+    this.patients = rows;
   },
   computed: {
-    getCaseDefs() {
-      let defs = ''
-      for (let i = 0; i < this.caseDefs.length; i++) {
-        defs +=
-          '<h2><b>' +
-          this.caseDefs[i].class +
-          '</b></h2><br>- ' +
-          this.caseDefs[i].definition +
-          '<br><br>'
-      }
-      return defs
-    },
   },
   methods: {
     formpart(disease, pageNum) {
@@ -2644,14 +2609,22 @@ export default {
         return true
       } else return false
     },
-    async searchPatient(event) {
+    autoFillPatient(patient) {
+	  alert(patient.patientID);
+    },
+    searchPatient(event) {
+      this.patientResult = [];
       if (event.target.value !== "") {
-        const rows = (await axios.get('http://localhost:8080/getPatientAutofill?name=' + event.target.value)).data;
-        for (let i = 0; i < rows.length; i++) {
-          console.log(rows[i]);
-          // construct rows[i].name and rows[i].address then append();
+        let ctr = 0;
+        for (let i = 0; i < this.patients.length && ctr < 5; i++) {
+          // eslint-disable-next-line no-useless-escape
+          const reg = new RegExp("^" + event.target.value + "\w*", "i");
+          if ((this.patients[i].firstName + " " + this.patients[i].midName + " " + this.patients[i].lastName).match(reg)) {
+            this.patientResult.push(this.patients[i]);
+            ctr++;
+          }
         }
-	  }
+      }
     },
   },
 }
@@ -2796,7 +2769,7 @@ body {
 .disease-name {
   position: relative;
   top: -3px;
-  z-index: 3;
+  z-index: 2;
 }
 @media only screen and (max-width: 800px) {
   .disease-name {
@@ -2834,6 +2807,7 @@ body {
 #form-header {
   text-align: left;
   padding-left: 5px;
+  margin-bottom:5px;
   font-weight: 600;
   font-size: 20px;
   background-color: #008d41;
@@ -3082,6 +3056,7 @@ select {
   width: 10px;
   height: 10px;
   margin: 0 5px;
+  z-index: 1;
 }
 
 .tooltip {
@@ -3096,17 +3071,26 @@ select {
 .tooltipText {
   background-color: #fff;
   position: absolute;
+  margin-left: 40px;
   bottom: 130%;
   padding: 10px 15px;
   border-radius: 5px;
   font-size: 14px;
   opacity: 0;
   transition: all 0.5s;
+  z-index: -2;
 }
 
-.tooltip:hover .tooltipText {
+.shorttooltip:hover .shorttooltipText {
   opacity: 1;
   transform: translateY(-10px);
+  margin: 0;
+}
+
+#infofever:hover ~ .tooltipText {
+  opacity: 1;
+  transform: translateY(-10px);
+  z-index: 3;
 }
 
 .tooltipText::after {
@@ -3151,6 +3135,7 @@ label {
   display: inline-flex;
   flex-direction: row;
   align-items: center;
+  z-index: 1;
 }
 
 .required:after {
