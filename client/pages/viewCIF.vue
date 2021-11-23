@@ -2464,8 +2464,8 @@ export default {
       this.isPrint = !this.isPrint
 
       let pWidth = 595.28 // 595.28 is the width of a4
-      let srcWidth = 1420 // this.$refs.content.scrollWidth
-      let margin = 18 // narrow margin - 1.27 cm (36);
+      let srcWidth = 1000 // this.$refs.content.scrollWidth
+      let margin = 12 // narrow margin - 1.27 cm (36);
       let scale = (pWidth - margin * 2) / srcWidth
 
       var doc = new jsPDF('p', 'pt', 'A4')
@@ -2484,7 +2484,7 @@ export default {
 
       // doc.save('test.pdf')
       console.log(this.$refs.content)
-      setTimeout(() => this.isPrint = !this.isPrint, 5000);
+      setTimeout(() => (this.isPrint = !this.isPrint), 5000)
     },
   },
 }
