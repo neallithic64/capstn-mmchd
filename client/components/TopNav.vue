@@ -277,7 +277,7 @@ body {
 }
 
 /* The "responsive" class is added to the topnav with JavaScript when the user clicks on the icon. This class makes the topnav look good on small screens (display the links vertically instead of horizontally) */
-@media screen and (max-width: 940px) {
+@media screen and (max-width: 1111px) {
   .topnav.responsive {
     position: relative;
   }
@@ -299,6 +299,7 @@ body {
   }
   .topnav.responsive .dropdown {
     float: none;
+    clear: both;
   }
   .topnav.responsive .dropdown-content {
     position: relative;
