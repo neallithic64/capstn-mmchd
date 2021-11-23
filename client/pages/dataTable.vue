@@ -7,14 +7,14 @@
         type="text"
         style="float: right"
         placeholder="Search here"
-        v-on:keyup="search()"
+        @keyup="search()"
       />
       Show
       <select
         id="rows"
         v-model="showDataAmount"
         class="form-control"
-        v-on:change="selectedDataAmount"
+        @change="selectedDataAmount"
       >
         <option value="10">10</option>
         <option value="20">20</option>
@@ -41,7 +41,7 @@
           >
             <a
               href="javascript:"
-              v-on:click="sortedKeyValue(column.key, 'desc')"
+              @click="sortedKeyValue(column.key, 'desc')"
             >
               <img src="~/assets/img/sortup.png" alt="up.png" /> </a
           ></span>
@@ -54,14 +54,14 @@
           >
             <a
               href="javascript:"
-              v-on:click="sortedKeyValue(column.key, 'asc')"
+              @click="sortedKeyValue(column.key, 'asc')"
             >
               <img src="~/assets/img/sortdown.png" alt="down.png" /> </a
           ></span>
           <span v-else-if="column.sortable" style="float: right">
             <a
               href="javascript:"
-              v-on:click="sortedKeyValue(column.key, 'asc')"
+              @click="sortedKeyValue(column.key, 'asc')"
             >
               <img src="~/assets/img/sort.png" alt="sort.png" />
             </a>
@@ -113,7 +113,7 @@
       <a
         href="javascript:"
         :class="{ isDisabled: currentPage == 1 }"
-        v-on:click="newPage(currentPage - 1)"
+        @click="newPage(currentPage - 1)"
         >&laquo;</a
       >
       <a
@@ -127,13 +127,13 @@
             isDisabled: currentPage === pageIndex || page === '...',
           },
         ]"
-        v-on:click="newPage(pageIndex)"
+        @click="newPage(pageIndex)"
         >{{ pageIndex }}</a
       >
       <a
         :class="{ isDisabled: currentPage == totalPage }"
         href="javascript:"
-        v-on:click="newPage(currentPage + 1)"
+        @click="newPage(currentPage + 1)"
         >&raquo;</a
       >
     </div>

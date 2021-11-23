@@ -99,7 +99,6 @@ export default {
               password: this.password
             },
           })
-          // this.$auth.setUser(user);
           this.$router.push('/');
         } catch (e) {
           // eslint-disable-next-line no-console
