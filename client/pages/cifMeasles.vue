@@ -2364,7 +2364,7 @@
             v-if="pageNum == Object.keys(disease.formNames).length"
             class="next-button"
             type="button"
-            @click="submit;"
+            @click="submit()"
           >
             Submit
           </button>
@@ -2577,11 +2577,13 @@ export default {
         else if (index > this.pageNum) return 'formnum'
       }
     },
-    submit() {
-      alert('DONE')
+    async submit() {
       // eslint-disable-next-line no-console
-      console.log(this.formData)
-      window.location.href = '/allcases'
+      console.log(this.formData);
+	  const result = await axios.post('http://localhost:8080/api/newCase', {formData: this.formData});
+	  console.log(result);
+      alert('case submitted!');
+	  // window.location.href = '/allcases'
     },
     move(page) {
       if (

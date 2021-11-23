@@ -377,41 +377,51 @@ const indexFunctions = {
 	*/
 	postNewCase: async function(req, res) {
 		let { formData } = req.body;
+		let result;
 
 		try {
-			formData.patient.patientID = await generateID("mmchddb.PATIENTS");
-
-			let result = await db.insertOne("mmchddb.PATIENTS", formData.patient);
-
-			if (result) {
-				formData.cases.caseID = await generateID("mmchddb.CASES");
-				formData.cases.patientID = formData.patient.patientID;
-				result = await createCase(formData.cases);
+			let currAddrID = await generateID("mmchddb.ADDRESSES");
+			formData.patient.caddressID = currAddrID;
+			let currAddr = new Address(currAddrID, formData.patient.currHouseStreet, formData.patient.currBrgy, formData.patient.currCity);
+			result = await db.insertOne("mmchddb.ADDRESSES", currAddr);
 			
+			if (result) {
+				let permAddrID = await generateID("mmchddb.ADDRESSES");
+				formData.patient.paddressID = permAddrID;
+				let permAddr = new Address(permAddrID, formData.patient.permHouseStreet, formData.patient.permBrgy, formData.patient.permCity);
+				result = await db.insertOne("mmchddb.ADDRESSES", permAddr);
+				
 				if (result) {
-					let newCaseData = Object.entries(formData.caseData);
-
-					newCaseData.forEach(function (element) {
-						element.push(formData.cases.caseID);				
-						element.push(formData.cases.diseaseID);
-					});
+					formData.patient.patientID = await generateID("mmchddb.PATIENTS");
+					result = await db.insertOne("mmchddb.PATIENTS", formData.patient);
 					
-				 	result = await db.insertCaseData(newCaseData);
-
 					if (result) {
-						formData.riskFactors.caseID = formData.cases.caseID;
-						result = await db.insertOne("mmchddb.RISK_FACTORS", formData.riskFactors);
-
+						formData.cases.caseID = await generateID("mmchddb.CASES");
+						formData.cases.patientID = formData.patient.patientID;
+						result = await createCase(formData.cases);
+					
 						if (result) {
-							res.status(200).send("Add case success");
-						}
-						else res.status(500).send("Add risk factor failed");
-					}
-					else res.status(500).send("Add case data failed");
-				} 
-				else res.status(500).send("Add case failed");
-			}
-			else res.status(500).send("Add patient failed");
+							let newCaseData = Object.entries(formData.caseData);
+
+							newCaseData.forEach(function (element) {
+								element.push(formData.cases.caseID);				
+								element.push(formData.cases.diseaseID);
+							});
+							
+							result = await db.insertCaseData(newCaseData);
+
+							if (result) {
+								formData.riskFactors.caseID = formData.cases.caseID;
+								result = await db.insertOne("mmchddb.RISK_FACTORS", formData.riskFactors);
+
+								if (result) {
+									res.status(200).send("Add case success");
+								} else res.status(500).send("Add risk factor failed");
+							} else res.status(500).send("Add case data failed");
+						} else res.status(500).send("Add case failed");
+					} else res.status(500).send("Add patient failed");
+				} else res.status(500).send("Add perm address failed");
+			} else res.status(500).send("Add curr address failed");
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
