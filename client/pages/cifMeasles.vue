@@ -323,7 +323,7 @@
                   <label for="permBarangay"> Barangay </label>
                   <input
                     id="permBarangay"
-                    v-model="formData.patient.permBarangay"
+                    v-model="formData.patient.permBrgy"
                     class="input-form-field"
                     type="text"
                     :disabled="inputEdit()"
