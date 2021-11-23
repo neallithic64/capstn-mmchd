@@ -48,28 +48,6 @@
               <h2 id="form-header">
                 {{ Object.values(disease.formNames)[0] }}
               </h2>
-              <!-- CASE DEFINITION -->
-              <div>
-                <!-- <div
-                    v-for="(value, name, i) in classification"
-                    :key="i"
-                    class="checkbox-options"
-                  > </div>-->
-
-                <div class="collpaseWrapper">
-                  <ul v-for="(value, name, i) in classification" :key="i">
-                    <li>
-                      <input :id="name" type="checkbox"  class="collapseInput" />
-                      <label :for="name" class="collapseLabel">{{
-                        name
-                      }}</label>
-                      <ul>
-                        <li>{{ value }}</li>
-                      </ul>
-                    </li>
-                  </ul>
-                </div>
-              </div>
 
               <p style="margin-bottom: -20px">Search for Patient:</p>
 
@@ -87,11 +65,34 @@
                     @keyup="searchPatient"
                   />
                   <div v-if="patientResult.length" class="searchPatientValues">
-                    <div v-for="(patient, i) in patientResult" :key="i" class="searchResult">
+                    <div
+                      v-for="(patient, i) in patientResult"
+                      :key="i"
+                      class="searchResult"
+                    >
                       <!-- <img class="searchPersonIcon" /> -->
-                      <div class="searchResultInfo" @click="autoFillPatient(patient)">
-                        <div class="searchPerson">{{ patient.firstName + " " + patient.midName + " " + patient.lastName }}</div>
-                        <div class="searchAddress">{{ patient.houseStreet + ", " + patient.brgy + ", " + patient.city }}</div>
+                      <div
+                        class="searchResultInfo"
+                        @click="autoFillPatient(patient)"
+                      >
+                        <div class="searchPerson">
+                          {{
+                            patient.firstName +
+                            ' ' +
+                            patient.midName +
+                            ' ' +
+                            patient.lastName
+                          }}
+                        </div>
+                        <div class="searchAddress">
+                          {{
+                            patient.houseStreet +
+                            ', ' +
+                            patient.brgy +
+                            ', ' +
+                            patient.city
+                          }}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -2078,8 +2079,42 @@
                     Please select the final classification
                   </label>
                   <div>
-                    <div style="display: inline-flex; flex-direction: column">
-                      <div
+                    <!-- <div style="display: inline-flex; flex-direction: column"> -->
+                    <!-- CASE DEFINITION -->
+                    <div>
+                      <div class="collpaseWrapper">
+                        <ul
+                          v-for="(value, name, i) in classification"
+                          :key="i"
+                          style="displayLinline-flex"
+                        >
+                          <li>
+                            <input
+                              :id="name"
+                              type="checkbox"
+                              class="collapseInput"
+                            />
+                            <label :for="name" class="collapseLabel">
+                              <input
+                                :id="name"
+                                v-model="formData.caseData.finalClassification"
+                                :value="name"
+                                class="input-checkbox"
+                                name="finalClassification"
+                                type="radio"
+                                :disabled="inputEdit()"
+                              />
+                              {{ name }}</label
+                            >
+                            <ul>
+                              <li>{{ value }}</li>
+                            </ul>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+
+                    <!-- <div
                         v-for="(value, name, i) in classification"
                         :key="i"
                         class="checkbox-options"
@@ -2106,9 +2141,9 @@
                             value
                           }}</span>
                         </div>
-                      </div>
+                      </div> -->
 
-                      <!-- <div class="checkbox-options">
+                    <!-- <div class="checkbox-options">
                         <input
                           id="Epi-linked Confirmed Measles"
                           v-model="formData.caseData.finalClassification"
@@ -2182,7 +2217,7 @@
                           Discarded Non Measles/Rubella
                         </label>
                       </div> -->
-                    </div>
+                    <!-- </div> -->
                   </div>
                 </div>
               </div>
@@ -2556,15 +2591,18 @@ export default {
     }
   },
   async fetch() {
-    let rows = (await axios.get('http://localhost:8080/api/getCaseDefs?diseaseID=' + this.diseaseID)).data;
+    let rows = (
+      await axios.get(
+        'http://localhost:8080/api/getCaseDefs?diseaseID=' + this.diseaseID
+      )
+    ).data
     for (let i = 0; i < rows.length; i++) {
-      this.classification[rows[i].class] = rows[i].definition;
+      this.classification[rows[i].class] = rows[i].definition
     }
-    rows = (await axios.get('http://localhost:8080/api/getPatients')).data;
-    this.patients = rows;
+    rows = (await axios.get('http://localhost:8080/api/getPatients')).data
+    this.patients = rows
   },
-  computed: {
-  },
+  computed: {},
   methods: {
     formpart(disease, pageNum) {
       this.formPart = disease + pageNum
@@ -2610,18 +2648,26 @@ export default {
       } else return false
     },
     autoFillPatient(patient) {
-	  alert(patient.patientID);
+      alert(patient.patientID)
     },
     searchPatient(event) {
-      this.patientResult = [];
-      if (event.target.value !== "") {
-        let ctr = 0;
+      this.patientResult = []
+      if (event.target.value !== '') {
+        let ctr = 0
         for (let i = 0; i < this.patients.length && ctr < 5; i++) {
           // eslint-disable-next-line no-useless-escape
-          const reg = new RegExp("^" + event.target.value + "\w*", "i");
-          if ((this.patients[i].firstName + " " + this.patients[i].midName + " " + this.patients[i].lastName).match(reg)) {
-            this.patientResult.push(this.patients[i]);
-            ctr++;
+          const reg = new RegExp('^' + event.target.value + 'w*', 'i')
+          if (
+            (
+              this.patients[i].firstName +
+              ' ' +
+              this.patients[i].midName +
+              ' ' +
+              this.patients[i].lastName
+            ).match(reg)
+          ) {
+            this.patientResult.push(this.patients[i])
+            ctr++
           }
         }
       }
@@ -2807,7 +2853,7 @@ body {
 #form-header {
   text-align: left;
   padding-left: 5px;
-  margin-bottom:5px;
+  margin-bottom: 5px;
   font-weight: 600;
   font-size: 20px;
   background-color: #008d41;
@@ -3326,22 +3372,21 @@ ul ul li {
 
 .searchPatientValues {
   background: white;
-  margin-top: -20px;
   height: fit-content;
-  /* border-radius: 0 0 25px 25px; */
-  border-radius: 25px 25px 0 0;
+  border-radius: 0 0 25px 25px;
+  /* border-radius: 25px 25px 0 0; */
   padding: 10px;
-  padding-bottom: 15px;
+  padding-top: 10px;
   display: grid;
   width: 100%;
 
   position: absolute;
-  bottom: 30px;
+  bottom: -100px;
 }
 
 .searchResult {
   padding: 5px 10px;
-  border-bottom: 1px solid lightgray;
+  border-top: 1px solid lightgray;
   display: inline-flex;
   flex-direction: row;
 }
