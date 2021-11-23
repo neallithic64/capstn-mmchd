@@ -38,6 +38,8 @@ function getPrefix(table) {
 			return "PA-";
 		case "mmchddb.CASES":
 			return "CA-";
+		case "mmchddb.CRFS":
+			return "CR-";
 		case "mmchddb.NOTIFICATIONS":
 			return "NO-";
 		case "mmchddb.REPORTS":
