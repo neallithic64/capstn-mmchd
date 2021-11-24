@@ -35,16 +35,17 @@
 
         <!--Form itself-->
         <div class="form-component">
+          <!-- User Type (Form 1) -->
           <form v-if="pageNum == 0" id="newUserType" type="submit">
-            <!-- User Type (Form 1) -->
-            <!-- <div id="new-user-form" class="center">
+            <div id="new-user-form" class="center">
               <h2 id="form-header"> {{ Object.values(formSection.formNames)[0] }} </h2>
               <div class="userType-field field">
                 <label class="required" style="margin-bottom: 3px;"> Please select the correct user type </label>
                 <hr>
-                <div class="field-row-straight"> -->
+
+                <div class="field-row-straight">
                   <!-- CHD User Types -->
-                  <!-- <div class="usertype-column">
+                  <div class="usertype-column">
                     <h2 id="form-header" style="margin-bottom: 3px;"> MMCHD </h2>
                     <div style="display: inline-flex; align-items: center">
                       <input
@@ -166,10 +167,10 @@
                       />
                       <label for="techStaff"> IT Service Staff </label>
                     </div>
-                  </div> -->
+                  </div>
 
                   <!-- DRU User Types -->
-                  <!-- <div class="usertype-column">
+                  <div class="usertype-column">
                     <h2 id="form-header" style="margin-bottom: 3px;"> DRU/PRU </h2>
                     <div style="display: inline-flex; align-items: center">
                       <input
@@ -282,110 +283,142 @@
                   </div>
                 </div>
               </div>
-            </div> -->
+            </div>
+          </form>
 
-
-            <!-- User Details (Form 2) -->
-            <!-- <div id="new-user-form" class="center">
+          <!-- User Details (Form 2) -->  
+          <form
+            v-if="pageNum == 1 || pageNum == Object.keys(formSection.formNames).length"
+            id="newuser1"
+            type="submit"
+          >
+            <div id="new-user-form" class="center">
               <h2 id="form-header"> {{ Object.values(formSection.formNames)[1] }} </h2>
 
-              <div v-if="user.userType == 'privHosp'" class="name-field">
-                <label for="druName" class="required">
-                  Unit Name
-                </label>
-                <input
-                  id="druName"
-                  v-model="user.druName"
-                  class="input-form-field"
-                  type="text"
-                  :disabled="inputEdit()"
-                />
-              </div>
-
-              <div v-if="user.userType == 'privHosp'" class="field-row">
-                <div class="field">
-                  <label for="userSt" class="required">
-                    Current Address: Street / House No.
+              <div v-if="user.userType === 'BHS' || user.userType === 'RHU' || user.userType === 'CHO' || user.userType === 'govtHosp' || user.userType === 'privHosp' || user.userType === 'clinic' || user.userType === 'govtLab' || user.userType === 'privLab' || user.userType === 'airseaPort'">
+                <div class="name-field">
+                  <label for="druName" class="required">
+                    Unit Name
                   </label>
                   <input
-                    id="userSt"
-                    v-model="user.userSt"
+                    id="druName"
+                    v-model="user.druName"
                     class="input-form-field"
                     type="text"
                     :disabled="inputEdit()"
                   />
                 </div>
-              </div>
 
-              <div v-if="user.userType == 'privHosp'" class="field-row-straight">
-                <div class="field">
-                  <label for="userBrgy" class="required"> Barangay </label>
+                <h2 id="form-header"> Address </h2>
+                <div class="field-row" style="margin-left: 0px">
+                  <div class="field">
+                    <label for="userHouseStreet" class="required">
+                      Street / House No.
+                    </label>
+                    <input
+                      id="userHouseStreet"
+                      v-model="user.userHouseStreet"
+                      class="input-form-field"
+                      type="text"
+                      :disabled="inputEdit()"
+                    />
+                  </div>
+                </div>
+
+                <div class="field-row-straight">
+                  <div class="name-field">
+                    <label for="userCity" class="required"> City </label>
+                    <select
+                      id="userCity"
+                      v-model="user.userCity"
+                      name="userCity"
+                      :disabled="inputEdit()"
+                    >
+                      <option value="Caloocan">Caloocan</option>
+                      <option value="Las Piñas">Las Piñas</option>
+                      <option value="Makati">Makati</option>
+                      <option value="Malabon">Malabon</option>
+                      <option value="Mandaluyong">Mandaluyong</option>
+                      <option value="Manila">Manila</option>
+                      <option value="Marikina">Marikina</option>
+                      <option value="Muntinlupa">Muntinlupa</option>
+                      <option value="Navotas">Navotas</option>
+                      <option value="Parañaque">Parañaque</option>
+                      <option value="Pasay">Pasay</option>
+                      <option value="Pasig">Pasig</option>
+                      <option value="Quezon City">Quezon City</option>
+                      <option value="San Juan">San Juan</option>
+                      <option value="Taguig">Taguig</option>
+                      <option value="Valenzuela">Valenzuela</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label for="userBrgy" class="required"> Barangay </label>
+                    <input
+                      id="userBrgy"
+                      v-model="user.userBrgy"
+                      class="input-form-field"
+                      type="text"
+                      :disabled="inputEdit()"
+                    />
+                  </div>
+                </div>
+
+                <h2 id="form-header"> Unit Contact Number </h2>
+                <div class="name-field">
+                  <label for="userContactNo1"> Line 1 Contact No. (11-digit Mobile Number or 8-digit Tel Number) </label>
                   <input
-                    id="userBrgy"
-                    v-model="user.userBrgy"
+                    id="userContactNo1"
+                    v-model="user.userContactNo"
                     class="input-form-field"
-                    type="text"
+                    type="tel"
+                    minlength="8"
+                    maxlength="11"
                     :disabled="inputEdit()"
                   />
                 </div>
                 <div class="name-field">
-                  <label for="userCity" class="required"> City </label>
-                  <select
-                    id="userCity"
-                    v-model="user.userCity"
-                    name="userCity"
+                  <label for="userContactNo2"> Line 2 Contact No. (11-digit Mobile Number or 8-digit Tel Number) </label>
+                  <input
+                    id="userContactNo2"
+                    v-model="user.userContactNo"
+                    class="input-form-field"
+                    type="tel"
+                    minlength="8"
+                    maxlength="11"
                     :disabled="inputEdit()"
-                  >
-                    <option value="Caloocan">Caloocan</option>
-                    <option value="Las Piñas">Las Piñas</option>
-                    <option value="Makati">Makati</option>
-                    <option value="Malabon">Malabon</option>
-                    <option value="Mandaluyong">Mandaluyong</option>
-                    <option value="Manila">Manila</option>
-                    <option value="Marikina">Marikina</option>
-                    <option value="Muntinlupa">Muntinlupa</option>
-                    <option value="Navotas">Navotas</option>
-                    <option value="Parañaque">Parañaque</option>
-                    <option value="Pasay">Pasay</option>
-                    <option value="Pasig">Pasig</option>
-                    <option value="Quezon City">Quezon City</option>
-                    <option value="San Juan">San Juan</option>
-                    <option value="Taguig">Taguig</option>
-                    <option value="Valenzuela">Valenzuela</option>
-                  </select>
+                  />
                 </div>
+
+                <h2 id="form-header"> Contact Person </h2>
               </div>
-
-
+              
               <div class="field-row-straight">
                 <div class="name-field">
-                  <label for="userLN" class="required"> Last Name </label>
-                  <label v-if="user.userType == 'privHosp'" for="userLN" class="required"> Contact Person Last Name </label>
+                  <label for="lastName" class="required"> Last Name </label>
                   <input
-                    id="userLN"
-                    v-model="user.userLN"
+                    id="lastName"
+                    v-model="user.lastName"
                     class="input-form-field"
                     type="text"
                     :disabled="inputEdit()"
                   />
                 </div>
                 <div class="name-field">
-                  <label for="userFN" class="required"> First Name </label>
-                  <label v-if="user.userType == 'privHosp'" for="userFN" class="required"> Contact Person First Name </label>
+                  <label for="firstName" class="required"> First Name </label>
                   <input
-                    id="userFN"
-                    v-model="user.userFN"
+                    id="firstName"
+                    v-model="user.firstName"
                     class="input-form-field"
                     type="text"
                     :disabled="inputEdit()"
                   />
                 </div>
                 <div class="name-field">
-                  <label for="userMN" class="required"> Middle Name </label>
-                  <label v-if="user.userType == 'privHosp'" for="userMN" class="required"> Contact Person Middle Name </label>
+                  <label for="midName" class="required"> Middle Name </label>
                   <input
-                    id="userMN"
-                    v-model="user.userMN"
+                    id="midName"
+                    v-model="user.midName"
                     class="input-form-field"
                     type="text"
                     :disabled="inputEdit()"
@@ -394,34 +427,26 @@
               </div>
 
               <div class="name-field">
-                <label for="userContactNo" class="required"> Contact No. (11-digit Mobile Number) </label>
-                <label v-if="user.userType == 'privHosp'" for="userContactNo" class="required"> Unit Line 1 Contact No. (11-digit Mobile Number or 8-digit Tel Number) </label>
+                <label for="userContactNo1" class="required"> Contact No. (11-digit Mobile Number) </label>
                 <input
-                  id="userContactNo"
+                  id="userContactNo1"
                   v-model="user.userContactNo"
                   class="input-form-field"
                   type="tel"
-                  minlength="8"
+                  minlength="11"
                   maxlength="11"
                   :disabled="inputEdit()"
                 />
               </div>
+            </div>
+          </form>
 
-              <div v-if="user.userType == 'privHosp'" class="name-field">
-                <label for="userContactNo2"> Unit Line 2 Contact No. (11-digit Mobile Number or 8-digit Tel Number) </label>
-                <input
-                  id="userContactNo2"
-                  v-model="user.userContactNo"
-                  class="input-form-field"
-                  type="tel"
-                  minlength="8"
-                  maxlength="11"
-                  :disabled="inputEdit()"
-                />
-              </div>
-            </div> -->
-
-            <!-- Login Details (Form 3) -->
+          <!-- Login Details (Form 3) -->
+          <form
+            v-if="pageNum == 2 || pageNum == Object.keys(formSection.formNames).length"
+            id="newuser1"
+            type="submit"
+          >
             <div id="new-user-form" class="center">
               <h2 id="form-header"> {{ Object.values(formSection.formNames)[1] }} </h2>
 
@@ -474,16 +499,8 @@
                 </div>
               </div>
             </div>
-
           </form>
 
-          <!-- <form
-            v-if="pageNum == 1 || pageNum == Object.keys(formSection.formNames).length"
-            id="newuser1"
-            type="submit"
-          >
-            
-          </form> -->
         </div>
         
         <!-- Buttons -->
@@ -540,13 +557,13 @@ export default {
         userID: '',
         userType: '',
         druName: '',
-        userFN: '',
-        userLN: '',
-        userMN: '',
-        userSt: '',
+        lastName: '',
+        firstName: '',
+        midName: '',
+        userHouseStreet: '',
         userBrgy: '',
         userCity: '',
-        userContactNo: '',
+        userContactNo1: '',
         userContactNo2: '',
         userEmail: '',
         userName: '',
@@ -581,19 +598,19 @@ export default {
       window.location.href = '/allcases'
     },
     move(page) {
-      if (
-        page < Object.keys(this.formSection.formNames).length &&
-        this.pageNum < Object.keys(this.formSection.formNames).length
-      ) {
-        // const prevFormId = this.disease.name + this.pageNum
-        const prevFormNum = 'form' + this.pageNum
-        // document.getElementById(prevFormId).className = 'hide'
-        document.getElementById(prevFormNum).className = 'formnum formnumdone'
-        // const currFormId = this.disease.name + page
-        const currFormNum = 'form' + page
-        // document.getElementById(currFormId).className = 'show'
-        document.getElementById(currFormNum).className = 'formnum formnumcurr'
-      }
+      // if (
+      //   page < Object.keys(this.formSection.formNames).length &&
+      //   this.pageNum < Object.keys(this.formSection.formNames).length
+      // ) {
+      //   // const prevFormId = this.disease.name + this.pageNum
+      //   const prevFormNum = 'form' + this.pageNum
+      //   // document.getElementById(prevFormId).className = 'hide'
+      //   document.getElementById(prevFormNum).className = 'formnum formnumdone'
+      //   // const currFormId = this.disease.name + page
+      //   const currFormNum = 'form' + page
+      //   // document.getElementById(currFormId).className = 'show'
+      //   document.getElementById(currFormNum).className = 'formnum formnumcurr'
+      // }
       this.pageNum = page
     },
     inputEdit() {
