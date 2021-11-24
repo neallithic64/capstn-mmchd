@@ -3,17 +3,21 @@ const saltRounds = 10;
 
 const db = require("../models/db");
 /* Object constructors */
-function User(userID, userName, email, password, userType, addressID,
-				lastName,firstName, midName) {
+function User(userID, userName, userEmail, userPassword, userType, addressID,
+				lastName, firstName, midName, userContactNo1, userContactNo2,
+				druName) {
 	this.userID = userID;
 	this.userName = userName;
-	this.email = email;
-	this.password = password;
+	this.userEmail = userEmail;
+	this.userPassword = userPassword;
 	this.userType = userType;
 	this.addressID = addressID;
 	this.lastName = lastName;
 	this.firstName = firstName;
 	this.midName = midName;
+	this.userContactNo1 = userContactNo1;
+	this.userContactNo2 = userContactNo2;
+	this.druName = druName;
 }
 
 function Address(addressID, houseStreet, brgy, city) {
@@ -262,17 +266,17 @@ const indexFunctions = {
 	 */
 	
 	postLogin: async function(req, res) {
-		let { email, password } = req.body;
+		let { userEmail, userPassword } = req.body;
 		let match;
 		try {
 			// checking if email or username
-			if (email.indexOf("@") != -1) {
-				match = await db.findRows("mmchddb.USERS", {email: email});
+			if (userEmail.indexOf("@") != -1) {
+				match = await db.findRows("mmchddb.USERS", {userEmail: userEmail});
 			} else {
-				match = await db.findRows("mmchddb.USERS", {userName: email});
+				match = await db.findRows("mmchddb.USERS", {userName: userEmail});
 			}
 			if (match.length > 0) {
-				bcrypt.compare(password, match[0].password, function(err, result) {
+				bcrypt.compare(userPassword, match[0].userPassword, function(err, result) {
 					console.log(result);
 					if (result) {
 						req.session.user = match[0];
@@ -292,13 +296,13 @@ const indexFunctions = {
 		let { user } = req.body;
 		try {
 			user.userID = await generateID("mmchddb.USERS");
+			// TODO: address
 			user.addressID = "AD-0000000000000";
-			user.password = await bcrypt.hash(user.password,saltRounds);
+			user.userPassword = await bcrypt.hash(user.userPassword, saltRounds);
 
 			let result = await db.insertOne("mmchddb.USERS", user);
-			console.log(result);
 			if (result) res.status(200).send("Register success");
-			else res.status(500).send("Registr failed");
+			else res.status(500).send("Register failed");
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
