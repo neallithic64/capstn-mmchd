@@ -62,12 +62,18 @@
       </button>
       <div class="dropdown">
         <button id="profile-dropbtn">
-          <span v-if="$auth.loggedIn" id="user-initials"> {{$auth.user.firstName.charAt(0)}} </span>
+          <span v-if="$auth.loggedIn" id="user-initials">
+            {{ $auth.user.firstName.charAt(0) }}
+          </span>
         </button>
         <div class="dropdown-content-profile">
-          <nuxt-link v-if="$auth.loggedIn" to="/myprofile"> My Profile </nuxt-link>
+          <nuxt-link v-if="$auth.loggedIn" to="/myprofile">
+            My Profile
+          </nuxt-link>
           <nuxt-link to="/settings"> Settings </nuxt-link>
-          <nuxt-link to="/"> <span v-if="$auth.loggedIn" @click="$auth.logout()"> Logout </span> </nuxt-link>
+          <nuxt-link to="/">
+            <span v-if="$auth.loggedIn" @click="$auth.logout()"> Logout </span>
+          </nuxt-link>
         </div>
       </div>
     </div>
@@ -293,6 +299,7 @@ body {
   }
   .topnav.responsive .dropdown {
     float: none;
+    clear: both;
   }
   .topnav.responsive .dropdown-content {
     position: relative;
