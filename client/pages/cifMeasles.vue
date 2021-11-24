@@ -48,28 +48,6 @@
               <h2 id="form-header">
                 {{ Object.values(disease.formNames)[0] }}
               </h2>
-              <!-- CASE DEFINITION -->
-              <div>
-                <!-- <div
-                    v-for="(value, name, i) in classification"
-                    :key="i"
-                    class="checkbox-options"
-                  > </div>-->
-
-                <div class="collpaseWrapper">
-                  <ul v-for="(value, name, i) in classification" :key="i">
-                    <li>
-                      <input :id="name" type="checkbox"  class="collapseInput" />
-                      <label :for="name" class="collapseLabel">{{
-                        name
-                      }}</label>
-                      <ul>
-                        <li>{{ value }}</li>
-                      </ul>
-                    </li>
-                  </ul>
-                </div>
-              </div>
 
               <p style="margin-bottom: -20px">Search for Patient:</p>
 
@@ -87,11 +65,15 @@
                     @keyup="searchPatient"
                   />
                   <div v-if="patientResult.length" class="searchPatientValues">
-                    <div v-for="(patient, i) in patientResult" :key="i" class="searchResult">
+                    <div
+                      v-for="(patient, i) in patientResult"
+                      :key="i"
+                      class="searchResult"
+                    >
                       <!-- <img class="searchPersonIcon" /> -->
                       <div class="searchResultInfo" @click="autoFillPatient(patient)">
                         <div class="searchPerson">{{ patient.firstName + " " + patient.midName + " " + patient.lastName }}</div>
-                        <div class="searchAddress">{{ patient.houseStreet + ", " + patient.brgy + ", " + patient.city }}</div>
+                        <div class="searchAddress">{{ patient.currHouseStreet + ", " + patient.currBrgy + ", " + patient.currCity }}</div>
                       </div>
                     </div>
                   </div>
@@ -207,10 +189,10 @@
                     <div style="display: inline-flex; align-items: center">
                       <input
                         id="Not Pregnant"
-                        v-model="formData.caseData.pregnancy"
+                        v-model="formData.caseData.pregWeeks"
                         value="Not Pregnant"
                         class="input-radio"
-                        name="pregnancy"
+                        name="pregWeeks"
                         type="radio"
                         :disabled="inputEdit()"
                       />
@@ -222,14 +204,14 @@
                         id="Pregnant"
                         value="pregnant"
                         class="input-radio"
-                        name="pregnancy"
+                        name="pregWeeks"
                         type="radio"
                         :disabled="inputEdit()"
                       />
                       <label for="pregnancyWeeks" style="display: inline-flex">
                         <input
                           id="pregnancy"
-                          v-model="formData.patient.pregMonths"
+                          v-model="formData.patient.pregWeeks"
                           class="input-form-field"
                           type="number"
                           style="width: 50px; height: 20px; margin: 0 2px"
@@ -276,22 +258,22 @@
                     name="currCity"
                     :disabled="inputEdit()"
                   >
-                    <option value="Caloocan">Caloocan</option>
-                    <option value="Las Piñas">Las Piñas</option>
-                    <option value="Makati">Makati</option>
-                    <option value="Malabon">Malabon</option>
-                    <option value="Mandaluyong">Mandaluyong</option>
-                    <option value="Manila">Manila</option>
-                    <option value="Marikina">Marikina</option>
-                    <option value="Muntinlupa">Muntinlupa</option>
-                    <option value="Navotas">Navotas</option>
-                    <option value="Parañaque">Parañaque</option>
-                    <option value="Pasay">Pasay</option>
-                    <option value="Pasig">Pasig</option>
-                    <option value="Quezon City">Quezon City</option>
-                    <option value="San Juan">San Juan</option>
-                    <option value="Taguig">Taguig</option>
-                    <option value="Valenzuela">Valenzuela</option>
+                    <option value="Caloocan">Caloocan City</option>
+                    <option value="Las Piñas City">Las Piñas City</option>
+                    <option value="Makati City">Makati City</option>
+                    <option value="Malabon City">Malabon City</option>
+                    <option value="Mandaluyong City">Mandaluyong City</option>
+                    <option value="Manila City">Manila City</option>
+                    <option value="Marikina City">Marikina City</option>
+                    <option value="Muntinlupa City">Muntinlupa City</option>
+                    <option value="Navotas City">Navotas City</option>
+                    <option value="Parañaque City">Parañaque City</option>
+                    <option value="Pasay City">Pasay City</option>
+                    <option value="Pasig City">Pasig City</option>
+                    <option value="Quezon City City">Quezon City</option>
+                    <option value="San Juan City">San Juan City</option>
+                    <option value="Taguig City">Taguig City</option>
+                    <option value="Valenzuela City">Valenzuela City</option>
                   </select>
                   <!-- <input
                     id="currCity"
@@ -323,7 +305,7 @@
                   <label for="permBarangay"> Barangay </label>
                   <input
                     id="permBarangay"
-                    v-model="formData.patient.permBarangay"
+                    v-model="formData.patient.permBrgy"
                     class="input-form-field"
                     type="text"
                     :disabled="inputEdit()"
@@ -2078,8 +2060,42 @@
                     Please select the final classification
                   </label>
                   <div>
-                    <div style="display: inline-flex; flex-direction: column">
-                      <div
+                    <!-- <div style="display: inline-flex; flex-direction: column"> -->
+                    <!-- CASE DEFINITION -->
+                    <div>
+                      <div class="collpaseWrapper">
+                        <ul
+                          v-for="(value, name, i) in classification"
+                          :key="i"
+                          style="displayLinline-flex"
+                        >
+                          <li>
+                            <input
+                              :id="name"
+                              type="checkbox"
+                              class="collapseInput"
+                            />
+                            <label :for="name" class="collapseLabel">
+                              <input
+                                :id="name"
+                                v-model="formData.caseData.finalClassification"
+                                :value="name"
+                                class="input-checkbox"
+                                name="finalClassification"
+                                type="radio"
+                                :disabled="inputEdit()"
+                              />
+                              {{ name }}</label
+                            >
+                            <ul>
+                              <li>{{ value }}</li>
+                            </ul>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+
+                    <!-- <div
                         v-for="(value, name, i) in classification"
                         :key="i"
                         class="checkbox-options"
@@ -2106,9 +2122,9 @@
                             value
                           }}</span>
                         </div>
-                      </div>
+                      </div> -->
 
-                      <!-- <div class="checkbox-options">
+                    <!-- <div class="checkbox-options">
                         <input
                           id="Epi-linked Confirmed Measles"
                           v-model="formData.caseData.finalClassification"
@@ -2182,7 +2198,7 @@
                           Discarded Non Measles/Rubella
                         </label>
                       </div> -->
-                    </div>
+                    <!-- </div> -->
                   </div>
                 </div>
               </div>
@@ -2364,7 +2380,7 @@
             v-if="pageNum == Object.keys(disease.formNames).length"
             class="next-button"
             type="button"
-            @click="submit;"
+            @click="submit()"
           >
             Submit
           </button>
@@ -2556,15 +2572,18 @@ export default {
     }
   },
   async fetch() {
-    let rows = (await axios.get('http://localhost:8080/api/getCaseDefs?diseaseID=' + this.diseaseID)).data;
+    let rows = (
+      await axios.get(
+        'http://localhost:8080/api/getCaseDefs?diseaseID=' + this.diseaseID
+      )
+    ).data
     for (let i = 0; i < rows.length; i++) {
-      this.classification[rows[i].class] = rows[i].definition;
+      this.classification[rows[i].class] = rows[i].definition
     }
-    rows = (await axios.get('http://localhost:8080/api/getPatients')).data;
-    this.patients = rows;
+    rows = (await axios.get('http://localhost:8080/api/getPatients')).data
+    this.patients = rows
   },
-  computed: {
-  },
+  computed: {},
   methods: {
     formpart(disease, pageNum) {
       this.formPart = disease + pageNum
@@ -2577,11 +2596,13 @@ export default {
         else if (index > this.pageNum) return 'formnum'
       }
     },
-    submit() {
-      alert('DONE')
+    async submit() {
       // eslint-disable-next-line no-console
-      console.log(this.formData)
-      window.location.href = '/allcases'
+      console.log(this.formData);
+      const result = await axios.post('http://localhost:8080/api/newCase', {formData: this.formData});
+      console.log(result);
+      alert('case submitted!');
+      // window.location.href = '/allcases'
     },
     move(page) {
       if (
@@ -2610,18 +2631,42 @@ export default {
       } else return false
     },
     autoFillPatient(patient) {
-	  alert(patient.patientID);
+	  console.log(patient);
+      this.formData.patient.lastName = patient.lastName;
+	  this.formData.patient.firstName = patient.firstName;
+	  this.formData.patient.midName = patient.midName;
+	  this.formData.patient.birthDate = patient.birthDate;
+	  this.formData.patient.ageNo = patient.ageNo;
+	  this.formData.patient.sex = patient.sex;
+	  this.formData.patient.pregWeeks = 
+	  this.formData.patient.currHouseStreet = patient.currHouseStreet;
+	  this.formData.patient.currBrgy = patient.currBrgy;
+	  this.formData.patient.currCity = patient.currCity;
+	  this.formData.patient.permHouseStreet = patient.permHouseStreet;
+	  this.formData.patient.permBrgy = patient.permBrgy;
+	  this.formData.patient.permCity = patient.permCity;
+	  this.formData.patient.guardianName = patient.guardianName;
+	  this.formData.patient.guardianContact = patient.guardianContact;
+	  this.pageNum++;
     },
     searchPatient(event) {
-      this.patientResult = [];
-      if (event.target.value !== "") {
-        let ctr = 0;
+      this.patientResult = []
+      if (event.target.value !== '') {
+        let ctr = 0
         for (let i = 0; i < this.patients.length && ctr < 5; i++) {
           // eslint-disable-next-line no-useless-escape
-          const reg = new RegExp("^" + event.target.value + "\w*", "i");
-          if ((this.patients[i].firstName + " " + this.patients[i].midName + " " + this.patients[i].lastName).match(reg)) {
-            this.patientResult.push(this.patients[i]);
-            ctr++;
+          const reg = new RegExp('^' + event.target.value + 'w*', 'i')
+          if (
+            (
+              this.patients[i].firstName +
+              ' ' +
+              this.patients[i].midName +
+              ' ' +
+              this.patients[i].lastName
+            ).match(reg)
+          ) {
+            this.patientResult.push(this.patients[i])
+            ctr++
           }
         }
       }
@@ -2807,7 +2852,7 @@ body {
 #form-header {
   text-align: left;
   padding-left: 5px;
-  margin-bottom:5px;
+  margin-bottom: 5px;
   font-weight: 600;
   font-size: 20px;
   background-color: #008d41;
@@ -3326,22 +3371,21 @@ ul ul li {
 
 .searchPatientValues {
   background: white;
-  margin-top: -20px;
   height: fit-content;
-  /* border-radius: 0 0 25px 25px; */
-  border-radius: 25px 25px 0 0;
+  border-radius: 0 0 25px 25px;
+  /* border-radius: 25px 25px 0 0; */
   padding: 10px;
-  padding-bottom: 15px;
+  padding-top: 10px;
   display: grid;
   width: 100%;
 
   position: absolute;
-  bottom: 30px;
+  bottom: -100px;
 }
 
 .searchResult {
   padding: 5px 10px;
-  border-bottom: 1px solid lightgray;
+  border-top: 1px solid lightgray;
   display: inline-flex;
   flex-direction: row;
 }

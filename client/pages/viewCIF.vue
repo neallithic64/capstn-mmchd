@@ -5,8 +5,8 @@
     <div ref="content" class="viewCIF-container">
       <div class="viewCIF-details" style="align-text: left">
         <div class="CIFnumbers">
-          <h1 style="margin-bottom: -10px">Case No. 123</h1>
-          <h2 style="margin-top: -5px">Patient No. 123</h2>
+          <h1 style="margin: -10px 0">Case No. 123</h1>
+          <h2 style="margin-top: -1px">Patient No. 123</h2>
         </div>
         <div class="CIFstatus" style="align-text: right">
           <span style="display: inline-flex; align-items: center"
@@ -49,14 +49,28 @@
             </div>
           </span>
           <div v-show="!editCase && !isPrint" class="CIFActionButtons">
-            <ul class="CIFActionButton" @click="downloadPDF">
-              <img src="~/assets/img/print.png" />
-            </ul>
+            <!-- <ul class="CIFActionButton" @click="downloadPDF"> -->
+            <img
+              src="~/assets/img/print.png"
+              class="printButton"
+              @click="downloadPDF"
+            />
+            <!-- </ul> -->
             <!-- <ul class="CIFActionButton">
               <img src="~/assets/img/csv.png" />
             </ul> -->
           </div>
         </div>
+      </div>
+      <div class="CIFreports">
+        <!-- <div class="CIFreports"> -->
+        <p>Reported by: <b>REPORTER</b></p>
+        <p>Type: <b>Private Laboratory</b></p>
+        <!-- </div>
+        <div class="CIFreports"> -->
+        <p>Case Level: <b>1</b></p>
+        <p>Reported Date: <b>TODAY</b></p>
+        <!-- </div> -->
       </div>
       <div v-show="!isPrint" class="CIF-SummaryContainer">
         <ul
@@ -2005,7 +2019,7 @@
                       <label :for="i">
                         {{ name }}
                       </label>
-                      <div class="tooltip">
+                      <!-- <div class="tooltip">
                         <img
                           id="infofever"
                           class="info-icon-img"
@@ -2014,7 +2028,7 @@
                         <span class="tooltipText" style="width: 500px">{{
                           value
                         }}</span>
-                      </div>
+                      </div> -->
                     </div>
 
                     <!-- <div class="checkbox-options">
@@ -2464,8 +2478,8 @@ export default {
       this.isPrint = !this.isPrint
 
       let pWidth = 595.28 // 595.28 is the width of a4
-      let srcWidth = 1420 // this.$refs.content.scrollWidth
-      let margin = 18 // narrow margin - 1.27 cm (36);
+      let srcWidth = 1000 // this.$refs.content.scrollWidth
+      let margin = 12 // narrow margin - 1.27 cm (36);
       let scale = (pWidth - margin * 2) / srcWidth
 
       var doc = new jsPDF('p', 'pt', 'A4')
@@ -2484,7 +2498,7 @@ export default {
 
       // doc.save('test.pdf')
       console.log(this.$refs.content)
-      setTimeout(() => this.isPrint = !this.isPrint, 5000);
+      setTimeout(() => (this.isPrint = !this.isPrint), 5000)
     },
   },
 }
@@ -2605,9 +2619,17 @@ h2 {
   font-weight: 600;
 }
 
-.CIFstatus {
-  display: inline-flex;
-  flex-direction: column;
+b {
+  color: #346083;
+  font-size: 18px;
+  font-weight: 400;
+}
+
+.CIFreports {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 7.5px;
 }
 
 .CIFActionButtons {
@@ -2626,6 +2648,11 @@ h2 {
 
 .CIFActionButton:hover {
   background: #a3a3a3;
+}
+
+.printButton {
+  width: 30px;
+  height: 30px;
 }
 
 .CIFEdit {

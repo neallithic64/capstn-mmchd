@@ -3,17 +3,21 @@ const saltRounds = 10;
 
 const db = require("../models/db");
 /* Object constructors */
-function User(userID, userName, email, password, userType, addressID,
-				lastName,firstName, midName) {
+function User(userID, userName, userEmail, userPassword, userType, addressID,
+				lastName, firstName, midName, userContactNo1, userContactNo2,
+				druName) {
 	this.userID = userID;
 	this.userName = userName;
-	this.email = email;
-	this.password = password;
+	this.userEmail = userEmail;
+	this.userPassword = userPassword;
 	this.userType = userType;
 	this.addressID = addressID;
 	this.lastName = lastName;
 	this.firstName = firstName;
 	this.midName = midName;
+	this.userContactNo1 = userContactNo1;
+	this.userContactNo2 = userContactNo2;
+	this.druName = druName;
 }
 
 function Address(addressID, houseStreet, brgy, city) {
@@ -38,6 +42,8 @@ function getPrefix(table) {
 			return "PA-";
 		case "mmchddb.CASES":
 			return "CA-";
+		case "mmchddb.CRFS":
+			return "CR-";
 		case "mmchddb.NOTIFICATIONS":
 			return "NO-";
 		case "mmchddb.REPORTS":
@@ -136,14 +142,14 @@ function Event(eventID, userID, addressID, remarks, caseStatus, dateSubmitted) {
 
 
 async function generateID(table) {
+	// TODO: add exist-check for "mmchddb.ADDRESSES"
 	try {
 		let rowcount = await db.findRowCount(table);
-		// console.log(rowcount);
 		let id = getPrefix(table);
 		for (let i = 0; i < 13 - rowcount.toString.length; i++)
 			id += '0';
 		id += rowcount.toString();
-		return id;	
+		return id;
 	} catch (e) {
 		console.log(e);
 		return false;
@@ -209,8 +215,12 @@ const indexFunctions = {
 	
 	getPatients: async function(req, res) {
 		try {
-			let match = await db.exec("SELECT * FROM mmchddb.PATIENTS p INNER JOIN mmchddb.ADDRESSES a ON p.caddressID = a.addressID;");
-			// console.log(match);
+			let match = await db.exec("SELECT p.*, "
+					+ "a1.houseStreet AS currHouseStreet, a1.brgy AS currBrgy, a1.city AS "
+					+ "currCity, a2.houseStreet AS permHouseStreet, a2.brgy AS permBrgy, "
+					+ "a2.city AS permCity FROM mmchddb.PATIENTS p INNER JOIN "
+					+ "mmchddb.ADDRESSES a1 ON p.caddressID = a1.addressID "
+					+ "INNER JOIN mmchddb.ADDRESSES a2 ON p.paddressID = a2.addressID;");
 			res.status(200).send(match);
 		} catch (e) {
 			console.log(e);
@@ -231,7 +241,7 @@ const indexFunctions = {
 	getCaseDefinitions: async function(req, res) {
 		try {
 			let rows = await db.findRows("mmchddb.CASE_DEFINITIONS", {diseaseID: req.query.diseaseID});
-			console.log(rows);
+			// console.log(rows);
 			res.status(200).send(rows);
 		} catch (e) {
 			console.log(e);
@@ -252,21 +262,21 @@ const indexFunctions = {
 	}, 
 	
 	/*
-	 * POST METHODS 
+	 * POST METHODS
 	 */
 	
 	postLogin: async function(req, res) {
-		let { email, password } = req.body;
+		let { userEmail, userPassword } = req.body;
 		let match;
 		try {
 			// checking if email or username
-			if (email.indexOf("@") != -1) {
-				match = await db.findRows("mmchddb.USERS", {email: email});
+			if (userEmail.indexOf("@") != -1) {
+				match = await db.findRows("mmchddb.USERS", {userEmail: userEmail});
 			} else {
-				match = await db.findRows("mmchddb.USERS", {userName: email});
+				match = await db.findRows("mmchddb.USERS", {userName: userEmail});
 			}
 			if (match.length > 0) {
-				bcrypt.compare(password, match[0].password, function(err, result) {
+				bcrypt.compare(userPassword, match[0].userPassword, function(err, result) {
 					console.log(result);
 					if (result) {
 						req.session.user = match[0];
@@ -286,13 +296,13 @@ const indexFunctions = {
 		let { user } = req.body;
 		try {
 			user.userID = await generateID("mmchddb.USERS");
+			// TODO: address
 			user.addressID = "AD-0000000000000";
-			user.password = await bcrypt.hash(user.password,saltRounds);
+			user.userPassword = await bcrypt.hash(user.userPassword, saltRounds);
 
 			let result = await db.insertOne("mmchddb.USERS", user);
-			console.log(result);
 			if (result) res.status(200).send("Register success");
-			else res.status(500).send("Registr failed");
+			else res.status(500).send("Register failed");
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
@@ -377,41 +387,59 @@ const indexFunctions = {
 	*/
 	postNewCase: async function(req, res) {
 		let { formData } = req.body;
+		let result;
 
 		try {
-			formData.patient.patientID = await generateID("mmchddb.PATIENTS");
-
-			let result = await db.insertOne("mmchddb.PATIENTS", formData.patient);
-
-			if (result) {
-				formData.cases.caseID = await generateID("mmchddb.CASES");
-				formData.cases.patientID = formData.patient.patientID;
-				result = await createCase(formData.cases);
+			let currAddrID = await generateID("mmchddb.ADDRESSES");
+			formData.patient.caddressID = currAddrID;
+			let currAddr = new Address(currAddrID, formData.patient.currHouseStreet, formData.patient.currBrgy, formData.patient.currCity);
+			result = await db.insertOne("mmchddb.ADDRESSES", currAddr);
 			
+			if (result) {
+				let permAddrID = await generateID("mmchddb.ADDRESSES");
+				formData.patient.paddressID = permAddrID;
+				let permAddr = new Address(permAddrID, formData.patient.permHouseStreet, formData.patient.permBrgy, formData.patient.permCity);
+				result = await db.insertOne("mmchddb.ADDRESSES", permAddr);
+				
 				if (result) {
-					let newCaseData = Object.entries(formData.caseData);
-
-					newCaseData.forEach(function (element) {
-						element.push(formData.cases.caseID);				
-						element.push(formData.cases.diseaseID);
-					});
+					delete formData.patient.currHouseStreet;
+					delete formData.patient.currBrgy;
+					delete formData.patient.currCity;
+					delete formData.patient.permHouseStreet;
+					delete formData.patient.permBrgy;
+					delete formData.patient.permCity;
+					// temp fix
+					formData.patient.occuAddrID = null;
 					
-				 	result = await db.insertCaseData(newCaseData);
-
+					formData.patient.patientID = await generateID("mmchddb.PATIENTS");
+					result = await db.insertOne("mmchddb.PATIENTS", formData.patient);
+					
 					if (result) {
-						formData.riskFactors.caseID = formData.cases.caseID;
-						result = await db.insertOne("mmchddb.RISK_FACTORS", formData.riskFactors);
-
+						formData.cases.caseID = await generateID("mmchddb.CASES");
+						formData.cases.patientID = formData.patient.patientID;
+						result = await createCase(formData.cases);
+						
 						if (result) {
-							res.status(200).send("Add case success");
-						}
-						else res.status(500).send("Add risk factor failed");
-					}
-					else res.status(500).send("Add case data failed");
-				} 
-				else res.status(500).send("Add case failed");
-			}
-			else res.status(500).send("Add patient failed");
+							let newCaseData = Object.entries(formData.caseData);
+							
+							newCaseData.forEach(function (element) {
+								element.push(formData.cases.caseID);				
+								element.push(formData.cases.diseaseID);
+							});
+							result = await db.insertCaseData(newCaseData);
+							
+							if (result) {
+								formData.riskFactors.caseID = formData.cases.caseID;
+								result = await db.insertOne("mmchddb.RISK_FACTORS", formData.riskFactors);
+								
+								if (result) {
+									res.status(200).send("Add case success");
+								} else res.status(500).send("Add risk factor failed");
+							} else res.status(500).send("Add case data failed");
+						} else res.status(500).send("Add case failed");
+					} else res.status(500).send("Add patient failed");
+				} else res.status(500).send("Add perm address failed");
+			} else res.status(500).send("Add curr address failed");
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
@@ -435,8 +463,8 @@ const indexFunctions = {
 			});
 			let i = 0;
 			let query = {
-				diseaseID : diseaseID,
-				class : null
+				diseaseID: diseaseID,
+				class: null
 			};
 
 			while(result && caseDef.length < i) {

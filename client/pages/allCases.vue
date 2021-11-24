@@ -3,9 +3,37 @@
     <!--Top Bar of the screen-->
     <TopNav />
     <div class="viewcases-container">
+      <div class="CIF-SummaryContainer">
+        <ul :class="formListClass('all')" @click="clickTab('all')">
+          ALL
+        </ul>
+        <ul :class="formListClass('cif')" @click="clickTab('cif')">
+          CIF
+        </ul>
+        <ul :class="formListClass('crf')" @click="clickTab('crf')">
+          CRF
+        </ul>
+      </div>
       <div class="viewcases-component">
         <div id="vue-root">
-          <dataTable :options="tableOptions" :datavalues="rowData" />
+          <dataTable
+            v-show="caseTab === 'all'"
+            :options="tableOptions"
+            :datavalues="allData"
+            :casetype="caseTab"
+          />
+          <dataTable
+            v-show="caseTab === 'cif'"
+            :options="tableOptions"
+            :datavalues="cifData"
+            :casetype="caseTab"
+          />
+          <dataTable
+            v-show="caseTab === 'crf'"
+            :options="tableOptions"
+            :datavalues="crfData"
+            :casetype="caseTab"
+          />
         </div>
       </div>
     </div>
@@ -24,105 +52,251 @@ export default {
   compute: {},
   data() {
     return {
+      caseTab: 'all',
       tableOptions: {
         tableName: 'cases',
-        columns: [
-          {
-            title: 'Case ID',
-            key: 'caseID',
-            type: 'clickable',
-            source: 'cases',
-            uniqueField: 'id',
-            sortable: true,
-          },
-          {
-            title: 'Disease',
-            key: 'disease',
-            type: 'text',
-            source: 'cases',
-            uniqueField: 'id',
-            sortable: true,
-          },
-          {
-            title: 'City',
-            key: 'city',
-            type: 'text',
-            source: 'cases',
-            uniqueField: 'id',
-            sortable: true,
-          },
-          {
-            title: 'Patient',
-            key: 'patientNo',
-            type: 'number',
-            source: 'cases',
-          },
-          {
-            title: 'Submitted on',
-            key: 'submittedDate',
-            type: 'text',
-            dateFormat: true,
-            currentFormat: 'YYYY-MM-DD',
-            expectFormat: 'DD MMM YYYY',
-            // sortable: true,
-          },
-          {
-            title: 'Last updated',
-            key: 'updatedDate',
-            type: 'text',
-            dateFormat: true,
-            currentFormat: 'YYYY-MM-DD',
-            expectFormat: 'DD MMM YYYY',
-            sortable: true,
-          },
-          {
-            title: 'Case Status',
-            key: 'status',
-            type: 'text',
-            source: 'cases',
-            uniqueField: 'id',
-            sortable: true,
-          },
-        ],
+        columns: [],
         // source: 'http://demo.datatable/api/users',
         search: true,
       },
-      rowData: [
+      allColumns: [
         {
+          title: 'Type',
+          key: 'type',
+          source: 'cases',
+          uniqueField: 'id',
+        },
+        {
+          title: 'Case ID',
+          key: 'caseID',
+          type: 'clickable',
+          source: 'cases',
+          uniqueField: 'id',
+          sortable: true,
+        },
+        {
+          title: 'Disease',
+          key: 'disease',
+          type: 'text',
+          source: 'cases',
+          uniqueField: 'id',
+          sortable: true,
+          filter: true,
+        },
+        {
+          title: 'DRU ID',
+          key: 'druID',
+          type: 'text',
+          source: 'cases',
+          uniqueField: 'id',
+        },
+        {
+          title: 'Patient',
+          key: 'patientNo',
+          type: 'number',
+          source: 'cases',
+        },
+        {
+          title: 'City',
+          key: 'city',
+          type: 'text',
+          source: 'cases',
+          uniqueField: 'id',
+          sortable: true,
+          filter: true,
+        },
+        {
+          title: 'Submitted on',
+          key: 'submittedDate',
+          type: 'text',
+          dateFormat: true,
+          currentFormat: 'YYYY-MM-DD',
+          expectFormat: 'DD MMM YYYY',
+          // sortable: true,
+        },
+        {
+          title: 'Last updated',
+          key: 'updatedDate',
+          type: 'text',
+          dateFormat: true,
+          currentFormat: 'YYYY-MM-DD',
+          expectFormat: 'DD MMM YYYY',
+          sortable: true,
+        },
+        {
+          title: 'Case Status',
+          key: 'status',
+          type: 'text',
+          source: 'cases',
+          uniqueField: 'id',
+          sortable: true,
+          filter: true,
+        },
+      ],
+      cifColumns: [
+        {
+          title: 'Case ID',
+          key: 'caseID',
+          type: 'clickable',
+          source: 'cases',
+          uniqueField: 'id',
+          sortable: true,
+        },
+        {
+          title: 'Disease',
+          key: 'disease',
+          type: 'text',
+          source: 'cases',
+          uniqueField: 'id',
+          sortable: true,
+          filter: true,
+        },
+        {
+          title: 'DRU ID',
+          key: 'druID',
+          type: 'text',
+          source: 'cases',
+          uniqueField: 'id',
+        },
+        {
+          title: 'Patient',
+          key: 'patientNo',
+          type: 'number',
+          source: 'cases',
+        },
+        {
+          title: 'City',
+          key: 'city',
+          type: 'text',
+          source: 'cases',
+          uniqueField: 'id',
+          sortable: true,
+          filter: true,
+        },
+        {
+          title: 'Submitted on',
+          key: 'submittedDate',
+          type: 'text',
+          dateFormat: true,
+          currentFormat: 'YYYY-MM-DD',
+          expectFormat: 'DD MMM YYYY',
+          // sortable: true,
+        },
+        {
+          title: 'Last updated',
+          key: 'updatedDate',
+          type: 'text',
+          dateFormat: true,
+          currentFormat: 'YYYY-MM-DD',
+          expectFormat: 'DD MMM YYYY',
+          sortable: true,
+        },
+        {
+          title: 'Case Status',
+          key: 'status',
+          type: 'text',
+          source: 'cases',
+          uniqueField: 'id',
+          sortable: true,
+          filter: true,
+        },
+      ],
+      crfColumns: [
+        {
+          title: 'CRF ID',
+          key: 'crfID',
+          type: 'clickable',
+          source: 'cases',
+          uniqueField: 'id',
+          sortable: true,
+        },
+        {
+          title: 'Disease',
+          key: 'disease',
+          type: 'text',
+          source: 'cases',
+          uniqueField: 'id',
+          sortable: true,
+          filter: true,
+        },
+        {
+          title: 'DRU ID',
+          key: 'druID',
+          type: 'text',
+          source: 'cases',
+          uniqueField: 'id',
+        },
+        {
+          title: 'City',
+          key: 'city',
+          type: 'text',
+          source: 'cases',
+          uniqueField: 'id',
+          sortable: true,
+          filter: true,
+        },
+        {
+          title: 'Submitted on',
+          key: 'submittedDate',
+          type: 'text',
+          dateFormat: true,
+          currentFormat: 'YYYY-MM-DD',
+          expectFormat: 'DD MMM YYYY',
+          // sortable: true,
+        },
+        {
+          title: 'Last updated',
+          key: 'updatedDate',
+          type: 'text',
+          dateFormat: true,
+          currentFormat: 'YYYY-MM-DD',
+          expectFormat: 'DD MMM YYYY',
+          sortable: true,
+        },
+      ],
+      allData: [
+        {
+          type: 'CIF',
           caseID: 19,
           disease: 'Measles',
+          druID: 123,
           city: 'Manila',
           patientNo: 123,
           submittedDate: '2020-12-10',
           updatedDate: '2020-1-10',
-          status: 'IDK',
+          status: 'Condtional Probable',
         },
         {
+          type: 'CIF',
           caseID: 10,
-          disease: 'Dengue',
+          disease: 'Disease',
+          druID: 123,
           city: 'PH',
           patientNo: 223,
           submittedDate: '2020-11-30',
           updatedDate: '2020-1-12',
-          status: 'IDK',
+          status: 'Conditional Confirm',
         },
         {
-          caseID: 20,
+          type: 'CRF',
+          caseID: 19,
           disease: 'Measles',
+          druID: 345,
           city: 'Manila',
           patientNo: 123,
           submittedDate: '2020-12-10',
           updatedDate: '2020-2-12',
-          status: 'IDK',
+          status: 'Suspected',
         },
         {
+          type: 'CRF',
           caseID: 21,
           disease: 'Dengue',
           city: 'PH',
           patientNo: 223,
           submittedDate: '2021-11-10',
           updatedDate: '2021-12-10',
-          status: 'IDK',
+          status: 'Probable',
         },
         {
           caseID: 29,
@@ -131,7 +305,7 @@ export default {
           patientNo: 223,
           submittedDate: '2020-11-10',
           updatedDate: '2020-11-10',
-          status: 'IDK',
+          status: 'Suspected',
         },
         {
           caseID: 30,
@@ -188,6 +362,27 @@ export default {
           status: 'e',
         },
       ],
+      cifData: [
+        {
+          caseID: 19,
+          disease: 'Measles',
+          druID: 123,
+          city: 'Manila',
+          patientNo: 123,
+          submittedDate: '2020-12-10',
+          updatedDate: '2020-1-10',
+          status: 'IDK',
+        },
+      ],
+      crfData: [
+        {
+          crfID: 35,
+          disease: 'hatdog',
+          city: 'PH',
+          submittedDate: '2020-11-10',
+          updatedDate: '2020-11-10',
+        },
+      ],
       diseases: {
         cif: {
           Measles: '/cifMeasles',
@@ -202,7 +397,24 @@ export default {
       },
     }
   },
-  methods: {},
+
+  mounted() {
+    this.tableOptions.columns = this.allColumns
+  },
+  methods: {
+    clickTab(caseTab) {
+      this.caseTab = caseTab
+      if (this.caseTab === 'all') this.tableOptions.columns = this.allColumns
+      else if (this.caseTab === 'cif')
+        this.tableOptions.columns = this.cifColumns
+      else if (this.caseTab === 'crf')
+        this.tableOptions.columns = this.crfColumns
+    },
+    formListClass(caseTab) {
+      if (caseTab === this.caseTab) return 'formSummaryItems selected'
+      else return 'formSummaryItems'
+    },
+  },
 }
 </script>
 
@@ -257,9 +469,10 @@ h3 {
 
   filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.25));
   background-color: #f2f2f2;
-  border-radius: 15px;
+  border-radius: 10px;
   padding: 15px;
   padding-bottom: 75px;
+  margin-bottom: 40px;
 }
 @media only screen and (max-width: 800px) {
   .viewcases-component {
@@ -267,6 +480,34 @@ h3 {
     top: 0px;
     min-height: fit-content;
   }
+}
+
+.CIF-SummaryContainer {
+  display: flex;
+  flex-direction: row;
+  overflow-x: auto;
+  overflow-y: hidden;
+  z-index: 1;
+  margin-left: 5px;
+}
+
+.formSummaryItems {
+  background: white;
+  border: 1px #f2f2f2 solid;
+  border-radius: 10px 10px 0 0;
+  margin: 0 -1px -1px 0;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.formSummaryItems:hover {
+  background: #f2f2f2;
+}
+
+.formSummaryItems.selected {
+  background: #f2f2f2;
+  font-weight: 600;
+  pointer-events: none;
 }
 
 #datatabale {

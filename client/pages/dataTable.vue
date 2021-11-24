@@ -23,6 +23,14 @@
         <option value="500">500</option>
       </select>
       rows
+      <input
+        id="search"
+        v-model="requestParams.search"
+        type="text"
+        style="float: right"
+        placeholder="Search here"
+        @keyup="search()"
+      />
     </div>
     <table id="datatable">
       <thead>
@@ -31,6 +39,101 @@
           :key="columnIndex"
           :style="{ 'text-align': column.textAlign }"
         >
+          <span v-if="column.filter" style="float: left">
+            <div v-if="column.key === 'disease'">
+              <a class="filterButton">
+                <img
+                  src="~/assets/img/filter.png"
+                  alt="filter.png"
+                  style="width: 16px; height: 16px"
+                  @click="diseaseOpen = !diseaseOpen"
+                />
+              </a>
+              <div v-if="diseaseOpen" style="position: absolute">
+                <div class="arrow-up"></div>
+                <div class="filterDropdown">
+                  <b>Select Disease:</b>
+                  <div
+                    v-for="(value, i) in diseaseFilters.options"
+                    :key="i"
+                    style="padding-left: 7px"
+                  >
+                    <input
+                      :id="value"
+                      v-model="diseaseFilters.selected"
+                      :value="value"
+                      name="filter"
+                      type="checkbox"
+                      @change="filter()"
+                    />
+                    <label :for="value">{{ value }}</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div v-if="column.key === 'city'">
+              <a class="filterButton">
+                <img
+                  src="~/assets/img/filter.png"
+                  alt="filter.png"
+                  style="width: 16px; height: 16px"
+                  @click="cityOpen = !cityOpen"
+                />
+              </a>
+              <div v-if="cityOpen" style="position: absolute">
+                <div class="arrow-up"></div>
+                <div class="filterDropdown">
+                  <b>Select City:</b>
+                  <div
+                    v-for="(value, i) in cityFilters.options"
+                    :key="i"
+                    style="padding-left: 7px"
+                  >
+                    <input
+                      :id="value"
+                      v-model="cityFilters.selected"
+                      :value="value"
+                      name="filter"
+                      type="checkbox"
+                      @change="filter()"
+                    />
+                    <label :for="value">{{ value }}</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div v-if="column.key === 'status'">
+              <a class="filterButton">
+                <img
+                  src="~/assets/img/filter.png"
+                  alt="filter.png"
+                  style="width: 16px; height: 16px"
+                  @click="statusOpen = !statusOpen"
+                />
+              </a>
+              <div v-if="statusOpen" style="position: absolute">
+                <div class="arrow-up"></div>
+                <div class="filterDropdown">
+                  <b>Select Status:</b>
+                  <div
+                    v-for="(value, i) in statusFilters.options"
+                    :key="i"
+                    style="padding-left: 7px"
+                  >
+                    <input
+                      :id="value"
+                      v-model="statusFilters.selected"
+                      :value="value"
+                      name="filter"
+                      type="checkbox"
+                      @change="filter()"
+                    />
+                    <label :for="value">{{ value }}</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </span>
           <span>{{ column.title }}</span>
           <span
             v-if="
@@ -86,7 +189,7 @@
               <span v-else-if="column.type === 'clickable'">
                 <a
                   style="color: #346083; text-decoration-line: underline"
-                  href="/viewCIF"
+                  :href="'/view' + data['type']"
                   >{{ data[column.key] }}</a
                 >
                 <!-- 
@@ -145,9 +248,25 @@ const axios = require('axios')
 // import moment from 'moment'
 
 export default {
-  props: ['options', 'datavalues'],
+  props: ['options', 'datavalues', 'casetype'],
   data() {
     return {
+      filters: [],
+      diseaseOpen: false,
+      cityOpen: false,
+      statusOpen: false,
+      diseaseFilters: {
+        options: ['Measles', 'Dengue', 'Hakdogness'],
+        selected: [],
+      },
+      cityFilters: {
+        options: ['Manila', 'Makati', 'Everywhere'],
+        selected: [],
+      },
+      statusFilters: {
+        options: ['Suspected', 'Probable', 'Confirmed'],
+        selected: [],
+      },
       dataSets: [],
       requestParams: {
         take: 10,
@@ -168,7 +287,9 @@ export default {
   watch: {},
   mounted() {
     // this.requestParams.sortedKey = this.options.columns[0].key
+    this.filterOff()
     this.dataSets = this.datavalues
+    console.log(this.filters)
     this.sortedKeyValue(
       this.requestParams.sortedKey,
       this.requestParams.sortedType
@@ -236,7 +357,150 @@ export default {
     },
     search() {
       this.currentPage = 1
-      this.readData()
+      // this.readData()
+      this.dataSets = []
+      // IF NO FILTERS
+      if (
+        this.diseaseFilters.selected.length === 0 &&
+        this.cityFilters.selected.length === 0 &&
+        this.statusFilters.selected.length === 0
+      )
+        for (let i = 0; i < Object.keys(this.datavalues).length; i++)
+          for (let j = 0; j < this.options.columns.length; j++) {
+            const key = this.options.columns[j].key
+            let value = this.datavalues[i][key]
+            if (typeof value !== 'undefined') {
+              value = value.toString()
+              if (value.includes(this.requestParams.search)) {
+                this.dataSets.push(this.datavalues[i])
+                break
+              }
+            }
+          }
+      // IF HAVE FILTERS
+      else this.filterSearch()
+      this.totalCount = Object.keys(this.dataSets).length
+    },
+    searchFilter() {
+      this.dataSets = []
+      // search
+      for (let i = 0; i < Object.keys(this.datavalues).length; i++)
+        for (let j = 0; j < this.options.columns.length; j++) {
+          const key = this.options.columns[j].key
+          let value = this.datavalues[i][key]
+          if (typeof value !== 'undefined') {
+            value = value.toString()
+            if (value.includes(this.requestParams.search)) {
+              this.dataSets.push(this.datavalues[i])
+              break
+            }
+          }
+        }
+      const filtered = this.dataSets
+      this.dataSets = []
+      // filter
+      for (let i = 0; i < Object.keys(filtered).length; i++)
+        if (
+          (this.diseaseFilters.selected !== null &&
+            this.diseaseFilters.selected.includes(
+              this.datavalues[i].disease
+            )) ||
+          (this.cityFilters.selected !== null &&
+            this.cityFilters.selected.includes(this.datavalues[i].city)) ||
+          (this.statusFilters.selected !== null &&
+            this.statusFilters.selected.includes(this.datavalues[i].status))
+        ) {
+          this.dataSets.push(filtered[i])
+        }
+      this.totalCount = Object.keys(this.dataSets).length
+    },
+    filterSearch() {
+      this.dataSets = []
+      // search
+      for (let i = 0; i < Object.keys(this.datavalues).length; i++)
+        if (
+          (this.diseaseFilters.selected !== null &&
+            this.diseaseFilters.selected.includes(
+              this.datavalues[i].disease
+            )) ||
+          (this.cityFilters.selected !== null &&
+            this.cityFilters.selected.includes(this.datavalues[i].city)) ||
+          (this.statusFilters.selected !== null &&
+            this.statusFilters.selected.includes(this.datavalues[i].status))
+        ) {
+          this.dataSets.push(this.datavalues[i])
+        }
+      const searched = this.dataSets
+      this.dataSets = []
+      // search
+      for (let i = 0; i < Object.keys(searched).length; i++)
+        for (let j = 0; j < this.options.columns.length; j++) {
+          const key = this.options.columns[j].key
+          let value = searched[i][key]
+          if (typeof value !== 'undefined') {
+            value = value.toString()
+            if (value.includes(this.requestParams.search)) {
+              this.dataSets.push(searched[i])
+              break
+            }
+          }
+        }
+      this.totalCount = Object.keys(this.dataSets).length
+    },
+    filter() {
+      this.currentPage = 1
+      this.dataSets = []
+      // this.readData()
+      // IF FILTER NONE
+      if (
+        this.diseaseFilters.selected.length === 0 &&
+        this.cityFilters.selected.length === 0 &&
+        this.statusFilters.selected.length === 0
+      ) {
+        if (this.requestParams.search !== '') this.search()
+        else this.dataSets = this.datavalues
+      }
+      // NO SEARCH
+      else if (this.requestParams.search === '') {
+        for (let i = 0; i < Object.keys(this.datavalues).length; i++)
+          if (
+            (this.diseaseFilters.selected !== null &&
+              this.diseaseFilters.selected.includes(
+                this.datavalues[i].disease
+              )) ||
+            (this.cityFilters.selected !== null &&
+              this.cityFilters.selected.includes(this.datavalues[i].city)) ||
+            (this.statusFilters.selected !== null &&
+              this.statusFilters.selected.includes(this.datavalues[i].status))
+          ) {
+            this.dataSets.push(this.datavalues[i])
+          }
+      }
+      // HAVE SEARCH
+      else this.searchFilter()
+
+      this.totalCount = Object.keys(this.dataSets).length
+    },
+    filterOff() {
+      this.filters = []
+      for (let i = 0; i < this.options.columns.length; i++)
+        // if (this.options.columns[i].filter)
+        //   this.filters.push({
+        //     filterKey: this.options.columns[i].key,
+        //     filterOpen: false,
+        //     filterOptions: ['ABC', 'ABCD'],
+        //     filterSelected: [],
+        //   })
+        if (this.options.columns[i].filter) this.filters[0] = false
+      console.log(this.filters)
+      // for (let j = 0; j < this.filters.length; j++) {
+      //   this.filters[j].filterOptions = ['Measles', 'Dengue']
+      // if (this.filterKey[j].key === 'disease') {
+      //   this.filterKey[j].filterOptions = ['Measles', 'Dengue']
+      // } else if (this.filterKey[j].key === 'city') {
+      //   this.filterKey[j].filterOptions = ['Manila', 'Makati']
+      // }
+      // }
     },
     selectedDataAmount() {
       this.readData()
@@ -285,6 +549,44 @@ export default {
 }
 </script>
 <style>
+.filterButton {
+  width: 150px;
+  height: 38px;
+  max-width: 100%;
+  font-size: 16px;
+  margin-top: 30px;
+  font-family: 'Work Sans', sans-serif;
+  font-weight: 600;
+  background-color: white;
+  color: #346083;
+}
+
+.filterDropdown {
+  background: white;
+  position: absolute;
+  display: block;
+  border: white solid 0.5px;
+  padding: 7.5px;
+  /* margin-top: 5px; */
+  width: 150px;
+  text-align: left;
+  font-weight: 400;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.25));
+}
+
+input[type='checkbox'] {
+  filter: hue-rotate(240deg);
+}
+
+.arrow-up {
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 5px solid white;
+  margin-left: 3px;
+}
+
 .datatable input[type='text'] {
   padding: 8px 12px;
   margin: 8px 0;
