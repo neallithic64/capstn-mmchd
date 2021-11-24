@@ -163,7 +163,7 @@
                       <input
                         id="female"
                         v-model="formData.patient.sex"
-                        value="female"
+                        value="Female"
                         class="input-radio"
                         name="sex"
                         type="radio"
@@ -175,7 +175,7 @@
                       <input
                         id="male"
                         v-model="formData.patient.sex"
-                        value="male"
+                        value="Male"
                         class="input-radio"
                         name="sex"
                         type="radio"
@@ -202,7 +202,7 @@
                     <div style="display: inline-flex; align-items: center">
                       <input
                         id="Pregnant"
-                        value="pregnant"
+                        value="Pregnant"
                         class="input-radio"
                         name="pregWeeks"
                         type="radio"
@@ -2634,10 +2634,10 @@ export default {
       this.formData.patient.lastName = patient.lastName;
 	  this.formData.patient.firstName = patient.firstName;
 	  this.formData.patient.midName = patient.midName;
-	  this.formData.patient.birthDate = patient.birthDate;
+	  this.formData.patient.birthDate = patient.birthDate.substr(0, 10);
 	  this.formData.patient.ageNo = patient.ageNo;
 	  this.formData.patient.sex = patient.sex;
-	  this.formData.patient.pregWeeks = 
+	  this.formData.patient.pregWeeks = patient.pregWeeks;
 	  this.formData.patient.currHouseStreet = patient.currHouseStreet;
 	  this.formData.patient.currBrgy = patient.currBrgy;
 	  this.formData.patient.currCity = patient.currCity;
