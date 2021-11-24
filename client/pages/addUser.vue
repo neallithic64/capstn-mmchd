@@ -6,13 +6,8 @@
       <!--SUMMARY: left side-->
       <div class="form-summary-container">
         <div class="form-summary">
-          <button
-            id="login-submit"
-            type="submit"
-            style="width: 210px; text-align: left"
-            @click="isOpen = !isOpen"
-          >
-            <h2 style="font-weight: 600">New User</h2>
+          <button id="login-submit" type="submit" style="width: 210px; text-align: left" @click="isOpen = !isOpen">
+            <h2 style="font-weight: 600">New User Progress</h2>
           </button>
 
           <div v-if="isOpen" class="form-contents">
@@ -31,62 +26,399 @@
         <!--Name of form-->
         <div class="disease-name">
           <h1 style="margin: 0; font-weight: 600; font-size: 24px">
-            User Type
+            Add New User
           </h1>
-          <p style="margin: 0 5px 5px 5px; font-size: 16px">
-            Please fill up the form with complete and correct information
+          <p style="margin: 0 5px 5px 0px; font-size: 16px">
+            Please fill up the form with complete and correct information.
           </p>
         </div>
 
         <!--Form itself-->
         <div class="form-component">
-          <form v-if="pageNum == 0" id="newuser0" type="submit">
+          <!-- User Type (Form 1) -->
+          <form v-if="pageNum == 0" id="newUserType" type="submit">
             <div id="new-user-form" class="center">
-              <h2 id="form-header">
-                {{ Object.values(formSection.formNames)[0] }}
-              </h2>
-              
+              <h2 id="form-header"> {{ Object.values(formSection.formNames)[0] }} </h2>
+              <div class="userType-field field">
+                <label class="required" style="margin-bottom: 3px;"> Please select the correct user type </label>
+                <hr>
+
+                <div class="field-row-straight">
+                  <!-- CHD User Types -->
+                  <div class="usertype-column">
+                    <h2 id="form-header" style="margin-bottom: 3px;"> MMCHD </h2>
+                    <div style="display: inline-flex; align-items: center">
+                      <input
+                        id="pidsrStaff"
+                        v-model="user.userType"
+                        value="pidsrStaff"
+                        class="input-radio"
+                        name="userType"
+                        type="radio"
+                        :disabled="inputEdit()"
+                      />
+                      <label for="pidsrStaff"> PIDSR Staff </label>
+                    </div>
+                    <div style="display: inline-flex; align-items: center">
+                      <input
+                        id="fhsisStaff"
+                        v-model="user.userType"
+                        value="fhsisStaff"
+                        class="input-radio"
+                        name="userType"
+                        type="radio"
+                        :disabled="inputEdit()"
+                      />
+                      <label for="fhsisStaff"> FHSIS Staff </label>
+                    </div>
+                    <div style="display: inline-flex; align-items: center">
+                      <input
+                        id="idpcStaff"
+                        v-model="user.userType"
+                        value="idpcStaff"
+                        class="input-radio"
+                        name="userType"
+                        type="radio"
+                        :disabled="inputEdit()"
+                      />
+                      <label for="idpcStaff"> IDPC Staff </label>
+                    </div>
+                    <div style="display: inline-flex; align-items: center">
+                      <input
+                        id="eohStaff"
+                        v-model="user.userType"
+                        value="eohStaff"
+                        class="input-radio"
+                        name="userType"
+                        type="radio"
+                        :disabled="inputEdit()"
+                      />
+                      <label for="eohStaff"> EOH Staff </label>
+                    </div>
+                    <div style="display: inline-flex; align-items: center">
+                      <input
+                        id="hemStaff"
+                        v-model="user.userType"
+                        value="hemStaff"
+                        class="input-radio"
+                        name="userType"
+                        type="radio"
+                        :disabled="inputEdit()"
+                      />
+                      <label for="hemStaff"> HEM Staff </label>
+                    </div>
+                    <div style="display: inline-flex; align-items: center">
+                      <input
+                        id="lhsdChief"
+                        v-model="user.userType"
+                        value="lhsdChief"
+                        class="input-radio"
+                        name="userType"
+                        type="radio"
+                        :disabled="inputEdit()"
+                      />
+                      <label for="lhsdChief"> LHSD Chief </label>
+                    </div>
+                    <div style="display: inline-flex; align-items: center">
+                      <input
+                        id="aehmdChief"
+                        v-model="user.userType"
+                        value="aehmdChief"
+                        class="input-radio"
+                        name="userType"
+                        type="radio"
+                        :disabled="inputEdit()"
+                      />
+                      <label for="aehmdChief"> AEHMD Chief </label>
+                    </div>
+                    <div style="display: inline-flex; align-items: center">
+                      <input
+                        id="resuHead"
+                        v-model="user.userType"
+                        value="resuHead"
+                        class="input-radio"
+                        name="userType"
+                        type="radio"
+                        :disabled="inputEdit()"
+                      />
+                      <label for="resuHead"> RESU Head </label>
+                    </div>
+                    <div style="display: inline-flex; align-items: center">
+                      <input
+                        id="chdDirector"
+                        v-model="user.userType"
+                        value="chdDirector"
+                        class="input-radio"
+                        name="userType"
+                        type="radio"
+                        :disabled="inputEdit()"
+                      />
+                      <label for="chdDirector"> CHD Director </label>
+                    </div>
+                    <div style="display: inline-flex; align-items: center">
+                      <input
+                        id="techStaff"
+                        v-model="user.userType"
+                        value="techStaff"
+                        class="input-radio"
+                        name="userType"
+                        type="radio"
+                        :disabled="inputEdit()"
+                      />
+                      <label for="techStaff"> IT Service Staff </label>
+                    </div>
+                  </div>
+
+                  <!-- DRU User Types -->
+                  <div class="usertype-column">
+                    <h2 id="form-header" style="margin-bottom: 3px;"> DRU/PRU </h2>
+                    <div style="display: inline-flex; align-items: center">
+                      <input
+                        id="BHS"
+                        v-model="user.userType"
+                        value="BHS"
+                        class="input-radio"
+                        name="userType"
+                        type="radio"
+                        :disabled="inputEdit()"
+                      />
+                      <label for="BHS"> BHS </label>
+                    </div>
+                    <div style="display: inline-flex; align-items: center">
+                      <input
+                        id="RHU"
+                        v-model="user.userType"
+                        value="RHU"
+                        class="input-radio"
+                        name="userType"
+                        type="radio"
+                        :disabled="inputEdit()"
+                      />
+                      <label for="RHU"> RHU </label>
+                    </div>
+                    <div style="display: inline-flex; align-items: center">
+                      <input
+                        id="CHO"
+                        v-model="user.userType"
+                        value="CHO"
+                        class="input-radio"
+                        name="userType"
+                        type="radio"
+                        :disabled="inputEdit()"
+                      />
+                      <label for="CHO"> CHO </label>
+                    </div>
+                    <div style="display: inline-flex; align-items: center">
+                      <input
+                        id="govtHosp"
+                        v-model="user.userType"
+                        value="govtHosp"
+                        class="input-radio"
+                        name="userType"
+                        type="radio"
+                        :disabled="inputEdit()"
+                      />
+                      <label for="govtHosp"> Government Hospital </label>
+                    </div>
+                    <div style="display: inline-flex; align-items: center">
+                      <input
+                        id="privHosp"
+                        v-model="user.userType"
+                        value="privHosp"
+                        class="input-radio"
+                        name="userType"
+                        type="radio"
+                        :disabled="inputEdit()"
+                      />
+                      <label for="privHosp"> Private Hospital </label>
+                    </div>
+                    <div style="display: inline-flex; align-items: center">
+                      <input
+                        id="clinic"
+                        v-model="user.userType"
+                        value="clinic"
+                        class="input-radio"
+                        name="userType"
+                        type="radio"
+                        :disabled="inputEdit()"
+                      />
+                      <label for="clinic"> Clinic </label>
+                    </div>
+                    <div style="display: inline-flex; align-items: center">
+                      <input
+                        id="govtLab"
+                        v-model="user.userType"
+                        value="govtLab"
+                        class="input-radio"
+                        name="userType"
+                        type="radio"
+                        :disabled="inputEdit()"
+                      />
+                      <label for="govtLab"> Government Laboratory </label>
+                    </div>
+                    <div style="display: inline-flex; align-items: center">
+                      <input
+                        id="privLab"
+                        v-model="user.userType"
+                        value="privLab"
+                        class="input-radio"
+                        name="userType"
+                        type="radio"
+                        :disabled="inputEdit()"
+                      />
+                      <label for="privLab"> Private Laboratory </label>
+                    </div>
+                    <div style="display: inline-flex; align-items: center">
+                      <input
+                        id="airseaPort"
+                        v-model="user.userType"
+                        value="airseaPort"
+                        class="input-radio"
+                        name="userType"
+                        type="radio"
+                        :disabled="inputEdit()"
+                      />
+                      <label for="airseaPort"> Airport/Seaport </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </form>
 
+          <!-- User Details (Form 2) -->  
           <form
-            v-if="
-              pageNum == 1 || pageNum == Object.keys(disease.formNames).length
-            "
-            id="measles1"
+            v-if="pageNum == 1 || pageNum == Object.keys(formSection.formNames).length"
+            id="newuser1"
             type="submit"
           >
             <div id="new-user-form" class="center">
-              <h2 id="form-header">
-                {{ Object.values(disease.formNames)[1] }}
-              </h2>
+              <h2 id="form-header"> {{ Object.values(formSection.formNames)[1] }} </h2>
 
+              <div v-if="user.userType === 'BHS' || user.userType === 'RHU' || user.userType === 'CHO' || user.userType === 'govtHosp' || user.userType === 'privHosp' || user.userType === 'clinic' || user.userType === 'govtLab' || user.userType === 'privLab' || user.userType === 'airseaPort'">
+                <div class="name-field">
+                  <label for="druName" class="required">
+                    Unit Name
+                  </label>
+                  <input
+                    id="druName"
+                    v-model="user.druName"
+                    class="input-form-field"
+                    type="text"
+                    :disabled="inputEdit()"
+                  />
+                </div>
+
+                <h2 id="form-header"> Address </h2>
+                <div class="field-row" style="margin-left: 0px">
+                  <div class="field">
+                    <label for="userHouseStreet" class="required">
+                      Street / House No.
+                    </label>
+                    <input
+                      id="userHouseStreet"
+                      v-model="user.userHouseStreet"
+                      class="input-form-field"
+                      type="text"
+                      :disabled="inputEdit()"
+                    />
+                  </div>
+                </div>
+
+                <div class="field-row-straight">
+                  <div class="name-field">
+                    <label for="userCity" class="required"> City </label>
+                    <select
+                      id="userCity"
+                      v-model="user.userCity"
+                      name="userCity"
+                      :disabled="inputEdit()"
+                    >
+                      <option value="Caloocan">Caloocan</option>
+                      <option value="Las Piñas">Las Piñas</option>
+                      <option value="Makati">Makati</option>
+                      <option value="Malabon">Malabon</option>
+                      <option value="Mandaluyong">Mandaluyong</option>
+                      <option value="Manila">Manila</option>
+                      <option value="Marikina">Marikina</option>
+                      <option value="Muntinlupa">Muntinlupa</option>
+                      <option value="Navotas">Navotas</option>
+                      <option value="Parañaque">Parañaque</option>
+                      <option value="Pasay">Pasay</option>
+                      <option value="Pasig">Pasig</option>
+                      <option value="Quezon City">Quezon City</option>
+                      <option value="San Juan">San Juan</option>
+                      <option value="Taguig">Taguig</option>
+                      <option value="Valenzuela">Valenzuela</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label for="userBrgy" class="required"> Barangay </label>
+                    <input
+                      id="userBrgy"
+                      v-model="user.userBrgy"
+                      class="input-form-field"
+                      type="text"
+                      :disabled="inputEdit()"
+                    />
+                  </div>
+                </div>
+
+                <h2 id="form-header"> Unit Contact Number </h2>
+                <div class="name-field">
+                  <label for="userContactNo1"> Line 1 Contact No. (11-digit Mobile Number or 8-digit Tel Number) </label>
+                  <input
+                    id="userContactNo1"
+                    v-model="user.userContactNo"
+                    class="input-form-field"
+                    type="tel"
+                    minlength="8"
+                    maxlength="11"
+                    :disabled="inputEdit()"
+                  />
+                </div>
+                <div class="name-field">
+                  <label for="userContactNo2"> Line 2 Contact No. (11-digit Mobile Number or 8-digit Tel Number) </label>
+                  <input
+                    id="userContactNo2"
+                    v-model="user.userContactNo"
+                    class="input-form-field"
+                    type="tel"
+                    minlength="8"
+                    maxlength="11"
+                    :disabled="inputEdit()"
+                  />
+                </div>
+
+                <h2 id="form-header"> Contact Person </h2>
+              </div>
+              
               <div class="field-row-straight">
                 <div class="name-field">
-                  <label for="lastname" class="required"> Last Name </label>
+                  <label for="lastName" class="required"> Last Name </label>
                   <input
-                    id="lastname"
-                    v-model="formData.patient.lastName"
+                    id="lastName"
+                    v-model="user.lastName"
                     class="input-form-field"
                     type="text"
                     :disabled="inputEdit()"
                   />
                 </div>
                 <div class="name-field">
-                  <label for="firstname" class="required"> First Name </label>
+                  <label for="firstName" class="required"> First Name </label>
                   <input
-                    id="firstname"
-                    v-model="formData.patient.firstName"
+                    id="firstName"
+                    v-model="user.firstName"
                     class="input-form-field"
                     type="text"
                     :disabled="inputEdit()"
                   />
                 </div>
                 <div class="name-field">
-                  <label for="middlename" class="required"> Middle Name </label>
+                  <label for="midName" class="required"> Middle Name </label>
                   <input
-                    id="middlename"
-                    v-model="formData.patient.midName"
+                    id="midName"
+                    v-model="user.midName"
                     class="input-form-field"
                     type="text"
                     :disabled="inputEdit()"
@@ -94,67 +426,120 @@
                 </div>
               </div>
 
-              <div
-                class="field-row"
-                style="display: inline-flex; margin-bottom: -1 px"
-              >
-                <div class="half-half half-half1">
-                  <div class="birthday-field field">
-                    <label for="birthdate" class="required">
-                      Date of Birth
-                    </label>
-                    <input
-                      id="birthdate"
-                      v-model="formData.patient.birthDate"
-                      class="input-form-field"
-                      type="date"
-                      :disabled="inputEdit()"
-                    />
-                  </div>
-                  <div class="age-field field">
-                    <label for="age" class="required"> Age </label>
-                    <input
-                      id="age"
-                      v-model="formData.patient.ageNo"
-                      class="input-form-field"
-                      type="number"
-                      :disabled="inputEdit()"
-                    />
-                  </div>
-                </div>
+              <div class="name-field">
+                <label for="userContactNo1" class="required"> Contact No. (11-digit Mobile Number) </label>
+                <input
+                  id="userContactNo1"
+                  v-model="user.userContactNo"
+                  class="input-form-field"
+                  type="tel"
+                  minlength="11"
+                  maxlength="11"
+                  :disabled="inputEdit()"
+                />
+              </div>
+            </div>
+          </form>
 
-                <div class="half-half half-half2">
-                  <div class="sex-field field">
-                    <label class="required"> Sex </label>
-                    <div style="display: inline-flex; align-items: center">
-                      <input
-                        id="female"
-                        v-model="formData.patient.sex"
-                        value="female"
-                        class="input-radio"
-                        name="sex"
-                        type="radio"
-                        :disabled="inputEdit()"
-                      />
-                      <label for="female"> Female </label>
-                    </div>
-                    <div style="display: inline-flex; align-items: center">
-                      <input
-                        id="male"
-                        v-model="formData.patient.sex"
-                        value="male"
-                        class="input-radio"
-                        name="sex"
-                        type="radio"
-                        :disabled="inputEdit()"
-                      />
-                      <label for="male"> Male </label>
-                    </div>
-                  </div>
+          <!-- Login Details (Form 3) -->
+          <form
+            v-if="pageNum == 2 || pageNum == Object.keys(formSection.formNames).length"
+            id="newuser1"
+            type="submit"
+          >
+            <div id="new-user-form" class="center">
+              <h2 id="form-header"> {{ Object.values(formSection.formNames)[1] }} </h2>
+
+              <div class="name-field">
+                <label for="userEmail" class="required">
+                  Email
+                </label>
+                <input
+                  id="userEmail"
+                  v-model="user.userEmail"
+                  class="input-form-field"
+                  type="email"
+                  :disabled="inputEdit()"
+                />
+              </div>
+
+              <div class="name-field">
+                <label for="userName" class="required">
+                  Username
+                </label>
+                <input
+                  id="userName"
+                  v-model="user.userName"
+                  class="input-form-field"
+                  type="text"
+                  :disabled="inputEdit()"
+                />
+              </div>
+
+              <div class="field-row-straight">
+                <div class="field">
+                  <label for="userPassword" class="required"> Password </label>
+                  <input
+                    id="userPassword"
+                    v-model="user.userPassword"
+                    class="input-form-field"
+                    type="password"
+                    :disabled="inputEdit()"
+                  />
+                </div>
+                <div class="name-field">
+                  <label for="userRePassword" class="required"> Re-type Password </label>
+                  <input
+                    id="userRePassword"
+                    v-model="user.userPassword"
+                    class="input-form-field"
+                    type="password"
+                    :disabled="inputEdit()"
+                  />
                 </div>
               </div>
             </div>
           </form>
+
+        </div>
+        
+        <!-- Buttons -->
+        <div style="margin: -10px 0 5px; float: right">
+          <button v-if="pageNum == 0" class="back-button" type="button">
+            <nuxt-link to="/allUsers"> Cancel </nuxt-link>
+          </button>
+          <button
+            v-if="pageNum != 0"
+            class="back-button"
+            type="button"
+            @click="move(pageNum - 1)"
+          >
+            Back
+          </button>
+          <button
+            v-if="pageNum < Object.keys(formSection.formNames).length - 1"
+            class="next-button"
+            type="button"
+            @click="move(pageNum + 1)"
+          >
+            Next
+          </button>
+          <button
+            v-if="pageNum == Object.keys(formSection.formNames).length - 1"
+            class="next-button"
+            type="button"
+            @click="move(pageNum + 1)"
+          >
+            Review
+          </button>
+          <button
+            v-if="pageNum == Object.keys(formSection.formNames).length"
+            class="next-button"
+            type="button"
+            @click="submit;"
+          >
+            Submit
+          </button>
         </div>
       </div>
     </div>
@@ -172,13 +557,14 @@ export default {
         userID: '',
         userType: '',
         druName: '',
-        userFN: '',
-        userLN: '',
-        userMI: '',
-        userSt: '',
+        lastName: '',
+        firstName: '',
+        midName: '',
+        userHouseStreet: '',
         userBrgy: '',
         userCity: '',
-        userContactNo: '',
+        userContactNo1: '',
+        userContactNo2: '',
         userEmail: '',
         userName: '',
         userPassword: ''
@@ -194,10 +580,10 @@ export default {
     }
   },
   methods: {
-    formpart(disease, pageNum) {
-      this.formPart = disease + pageNum
-      // if (this.isOpen) this.formStatus(this.pageNum)
-    },
+    // formpart(disease, pageNum) {
+    //   this.formPart = disease + pageNum
+    //   // if (this.isOpen) this.formStatus(this.pageNum)
+    // },
     formColor(index) {
       if (this.isOpen) {
         if (index === this.pageNum) return 'formnum formnumcurr'
@@ -212,23 +598,23 @@ export default {
       window.location.href = '/allcases'
     },
     move(page) {
-      if (
-        page < Object.keys(this.disease.formNames).length &&
-        this.pageNum < Object.keys(this.disease.formNames).length
-      ) {
-        // const prevFormId = this.disease.name + this.pageNum
-        const prevFormNum = 'form' + this.pageNum
-        // document.getElementById(prevFormId).className = 'hide'
-        document.getElementById(prevFormNum).className = 'formnum formnumdone'
-        // const currFormId = this.disease.name + page
-        const currFormNum = 'form' + page
-        // document.getElementById(currFormId).className = 'show'
-        document.getElementById(currFormNum).className = 'formnum formnumcurr'
-      }
+      // if (
+      //   page < Object.keys(this.formSection.formNames).length &&
+      //   this.pageNum < Object.keys(this.formSection.formNames).length
+      // ) {
+      //   // const prevFormId = this.disease.name + this.pageNum
+      //   const prevFormNum = 'form' + this.pageNum
+      //   // document.getElementById(prevFormId).className = 'hide'
+      //   document.getElementById(prevFormNum).className = 'formnum formnumdone'
+      //   // const currFormId = this.disease.name + page
+      //   const currFormNum = 'form' + page
+      //   // document.getElementById(currFormId).className = 'show'
+      //   document.getElementById(currFormNum).className = 'formnum formnumcurr'
+      // }
       this.pageNum = page
     },
     inputEdit() {
-      if (this.pageNum === Object.keys(this.disease.formNames).length) {
+      if (this.pageNum === Object.keys(this.formSection.formNames).length) {
         // const elems = document.getElementsByTagName('input')
         // for (let i = 0; i < elems.length; i++) {
         //   elems[i].disabled = true
@@ -431,7 +817,7 @@ export default {
     width: 100%;
     display: flex;
     flex-direction: row;
-    margin: 0 7px 6px 5px;
+    margin: 0 7px 6px 0px;
   }
 
   @media only screen and (max-width: 950px) {
@@ -453,6 +839,20 @@ export default {
     .field-row {
       flex-direction: column;
       margin: 0 0 10px;
+    }
+  }
+
+  .usertype-column {
+    display: flex; 
+    flex-direction: column; 
+    margin-right: 50px;
+  }
+
+  @media only screen and (max-width: 950px) {
+    .usertype-column {
+      display: flex; 
+      flex-direction: column; 
+      margin-right: 0px;
     }
   }
 
@@ -555,9 +955,9 @@ export default {
     /* width: 15%; */
     width: 33.33%;
   }
-  .sex-field {
+  .userType-field {
     /* width: 15%; */
-    width: 27.27%;
+    width: 100%;
   }
   .pregnancy-field {
     /* width: 40%; */
@@ -577,8 +977,8 @@ export default {
     .age-field {
       width: 39%;
     }
-    .sex-field {
-      width: 39%;
+    .userType-field {
+      width: 50%;
     }
     .pregnancy-field {
       width: 59%;

@@ -9,7 +9,7 @@
         <i class="fa fa-caret-down"></i>
       </button>
       <div class="dropdown-content">
-        <nuxt-link to="/allcases"> View Cases </nuxt-link>
+        <nuxt-link to="/allCases"> View Cases </nuxt-link>
         <nuxt-link to="/addCase"> Add Case </nuxt-link>
       </div>
     </div>
@@ -19,24 +19,33 @@
         <i class="fa fa-caret-down"></i>
       </button>
       <div class="dropdown-content">
-        <nuxt-link to="/allprogreports"> View Reports </nuxt-link>
-        <nuxt-link to="/newprogreport"> Add Program Report </nuxt-link>
+        <nuxt-link to="/allProgReports"> View Program Reports </nuxt-link>
+        <nuxt-link to="/addProgReport"> Add Program Report </nuxt-link>
       </div>
     </div>
-    <nuxt-link to="/analysis"> Analysis and Visualization </nuxt-link>
-    <nuxt-link to="/bulletin"> Feedback Bulletin </nuxt-link>
     <div class="dropdown">
       <button class="dropbtn">
         ESR
         <i class="fa fa-caret-down"></i>
       </button>
       <div class="dropdown-content">
-        <nuxt-link to="/allevents"> View Health Events </nuxt-link>
-        <nuxt-link to="/newevent"> New Health Event </nuxt-link>
+        <nuxt-link to="/allEvents"> View Health Events </nuxt-link>
+        <nuxt-link to="/addEvent"> Add Health Event </nuxt-link>
       </div>
     </div>
+    <nuxt-link to="/analysis"> Analysis and Visualization </nuxt-link>
+    <nuxt-link to="/bulletin"> Feedback Bulletin </nuxt-link>
     <nuxt-link to="/evaluation"> Evaluation </nuxt-link>
-    <nuxt-link to="/addUser"> Accounts </nuxt-link>
+    <div class="dropdown">
+      <button class="dropbtn">
+        Users
+        <i class="fa fa-caret-down"></i>
+      </button>
+      <div class="dropdown-content">
+        <nuxt-link to="/allUsers"> All Users </nuxt-link>
+        <nuxt-link to="/addUser"> Add User </nuxt-link>
+      </div>
+    </div>
 
     <div class="topnav-right-inside">
       <nuxt-link to="/notification"> Notification </nuxt-link>
@@ -46,7 +55,7 @@
           <i class="fa fa-caret-down"></i>
         </button>
         <div class="dropdown-content">
-          <nuxt-link to="/myprofile"> My Profile </nuxt-link>
+          <nuxt-link to="/myProfile"> My Profile </nuxt-link>
           <nuxt-link to="/settings"> Settings </nuxt-link>
           <nuxt-link to="/logout"> Logout </nuxt-link>
         </div>
