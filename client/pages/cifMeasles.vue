@@ -91,7 +91,7 @@
                       <!-- <img class="searchPersonIcon" /> -->
                       <div class="searchResultInfo" @click="autoFillPatient(patient)">
                         <div class="searchPerson">{{ patient.firstName + " " + patient.midName + " " + patient.lastName }}</div>
-                        <div class="searchAddress">{{ patient.houseStreet + ", " + patient.brgy + ", " + patient.city }}</div>
+                        <div class="searchAddress">{{ patient.currHouseStreet + ", " + patient.currBrgy + ", " + patient.currCity }}</div>
                       </div>
                     </div>
                   </div>
@@ -207,10 +207,10 @@
                     <div style="display: inline-flex; align-items: center">
                       <input
                         id="Not Pregnant"
-                        v-model="formData.caseData.pregnancy"
+                        v-model="formData.caseData.pregWeeks"
                         value="Not Pregnant"
                         class="input-radio"
-                        name="pregnancy"
+                        name="pregWeeks"
                         type="radio"
                         :disabled="inputEdit()"
                       />
@@ -222,14 +222,14 @@
                         id="Pregnant"
                         value="pregnant"
                         class="input-radio"
-                        name="pregnancy"
+                        name="pregWeeks"
                         type="radio"
                         :disabled="inputEdit()"
                       />
                       <label for="pregnancyWeeks" style="display: inline-flex">
                         <input
                           id="pregnancy"
-                          v-model="formData.patient.pregMonths"
+                          v-model="formData.patient.pregWeeks"
                           class="input-form-field"
                           type="number"
                           style="width: 50px; height: 20px; margin: 0 2px"
@@ -276,22 +276,22 @@
                     name="currCity"
                     :disabled="inputEdit()"
                   >
-                    <option value="Caloocan">Caloocan</option>
-                    <option value="Las Piñas">Las Piñas</option>
-                    <option value="Makati">Makati</option>
-                    <option value="Malabon">Malabon</option>
-                    <option value="Mandaluyong">Mandaluyong</option>
-                    <option value="Manila">Manila</option>
-                    <option value="Marikina">Marikina</option>
-                    <option value="Muntinlupa">Muntinlupa</option>
-                    <option value="Navotas">Navotas</option>
-                    <option value="Parañaque">Parañaque</option>
-                    <option value="Pasay">Pasay</option>
-                    <option value="Pasig">Pasig</option>
-                    <option value="Quezon City">Quezon City</option>
-                    <option value="San Juan">San Juan</option>
-                    <option value="Taguig">Taguig</option>
-                    <option value="Valenzuela">Valenzuela</option>
+                    <option value="Caloocan">Caloocan City</option>
+                    <option value="Las Piñas City">Las Piñas City</option>
+                    <option value="Makati City">Makati City</option>
+                    <option value="Malabon City">Malabon City</option>
+                    <option value="Mandaluyong City">Mandaluyong City</option>
+                    <option value="Manila City">Manila City</option>
+                    <option value="Marikina City">Marikina City</option>
+                    <option value="Muntinlupa City">Muntinlupa City</option>
+                    <option value="Navotas City">Navotas City</option>
+                    <option value="Parañaque City">Parañaque City</option>
+                    <option value="Pasay City">Pasay City</option>
+                    <option value="Pasig City">Pasig City</option>
+                    <option value="Quezon City City">Quezon City</option>
+                    <option value="San Juan City">San Juan City</option>
+                    <option value="Taguig City">Taguig City</option>
+                    <option value="Valenzuela City">Valenzuela City</option>
                   </select>
                   <!-- <input
                     id="currCity"
@@ -2580,10 +2580,10 @@ export default {
     async submit() {
       // eslint-disable-next-line no-console
       console.log(this.formData);
-	  const result = await axios.post('http://localhost:8080/api/newCase', {formData: this.formData});
-	  console.log(result);
+      const result = await axios.post('http://localhost:8080/api/newCase', {formData: this.formData});
+      console.log(result);
       alert('case submitted!');
-	  // window.location.href = '/allcases'
+      // window.location.href = '/allcases'
     },
     move(page) {
       if (
@@ -2612,7 +2612,23 @@ export default {
       } else return false
     },
     autoFillPatient(patient) {
-      alert(patient.patientID);
+	  console.log(patient);
+      this.formData.patient.lastName = patient.lastName;
+	  this.formData.patient.firstName = patient.firstName;
+	  this.formData.patient.midName = patient.midName;
+	  this.formData.patient.birthDate = patient.birthDate;
+	  this.formData.patient.ageNo = patient.ageNo;
+	  this.formData.patient.sex = patient.sex;
+	  this.formData.patient.pregWeeks = 
+	  this.formData.patient.currHouseStreet = patient.currHouseStreet;
+	  this.formData.patient.currBrgy = patient.currBrgy;
+	  this.formData.patient.currCity = patient.currCity;
+	  this.formData.patient.permHouseStreet = patient.permHouseStreet;
+	  this.formData.patient.permBrgy = patient.permBrgy;
+	  this.formData.patient.permCity = patient.permCity;
+	  this.formData.patient.guardianName = patient.guardianName;
+	  this.formData.patient.guardianContact = patient.guardianContact;
+	  this.pageNum++;
     },
     searchPatient(event) {
       this.patientResult = [];

@@ -211,7 +211,12 @@ const indexFunctions = {
 	
 	getPatients: async function(req, res) {
 		try {
-			let match = await db.exec("SELECT * FROM mmchddb.PATIENTS p INNER JOIN mmchddb.ADDRESSES a ON p.caddressID = a.addressID;");
+			let match = await db.exec("SELECT p.*, "
+					+ "a1.houseStreet AS currHouseStreet, a1.brgy AS currBrgy, a1.city AS "
+					+ "currCity, a2.houseStreet AS permHouseStreet, a2.brgy AS permBrgy, "
+					+ "a2.city AS permCity FROM mmchddb.PATIENTS p INNER JOIN "
+					+ "mmchddb.ADDRESSES a1 ON p.caddressID = a1.addressID "
+					+ "INNER JOIN mmchddb.ADDRESSES a2 ON p.paddressID = a2.addressID;");
 			res.status(200).send(match);
 		} catch (e) {
 			console.log(e);
