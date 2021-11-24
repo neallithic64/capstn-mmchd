@@ -319,22 +319,22 @@
                     name="permCity"
                     :disabled="inputEdit()"
                   >
-                    <option value="Caloocan">Caloocan</option>
-                    <option value="Las Piñas">Las Piñas</option>
-                    <option value="Makati">Makati</option>
-                    <option value="Malabon">Malabon</option>
-                    <option value="Mandaluyong">Mandaluyong</option>
-                    <option value="Manila">Manila</option>
-                    <option value="Marikina">Marikina</option>
-                    <option value="Muntinlupa">Muntinlupa</option>
-                    <option value="Navotas">Navotas</option>
-                    <option value="Parañaque">Parañaque</option>
-                    <option value="Pasay">Pasay</option>
-                    <option value="Pasig">Pasig</option>
+                    <option value="Caloocan City">Caloocan City</option>
+                    <option value="Las Piñas City">Las Piñas City</option>
+                    <option value="Makati City">Makati City</option>
+                    <option value="Malabon City">Malabon City</option>
+                    <option value="Mandaluyong City">Mandaluyong City</option>
+                    <option value="Manila City">Manila City</option>
+                    <option value="Marikina City">Marikina City</option>
+                    <option value="Muntinlupa City">Muntinlupa City</option>
+                    <option value="Navotas City">Navotas City</option>
+                    <option value="Parañaque City">Parañaque City</option>
+                    <option value="Pasay City">Pasay City</option>
+                    <option value="Pasig City">Pasig City</option>
                     <option value="Quezon City">Quezon City</option>
-                    <option value="San Juan">San Juan</option>
-                    <option value="Taguig">Taguig</option>
-                    <option value="Valenzuela">Valenzuela</option>
+                    <option value="San Juan City">San Juan City</option>
+                    <option value="Taguig City">Taguig City</option>
+                    <option value="Valenzuela City">Valenzuela City</option>
                   </select>
                 </div>
               </div>
@@ -2597,9 +2597,8 @@ export default {
       }
     },
     async submit() {
-      // eslint-disable-next-line no-console
-      console.log(this.formData);
       const result = await axios.post('http://localhost:8080/api/newCase', {formData: this.formData});
+      // eslint-disable-next-line no-console
       console.log(result);
       alert('case submitted!');
       // window.location.href = '/allcases'
@@ -3373,14 +3372,11 @@ ul ul li {
   background: white;
   height: fit-content;
   border-radius: 0 0 25px 25px;
-  /* border-radius: 25px 25px 0 0; */
+  margin-top: -10px;
   padding: 10px;
-  padding-top: 10px;
   display: grid;
   width: 100%;
-
   position: absolute;
-  bottom: -100px;
 }
 
 .searchResult {

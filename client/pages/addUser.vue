@@ -1346,21 +1346,6 @@ export default {
     height: 30px;
   }
 
-  .searchPatientValues {
-    background: white;
-    margin-top: -20px;
-    height: fit-content;
-    /* border-radius: 0 0 25px 25px; */
-    border-radius: 25px 25px 0 0;
-    padding: 10px;
-    padding-bottom: 15px;
-    display: grid;
-    width: 100%;
-
-    position: absolute;
-    bottom: 30px;
-  }
-
   .searchResult {
     padding: 5px 10px;
     border-bottom: 1px solid lightgray;
