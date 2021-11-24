@@ -36,7 +36,7 @@
         <!--Form itself-->
         <div class="form-component">
           <!-- User Type (Form 1) -->
-          <form v-if="pageNum == 0" id="newUserType" type="submit">
+          <form v-if="pageNum == 0 || pageNum == Object.keys(formSection.formNames).length" id="newUserType" type="submit">
             <div id="new-user-form" class="center">
               <h2 id="form-header"> {{ Object.values(formSection.formNames)[0] }} </h2>
               <div class="userType-field field">
@@ -286,6 +286,8 @@
             </div>
           </form>
 
+          <hr v-if="pageNum == Object.keys(formSection.formNames).length" />
+
           <!-- User Details (Form 2) -->  
           <form
             v-if="pageNum == 1 || pageNum == Object.keys(formSection.formNames).length"
@@ -333,6 +335,7 @@
                       v-model="user.userCity"
                       name="userCity"
                       :disabled="inputEdit()"
+                      @change="getBrgyList()"
                     >
                       <option value="Caloocan">Caloocan</option>
                       <option value="Las Piñas">Las Piñas</option>
@@ -352,15 +355,24 @@
                       <option value="Valenzuela">Valenzuela</option>
                     </select>
                   </div>
+
                   <div class="field">
                     <label for="userBrgy" class="required"> Barangay </label>
-                    <input
+                    <select
+                      v-if="true"
                       id="userBrgy"
                       v-model="user.userBrgy"
-                      class="input-form-field"
-                      type="text"
+                      name="userBrgy"
                       :disabled="inputEdit()"
-                    />
+                    >
+                      <!-- <option 
+                        v-for="(brgy, i) in brgyList"
+                        :key = "i" 
+                        :value="brgy"
+                      > 
+                        {{ brgy }} 
+                      </option> -->
+                    </select>
                   </div>
                 </div>
 
@@ -426,7 +438,7 @@
                 </div>
               </div>
 
-              <div class="name-field">
+              <div v-if="user.userType === 'pidsrStaff' || user.userType === 'fhsisStaff' || user.userType === 'idpcStaff' || user.userType === 'eohStaff' || user.userType === 'hemStaff' || user.userType === 'lhsdChief' || user.userType === 'aehmdChief' || user.userType === 'resuHead' || user.userType === 'chdDirector' || user.userType === 'techStaff'" class="name-field">
                 <label for="userContactNo1" class="required"> Contact No. (11-digit Mobile Number) </label>
                 <input
                   id="userContactNo1"
@@ -441,6 +453,8 @@
             </div>
           </form>
 
+          <hr v-if="pageNum == Object.keys(formSection.formNames).length" />
+
           <!-- Login Details (Form 3) -->
           <form
             v-if="pageNum == 2 || pageNum == Object.keys(formSection.formNames).length"
@@ -448,7 +462,7 @@
             type="submit"
           >
             <div id="new-user-form" class="center">
-              <h2 id="form-header"> {{ Object.values(formSection.formNames)[1] }} </h2>
+              <h2 id="form-header"> {{ Object.values(formSection.formNames)[2] }} </h2>
 
               <div class="name-field">
                 <label for="userEmail" class="required">
@@ -547,12 +561,15 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   middleware: 'is-auth',
   data() {
     return {
       isOpen: true,
       pageNum: 0,
+      brgyList: [],
       user: {
         userID: '',
         userType: '',
@@ -573,17 +590,12 @@ export default {
         formNames: {
           form1: 'User Type',
           form2: 'User Details',
-          form3: 'Login Details',
-          form4: 'Confirmation'
+          form3: 'Login Details'
         }
       }
     }
   },
   methods: {
-    // formpart(disease, pageNum) {
-    //   this.formPart = disease + pageNum
-    //   // if (this.isOpen) this.formStatus(this.pageNum)
-    // },
     formColor(index) {
       if (this.isOpen) {
         if (index === this.pageNum) return 'formnum formnumcurr'
@@ -593,35 +605,53 @@ export default {
     },
     submit() {
       alert('DONE')
-      // eslint-disable-next-line no-console
-      console.log(this.formData)
       window.location.href = '/allcases'
     },
     move(page) {
-      // if (
-      //   page < Object.keys(this.formSection.formNames).length &&
-      //   this.pageNum < Object.keys(this.formSection.formNames).length
-      // ) {
-      //   // const prevFormId = this.disease.name + this.pageNum
-      //   const prevFormNum = 'form' + this.pageNum
-      //   // document.getElementById(prevFormId).className = 'hide'
-      //   document.getElementById(prevFormNum).className = 'formnum formnumdone'
-      //   // const currFormId = this.disease.name + page
-      //   const currFormNum = 'form' + page
-      //   // document.getElementById(currFormId).className = 'show'
-      //   document.getElementById(currFormNum).className = 'formnum formnumcurr'
-      // }
       this.pageNum = page
+      this.$nextTick(() => {
+        if ((page === 1 || page === 3) && this.user.userBrgy != null) {
+          for (let i = 0; i < this.brgyList.length; i++) {
+            const option = document.createElement('option');
+            option.text = this.brgyList[i];
+            option.value = this.brgyList[i];
+            document.getElementById('userBrgy').add(option);
+            if (this.user.userBrgy === this.brgyList[i])
+              document.getElementById('userBrgy').selectedIndex = i;
+          }
+        }
+      })
     },
     inputEdit() {
       if (this.pageNum === Object.keys(this.formSection.formNames).length) {
-        // const elems = document.getElementsByTagName('input')
-        // for (let i = 0; i < elems.length; i++) {
-        //   elems[i].disabled = true
-        //   console.log(elems)
-        // }
         return true
       } else return false
+    },
+    getBrgyList() {
+      const dropdown = document.getElementById('userBrgy');
+      while (dropdown.firstChild) dropdown.removeChild(dropdown.firstChild);
+
+      const defaultOption = document.createElement('option');
+      defaultOption.text = 'Choose Barangay';
+
+      dropdown.add(defaultOption);
+      dropdown.selectedIndex = 0;
+
+      axios.get('barangays.json')
+        .then(res => {
+          let option;
+
+          this.brgyList = res.data[this.user.userCity].barangay_list;
+
+          for (let i = 0; i < this.brgyList.length; i++) {
+            option = document.createElement('option');
+            option.text = this.brgyList[i];
+            option.value = this.brgyList[i];
+            dropdown.add(option);
+          }
+        })
+        // eslint-disable-next-line no-console
+        .catch(err => console.log(err))
     },
   }
 }
