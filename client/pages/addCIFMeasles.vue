@@ -71,9 +71,28 @@
                       class="searchResult"
                     >
                       <!-- <img class="searchPersonIcon" /> -->
-                      <div class="searchResultInfo" @click="autoFillPatient(patient)">
-                        <div class="searchPerson">{{ patient.firstName + " " + patient.midName + " " + patient.lastName }}</div>
-                        <div class="searchAddress">{{ patient.currHouseStreet + ", " + patient.currBrgy + ", " + patient.currCity }}</div>
+                      <div
+                        class="searchResultInfo"
+                        @click="autoFillPatient(patient)"
+                      >
+                        <div class="searchPerson">
+                          {{
+                            patient.firstName +
+                            ' ' +
+                            patient.midName +
+                            ' ' +
+                            patient.lastName
+                          }}
+                        </div>
+                        <div class="searchAddress">
+                          {{
+                            patient.currHouseStreet +
+                            ', ' +
+                            patient.currBrgy +
+                            ', ' +
+                            patient.currCity
+                          }}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -2597,10 +2616,12 @@ export default {
       }
     },
     async submit() {
-      const result = await axios.post('http://localhost:8080/api/newCase', {formData: this.formData});
+      const result = await axios.post('http://localhost:8080/api/newCase', {
+        formData: this.formData,
+      })
       // eslint-disable-next-line no-console
-      console.log(result);
-      alert('case submitted!');
+      console.log(result)
+      alert('case submitted!')
       // window.location.href = '/allcases'
     },
     move(page) {
@@ -2630,23 +2651,23 @@ export default {
       } else return false
     },
     autoFillPatient(patient) {
-	  console.log(patient);
-      this.formData.patient.lastName = patient.lastName;
-	  this.formData.patient.firstName = patient.firstName;
-	  this.formData.patient.midName = patient.midName;
-	  this.formData.patient.birthDate = patient.birthDate;
-	  this.formData.patient.ageNo = patient.ageNo;
-	  this.formData.patient.sex = patient.sex;
-	  this.formData.patient.pregWeeks = 
-	  this.formData.patient.currHouseStreet = patient.currHouseStreet;
-	  this.formData.patient.currBrgy = patient.currBrgy;
-	  this.formData.patient.currCity = patient.currCity;
-	  this.formData.patient.permHouseStreet = patient.permHouseStreet;
-	  this.formData.patient.permBrgy = patient.permBrgy;
-	  this.formData.patient.permCity = patient.permCity;
-	  this.formData.patient.guardianName = patient.guardianName;
-	  this.formData.patient.guardianContact = patient.guardianContact;
-	  this.pageNum++;
+      // console.log(patient)
+      this.formData.patient.lastName = patient.lastName
+      this.formData.patient.firstName = patient.firstName
+      this.formData.patient.midName = patient.midName
+      this.formData.patient.birthDate = patient.birthDate
+      this.formData.patient.ageNo = patient.ageNo
+      this.formData.patient.sex = patient.sex
+      this.formData.patient.pregWeeks = this.formData.patient.currHouseStreet =
+        patient.currHouseStreet
+      this.formData.patient.currBrgy = patient.currBrgy
+      this.formData.patient.currCity = patient.currCity
+      this.formData.patient.permHouseStreet = patient.permHouseStreet
+      this.formData.patient.permBrgy = patient.permBrgy
+      this.formData.patient.permCity = patient.permCity
+      this.formData.patient.guardianName = patient.guardianName
+      this.formData.patient.guardianContact = patient.guardianContact
+      this.pageNum++
     },
     searchPatient(event) {
       this.patientResult = []
@@ -3372,7 +3393,7 @@ ul ul li {
   background: white;
   height: fit-content;
   border-radius: 0 0 25px 25px;
-  margin-top: -10px;
+  margin-top: -15px;
   padding: 10px;
   display: grid;
   width: 100%;

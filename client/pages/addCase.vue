@@ -8,10 +8,8 @@
       <div class="cases-section-container">
         <!--Name of form-->
         <div class="page-name">
-          <h1 style="margin: 0; font-weight: 600; font-size: 24px">
-            Add a Case
-          </h1>
-          <p style="margin: 0 5px 5px 5px; font-size: 16px">
+          <h1 class="formHeader">Add a Case</h1>
+          <p style="margin: -5px 5px 10px; font-size: 16px">
             Select the disease of the reported case:
           </p>
         </div>
@@ -46,6 +44,17 @@
           <div id="CRF" class="center formTypeDiv">
             <!-- CASE DEFINITION -->
             <h2 id="formTypeH">Case Report Form</h2>
+
+            <div
+              v-for="(value, name, i) in diseases.crf"
+              :key="i"
+              style="width: 100%; align-content: center"
+            >
+              <!-- <div v-if="i > 1" :id="name" :class="formColor(i - 1)"> -->
+              <a :href="value" style="margin: auto"
+                ><div class="cases-disease-name">{{ name }}</div></a
+              >
+            </div>
           </div>
         </div>
       </div>
@@ -62,14 +71,14 @@ export default {
     return {
       diseases: {
         cif: {
-          Measles: '/cifMeasles',
-          Diphtheria: '/cifDiphtheria',
-          'Neonatal Tetanus': '/cifNeonatalTetanus',
-          Pertussis: '/cifPertussis',
-          'Meningococcal Disease': '/cifMeningococcal',
+          Measles: '/addCIFMeasles',
+          Diphtheria: '/addCIFDiphtheria',
+          'Neonatal Tetanus': '/addCIFNeonatalTetanus',
+          Pertussis: '/addCIFPertussis',
+          'Meningococcal Disease': '/addCIFMeningococcal',
         },
         crf: {
-          Dengue: 'crfDengue',
+          Dengue: '/addCRFDengue',
         },
       },
     }
@@ -89,6 +98,13 @@ body {
 h3 {
   font-size: 15px;
   font-weight: 600;
+}
+
+.formHeader {
+  margin: -5px 0;
+  font-weight: 800;
+  font-size: 32px;
+  color: #346083;
 }
 
 .cases-container {
@@ -158,7 +174,7 @@ h3 {
 #formTypeH {
   text-align: center;
   font-weight: 600;
-  font-size: 30px;
+  font-size: 28px;
   background-color: #008d41;
   color: transparent;
   text-shadow: 1px 1px, -1px -1px rgba(0, 0, 0, 0.25);
