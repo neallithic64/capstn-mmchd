@@ -381,7 +381,7 @@
                   <label for="userContactNo1"> Line 1 Contact No. (11-digit Mobile Number or 8-digit Tel Number) </label>
                   <input
                     id="userContactNo1"
-                    v-model="user.userContactNo"
+                    v-model="user.userContactNo1"
                     class="input-form-field"
                     type="tel"
                     minlength="8"
@@ -393,7 +393,7 @@
                   <label for="userContactNo2"> Line 2 Contact No. (11-digit Mobile Number or 8-digit Tel Number) </label>
                   <input
                     id="userContactNo2"
-                    v-model="user.userContactNo"
+                    v-model="user.userContactNo2"
                     class="input-form-field"
                     type="tel"
                     minlength="8"
@@ -442,7 +442,7 @@
                 <label for="userContactNo1" class="required"> Contact No. (11-digit Mobile Number) </label>
                 <input
                   id="userContactNo1"
-                  v-model="user.userContactNo"
+                  v-model="user.userContactNo1"
                   class="input-form-field"
                   type="tel"
                   minlength="11"
@@ -505,7 +505,7 @@
                   <label for="userRePassword" class="required"> Re-type Password </label>
                   <input
                     id="userRePassword"
-                    v-model="user.userPassword"
+                    v-model="user.userRePassword"
                     class="input-form-field"
                     type="password"
                     :disabled="inputEdit()"
@@ -550,7 +550,7 @@
             v-if="pageNum == Object.keys(formSection.formNames).length"
             class="next-button"
             type="button"
-            @click="submit;"
+            @click="submit()"
           >
             Submit
           </button>
@@ -570,6 +570,7 @@ export default {
       isOpen: true,
       pageNum: 0,
       brgyList: [],
+      errors: [],
       user: {
         userID: '',
         userType: '',
@@ -584,7 +585,8 @@ export default {
         userContactNo2: '',
         userEmail: '',
         userName: '',
-        userPassword: ''
+        userPassword: '',
+        userRePassword: ''
       },
       formSection: {
         formNames: {
@@ -603,9 +605,23 @@ export default {
         else if (index > this.pageNum) return 'formnum'
       }
     },
-    submit() {
-      alert('DONE')
-      window.location.href = '/allcases'
+    async submit() {
+      // alert('DONE')
+      // window.location.href = '/allcases'
+      // const formData = new FormData()
+      // Object.keys(this.user).forEach((key) => {
+      //   formData.append(key, this.user[key])
+      // })
+
+      try {
+        const result = await axios.post('http://localhost:8080/api/newUser', {user: this.user});
+        // eslint-disable-next-line no-console
+        console.log(result);
+        this.$router.push('/');
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.log(err)
+      }
     },
     move(page) {
       this.pageNum = page
