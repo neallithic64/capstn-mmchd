@@ -293,9 +293,18 @@ export default {
       },
     }
   },
-
-  mounted() {
-    this.tableOptions.columns = this.allColumns
+  async fetch() {
+    // eslint-disable-next-line no-unused-vars
+    const rows = (
+      await axios.get('http://localhost:8080/api/getCases')
+    ).data;
+    this.allData = rows;
+	console.log("fetch()");
+	console.log(this.allData);
+  },
+  async mounted() {
+    await this.fetch();
+    this.tableOptions.columns = this.allColumns;
   },
   methods: {
     clickTab(caseTab) {
@@ -310,13 +319,6 @@ export default {
       if (caseTab === this.caseTab) return 'formSummaryItems selected'
       else return 'formSummaryItems'
     },
-  },
-  async fetch() {
-    const rows = (
-      await axios.get('http://localhost:8080/api/getCases')
-    ).data;
-    this.allData = rows;
-	console.log(this.allData);
   },
 }
 </script>

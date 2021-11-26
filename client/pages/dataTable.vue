@@ -326,7 +326,7 @@ export default {
         this.requestParams.sortedType = type
       }
 
-      if (typeof this.dataSets[0][key] === 'number') {
+      if (this.dataSets.length && typeof this.dataSets[0][key] === 'number') {
         if (type === 'asc') return this.dataSets.sort((a, b) => a[key] - b[key])
         else return this.dataSets.sort((a, b) => b[key] - a[key])
       } else {

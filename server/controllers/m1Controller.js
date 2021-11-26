@@ -263,7 +263,8 @@ const indexFunctions = {
 	
 	getCases: async function(req, res) {
 		try {
-			let match = await db.findRows("mmchddb.CASES");
+			let match = await db.findAll("mmchddb.CASES");
+			console.log(match);
 			res.status(200).send(match);
 		} catch (e) {
 			console.log(e);
