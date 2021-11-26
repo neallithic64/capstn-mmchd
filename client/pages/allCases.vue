@@ -42,6 +42,8 @@
 
 <script>
 import dataTable from './dataTable.vue'
+const axios = require('axios');
+
 export default {
   header: {
     title: 'Add Case',
@@ -255,112 +257,6 @@ export default {
         },
       ],
       allData: [
-        {
-          type: 'CIF',
-          caseID: 19,
-          disease: 'Measles',
-          druID: 123,
-          city: 'Manila',
-          patientNo: 123,
-          submittedDate: '2020-12-10',
-          updatedDate: '2020-1-10',
-          status: 'Condtional Probable',
-        },
-        {
-          type: 'CIF',
-          caseID: 10,
-          disease: 'Disease',
-          druID: 123,
-          city: 'PH',
-          patientNo: 223,
-          submittedDate: '2020-11-30',
-          updatedDate: '2020-1-12',
-          status: 'Conditional Confirm',
-        },
-        {
-          type: 'CRF',
-          caseID: 19,
-          disease: 'Measles',
-          druID: 345,
-          city: 'Manila',
-          patientNo: 123,
-          submittedDate: '2020-12-10',
-          updatedDate: '2020-2-12',
-          status: 'Suspected',
-        },
-        {
-          type: 'CRF',
-          caseID: 21,
-          disease: 'Dengue',
-          city: 'PH',
-          patientNo: 223,
-          submittedDate: '2021-11-10',
-          updatedDate: '2021-12-10',
-          status: 'Probable',
-        },
-        {
-          caseID: 29,
-          disease: 'Dengue',
-          city: 'PH',
-          patientNo: 223,
-          submittedDate: '2020-11-10',
-          updatedDate: '2020-11-10',
-          status: 'Suspected',
-        },
-        {
-          caseID: 30,
-          disease: 'Measles',
-          city: 'Manila',
-          patientNo: 123,
-          submittedDate: '2020-10-10',
-          updatedDate: '2020-10-10',
-          status: 'IDK',
-        },
-        {
-          caseID: 31,
-          disease: 'Dengue',
-          city: 'PH',
-          patientNo: 223,
-          submittedDate: '2020-11-10',
-          updatedDate: '2020-11-10',
-          status: 'IDK',
-        },
-        {
-          caseID: 32,
-          disease: 'Measles',
-          city: 'Manila',
-          patientNo: 123,
-          submittedDate: '2020-10-10',
-          updatedDate: '2020-10-10',
-          status: 'IDK',
-        },
-        {
-          caseID: 33,
-          disease: 'Dengue',
-          city: 'earth',
-          patientNo: 223,
-          submittedDate: '2020-11-10',
-          updatedDate: '2020-11-10',
-          status: 'IDK',
-        },
-        {
-          caseID: 34,
-          disease: 'cries',
-          city: 'Manila',
-          patientNo: 123,
-          submittedDate: '2020-10-10',
-          updatedDate: '2020-10-10',
-          status: 'dd',
-        },
-        {
-          caseID: 35,
-          disease: 'hatdog',
-          city: 'PH',
-          patientNo: 223,
-          submittedDate: '2020-11-10',
-          updatedDate: '2020-11-10',
-          status: 'e',
-        },
       ],
       cifData: [
         {
@@ -414,6 +310,13 @@ export default {
       if (caseTab === this.caseTab) return 'formSummaryItems selected'
       else return 'formSummaryItems'
     },
+  },
+  async fetch() {
+    const rows = (
+      await axios.get('http://localhost:8080/api/getCases')
+    ).data;
+    this.allData = rows;
+	console.log(this.allData);
   },
 }
 </script>

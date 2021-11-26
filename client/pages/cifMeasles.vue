@@ -1922,14 +1922,14 @@
                 class="field"
                 style="display: inline-flex; flex-direction: row"
               >
-                <label for="labspecimen" class="required">
+                <label for="labSpecimen" class="required">
                   Please select the specimen collected with the following
                   information
                 </label>
                 <select
-                  id="labspecimen"
-                  v-model="formData.caseData.labspecimen"
-                  name="labspecimen"
+                  id="labSpecimen"
+                  v-model="formData.caseData.labSpecimen"
+                  name="labSpecimen"
                   style="width: 300px"
                   :disabled="inputEdit()"
                 >
@@ -2500,7 +2500,7 @@ export default {
           MCVlastDoseDate: '',
           MCVvalidation: '',
           MCVCampaign: '',
-          noMCVreason: [''],
+          noMCVreason: [],
           vitA: '',
           // page 4
           travelHistory: '',
@@ -2515,7 +2515,7 @@ export default {
           expPlaceType: '',
           otherCommunityCases: '',
           // page 5
-          labspecimen: '',
+          labSpecimen: '',
           labDateCollected: '',
           labDateSent: '',
           labDateReceived: '',
@@ -2597,11 +2597,16 @@ export default {
       }
     },
     async submit() {
+      this.formData.cases.diseaseID = this.diseaseID;
+      this.formData.cases.reportedBy = this.$auth.user.userID;
       const result = await axios.post('http://localhost:8080/api/newCase', {formData: this.formData});
-      // eslint-disable-next-line no-console
-      console.log(result);
-      alert('case submitted!');
-      // window.location.href = '/allcases'
+      if (result.status === 200) {
+        alert('case submitted!');
+        window.location.href = '/allCases'
+      } else {
+        // eslint-disable-next-line no-console
+        console.log(result);
+      }
     },
     move(page) {
       if (
@@ -2630,23 +2635,23 @@ export default {
       } else return false
     },
     autoFillPatient(patient) {
-	  console.log(patient);
+      console.log(patient);
       this.formData.patient.lastName = patient.lastName;
-	  this.formData.patient.firstName = patient.firstName;
-	  this.formData.patient.midName = patient.midName;
-	  this.formData.patient.birthDate = patient.birthDate.substr(0, 10);
-	  this.formData.patient.ageNo = patient.ageNo;
-	  this.formData.patient.sex = patient.sex;
-	  this.formData.patient.pregWeeks = patient.pregWeeks;
-	  this.formData.patient.currHouseStreet = patient.currHouseStreet;
-	  this.formData.patient.currBrgy = patient.currBrgy;
-	  this.formData.patient.currCity = patient.currCity;
-	  this.formData.patient.permHouseStreet = patient.permHouseStreet;
-	  this.formData.patient.permBrgy = patient.permBrgy;
-	  this.formData.patient.permCity = patient.permCity;
-	  this.formData.patient.guardianName = patient.guardianName;
-	  this.formData.patient.guardianContact = patient.guardianContact;
-	  this.pageNum++;
+      this.formData.patient.firstName = patient.firstName;
+      this.formData.patient.midName = patient.midName;
+      this.formData.patient.birthDate = patient.birthDate.substr(0, 10);
+      this.formData.patient.ageNo = patient.ageNo;
+      this.formData.patient.sex = patient.sex;
+      this.formData.patient.pregWeeks = patient.pregWeeks;
+      this.formData.patient.currHouseStreet = patient.currHouseStreet;
+      this.formData.patient.currBrgy = patient.currBrgy;
+      this.formData.patient.currCity = patient.currCity;
+      this.formData.patient.permHouseStreet = patient.permHouseStreet;
+      this.formData.patient.permBrgy = patient.permBrgy;
+      this.formData.patient.permCity = patient.permCity;
+      this.formData.patient.guardianName = patient.guardianName;
+      this.formData.patient.guardianContact = patient.guardianContact;
+      this.pageNum++;
     },
     searchPatient(event) {
       this.patientResult = []

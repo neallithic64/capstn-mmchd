@@ -85,7 +85,6 @@ const database = {
 	exec: async function(sql) {
 		try {
 			let [rows, fields] = await pool.execute(sql);
-			console.log(rows);
 			return rows;
 		} catch (e) {
 			console.log(e);
