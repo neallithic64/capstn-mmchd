@@ -2,7 +2,10 @@ const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
 const db = require("../models/db");
-/* Object constructors */
+
+/** OBJECT CONSTRUCTORS
+*/
+
 function User(userID, userName, userEmail, userPassword, userType, addressID,
 				lastName, firstName, midName, userContactNo1, userContactNo2,
 				druName) {
@@ -27,43 +30,6 @@ function Address(addressID, houseStreet, brgy, city) {
 	this.city = city;
 }
 
-/** ON ID CREATION, AND FORMAT:
-	- 
-*/
-function getPrefix(table) {
-	switch(table) {
-		case "mmchddb.USERS":
-			return "US-";
-		case "mmchddb.DISEASES":
-			return "DI-";
-		case "mmchddb.EVENTS":
-			return "EV-";
-		case "mmchddb.PATIENTS":
-			return "PA-";
-		case "mmchddb.CASES":
-			return "CA-";
-		case "mmchddb.CRFS":
-			return "CR-";
-		case "mmchddb.NOTIFICATIONS":
-			return "NO-";
-		case "mmchddb.REPORTS":
-			return "RE-";
-		case "mmchddb.TARGETS":
-			return "TA-";
-		case "mmchddb.PROGRAMS":
-			return "PR-";
-		case "mmchddb.AGE_RANGE_REF":
-			return "AR-";
-		case "mmchddb.ADDRESSES":
-			return "AD-";
-		case "mmchddb.OUTBREAKS":
-			return "OU-";
-		case "mmchddb.SURVEILLANCE_EVAL":
-			return "SE-";
-		case "mmchddb.PROGRAM_EVAL":
-			return "PE-";
-	}
-}
 function Disease(diseaseID, diseaseName, notifiable, caseThreshold) {
 	this.diseaseID = diseaseID;
 	this.diseaseName = diseaseName;
@@ -140,28 +106,75 @@ function Event(eventID, userID, addressID, remarks, caseStatus, dateSubmitted) {
 	this.dateSubmitted = dateSubmitted;
 }
 
-
-async function generateID(table) {
-	// TODO: add exist-check for "mmchddb.ADDRESSES"
-	try {
-		let rowcount = await db.findRowCount(table);
-		let id = getPrefix(table);
-		for (let i = 0; i < 13 - rowcount.toString.length; i++)
-			id += '0';
-		id += rowcount.toString();
-		return id;
-	} catch (e) {
-		console.log(e);
-		return false;
+/** ON ID CREATION
+*/
+function getPrefix(table) {
+	switch(table) {
+		case "mmchddb.USERS":
+			return "US-";
+		case "mmchddb.DISEASES":
+			return "DI-";
+		case "mmchddb.EVENTS":
+			return "EV-";
+		case "mmchddb.PATIENTS":
+			return "PA-";
+		case "mmchddb.CASES":
+			return "CA-";
+		case "mmchddb.CRFS":
+			return "CR-";
+		case "mmchddb.NOTIFICATIONS":
+			return "NO-";
+		case "mmchddb.REPORTS":
+			return "RE-";
+		case "mmchddb.TARGETS":
+			return "TA-";
+		case "mmchddb.PROGRAMS":
+			return "PR-";
+		case "mmchddb.AGE_RANGE_REF":
+			return "AR-";
+		case "mmchddb.ADDRESSES":
+			return "AD-";
+		case "mmchddb.OUTBREAKS":
+			return "OU-";
+		case "mmchddb.SURVEILLANCE_EVAL":
+			return "SE-";
+		case "mmchddb.PROGRAM_EVAL":
+			return "PE-";
 	}
 }
 
-async function createAddress(address) {
+async function generateID(table, checkObj) {
+	let retObj = { exists: false, id: "" };
+	
 	try {
-		address.addressID = await generateID("mmchddb.ADDRESSES");
-		let r = await db.insertOne("mmchddb.ADDRESSES", address);
-		return r;
-	} catch(e) {
+		// checking for existence
+		if (table === "mmchddb.ADDRESSES") {
+			let rows = await db.findRows(table, checkObj);
+			if (rows.length > 0) {
+				retObj.exists = true;
+				retObj.id = rows[0].addressID;
+			}
+		} else if (table === "mmchddb.PATIENTS") {
+			// JOIN to addresses? well...
+			let rows = await db.findRows(table, checkObj);
+			if (rows.length > 0) {
+				retObj.exists = true;
+				retObj.id = rows[0].patientID;
+			}
+		}
+		
+		// generating for new object/row
+		if (!retObj.exists) {
+			let rowcount = await db.findRowCount(table);
+			let id = getPrefix(table);
+			for (let i = 0; i < 13 - rowcount.toString.length; i++)
+				id += '0';
+			id += rowcount.toString();
+			retObj.id = id;
+		}
+		
+		return retObj;
+	} catch (e) {
 		console.log(e);
 		return false;
 	}
@@ -169,7 +182,7 @@ async function createAddress(address) {
 
 async function createCase(cases) {
 	try {
-		cases.caseID = await generateID("mmchddb.CASES");
+		cases.caseID = (await generateID("mmchddb.CASES")).id;
 		let r = await db.insertOne("mmchddb.CASES", cases);
 		return r;
 	} catch(e) {
@@ -190,13 +203,10 @@ const indexFunctions = {
 	},
 	
 	mkData: async function(req, res) {
-		// let r = await db.findAll("mmchddb.TARGETS_REF");
+		let r = await db.findAll("mmchddb.TARGETS_REF");
 		// let r = await db.updateRows("mmchddb.TARGETS_REF", {targetDesc: "desc1"}, {targetDesc: "desc999"});
-		// console.log(r);
-		let r = await createAddress(new Address(null, '40', 'Basilio Street', 'Barangay Acacia', 'Malabon City',
-										'Metro Manila', 'NCR', 'Philippines'));
 		console.log(r);
-		res.send("exec done");
+		res.status(200).send("exec done");
 	},
 
 	getDisease: async function(req, res) {
@@ -307,7 +317,7 @@ const indexFunctions = {
 	postRegUser: async function(req, res) {
 		let { user } = req.body;
 		try {
-			user.userID = await generateID("mmchddb.USERS");
+			user.userID = (await generateID("mmchddb.USERS")).id;
 			// TODO: address
 			user.addressID = "AD-0000000000000";
 			delete user.userHouseStreet;
@@ -334,7 +344,7 @@ const indexFunctions = {
 		let { disease } = req.body;
 
 		try {
-			disease.diseaseID = await generateID("mmchddb.DISEASES");
+			disease.diseaseID = (await generateID("mmchddb.DISEASES")).id;
 			// let disease = new Disease(diseaseID, "Sample Disease", "Insert symptoms here",
 			// 							"Insert Suspected here", "Insert Probable here",
 			// 							"Insert Confirmed here", true, 100);
@@ -355,20 +365,18 @@ const indexFunctions = {
 		let { formData } = req.body;
 
 		try {
-			formData.patient.patientID = await generateID("mmchddb.PATIENTS");
-
-			// let patient = new Patient(patientID, "EPI-121312", "Garcia", "Benjamin", "Estepa", "AD-0000000000000", "AD-0000000000000",
-			// 							"Male", '1982-02-27 00:00:00', 39, "years", 'yes', "Married", "Working", "Globe", 
-			// 							"AD-0000000000000", "De La Salle University", "AD-0000000000000", null,
-			// 							false, null, false, null, 'Medicare', "Malabon ILHZ");
-
-			let result = await db.insertOne("mmchddb.PATIENTS", formData.patient);
+			let genPatientID = await generateID("mmchddb.PATIENTS", {
+				lastName: formData.patient.lastName
+				firstName: formData.patient.firstName
+				midName: formData.patient.midName
+			});
+			formData.patient.patientID = genPatientID.id;
+			if (!genPatientID.exists)
+				let result = await db.insertOne("mmchddb.PATIENTS", formData.patient);
+			
 			console.log(result);
-
-			if (result)
-				res.status(200).send("Add patient success");
-			else
-				res.status(500).send("Add patient failed");
+			if (result) res.status(200).send("Add patient success");
+			else res.status(500).send("Add patient failed");
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
@@ -379,16 +387,13 @@ const indexFunctions = {
 		let { event } = req.body;
 
 		try {
-			event.eventID = await generateID("mmchddb.EVENTS");
-
-			// let event = new Event(eventID, 'US-0000000000000', 'AD-0000000000000', 'Insert Remarks here', 'Ongoing', '2021-11-01 00:00:00')
+			event.eventID = (await generateID("mmchddb.EVENTS")).id;
+			// let event = new Event(event.eventID, 'US-0000000000000', 'AD-0000000000000', 'Insert Remarks here', 'Ongoing', '2021-11-01 00:00:00');
 
 			let result = await db.insertOne("mmchddb.EVENTS", event);
 			console.log(result);
-			if (result)
-				res.status(200).send("Add patient success");
-			else
-				res.status(500).send("Add patient failed");
+			if (result) res.status(200).send("Add event success");
+			else res.status(500).send("Add event failed");
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
@@ -407,16 +412,28 @@ const indexFunctions = {
 		let result;
 
 		try {
-			let currAddrID = await generateID("mmchddb.ADDRESSES");
-			formData.patient.caddressID = currAddrID;
-			let currAddr = new Address(currAddrID, formData.patient.currHouseStreet, formData.patient.currBrgy, formData.patient.currCity);
-			result = await db.insertOne("mmchddb.ADDRESSES", currAddr);
+			let currAddrID = await generateID("mmchddb.ADDRESSES", {
+				houseStreet: formData.patient.currHouseStreet,
+				brgy: formData.patient.currBrgy,
+				city: formData.patient.currCity
+			});
+			formData.patient.caddressID = currAddrID.id;
+			if (!currAddrID.exists) {
+				let currAddr = new Address(currAddrID, formData.patient.currHouseStreet, formData.patient.currBrgy, formData.patient.currCity);
+				result = await db.insertOne("mmchddb.ADDRESSES", currAddr);
+			}
 			
 			if (result) {
-				let permAddrID = await generateID("mmchddb.ADDRESSES");
-				formData.patient.paddressID = permAddrID;
-				let permAddr = new Address(permAddrID, formData.patient.permHouseStreet, formData.patient.permBrgy, formData.patient.permCity);
-				result = await db.insertOne("mmchddb.ADDRESSES", permAddr);
+				let permAddrID = await generateID("mmchddb.ADDRESSES", {
+					houseStreet: formData.patient.permHouseStreet,
+					brgy: formData.patient.permBrgy,
+					city: formData.patient.permCity
+				});
+				formData.patient.paddressID = permAddrID.id;
+				if (!currAddrID.exists) {
+					let permAddr = new Address(permAddrID, formData.patient.permHouseStreet, formData.patient.permBrgy, formData.patient.permCity);
+					result = await db.insertOne("mmchddb.ADDRESSES", permAddr);
+				}
 				
 				if (result) {
 					delete formData.patient.currHouseStreet;
@@ -425,11 +442,16 @@ const indexFunctions = {
 					delete formData.patient.permHouseStreet;
 					delete formData.patient.permBrgy;
 					delete formData.patient.permCity;
-					// temp fix
-					formData.patient.occuAddrID = null;
 					
-					formData.patient.patientID = await generateID("mmchddb.PATIENTS");
-					result = await db.insertOne("mmchddb.PATIENTS", formData.patient);
+					// temp fix for occuAddr
+					formData.patient.occuAddrID = null;
+					let genPatientID = await generateID("mmchddb.PATIENTS", {
+						
+					});
+					formData.patient.patientID = genPatientID.id;
+					if (!genPatientID.exists) {
+						result = await db.insertOne("mmchddb.PATIENTS", formData.patient);
+					}
 					
 					if (result) {
 						formData.cases.caseID = await generateID("mmchddb.CASES");

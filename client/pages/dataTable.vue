@@ -151,10 +151,9 @@
                   :href="'/view' + 'CRF' + data['disease']">
                   {{ data[column.key] }}
                 </a>
-                <!-- <a
-                  style="text-decoration: none"
-                  v-bind:href="column.source + '/' + data[column.key]"
-                  >{{ data[column.key] }}
+                <!-- <a style="text-decoration: none"
+                  v-bind:href="column.source + '/' + data[column.key]">
+				  {{ data[column.key] }}
                 </a> -->
               </span>
               <span v-else>
