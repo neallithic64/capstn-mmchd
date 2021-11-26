@@ -2658,8 +2658,8 @@ export default {
       this.formData.patient.birthDate = patient.birthDate
       this.formData.patient.ageNo = patient.ageNo
       this.formData.patient.sex = patient.sex
-      this.formData.patient.pregWeeks = this.formData.patient.currHouseStreet =
-        patient.currHouseStreet
+      this.formData.patient.pregWeeks = patient.pregWeeks
+      this.formData.patient.currHouseStreet = patient.currHouseStreet
       this.formData.patient.currBrgy = patient.currBrgy
       this.formData.patient.currCity = patient.currCity
       this.formData.patient.permHouseStreet = patient.permHouseStreet
