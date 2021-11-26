@@ -507,7 +507,7 @@
           <button v-if="pageNum == Object.keys(formSection.formNames).length - 1" class="next-button" type="button" @click="move(pageNum + 1)">
             Review
           </button>
-          <buttonv-if="pageNum == Object.keys(formSection.formNames).length" class="next-button" type="button" @click="submit()">
+          <button v-if="pageNum == Object.keys(formSection.formNames).length" class="next-button" type="button" @click="submit()">
             Submit
           </button>
         </div>
