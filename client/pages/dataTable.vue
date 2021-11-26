@@ -2,12 +2,7 @@
   <div class="datatable">
     <div class="search">
       Show
-      <select
-        id="rows"
-        v-model="showDataAmount"
-        class="form-control"
-        @change="selectedDataAmount"
-      >
+      <select id="rows" v-model="showDataAmount" class="form-control" @change="selectedDataAmount">
         <option value="10">10</option>
         <option value="20">20</option>
         <option value="50">50</option>
@@ -114,13 +109,13 @@
           <span v-if="requestParams.sortedKey === column.key && requestParams.sortedType === 'asc'" style="float: right>
             <a href="javascript:" @click="sortedKeyValue(column.key, 'desc')">
               <img src="~/assets/img/sortup.png" alt="up.png" />
-			</a>
-	      </span>
+            </a>
+          </span>
           <span v-else-if="requestParams.sortedKey === column.key && requestParams.sortedType === 'desc'" style="float: right">
             <a href="javascript:" @click="sortedKeyValue(column.key, 'asc')">
               <img src="~/assets/img/sortdown.png" alt="down.png" />
-			</a>
-		  </span>
+            </a>
+          </span>
           <span v-else-if="column.sortable" style="float: right">
             <a href="javascript:" @click="sortedKeyValue(column.key, 'asc')">
               <img src="~/assets/img/sort.png" alt="sort.png" />
@@ -137,30 +132,30 @@
               </span>
               <span v-else-if="column.type === 'clickable'">
                 <a v-if="pageType === 'all' && data['type'] === 'CIF'"
-				  style="color: #346083; text-decoration-line: underline"
-				  :href="'/view' + data['type'] + data['disease']">
-				  {{ data[column.key] }}
-				</a>
+                  style="color: #346083; text-decoration-line: underline"
+                  :href="'/view' + data['type'] + data['disease']">
+                  {{ data[column.key] }}
+                </a>
                 <a v-else-if="(pageType === 'all' && data['type'] === 'CRF') || pageType === 'crfCase'"
                   style="color: #346083; text-decoration-line: underline"
                   :href="'/view' + 'CRF' + data['disease'] + 'Case'">
-				  {{ data[column.key] }}
-				</a>
+                  {{ data[column.key] }}
+                </a>
                 <a v-else-if="pageType === 'cif'"
                   style="color: #346083; text-decoration-line: underline"
                   :href="'/view' + 'CIF' + data['disease']">
-				  {{ data[column.key] }}
-				</a>
+                  {{ data[column.key] }}
+                </a>
                 <a v-else-if="pageType === 'crf'"
                   style="color: #346083; text-decoration-line: underline"
                   :href="'/view' + 'CRF' + data['disease']">
-				  {{ data[column.key] }}
-				</a>
+                  {{ data[column.key] }}
+                </a>
                 <!-- <a
                   style="text-decoration: none"
                   v-bind:href="column.source + '/' + data[column.key]"
                   >{{ data[column.key] }}
-				</a> -->
+                </a> -->
               </span>
               <span v-else>
                 {{ data[column.key] }}
@@ -177,22 +172,22 @@
     <div v-if="totalCount > requestParams.take" class="pagination">
       <a href="javascript:"
         :class="{ isDisabled: currentPage == 1 }"
-        @click="newPage(currentPage - 1)"
-        >&laquo;</a
-      >
+        @click="newPage(currentPage - 1)">
+        &laquo;
+      </a>
       <a v-for="(page, pageIndex) in pages"
         v-show="pageIndex > 0"
         :key="pageIndex"
         href="javascript:"
         :class="[{ active: currentPage === pageIndex }, { isDisabled: currentPage === pageIndex || page === '...', },]"
         @click="newPage(pageIndex)">
-		{{ pageIndex }}
-	  </a>
+        {{ pageIndex }}
+      </a>
       <a :class="{ isDisabled: currentPage == totalPage }"
         href="javascript:"
         @click="newPage(currentPage + 1)">
         &raquo;
-	  </a>
+      </a>
     </div>
   </div>
 </template>

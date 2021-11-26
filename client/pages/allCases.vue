@@ -295,8 +295,8 @@ export default {
     // eslint-disable-next-line no-unused-vars
     const rows = (await axios.get('http://localhost:8080/api/getCases')).data;
     this.allData = rows;
-	console.log("fetch()");
-	console.log(this.allData);
+    console.log("fetch()");
+    console.log(this.allData);
   },
   async mounted() {
     await this.fetch();

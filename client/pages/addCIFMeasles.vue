@@ -872,20 +872,14 @@
                 {{ Object.values(disease.formNames)[3] }}
               </h2>
 
-              <div
-                class="field-row"
-                style="display: inline-flex; margin-bottom: -1 px"
-              >
+              <div class="field-row" style="display: inline-flex; margin-bottom: -1 px">
                 <div class="field">
                   <label class="required">
                     Select the following symptoms shown by patient
                   </label>
                   <div style="margin-left: 5px">
                     <div class="symptoms-half">
-                      <div
-                        class="checkbox-options"
-                        style="display: inline-flex"
-                      >
+                      <div class="checkbox-options" style="display: inline-flex">
                         <input
                           id="fever"
                           value="fever"
@@ -1317,8 +1311,8 @@
                         type="checkbox"
                       />
                       <label v-if="i > 0" :for="reason" style="display: inline-flex">
-					    {{ reason }}
-				      </label>
+                        {{ reason }}
+                      </label>
                     </div>
 
                     <div style="display: flex; align-items: center">
@@ -1912,7 +1906,7 @@
                                 :disabled="inputEdit()"
                               />
                               {{ name }}
-							</label>
+                            </label>
                             <ul>
                               <li>{{ value }}</li>
                             </ul>
@@ -1920,32 +1914,32 @@
                         </ul>
                       </div>
                     </div>
-					
-					<!-- <div v-for="(value, name, i) in classification" :key="i" class="checkbox-options">
-						<input
-						  :id="i"
-						  v-model="formData.caseData.finalClassification"
-						  :value="name"
-						  class="input-checkbox"
-						  name="finalClassification"
-						  type="radio"
-						  :disabled="inputEdit()"
-						/>
-						<label :for="i">
-						  {{ name }}
-						</label>
-						<div class="tooltip">
-						  <img
-							id="infofever"
-							class="info-icon-img"
-							src="~/assets/img/infoicon.png"
-						  />
-						  <span class="tooltipText" style="width: 500px">{{
-							value
-						  }}</span>
-						</div>
+                    
+                    <!-- <div v-for="(value, name, i) in classification" :key="i" class="checkbox-options">
+                        <input
+                          :id="i"
+                          v-model="formData.caseData.finalClassification"
+                          :value="name"
+                          class="input-checkbox"
+                          name="finalClassification"
+                          type="radio"
+                          :disabled="inputEdit()"
+                        />
+                        <label :for="i">
+                          {{ name }}
+                        </label>
+                        <div class="tooltip">
+                          <img
+                            id="infofever"
+                            class="info-icon-img"
+                            src="~/assets/img/infoicon.png"
+                          />
+                          <span class="tooltipText" style="width: 500px">{{
+                            value
+                          }}</span>
+                        </div>
                     </div> -->
-					
+                    
                     <!-- <div class="checkbox-options">
                         <input
                           id="Epi-linked Confirmed Measles"
@@ -2358,7 +2352,7 @@ export default {
       this.formData.cases.diseaseID = this.diseaseID;
       this.formData.cases.reportedBy = this.$auth.user.userID;
       const result = await axios.post('http://localhost:8080/api/newCase', {formData: this.formData});
-	  if (result.status === 200) {
+      if (result.status === 200) {
         alert('case submitted!');
         window.location.href = '/allCases';
       } else {
