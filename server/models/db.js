@@ -85,7 +85,6 @@ const database = {
 	exec: async function(sql) {
 		try {
 			let [rows, fields] = await pool.execute(sql);
-			console.log(rows);
 			return rows;
 		} catch (e) {
 			console.log(e);
@@ -129,7 +128,7 @@ const database = {
 	 *  column Like '%value%'condition. Currently, the WHERE clause supports string types; integers are
 	 * not yet taken into account.
 	 */
-	 findRowsLike: async function(table, query) {
+	findRowsLike: async function(table, query) {
 		try {
 			let statement = "SELECT * FROM " + table + " WHERE " + makeWhereLikeClause(query);
 			let [rows, fields] = await pool.execute(statement);

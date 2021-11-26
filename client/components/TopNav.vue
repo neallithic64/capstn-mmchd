@@ -38,8 +38,7 @@
       $auth.user.userType === 'BHS' || $auth.user.userType === 'RHU' || $auth.user.userType === 'CHO' ||
       $auth.user.userType === 'govtHosp' || $auth.user.userType === 'privHosp' || $auth.user.userType === 'clinic' ||
       $auth.user.userType === 'govtLab' || $auth.user.userType === 'privLab' || $auth.user.userType === 'airseaPort'"
-      class="dropdown"
-    >
+      class="dropdown">
       <button class="dropbtn">
         ESR
         <i class="fa fa-caret-down"></i>
@@ -51,8 +50,7 @@
     </div>
     <nuxt-link 
       v-if="$auth.user.userType === 'pidsrStaff' || $auth.user.userType === 'fhsisStaff' || $auth.user.userType === 'techStaff'"
-      to="/analysis"
-    > 
+      to="/analysis"> 
       Analysis and Visualization 
     </nuxt-link>
     <nuxt-link to="/bulletin"> Feedback Bulletin </nuxt-link>
@@ -114,11 +112,11 @@
 export default {
   methods: {
     responsive() {
-      const x = document.getElementById('myTopnav')
+      const x = document.getElementById('myTopnav');
       if (x.className === 'topnav') {
-        x.className += ' responsive'
+        x.className += ' responsive';
       } else {
-        x.className = 'topnav'
+        x.className = 'topnav';
       }
     },
   },

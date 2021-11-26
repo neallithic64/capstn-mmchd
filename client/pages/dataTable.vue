@@ -1,21 +1,8 @@
 <template>
   <div class="datatable">
     <div class="search">
-      <input
-        id="search"
-        v-model="requestParams.search"
-        type="text"
-        style="float: right"
-        placeholder="Search here"
-        @keyup="search()"
-      />
       Show
-      <select
-        id="rows"
-        v-model="showDataAmount"
-        class="form-control"
-        @change="selectedDataAmount"
-      >
+      <select id="rows" v-model="showDataAmount" class="form-control" @change="selectedDataAmount">
         <option value="10">10</option>
         <option value="20">20</option>
         <option value="50">50</option>
@@ -34,11 +21,7 @@
     </div>
     <table id="datatable">
       <thead>
-        <th
-          v-for="(column, columnIndex) in options.columns"
-          :key="columnIndex"
-          :style="{ 'text-align': column.textAlign }"
-        >
+        <th v-for="(column, columnIndex) in options.columns" :key="columnIndex" :style="{ 'text-align': column.textAlign }">
           <span v-if="column.filter" style="float: left">
             <div v-if="column.key === 'disease'">
               <a class="filterButton">
@@ -53,11 +36,7 @@
                 <div class="arrow-up"></div>
                 <div class="filterDropdown">
                   <b>Select Disease:</b>
-                  <div
-                    v-for="(value, i) in diseaseFilters.options"
-                    :key="i"
-                    style="padding-left: 7px"
-                  >
+                  <div v-for="(value, i) in diseaseFilters.options" :key="i" style="padding-left: 7px">
                     <input
                       :id="value"
                       v-model="diseaseFilters.selected"
@@ -84,11 +63,7 @@
                 <div class="arrow-up"></div>
                 <div class="filterDropdown">
                   <b>Select City:</b>
-                  <div
-                    v-for="(value, i) in cityFilters.options"
-                    :key="i"
-                    style="padding-left: 7px"
-                  >
+                  <div v-for="(value, i) in cityFilters.options" :key="i" style="padding-left: 7px">
                     <input
                       :id="value"
                       v-model="cityFilters.selected"
@@ -115,11 +90,7 @@
                 <div class="arrow-up"></div>
                 <div class="filterDropdown">
                   <b>Select Status:</b>
-                  <div
-                    v-for="(value, i) in statusFilters.options"
-                    :key="i"
-                    style="padding-left: 7px"
-                  >
+                  <div v-for="(value, i) in statusFilters.options" :key="i" style="padding-left: 7px">
                     <input
                       :id="value"
                       v-model="statusFilters.selected"
@@ -135,37 +106,18 @@
             </div>
           </span>
           <span>{{ column.title }}</span>
-          <span
-            v-if="
-              requestParams.sortedKey === column.key &&
-              requestParams.sortedType === 'asc'
-            "
-            style="float: right"
-          >
-            <a
-              href="javascript:"
-              @click="sortedKeyValue(column.key, 'desc')"
-            >
-              <img src="~/assets/img/sortup.png" alt="up.png" /> </a
-          ></span>
-          <span
-            v-else-if="
-              requestParams.sortedKey === column.key &&
-              requestParams.sortedType === 'desc'
-            "
-            style="float: right"
-          >
-            <a
-              href="javascript:"
-              @click="sortedKeyValue(column.key, 'asc')"
-            >
-              <img src="~/assets/img/sortdown.png" alt="down.png" /> </a
-          ></span>
+          <span v-if="requestParams.sortedKey === column.key && requestParams.sortedType === 'asc'" style="float: right>
+            <a href="javascript:" @click="sortedKeyValue(column.key, 'desc')">
+              <img src="~/assets/img/sortup.png" alt="up.png" />
+            </a>
+          </span>
+          <span v-else-if="requestParams.sortedKey === column.key && requestParams.sortedType === 'desc'" style="float: right">
+            <a href="javascript:" @click="sortedKeyValue(column.key, 'asc')">
+              <img src="~/assets/img/sortdown.png" alt="down.png" />
+            </a>
+          </span>
           <span v-else-if="column.sortable" style="float: right">
-            <a
-              href="javascript:"
-              @click="sortedKeyValue(column.key, 'asc')"
-            >
+            <a href="javascript:" @click="sortedKeyValue(column.key, 'asc')">
               <img src="~/assets/img/sort.png" alt="sort.png" />
             </a>
           </span>
@@ -173,32 +125,37 @@
       </thead>
       <tbody>
         <template v-if="dataSets.length > 0">
-          <tr
-            v-for="(data, dataIndex) in dataSets"
-            v-show="dataIndex >= showstart && dataIndex <= showend"
-            :key="dataIndex"
-          >
-            <td
-              v-for="(column, columnIndex) in options.columns"
-              :key="columnIndex"
-              style="text-align: center"
-            >
+          <tr v-for="(data, dataIndex) in dataSets" v-show="dataIndex >= showstart && dataIndex <= showend" :key="dataIndex">
+            <td v-for="(column, columnIndex) in options.columns" :key="columnIndex" style="text-align: center">
               <span v-if="column.type === 'component'">
                 <component :is="column.name" :row="data"></component>
               </span>
               <span v-else-if="column.type === 'clickable'">
-                <a
+                <a v-if="pageType === 'all' && data['type'] === 'CIF'"
                   style="color: #346083; text-decoration-line: underline"
-                  :href="'/view' + data['type']"
-                  >{{ data[column.key] }}</a
-                >
-                <!-- 
-                    <a
+                  :href="'/view' + data['type'] + data['disease']">
+                  {{ data[column.key] }}
+                </a>
+                <a v-else-if="(pageType === 'all' && data['type'] === 'CRF') || pageType === 'crfCase'"
+                  style="color: #346083; text-decoration-line: underline"
+                  :href="'/view' + 'CRF' + data['disease'] + 'Case'">
+                  {{ data[column.key] }}
+                </a>
+                <a v-else-if="pageType === 'cif'"
+                  style="color: #346083; text-decoration-line: underline"
+                  :href="'/view' + 'CIF' + data['disease']">
+                  {{ data[column.key] }}
+                </a>
+                <a v-else-if="pageType === 'crf'"
+                  style="color: #346083; text-decoration-line: underline"
+                  :href="'/view' + 'CRF' + data['disease']">
+                  {{ data[column.key] }}
+                </a>
+                <!-- <a
                   style="text-decoration: none"
                   v-bind:href="column.source + '/' + data[column.key]"
-                  >{{ data[column.key] }}</a
-                >
-                 -->
+                  >{{ data[column.key] }}
+                </a> -->
               </span>
               <span v-else>
                 {{ data[column.key] }}
@@ -213,45 +170,37 @@
     </table>
 
     <div v-if="totalCount > requestParams.take" class="pagination">
-      <a
-        href="javascript:"
+      <a href="javascript:"
         :class="{ isDisabled: currentPage == 1 }"
-        @click="newPage(currentPage - 1)"
-        >&laquo;</a
-      >
-      <a
-        v-for="(page, pageIndex) in pages"
+        @click="newPage(currentPage - 1)">
+        &laquo;
+      </a>
+      <a v-for="(page, pageIndex) in pages"
         v-show="pageIndex > 0"
         :key="pageIndex"
         href="javascript:"
-        :class="[
-          { active: currentPage === pageIndex },
-          {
-            isDisabled: currentPage === pageIndex || page === '...',
-          },
-        ]"
-        @click="newPage(pageIndex)"
-        >{{ pageIndex }}</a
-      >
-      <a
-        :class="{ isDisabled: currentPage == totalPage }"
+        :class="[{ active: currentPage === pageIndex }, { isDisabled: currentPage === pageIndex || page === '...', },]"
+        @click="newPage(pageIndex)">
+        {{ pageIndex }}
+      </a>
+      <a :class="{ isDisabled: currentPage == totalPage }"
         href="javascript:"
-        @click="newPage(currentPage + 1)"
-        >&raquo;</a
-      >
+        @click="newPage(currentPage + 1)">
+        &raquo;
+      </a>
     </div>
   </div>
 </template>
 
 <script>
-const axios = require('axios')
 // import moment from 'moment'
+const axios = require('axios');
 
 export default {
   props: ['options', 'datavalues', 'casetype'],
   data() {
     return {
-      filters: [],
+      pageType: '',
       diseaseOpen: false,
       cityOpen: false,
       statusOpen: false,
@@ -286,203 +235,164 @@ export default {
   },
   watch: {},
   mounted() {
-    // this.requestParams.sortedKey = this.options.columns[0].key
-    this.filterOff()
-    this.dataSets = this.datavalues
-    console.log(this.filters)
-    this.sortedKeyValue(
-      this.requestParams.sortedKey,
-      this.requestParams.sortedType
-    )
-    this.totalCount = Object.keys(this.dataSets).length
-    this.getPages()
-    this.getStartEnd()
-    this.readData()
+    this.pageType = this.casetype;
+    // this.requestParams.sortedKey = this.options.columns[0].key;
+    this.filterOff();
+    this.dataSets = this.datavalues;
+    this.sortedKeyValue(this.requestParams.sortedKey, this.requestParams.sortedType);
+    this.totalCount = Object.keys(this.dataSets).length;
+    this.getPages();
+    this.getStartEnd();
+    this.readData();
   },
   methods: {
     getStartEnd() {
-      this.showstart = this.pages[this.currentPage][1]
-      this.showend = this.pages[this.currentPage][2]
+      this.showstart = this.pages[this.currentPage][1];
+      this.showend = this.pages[this.currentPage][2];
     },
     getPages() {
-      this.pages = []
-      this.totalPage = Math.floor(this.totalCount / this.showDataAmount) + 1
-      let start = 0
+      this.pages = [];
+      this.totalPage = Math.floor(this.totalCount / this.showDataAmount) + 1;
+      let start = 0;
       for (let i = 1; i <= this.totalPage; i++) {
-        let end = start + this.showDataAmount - 1
-        if (end === this.totalCount - 1) end = this.totalCount - 1
-        this.pages[i] = [i, start, end]
-        start = end + 1
+        let end = start + this.showDataAmount - 1;
+        if (end === this.totalCount - 1) end = this.totalCount - 1;
+        this.pages[i] = [i, start, end];
+        start = end + 1;
       }
     },
     sortedKeyValue(key, type) {
-      if (
-        this.requestParams.sortedKey === key &&
-        this.requestParams.sortedType === type
-      );
+      if (this.requestParams.sortedKey === key && this.requestParams.sortedType === type);
       else {
-        // this.requestParams.sortedType = !this.requestParams.sortedType
-        this.requestParams.sortedKey = key
-        this.requestParams.sortedType = type
+        // this.requestParams.sortedType = !this.requestParams.sortedType;
+        this.requestParams.sortedKey = key;
+        this.requestParams.sortedType = type;
       }
 
-      if (typeof this.dataSets[0][key] === 'number') {
-        if (type === 'asc') return this.dataSets.sort((a, b) => a[key] - b[key])
-        else return this.dataSets.sort((a, b) => b[key] - a[key])
+      if (this.dataSets.length && typeof this.dataSets[0][key] === 'number') {
+        if (type === 'asc') return this.dataSets.sort((a, b) => a[key] - b[key]);
+        else return this.dataSets.sort((a, b) => b[key] - a[key]);
       } else {
         this.dataSets.sort(function (a, b) {
-          if (type === 'asc') return ('' + a[key]).localeCompare(b[key])
-          else return ('' + b[key]).localeCompare(a[key])
+          if (type === 'asc') return ('' + a[key]).localeCompare(b[key]);
+          else return ('' + b[key]).localeCompare(a[key]);
         })
       }
     },
     readData() {
-      const instance = this
-      axios
-        .post(this.options.source, this.requestParams)
+      const instance = this;
+      axios.post(this.options.source, this.requestParams)
         .then(function (response) {
-          instance.dataSets = response.data.data
-          instance.totalCount = response.data.count
-          instance.totalPage = Math.ceil(
-            instance.totalCount / instance.requestParams.take
-          )
-          instance.pages = instance.pagination(
-            instance.currentPage,
-            instance.totalPage
-          )
+          instance.dataSets = response.data.data;
+          instance.totalCount = response.data.count;
+          instance.totalPage = Math.ceil(instance.totalCount / instance.requestParams.take);
+          instance.pages = instance.pagination(instance.currentPage, instance.totalPage);
         })
         .catch(function (err) {
-          console.log(err)
+          console.log(err);
         })
     },
     search() {
-      this.currentPage = 1
-      // this.readData()
-      this.dataSets = []
+      this.currentPage = 1;
+      // this.readData();
+      this.dataSets = [];
       // IF NO FILTERS
-      if (
-        this.diseaseFilters.selected.length === 0 &&
-        this.cityFilters.selected.length === 0 &&
-        this.statusFilters.selected.length === 0
-      )
+      if (this.diseaseFilters.selected.length === 0 && this.cityFilters.selected.length === 0 && this.statusFilters.selected.length === 0)
         for (let i = 0; i < Object.keys(this.datavalues).length; i++)
           for (let j = 0; j < this.options.columns.length; j++) {
-            const key = this.options.columns[j].key
-            let value = this.datavalues[i][key]
+            const key = this.options.columns[j].key;
+            let value = this.datavalues[i][key];
             if (typeof value !== 'undefined') {
-              value = value.toString()
+              value = value.toString();
               if (value.includes(this.requestParams.search)) {
-                this.dataSets.push(this.datavalues[i])
-                break
+                this.dataSets.push(this.datavalues[i]);
+                break;
               }
             }
           }
       // IF HAVE FILTERS
-      else this.filterSearch()
-      this.totalCount = Object.keys(this.dataSets).length
+      else this.filterSearch();
+      this.totalCount = Object.keys(this.dataSets).length;
     },
     searchFilter() {
-      this.dataSets = []
+      this.dataSets = [];
       // search
       for (let i = 0; i < Object.keys(this.datavalues).length; i++)
         for (let j = 0; j < this.options.columns.length; j++) {
-          const key = this.options.columns[j].key
-          let value = this.datavalues[i][key]
+          const key = this.options.columns[j].key;
+          let value = this.datavalues[i][key];
           if (typeof value !== 'undefined') {
-            value = value.toString()
+            value = value.toString();
             if (value.includes(this.requestParams.search)) {
-              this.dataSets.push(this.datavalues[i])
-              break
+              this.dataSets.push(this.datavalues[i]);
+              break;
             }
           }
         }
-      const filtered = this.dataSets
-      this.dataSets = []
+      const filtered = this.dataSets;
+      this.dataSets = [];
       // filter
       for (let i = 0; i < Object.keys(filtered).length; i++)
         if (
-          (this.diseaseFilters.selected !== null &&
-            this.diseaseFilters.selected.includes(
-              this.datavalues[i].disease
-            )) ||
-          (this.cityFilters.selected !== null &&
-            this.cityFilters.selected.includes(this.datavalues[i].city)) ||
-          (this.statusFilters.selected !== null &&
-            this.statusFilters.selected.includes(this.datavalues[i].status))
-        ) {
-          this.dataSets.push(filtered[i])
+          (this.diseaseFilters.selected !== null && this.diseaseFilters.selected.includes(this.datavalues[i].disease)) ||
+          (this.cityFilters.selected !== null && this.cityFilters.selected.includes(this.datavalues[i].city)) ||
+          (this.statusFilters.selected !== null && this.statusFilters.selected.includes(this.datavalues[i].status))) {
+          this.dataSets.push(filtered[i]);
         }
-      this.totalCount = Object.keys(this.dataSets).length
+      this.totalCount = Object.keys(this.dataSets).length;
     },
     filterSearch() {
-      this.dataSets = []
+      this.dataSets = [];
       // search
       for (let i = 0; i < Object.keys(this.datavalues).length; i++)
         if (
-          (this.diseaseFilters.selected !== null &&
-            this.diseaseFilters.selected.includes(
-              this.datavalues[i].disease
-            )) ||
-          (this.cityFilters.selected !== null &&
-            this.cityFilters.selected.includes(this.datavalues[i].city)) ||
-          (this.statusFilters.selected !== null &&
-            this.statusFilters.selected.includes(this.datavalues[i].status))
-        ) {
-          this.dataSets.push(this.datavalues[i])
+          (this.diseaseFilters.selected !== null && this.diseaseFilters.selected.includes(this.datavalues[i].disease)) ||
+          (this.cityFilters.selected !== null && this.cityFilters.selected.includes(this.datavalues[i].city)) ||
+          (this.statusFilters.selected !== null && this.statusFilters.selected.includes(this.datavalues[i].status))) {
+          this.dataSets.push(this.datavalues[i]);
         }
-      const searched = this.dataSets
-      this.dataSets = []
+      const searched = this.dataSets;
+      this.dataSets = [];
       // search
       for (let i = 0; i < Object.keys(searched).length; i++)
         for (let j = 0; j < this.options.columns.length; j++) {
-          const key = this.options.columns[j].key
-          let value = searched[i][key]
+          const key = this.options.columns[j].key;
+          let value = searched[i][key];
           if (typeof value !== 'undefined') {
-            value = value.toString()
+            value = value.toString();
             if (value.includes(this.requestParams.search)) {
-              this.dataSets.push(searched[i])
-              break
+              this.dataSets.push(searched[i]);
+              break;
             }
           }
         }
-      this.totalCount = Object.keys(this.dataSets).length
+      this.totalCount = Object.keys(this.dataSets).length;
     },
     filter() {
-      this.currentPage = 1
-      this.dataSets = []
-      // this.readData()
+      this.currentPage = 1;
+      this.dataSets = [];
+      // this.readData();
       // IF FILTER NONE
-      if (
-        this.diseaseFilters.selected.length === 0 &&
-        this.cityFilters.selected.length === 0 &&
-        this.statusFilters.selected.length === 0
-      ) {
-        if (this.requestParams.search !== '') this.search()
-        else this.dataSets = this.datavalues
+      if (this.diseaseFilters.selected.length === 0 && this.cityFilters.selected.length === 0 && this.statusFilters.selected.length === 0) {
+        if (this.requestParams.search !== '') this.search();
+        else this.dataSets = this.datavalues;
       }
       // NO SEARCH
       else if (this.requestParams.search === '') {
         for (let i = 0; i < Object.keys(this.datavalues).length; i++)
-          if (
-            (this.diseaseFilters.selected !== null &&
-              this.diseaseFilters.selected.includes(
-                this.datavalues[i].disease
-              )) ||
-            (this.cityFilters.selected !== null &&
-              this.cityFilters.selected.includes(this.datavalues[i].city)) ||
-            (this.statusFilters.selected !== null &&
-              this.statusFilters.selected.includes(this.datavalues[i].status))
-          ) {
-            this.dataSets.push(this.datavalues[i])
+          if ((this.diseaseFilters.selected !== null && this.diseaseFilters.selected.includes(this.datavalues[i].disease)) ||
+            (this.cityFilters.selected !== null && this.cityFilters.selected.includes(this.datavalues[i].city)) ||
+            (this.statusFilters.selected !== null && this.statusFilters.selected.includes(this.datavalues[i].status))) {
+            this.dataSets.push(this.datavalues[i]);
           }
       }
       // HAVE SEARCH
-      else this.searchFilter()
+      else this.searchFilter();
 
-      this.totalCount = Object.keys(this.dataSets).length
+      this.totalCount = Object.keys(this.dataSets).length;
     },
     filterOff() {
-      this.filters = []
+      this.filters = [];
       for (let i = 0; i < this.options.columns.length; i++)
         // if (this.options.columns[i].filter)
         //   this.filters.push({
@@ -491,8 +401,8 @@ export default {
         //     filterOptions: ['ABC', 'ABCD'],
         //     filterSelected: [],
         //   })
-        if (this.options.columns[i].filter) this.filters[0] = false
-      console.log(this.filters)
+        if (this.options.columns[i].filter) this.filters[0] = false;
+      // console.log(this.filters)
       // for (let j = 0; j < this.filters.length; j++) {
       //   this.filters[j].filterOptions = ['Measles', 'Dengue']
       // if (this.filterKey[j].key === 'disease') {
@@ -503,47 +413,47 @@ export default {
       // }
     },
     selectedDataAmount() {
-      this.readData()
-      this.currentPage = 1
-      this.getPages()
-      this.getStartEnd()
+      this.readData();
+      this.currentPage = 1;
+      this.getPages();
+      this.getStartEnd();
     },
     newPage(page) {
       if (page !== 0 && page <= this.totalPage) {
-        this.requestParams.skip = (page - 1) * this.requestParams.take
-        this.currentPage = page
-        this.readData()
+        this.requestParams.skip = (page - 1) * this.requestParams.take;
+        this.currentPage = page;
+        this.readData();
       }
-      this.currentPage = page
-      this.getStartEnd()
+      this.currentPage = page;
+      this.getStartEnd();
     },
     pagination(c, m) {
-      const delta = 2
-      const range = []
-      const rangeWithDots = []
-      let l
+      const delta = 2;
+      const range = [];
+      const rangeWithDots = [];
+      let l;
 
-      range.push(1)
+      range.push(1);
       for (let i = c - delta; i <= c + delta; i++) {
         if (i < m && i > 1) {
-          range.push(i)
+          range.push(i);
         }
       }
-      range.push(m)
+      range.push(m);
 
       for (const i of range) {
         if (l) {
           if (i - l === 2) {
-            rangeWithDots.push(l + 1)
+            rangeWithDots.push(l + 1);
           } else if (i - l !== 1) {
-            rangeWithDots.push('...')
+            rangeWithDots.push('...');
           }
         }
-        rangeWithDots.push(i)
-        l = i
+        rangeWithDots.push(i);
+        l = i;
       }
 
-      return rangeWithDots
+      return rangeWithDots;
     },
   },
 }
@@ -585,6 +495,19 @@ input[type='checkbox'] {
   border-right: 5px solid transparent;
   border-bottom: 5px solid white;
   margin-left: 3px;
+}
+
+table {
+  /* display: block; */
+  display: table;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+@media only screen and (max-width: 950px) {
+  table {
+    display: block;
+  }
 }
 
 .datatable input[type='text'] {

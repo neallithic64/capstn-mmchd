@@ -14,6 +14,7 @@ router.get("/getPatients", m1Cont.getPatients);
 router.get("/getPatientAutofill", m1Cont.getPatientAutofill);
 router.get("/getCaseDefs", m1Cont.getCaseDefinitions);
 router.get("/getUser", m1Cont.getUser);
+router.get("/getCases", m1Cont.getCases);
 
 // POST Routes
 router.post("/login", m1Cont.postLogin);

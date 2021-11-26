@@ -3,6 +3,7 @@
     <!--Top Bar of the screen-->
     <TopNav />
     <div class="viewcases-container">
+      <h1 class="pageHeader">View Cases</h1>
       <div class="CIF-SummaryContainer">
         <ul :class="formListClass('all')" @click="clickTab('all')">
           ALL
@@ -20,19 +21,19 @@
             v-show="caseTab === 'all'"
             :options="tableOptions"
             :datavalues="allData"
-            :casetype="caseTab"
+            :casetype="'all'"
           />
           <dataTable
             v-show="caseTab === 'cif'"
             :options="tableOptions"
             :datavalues="cifData"
-            :casetype="caseTab"
+            :casetype="'cif'"
           />
           <dataTable
             v-show="caseTab === 'crf'"
             :options="tableOptions"
             :datavalues="crfData"
-            :casetype="caseTab"
+            :casetype="'crf'"
           />
         </div>
       </div>
@@ -42,6 +43,8 @@
 
 <script>
 import dataTable from './dataTable.vue'
+const axios = require('axios');
+
 export default {
   header: {
     title: 'Add Case',
@@ -203,8 +206,8 @@ export default {
       ],
       crfColumns: [
         {
-          title: 'CRF ID',
-          key: 'crfID',
+          title: 'CRF No.',
+          key: 'crfNo',
           type: 'clickable',
           source: 'cases',
           uniqueField: 'id',
@@ -227,15 +230,6 @@ export default {
           uniqueField: 'id',
         },
         {
-          title: 'City',
-          key: 'city',
-          type: 'text',
-          source: 'cases',
-          uniqueField: 'id',
-          sortable: true,
-          filter: true,
-        },
-        {
           title: 'Submitted on',
           key: 'submittedDate',
           type: 'text',
@@ -253,115 +247,14 @@ export default {
           expectFormat: 'DD MMM YYYY',
           sortable: true,
         },
-      ],
-      allData: [
         {
-          type: 'CIF',
-          caseID: 19,
-          disease: 'Measles',
-          druID: 123,
-          city: 'Manila',
-          patientNo: 123,
-          submittedDate: '2020-12-10',
-          updatedDate: '2020-1-10',
-          status: 'Condtional Probable',
-        },
-        {
-          type: 'CIF',
-          caseID: 10,
-          disease: 'Disease',
-          druID: 123,
-          city: 'PH',
-          patientNo: 223,
-          submittedDate: '2020-11-30',
-          updatedDate: '2020-1-12',
-          status: 'Conditional Confirm',
-        },
-        {
-          type: 'CRF',
-          caseID: 19,
-          disease: 'Measles',
-          druID: 345,
-          city: 'Manila',
-          patientNo: 123,
-          submittedDate: '2020-12-10',
-          updatedDate: '2020-2-12',
-          status: 'Suspected',
-        },
-        {
-          type: 'CRF',
-          caseID: 21,
-          disease: 'Dengue',
-          city: 'PH',
-          patientNo: 223,
-          submittedDate: '2021-11-10',
-          updatedDate: '2021-12-10',
-          status: 'Probable',
-        },
-        {
-          caseID: 29,
-          disease: 'Dengue',
-          city: 'PH',
-          patientNo: 223,
-          submittedDate: '2020-11-10',
-          updatedDate: '2020-11-10',
-          status: 'Suspected',
-        },
-        {
-          caseID: 30,
-          disease: 'Measles',
-          city: 'Manila',
-          patientNo: 123,
-          submittedDate: '2020-10-10',
-          updatedDate: '2020-10-10',
-          status: 'IDK',
-        },
-        {
-          caseID: 31,
-          disease: 'Dengue',
-          city: 'PH',
-          patientNo: 223,
-          submittedDate: '2020-11-10',
-          updatedDate: '2020-11-10',
-          status: 'IDK',
-        },
-        {
-          caseID: 32,
-          disease: 'Measles',
-          city: 'Manila',
-          patientNo: 123,
-          submittedDate: '2020-10-10',
-          updatedDate: '2020-10-10',
-          status: 'IDK',
-        },
-        {
-          caseID: 33,
-          disease: 'Dengue',
-          city: 'earth',
-          patientNo: 223,
-          submittedDate: '2020-11-10',
-          updatedDate: '2020-11-10',
-          status: 'IDK',
-        },
-        {
-          caseID: 34,
-          disease: 'cries',
-          city: 'Manila',
-          patientNo: 123,
-          submittedDate: '2020-10-10',
-          updatedDate: '2020-10-10',
-          status: 'dd',
-        },
-        {
-          caseID: 35,
-          disease: 'hatdog',
-          city: 'PH',
-          patientNo: 223,
-          submittedDate: '2020-11-10',
-          updatedDate: '2020-11-10',
-          status: 'e',
+          title: 'Week No.',
+          key: 'weekNo',
+          type: 'text',
+          sortable: true,
         },
       ],
+      allData: [],
       cifData: [
         {
           caseID: 19,
@@ -376,43 +269,51 @@ export default {
       ],
       crfData: [
         {
-          crfID: 35,
-          disease: 'hatdog',
-          city: 'PH',
+          crfNo: 35,
+          disease: 'Dengue',
+          druID: 'ABC',
           submittedDate: '2020-11-10',
           updatedDate: '2020-11-10',
+          weekNo: '2021-21',
         },
       ],
       diseases: {
         cif: {
-          Measles: '/cifMeasles',
-          Diphtheria: '/cifDiphtheria',
-          'Neonatal Tetanus': '/cifNeonatalTetanus',
-          Pertussis: '/cifPertussis',
-          'Meningococcal Disease': '/cifMeningococcal',
+          Measles: '/addCIFMeasles',
+          Diphtheria: '/addCIFDiphtheria',
+          'Neonatal Tetanus': '/addCIFNeonatalTetanus',
+          Pertussis: '/addCIFPertussis',
+          'Meningococcal Disease': '/addCIFMeningococcal',
         },
         crf: {
-          Dengue: 'crfDengue',
+          Dengue: '/addCRFDengue',
         },
       },
     }
   },
-
-  mounted() {
-    this.tableOptions.columns = this.allColumns
+  async fetch() {
+    // eslint-disable-next-line no-unused-vars
+    const rows = (await axios.get('http://localhost:8080/api/getCases')).data;
+    this.allData = rows;
+    console.log("fetch()");
+    console.log(this.allData);
+  },
+  async mounted() {
+    await this.fetch();
+    this.tableOptions.columns = this.allColumns;
   },
   methods: {
     clickTab(caseTab) {
-      this.caseTab = caseTab
-      if (this.caseTab === 'all') this.tableOptions.columns = this.allColumns
+      this.caseTab = caseTab;
+      if (this.caseTab === 'all') this.tableOptions.columns = this.allColumns;
       else if (this.caseTab === 'cif')
-        this.tableOptions.columns = this.cifColumns
+        this.tableOptions.columns = this.cifColumns;
       else if (this.caseTab === 'crf')
-        this.tableOptions.columns = this.crfColumns
+        this.tableOptions.columns = this.crfColumns;
     },
     formListClass(caseTab) {
-      if (caseTab === this.caseTab) return 'formSummaryItems selected'
-      else return 'formSummaryItems'
+      if (caseTab === this.caseTab) return 'formSummaryItems selected';
+      else return 'formSummaryItems';
     },
   },
 }
@@ -426,9 +327,10 @@ body {
   margin: 0px;
 }
 
-h3 {
-  font-size: 15px;
-  font-weight: 600;
+.pageHeader {
+  font-weight: 800;
+  font-size: 32px;
+  color: #346083;
 }
 
 .viewcases-container {

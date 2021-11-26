@@ -5,14 +5,18 @@
     <div ref="content" class="viewCIF-container">
       <div class="viewCIF-details" style="align-text: left">
         <div class="CIFnumbers">
-          <h1 style="margin: -10px 0">Case No. 123</h1>
-          <h2 style="margin-top: -1px">Patient No. 123</h2>
+          <h1 style="margin: -10px 0">Case No. {{ formData.cases.caseID }}</h1>
+          <h2 style="margin-top: -1px">
+            Patient No. {{ formData.patient.patientID }}
+          </h2>
         </div>
         <div class="CIFstatus" style="align-text: right">
           <span style="display: inline-flex; align-items: center"
-            >Status:&nbsp;
+            >Case Status:&nbsp;
             <div v-show="!editCase" class="CIFActionButtons">
-              <h1 style="line-height: 1; align-items: center">Probable</h1>
+              <h1 style="line-height: 1; align-items: center">
+                {{ formData.cases.caseLevel }}
+              </h1>
               <ul
                 v-show="!isPrint"
                 class="CIFEdit"
@@ -64,12 +68,16 @@
       </div>
       <div class="CIFreports">
         <!-- <div class="CIFreports"> -->
-        <p>Reported by: <b>REPORTER</b></p>
+        <p>
+          Reported by: <b>{{ formData.cases.reporterName }}</b>
+        </p>
         <p>Type: <b>Private Laboratory</b></p>
         <!-- </div>
         <div class="CIFreports"> -->
-        <p>Case Level: <b>1</b></p>
-        <p>Reported Date: <b>TODAY</b></p>
+        <!-- <p>Case Level: <b>1</b></p> -->
+        <p>
+          Reported Date: <b>{{ formData.cases.reportDate }}</b>
+        </p>
         <!-- </div> -->
       </div>
       <div v-show="!isPrint" class="CIF-SummaryContainer">
@@ -2019,7 +2027,7 @@
                       <label :for="i">
                         {{ name }}
                       </label>
-                      <!-- <div class="tooltip">
+                      <div class="tooltip">
                         <img
                           id="infofever"
                           class="info-icon-img"
@@ -2028,83 +2036,8 @@
                         <span class="tooltipText" style="width: 500px">{{
                           value
                         }}</span>
-                      </div> -->
+                      </div>
                     </div>
-
-                    <!-- <div class="checkbox-options">
-                        <input
-                          id="Epi-linked Confirmed Measles"
-                          v-model="formData.caseData.finalClassification"
-                          value="Epi-linked Confirmed Measles"
-                          class="input-checkbox"
-                          name="finalClassification"
-                          type="radio"
-                          :disabled="inputEdit()"
-                        />
-                        <label for="Epi-linked Confirmed Measles">
-                          Epi-linked Confirmed Measles
-                        </label>
-                      </div>
-
-                      <div class="checkbox-options">
-                        <input
-                          id="Measles Compatible"
-                          v-model="formData.caseData.finalClassification"
-                          value="Measles Compatible"
-                          class="input-checkbox"
-                          name="finalClassification"
-                          type="radio"
-                          :disabled="inputEdit()"
-                        />
-                        <label for="Measles Compatible">
-                          Measles Compatible
-                        </label>
-                      </div>
-
-                      <div class="checkbox-options">
-                        <input
-                          id="Laboratory Confirmed Rubella"
-                          v-model="formData.caseData.finalClassification"
-                          value="Laboratory Confirmed Rubella"
-                          class="input-checkbox"
-                          name="finalClassification"
-                          type="radio"
-                          :disabled="inputEdit()"
-                        />
-                        <label for="Laboratory Confirmed Rubella">
-                          Laboratory Confirmed Rubella
-                        </label>
-                      </div>
-
-                      <div class="checkbox-options">
-                        <input
-                          id="Epi-linked Cofirmed Rubella"
-                          v-model="formData.caseData.finalClassification"
-                          value="Epi-linked Cofirmed Rubella"
-                          class="input-checkbox"
-                          name="finalClassification"
-                          type="radio"
-                          :disabled="inputEdit()"
-                        />
-                        <label for="Epi-linked Cofirmed Rubella">
-                          Epi-linked Cofirmed Rubella
-                        </label>
-                      </div>
-
-                      <div class="checkbox-options">
-                        <input
-                          id="Discarded Non Measles/Rubella"
-                          v-model="formData.caseData.finalClassification"
-                          value="Discarded Non Measles/Rubella"
-                          class="input-checkbox"
-                          name="finalClassification"
-                          type="radio"
-                          :disabled="inputEdit()"
-                        />
-                        <label for="Discarded Non Measles/Rubella">
-                          Discarded Non Measles/Rubella
-                        </label>
-                      </div> -->
                   </div>
                 </div>
               </div>
@@ -2267,21 +2200,21 @@ export default {
       formPart: 'Measles0',
       formData: {
         cases: {
-          caseID: '',
+          caseID: 123,
           diseaseID: '',
           reportedBy: '',
-          caseLevel: '',
-          reportDate: '',
+          caseLevel: 'Suspected Case',
+          reportDate: '11/30/2021',
           investigationDate: '',
           dateAdmitted: '',
           dateOnset: '',
-          reporterName: '',
+          reporterName: 'me',
           reporterContact: '',
           investigatorName: '',
           investigatorContact: '',
         },
         patient: {
-          patientID: '',
+          patientID: 123,
           epiID: '',
           lastName: '',
           firstName: '',
@@ -2478,7 +2411,7 @@ export default {
       this.isPrint = !this.isPrint
 
       let pWidth = 595.28 // 595.28 is the width of a4
-      let srcWidth = 1000 // this.$refs.content.scrollWidth
+      let srcWidth = this.$refs.content.scrollWidth
       let margin = 12 // narrow margin - 1.27 cm (36);
       let scale = (pWidth - margin * 2) / srcWidth
 

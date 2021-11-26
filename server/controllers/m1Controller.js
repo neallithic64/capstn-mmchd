@@ -254,12 +254,23 @@ const indexFunctions = {
 			if (!req.session || !req.session.user) {
 				return res.status(403).send();
 			}
-			return res.status(200).send({user: req.session.user})
+			return res.status(200).send({user: req.session.user});
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
 		}
-	}, 
+	},
+	
+	getCases: async function(req, res) {
+		try {
+			let match = await db.findAll("mmchddb.CASES");
+			console.log(match);
+			res.status(200).send(match);
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
 	
 	/*
 	 * POST METHODS
@@ -280,6 +291,7 @@ const indexFunctions = {
 					console.log(result);
 					if (result) {
 						req.session.user = match[0];
+						console.log(req.session);
 						// res.status(200).send("Login successful.");
 						// // ALTERNATIVE (to reconsider user type checking):
 						res.status(200).send({user: match[0]});
@@ -391,6 +403,7 @@ const indexFunctions = {
 	*/
 	postNewCase: async function(req, res) {
 		let { formData } = req.body;
+		console.log(formData);
 		let result;
 
 		try {
@@ -421,9 +434,12 @@ const indexFunctions = {
 					if (result) {
 						formData.cases.caseID = await generateID("mmchddb.CASES");
 						formData.cases.patientID = formData.patient.patientID;
+						// formData.cases.reportedBy = req.session.user.userID;
 						result = await createCase(formData.cases);
 						
 						if (result) {
+							formData.caseData.noMCVreason = formData.caseData.noMCVreason.join(",");
+							formData.caseData.sourceInfection = formData.caseData.sourceInfection.join(",");
 							let newCaseData = Object.entries(formData.caseData);
 							
 							newCaseData.forEach(function (element) {
