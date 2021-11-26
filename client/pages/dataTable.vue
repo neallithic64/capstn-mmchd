@@ -194,7 +194,7 @@
 
 <script>
 // import moment from 'moment'
-const axios = require('axios');
+// const axios = require('axios');
 
 export default {
   props: ['options', 'datavalues', 'casetype'],
@@ -239,11 +239,12 @@ export default {
     // this.requestParams.sortedKey = this.options.columns[0].key;
     this.filterOff();
     this.dataSets = this.datavalues;
+	console.log(this.datavalues);
     this.sortedKeyValue(this.requestParams.sortedKey, this.requestParams.sortedType);
     this.totalCount = Object.keys(this.dataSets).length;
     this.getPages();
     this.getStartEnd();
-    this.readData();
+    // this.readData();
   },
   methods: {
     getStartEnd() {
@@ -280,17 +281,11 @@ export default {
       }
     },
     readData() {
-      const instance = this;
-      axios.post(this.options.source, this.requestParams)
-        .then(function (response) {
-          instance.dataSets = response.data.data;
-          instance.totalCount = response.data.count;
-          instance.totalPage = Math.ceil(instance.totalCount / instance.requestParams.take);
-          instance.pages = instance.pagination(instance.currentPage, instance.totalPage);
-        })
-        .catch(function (err) {
-          console.log(err);
-        })
+	  // this.dataSets = response.data.data;
+	  // this.totalCount = response.data.count;
+	  // this.totalPage = Math.ceil(instance.totalCount / instance.requestParams.take);
+	  // this.pages = instance.pagination(instance.currentPage, instance.totalPage);
+      // axios.post(this.options.source, this.requestParams).then(function (response) {}).catch(function (err) {console.log(err);});
     },
     search() {
       this.currentPage = 1;

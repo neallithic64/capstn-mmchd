@@ -16,7 +16,7 @@
         </ul>
       </div>
       <div class="viewcases-component">
-        <div id="vue-root">
+        <div v-if="allData.length > 0" id="vue-root">
           <dataTable
             v-show="caseTab === 'all'"
             :options="tableOptions"
@@ -69,7 +69,7 @@ export default {
           source: 'cases',
           uniqueField: 'id',
         },
-        {
+		{
           title: 'Case ID',
           key: 'caseID',
           type: 'clickable',
@@ -79,7 +79,7 @@ export default {
         },
         {
           title: 'Disease',
-          key: 'disease',
+          key: 'diseaseID',
           type: 'text',
           source: 'cases',
           uniqueField: 'id',
@@ -88,15 +88,15 @@ export default {
         },
         {
           title: 'DRU ID',
-          key: 'druID',
+          key: 'reportedBy',
           type: 'text',
           source: 'cases',
           uniqueField: 'id',
         },
         {
           title: 'Patient',
-          key: 'patientNo',
-          type: 'number',
+          key: 'patientID',
+          type: 'text',
           source: 'cases',
         },
         {
@@ -110,7 +110,7 @@ export default {
         },
         {
           title: 'Submitted on',
-          key: 'submittedDate',
+          key: 'reportDate',
           type: 'text',
           dateFormat: true,
           currentFormat: 'YYYY-MM-DD',
@@ -128,7 +128,7 @@ export default {
         },
         {
           title: 'Case Status',
-          key: 'status',
+          key: 'caseLevel',
           type: 'text',
           source: 'cases',
           uniqueField: 'id',
@@ -291,16 +291,16 @@ export default {
       },
     }
   },
-  async fetch() {
-    // eslint-disable-next-line no-unused-vars
-    const rows = (await axios.get('http://localhost:8080/api/getCases')).data;
-    this.allData = rows;
-    console.log("fetch()");
-    console.log(this.allData);
-  },
   async mounted() {
-    await this.fetch();
-    this.tableOptions.columns = this.allColumns;
+    const rows = (await axios.get('http://localhost:8080/api/getCases')).data;
+	for (let i = 0; i < rows.length; i++) {
+	  rows[i].type = "CIF";
+	  rows[i].city = "Placeholder";
+	  rows[i].updatedDate = "1111-11-11";
+	  rows[i].reportDate = rows[i].reportDate.substr(0, 10);
+	}
+    this.allData = rows;
+	this.tableOptions.columns = this.allColumns;
   },
   methods: {
     clickTab(caseTab) {
