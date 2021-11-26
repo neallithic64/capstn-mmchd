@@ -321,6 +321,135 @@
               </div>
             </div>
             <hr />
+
+            <div class="field-row">
+              <div
+                class="sixtyDesk"
+                style="display: inline-flex; flex-direction: row"
+              >
+                <div class="patientAdmitted-field field">
+                  <label class="required"> Patient Admitted </label>
+                  <div style="display: inline-flex; align-items: center">
+                    <input
+                      id="yes"
+                      v-model="formData.caseData.patientAdmitted"
+                      value="yes"
+                      class="input-radio"
+                      name="patientAdmitted"
+                      type="radio"
+                      :disabled="inputEdit()"
+                    />
+                    <label for="yes"> Yes </label>
+                  </div>
+                  <div style="display: inline-flex; align-items: center">
+                    <input
+                      id="no"
+                      v-model="formData.caseData.patientAdmitted"
+                      value="no"
+                      class="input-radio"
+                      name="patientAdmitted"
+                      type="radio"
+                      :disabled="inputEdit()"
+                    />
+                    <label for="no"> No </label>
+                  </div>
+                </div>
+                <div class="dateAdmitted-field field">
+                  <label for="dateAdmitted" class="required">
+                    Date Admitted / Seen
+                  </label>
+                  <input
+                    id="dateAdmitted"
+                    v-model="formData.cases.dateAdmitted"
+                    class="input-form-field"
+                    type="date"
+                    :disabled="inputEdit()"
+                  />
+                </div>
+              </div>
+              <div class="indigenousGroup-field field" style="width: 40%">
+                <label for="indigenousGroup"> Indigenous Group </label>
+                <input
+                  id="indigenousGroup"
+                  v-model="formData.patient.indGroup"
+                  class="input-form-field"
+                  type="text"
+                  :disabled="inputEdit()"
+                />
+              </div>
+            </div>
+
+            <div class="field-row-straight">
+              <div class="field">
+                <label for="reportDate" class="required"> Date Reported </label>
+                <input
+                  id="reportDate"
+                  v-model="formData.cases.reportDate"
+                  class="input-form-field"
+                  type="date"
+                  :disabled="inputEdit()"
+                />
+              </div>
+              <div class="field">
+                <label for="reporter" class="required"> Reporter </label>
+                <input
+                  id="reporter"
+                  v-model="formData.cases.reporterName"
+                  class="input-form-field"
+                  type="text"
+                  :disabled="inputEdit()"
+                />
+              </div>
+              <div class="field">
+                <label for="reporterNum" class="required"> Contact No. </label>
+                <input
+                  id="reporterNum"
+                  v-model="formData.cases.reportContact"
+                  class="input-form-field"
+                  type="number"
+                  :disabled="inputEdit()"
+                />
+              </div>
+            </div>
+
+            <div class="field-row-straight">
+              <div class="field">
+                <label for="investigationDate" class="required">
+                  Date of Investigation
+                </label>
+                <input
+                  id="investigationDate"
+                  v-model="formData.cases.investigationDate"
+                  class="input-form-field"
+                  type="date"
+                  :disabled="inputEdit()"
+                />
+              </div>
+              <div class="field">
+                <label for="investigator" class="required">
+                  Investigator
+                </label>
+                <input
+                  id="investigator"
+                  v-model="formData.cases.investigatorName"
+                  class="input-form-field"
+                  type="text"
+                  :disabled="inputEdit()"
+                />
+              </div>
+              <div class="field">
+                <label for="investigatorContact" class="required">
+                  Contact No.
+                </label>
+                <input
+                  id="investigatorContact"
+                  v-model="formData.cases.investigatorContact"
+                  class="input-form-field"
+                  type="number"
+                  :disabled="inputEdit()"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -475,6 +604,19 @@ export default {
           pregWeeks: '',
           HCPN: '',
           ILHZ: '',
+        },
+        caseData: {
+          patientA: '',
+          patientAdmitted: '',
+        },
+        cases: {
+          dateAdmitted: '',
+          reportDate: '',
+          reporterName: '',
+          reportContact: '',
+          investigationDate: '',
+          investigatorName: '',
+          investigatorContact: '',
         },
       },
     }

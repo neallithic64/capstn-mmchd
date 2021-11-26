@@ -384,14 +384,14 @@ export default {
       ],
       diseases: {
         cif: {
-          Measles: '/cifMeasles',
-          Diphtheria: '/cifDiphtheria',
-          'Neonatal Tetanus': '/cifNeonatalTetanus',
-          Pertussis: '/cifPertussis',
-          'Meningococcal Disease': '/cifMeningococcal',
+          Measles: '/addCIFMeasles',
+          Diphtheria: '/addCIFDiphtheria',
+          'Neonatal Tetanus': '/addCIFNeonatalTetanus',
+          Pertussis: '/addCIFPertussis',
+          'Meningococcal Disease': '/addCIFMeningococcal',
         },
         crf: {
-          Dengue: 'crfDengue',
+          Dengue: '/addCRFDengue',
         },
       },
     }
