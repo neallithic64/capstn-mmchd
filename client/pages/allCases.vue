@@ -79,7 +79,7 @@ export default {
         },
         {
           title: 'Disease',
-          key: 'diseaseID',
+          key: 'disease',
           type: 'text',
           source: 'cases',
           uniqueField: 'id',
@@ -298,6 +298,7 @@ export default {
 	  rows[i].city = "Placeholder";
 	  rows[i].updatedDate = "1111-11-11";
 	  rows[i].reportDate = rows[i].reportDate.substr(0, 10);
+	  rows[i].disease = rows[i].diseaseID;
 	}
     this.allData = rows;
 	this.tableOptions.columns = this.allColumns;
