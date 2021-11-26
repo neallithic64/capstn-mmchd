@@ -106,7 +106,7 @@
             </div>
           </span>
           <span>{{ column.title }}</span>
-          <span v-if="requestParams.sortedKey === column.key && requestParams.sortedType === 'asc'" style="float: right>
+          <span v-if="requestParams.sortedKey === column.key && requestParams.sortedType === 'asc'" style="float: right">
             <a href="javascript:" @click="sortedKeyValue(column.key, 'desc')">
               <img src="~/assets/img/sortup.png" alt="up.png" />
             </a>

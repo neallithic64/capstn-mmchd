@@ -289,11 +289,7 @@
           <hr v-if="pageNum == Object.keys(formSection.formNames).length" />
 
           <!-- User Details (Form 2) -->  
-          <form
-            v-if="pageNum == 1 || pageNum == Object.keys(formSection.formNames).length"
-            id="newuser1"
-            type="submit"
-          >
+          <form v-if="pageNum == 1 || pageNum == Object.keys(formSection.formNames).length" id="newuser1" type="submit">
             <div id="new-user-form" class="center">
               <h2 id="form-header"> {{ Object.values(formSection.formNames)[1] }} </h2>
 
@@ -330,13 +326,7 @@
                 <div class="field-row-straight">
                   <div class="name-field">
                     <label for="userCity" class="required"> City </label>
-                    <select
-                      id="userCity"
-                      v-model="user.userCity"
-                      name="userCity"
-                      :disabled="inputEdit()"
-                      @change="getBrgyList()"
-                    >
+                    <select id="userCity" v-model="user.userCity" name="userCity" :disabled="inputEdit()" @change="getBrgyList()">
                       <option value="Caloocan">Caloocan</option>
                       <option value="Las Piñas">Las Piñas</option>
                       <option value="Makati">Makati</option>
@@ -358,18 +348,8 @@
 
                   <div class="field">
                     <label for="userBrgy" class="required"> Barangay </label>
-                    <select
-                      v-if="true"
-                      id="userBrgy"
-                      v-model="user.userBrgy"
-                      name="userBrgy"
-                      :disabled="inputEdit()"
-                    >
-                      <!-- <option 
-                        v-for="(brgy, i) in brgyList"
-                        :key = "i" 
-                        :value="brgy"
-                      > 
+                    <select v-if="true" id="userBrgy" v-model="user.userBrgy" name="userBrgy" :disabled="inputEdit()">
+                      <!-- <option v-for="(brgy, i) in brgyList" :key = "i" :value="brgy"> 
                         {{ brgy }} 
                       </option> -->
                     </select>
@@ -456,11 +436,7 @@
           <hr v-if="pageNum == Object.keys(formSection.formNames).length" />
 
           <!-- Login Details (Form 3) -->
-          <form
-            v-if="pageNum == 2 || pageNum == Object.keys(formSection.formNames).length"
-            id="newuser1"
-            type="submit"
-          >
+          <form v-if="pageNum == 2 || pageNum == Object.keys(formSection.formNames).length" id="newuser1" type="submit">
             <div id="new-user-form" class="center">
               <h2 id="form-header"> {{ Object.values(formSection.formNames)[2] }} </h2>
 
@@ -522,36 +498,16 @@
           <button v-if="pageNum == 0" class="back-button" type="button">
             <nuxt-link to="/allUsers"> Cancel </nuxt-link>
           </button>
-          <button
-            v-if="pageNum != 0"
-            class="back-button"
-            type="button"
-            @click="move(pageNum - 1)"
-          >
+          <button v-if="pageNum != 0" class="back-button" type="button" @click="move(pageNum - 1)">
             Back
           </button>
-          <button
-            v-if="pageNum < Object.keys(formSection.formNames).length - 1"
-            class="next-button"
-            type="button"
-            @click="move(pageNum + 1)"
-          >
+          <button v-if="pageNum < Object.keys(formSection.formNames).length - 1" class="next-button" type="button" @click="move(pageNum + 1)">
             Next
           </button>
-          <button
-            v-if="pageNum == Object.keys(formSection.formNames).length - 1"
-            class="next-button"
-            type="button"
-            @click="move(pageNum + 1)"
-          >
+          <button v-if="pageNum == Object.keys(formSection.formNames).length - 1" class="next-button" type="button" @click="move(pageNum + 1)">
             Review
           </button>
-          <button
-            v-if="pageNum == Object.keys(formSection.formNames).length"
-            class="next-button"
-            type="button"
-            @click="submit()"
-          >
+          <button v-if="pageNum == Object.keys(formSection.formNames).length" class="next-button" type="button" @click="submit()">
             Submit
           </button>
         </div>
@@ -600,9 +556,9 @@ export default {
   methods: {
     formColor(index) {
       if (this.isOpen) {
-        if (index === this.pageNum) return 'formnum formnumcurr'
-        else if (index < this.pageNum) return 'formnum formnumdone'
-        else if (index > this.pageNum) return 'formnum'
+        if (index === this.pageNum) return 'formnum formnumcurr';
+        else if (index < this.pageNum) return 'formnum formnumdone';
+        else if (index > this.pageNum) return 'formnum';
       }
     },
     async submit() {
@@ -613,11 +569,11 @@ export default {
         this.$router.push('/');
       } catch (err) {
         // eslint-disable-next-line no-console
-        console.log(err)
+        console.log(err);
       }
     },
     move(page) {
-      this.pageNum = page
+      this.pageNum = page;
       this.$nextTick(() => {
         if ((page === 1 || page === 3) && this.user.userBrgy != null) {
           for (let i = 0; i < this.brgyList.length; i++) {
@@ -633,8 +589,8 @@ export default {
     },
     inputEdit() {
       if (this.pageNum === Object.keys(this.formSection.formNames).length) {
-        return true
-      } else return false
+        return true;
+      } else return false;
     },
     getBrgyList() {
       const dropdown = document.getElementById('userBrgy');
@@ -646,8 +602,7 @@ export default {
       dropdown.add(defaultOption);
       dropdown.selectedIndex = 0;
 
-      axios.get('barangays.json')
-        .then(res => {
+      axios.get('barangays.json').then(res => {
           let option;
 
           this.brgyList = res.data[this.user.userCity].barangay_list;
