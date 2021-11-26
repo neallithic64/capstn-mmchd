@@ -309,6 +309,10 @@ const indexFunctions = {
 			user.userID = await generateID("mmchddb.USERS");
 			// TODO: address
 			user.addressID = "AD-0000000000000";
+			delete user.userHouseStreet;
+			delete user.userBrgy;
+			delete user.userCity;
+			delete user.userRePassword;
 			user.userPassword = await bcrypt.hash(user.userPassword, saltRounds);
 
 			let result = await db.insertOne("mmchddb.USERS", user);

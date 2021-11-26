@@ -13,6 +13,7 @@ export default {
 
 <style>
 body {
-  background: white;
+  background-image: none;
+  background-color: white;
 }
 </style>
