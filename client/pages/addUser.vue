@@ -562,13 +562,6 @@ export default {
       }
     },
     async submit() {
-      // alert('DONE')
-      // window.location.href = '/allcases'
-      // const formData = new FormData()
-      // Object.keys(this.user).forEach((key) => {
-      //   formData.append(key, this.user[key])
-      // })
-
       try {
         const result = await axios.post('http://localhost:8080/api/newUser', {user: this.user});
         // eslint-disable-next-line no-console
@@ -699,6 +692,12 @@ export default {
     margin: 0;
     color: #000000;
     text-align: center;
+  }
+
+  .error-message {
+        color: #da4944;
+        font-weight: 500;
+        font-size: 12px;
   }
 
   .formnum {
@@ -948,21 +947,9 @@ export default {
     width: 55%;
   }
 
-  .birthday-field {
-    /* width: 30%; */
-    width: 66.67%;
-  }
-  .age-field {
-    /* width: 15%; */
-    width: 33.33%;
-  }
   .userType-field {
     /* width: 15%; */
     width: 100%;
-  }
-  .pregnancy-field {
-    /* width: 40%; */
-    width: 72.73%;
   }
 
   @media only screen and (max-width: 950px) {
@@ -971,88 +958,8 @@ export default {
     .half-half2 {
       width: 100%;
     }
-
-    .birthday-field {
-      width: 59%;
-    }
-    .age-field {
-      width: 39%;
-    }
     .userType-field {
       width: 50%;
-    }
-    .pregnancy-field {
-      width: 59%;
-    }
-  }
-
-  .sixtyDesk {
-    width: 60%;
-  }
-
-  .patientAdmitted-field {
-    /* width: 25%; */
-    width: 41.67%;
-  }
-
-  .dateAdmitted-field {
-    /* width: 35%; */
-    width: 58.33%;
-  }
-
-  .indigenousGroup-field {
-    width: 40%;
-  }
-
-  @media only screen and (max-width: 950px) {
-    .sixtyDesk {
-      width: 100%;
-    }
-    .patientAdmitted-field {
-      width: 39%;
-    }
-
-    .dateAdmitted-field {
-      width: 59%;
-    }
-
-    .indigenousGroup-field {
-      width: 98%;
-    }
-  }
-
-  .symptoms-half {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .checkbox-options {
-    display: inline-flex;
-    flex-direction: row;
-    align-items: center;
-    /* font-size: 16px; */
-  }
-
-  .risk-flex {
-    display: inline-flex;
-    flex-direction: row;
-  }
-
-  @media only screen and (max-width: 950px) {
-    .risk-flex {
-      flex-direction: column;
-    }
-  }
-
-  .vaccine-label {
-    display: inline-flex;
-    flex-direction: row;
-    align-items: center;
-  }
-
-  @media only screen and (max-width: 950px) {
-    .vaccine-label {
-      display: block;
     }
   }
 
