@@ -71,9 +71,28 @@
                       class="searchResult"
                     >
                       <!-- <img class="searchPersonIcon" /> -->
-                      <div class="searchResultInfo" @click="autoFillPatient(patient)">
-                        <div class="searchPerson">{{ patient.firstName + " " + patient.midName + " " + patient.lastName }}</div>
-                        <div class="searchAddress">{{ patient.currHouseStreet + ", " + patient.currBrgy + ", " + patient.currCity }}</div>
+                      <div
+                        class="searchResultInfo"
+                        @click="autoFillPatient(patient)"
+                      >
+                        <div class="searchPerson">
+                          {{
+                            patient.firstName +
+                            ' ' +
+                            patient.midName +
+                            ' ' +
+                            patient.lastName
+                          }}
+                        </div>
+                        <div class="searchAddress">
+                          {{
+                            patient.currHouseStreet +
+                            ', ' +
+                            patient.currBrgy +
+                            ', ' +
+                            patient.currCity
+                          }}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -2599,8 +2618,8 @@ export default {
     async submit() {
       this.formData.cases.diseaseID = this.diseaseID;
       this.formData.cases.reportedBy = this.$auth.user.userID;
-      const result = await axios.post('http://localhost:8080/api/newCase', {formData: this.formData});
-      if (result.status === 200) {
+      const result = await axios.post('http://localhost:8080/api/newCase', {formData: this.formData})
+	  if (result.status === 200) {
         alert('case submitted!');
         window.location.href = '/allCases'
       } else {
@@ -2635,7 +2654,7 @@ export default {
       } else return false
     },
     autoFillPatient(patient) {
-      console.log(patient);
+      // console.log(patient);
       this.formData.patient.lastName = patient.lastName;
       this.formData.patient.firstName = patient.firstName;
       this.formData.patient.midName = patient.midName;
@@ -3377,7 +3396,7 @@ ul ul li {
   background: white;
   height: fit-content;
   border-radius: 0 0 25px 25px;
-  margin-top: -10px;
+  margin-top: -15px;
   padding: 10px;
   display: grid;
   width: 100%;

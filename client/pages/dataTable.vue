@@ -1,14 +1,6 @@
 <template>
   <div class="datatable">
     <div class="search">
-      <input
-        id="search"
-        v-model="requestParams.search"
-        type="text"
-        style="float: right"
-        placeholder="Search here"
-        @keyup="search()"
-      />
       Show
       <select
         id="rows"
@@ -142,10 +134,7 @@
             "
             style="float: right"
           >
-            <a
-              href="javascript:"
-              @click="sortedKeyValue(column.key, 'desc')"
-            >
+            <a href="javascript:" @click="sortedKeyValue(column.key, 'desc')">
               <img src="~/assets/img/sortup.png" alt="up.png" /> </a
           ></span>
           <span
@@ -155,17 +144,11 @@
             "
             style="float: right"
           >
-            <a
-              href="javascript:"
-              @click="sortedKeyValue(column.key, 'asc')"
-            >
+            <a href="javascript:" @click="sortedKeyValue(column.key, 'asc')">
               <img src="~/assets/img/sortdown.png" alt="down.png" /> </a
           ></span>
           <span v-else-if="column.sortable" style="float: right">
-            <a
-              href="javascript:"
-              @click="sortedKeyValue(column.key, 'asc')"
-            >
+            <a href="javascript:" @click="sortedKeyValue(column.key, 'asc')">
               <img src="~/assets/img/sort.png" alt="sort.png" />
             </a>
           </span>
@@ -188,8 +171,30 @@
               </span>
               <span v-else-if="column.type === 'clickable'">
                 <a
+                  v-if="pageType === 'all' && data['type'] === 'CIF'"
                   style="color: #346083; text-decoration-line: underline"
-                  :href="'/view' + data['type']"
+                  :href="'/view' + data['type'] + data['disease']"
+                  >{{ data[column.key] }}</a
+                >
+                <a
+                  v-else-if="
+                    (pageType === 'all' && data['type'] === 'CRF') ||
+                    pageType === 'crfCase'
+                  "
+                  style="color: #346083; text-decoration-line: underline"
+                  :href="'/view' + 'CRF' + data['disease'] + 'Case'"
+                  >{{ data[column.key] }}</a
+                >
+                <a
+                  v-else-if="pageType === 'cif'"
+                  style="color: #346083; text-decoration-line: underline"
+                  :href="'/view' + 'CIF' + data['disease']"
+                  >{{ data[column.key] }}</a
+                >
+                <a
+                  v-else-if="pageType === 'crf'"
+                  style="color: #346083; text-decoration-line: underline"
+                  :href="'/view' + 'CRF' + data['disease']"
                   >{{ data[column.key] }}</a
                 >
                 <!-- 
@@ -198,7 +203,7 @@
                   v-bind:href="column.source + '/' + data[column.key]"
                   >{{ data[column.key] }}</a
                 >
-                 -->
+                -->
               </span>
               <span v-else>
                 {{ data[column.key] }}
@@ -251,7 +256,7 @@ export default {
   props: ['options', 'datavalues', 'casetype'],
   data() {
     return {
-      filters: [],
+      pageType: '',
       diseaseOpen: false,
       cityOpen: false,
       statusOpen: false,
@@ -286,10 +291,10 @@ export default {
   },
   watch: {},
   mounted() {
+    this.pageType = this.casetype
     // this.requestParams.sortedKey = this.options.columns[0].key
     this.filterOff()
     this.dataSets = this.datavalues
-    console.log(this.filters)
     this.sortedKeyValue(
       this.requestParams.sortedKey,
       this.requestParams.sortedType
@@ -492,7 +497,7 @@ export default {
         //     filterSelected: [],
         //   })
         if (this.options.columns[i].filter) this.filters[0] = false
-      console.log(this.filters)
+      // console.log(this.filters)
       // for (let j = 0; j < this.filters.length; j++) {
       //   this.filters[j].filterOptions = ['Measles', 'Dengue']
       // if (this.filterKey[j].key === 'disease') {
@@ -585,6 +590,19 @@ input[type='checkbox'] {
   border-right: 5px solid transparent;
   border-bottom: 5px solid white;
   margin-left: 3px;
+}
+
+table {
+  /* display: block; */
+  display: table;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+@media only screen and (max-width: 950px) {
+  table {
+    display: block;
+  }
 }
 
 .datatable input[type='text'] {

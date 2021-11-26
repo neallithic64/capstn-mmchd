@@ -3,6 +3,7 @@
     <!--Top Bar of the screen-->
     <TopNav />
     <div class="viewcases-container">
+      <h1 class="pageHeader">View Cases</h1>
       <div class="CIF-SummaryContainer">
         <ul :class="formListClass('all')" @click="clickTab('all')">
           ALL
@@ -20,19 +21,19 @@
             v-show="caseTab === 'all'"
             :options="tableOptions"
             :datavalues="allData"
-            :casetype="caseTab"
+            :casetype="'all'"
           />
           <dataTable
             v-show="caseTab === 'cif'"
             :options="tableOptions"
             :datavalues="cifData"
-            :casetype="caseTab"
+            :casetype="'cif'"
           />
           <dataTable
             v-show="caseTab === 'crf'"
             :options="tableOptions"
             :datavalues="crfData"
-            :casetype="caseTab"
+            :casetype="'crf'"
           />
         </div>
       </div>
@@ -205,8 +206,8 @@ export default {
       ],
       crfColumns: [
         {
-          title: 'CRF ID',
-          key: 'crfID',
+          title: 'CRF No.',
+          key: 'crfNo',
           type: 'clickable',
           source: 'cases',
           uniqueField: 'id',
@@ -229,15 +230,6 @@ export default {
           uniqueField: 'id',
         },
         {
-          title: 'City',
-          key: 'city',
-          type: 'text',
-          source: 'cases',
-          uniqueField: 'id',
-          sortable: true,
-          filter: true,
-        },
-        {
           title: 'Submitted on',
           key: 'submittedDate',
           type: 'text',
@@ -253,6 +245,12 @@ export default {
           dateFormat: true,
           currentFormat: 'YYYY-MM-DD',
           expectFormat: 'DD MMM YYYY',
+          sortable: true,
+        },
+        {
+          title: 'Week No.',
+          key: 'weekNo',
+          type: 'text',
           sortable: true,
         },
       ],
@@ -272,23 +270,24 @@ export default {
       ],
       crfData: [
         {
-          crfID: 35,
-          disease: 'hatdog',
-          city: 'PH',
+          crfNo: 35,
+          disease: 'Dengue',
+          druID: 'ABC',
           submittedDate: '2020-11-10',
           updatedDate: '2020-11-10',
+          weekNo: '2021-21',
         },
       ],
       diseases: {
         cif: {
-          Measles: '/cifMeasles',
-          Diphtheria: '/cifDiphtheria',
-          'Neonatal Tetanus': '/cifNeonatalTetanus',
-          Pertussis: '/cifPertussis',
-          'Meningococcal Disease': '/cifMeningococcal',
+          Measles: '/addCIFMeasles',
+          Diphtheria: '/addCIFDiphtheria',
+          'Neonatal Tetanus': '/addCIFNeonatalTetanus',
+          Pertussis: '/addCIFPertussis',
+          'Meningococcal Disease': '/addCIFMeningococcal',
         },
         crf: {
-          Dengue: 'crfDengue',
+          Dengue: '/addCRFDengue',
         },
       },
     }
@@ -331,9 +330,10 @@ body {
   margin: 0px;
 }
 
-h3 {
-  font-size: 15px;
-  font-weight: 600;
+.pageHeader {
+  font-weight: 800;
+  font-size: 32px;
+  color: #346083;
 }
 
 .viewcases-container {
