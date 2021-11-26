@@ -254,8 +254,7 @@ export default {
           sortable: true,
         },
       ],
-      allData: [
-      ],
+      allData: [],
       cifData: [
         {
           caseID: 19,
@@ -294,9 +293,7 @@ export default {
   },
   async fetch() {
     // eslint-disable-next-line no-unused-vars
-    const rows = (
-      await axios.get('http://localhost:8080/api/getCases')
-    ).data;
+    const rows = (await axios.get('http://localhost:8080/api/getCases')).data;
     this.allData = rows;
 	console.log("fetch()");
 	console.log(this.allData);
@@ -307,16 +304,16 @@ export default {
   },
   methods: {
     clickTab(caseTab) {
-      this.caseTab = caseTab
-      if (this.caseTab === 'all') this.tableOptions.columns = this.allColumns
+      this.caseTab = caseTab;
+      if (this.caseTab === 'all') this.tableOptions.columns = this.allColumns;
       else if (this.caseTab === 'cif')
-        this.tableOptions.columns = this.cifColumns
+        this.tableOptions.columns = this.cifColumns;
       else if (this.caseTab === 'crf')
-        this.tableOptions.columns = this.crfColumns
+        this.tableOptions.columns = this.crfColumns;
     },
     formListClass(caseTab) {
-      if (caseTab === this.caseTab) return 'formSummaryItems selected'
-      else return 'formSummaryItems'
+      if (caseTab === this.caseTab) return 'formSummaryItems selected';
+      else return 'formSummaryItems';
     },
   },
 }
