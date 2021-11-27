@@ -362,17 +362,17 @@ const indexFunctions = {
 	}, 
 
 	postAddPatient: async function(req, res) {
-		let { formData } = req.body;
+		let { formData } = req.body, result;
 
 		try {
 			let genPatientID = await generateID("mmchddb.PATIENTS", {
-				lastName: formData.patient.lastName
-				firstName: formData.patient.firstName
+				lastName: formData.patient.lastName,
+				firstName: formData.patient.firstName,
 				midName: formData.patient.midName
 			});
 			formData.patient.patientID = genPatientID.id;
 			if (!genPatientID.exists)
-				let result = await db.insertOne("mmchddb.PATIENTS", formData.patient);
+				result = await db.insertOne("mmchddb.PATIENTS", formData.patient);
 			
 			console.log(result);
 			if (result) res.status(200).send("Add patient success");

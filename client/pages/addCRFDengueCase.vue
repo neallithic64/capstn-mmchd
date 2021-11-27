@@ -803,8 +803,244 @@
           </form>
           <hr v-if="pageNum == Object.keys(disease.formNames).length" />
 
-          <form v-if="pageNum == 3 || pageNum == Object.keys(disease.formNames).length" id="dengue3" type="submit">
+          <form v-if="pageNum == 3 || pageNum == Object.keys(disease.formNames).length" id="dengue4" type="submit">
             <div id="case-report-form" class="center">
+              <h2 id="form-header"> {{ Object.values(disease.formNames)[2] }} </h2>
+
+              <div class="field-row">
+                <div class="thirtyDesk" style="display: inline-flex; flex-direction: row">
+                  <div class=" field">
+                    <label class="required"> Vaccinated with Dengue Vaccine </label>
+                    <div style="display: inline-flex; align-items: center">
+                      <input
+                        id="noVaccine"
+                        v-model="formData.caseData.vaccine"
+                        value="noVaccine"
+                        class="input-radio"
+                        name="patientConsulted"
+                        type="radio"
+                        :disabled="inputEdit()"
+                      />
+                      <label for="noVaccine"> No </label>
+                    </div>
+                    <div style="display: inline-flex; align-items: center">
+                      <input
+                        id="yesVaccine"
+                        v-model="formData.caseData.vaccine"
+                        value="yesVaccine"
+                        class="input-radio"
+                        name="patientConsulted"
+                        type="radio"
+                        :disabled="inputEdit()"
+                      />
+                      <label for="yesVaccine"> Yes </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="patientConsultDate-field field">
+                  <label for="patientConsultDate">
+                    Date First Vaccinated
+                  </label>
+                  <input
+                    id="patientConsultDate"
+                    v-model="formData.cases.vaccineFirstDate"
+                    class="input-form-field"
+                    type="date"
+                    :disabled="inputEdit()"
+                  />
+                </div>
+                <div class="indigenousGroup-field field" style="width: 40%">
+                  <label for="patientConsultPlace"> Date Last Vaccinated </label>
+                  <input
+                    id="patientConsultPlace"
+                    v-model="formData.patient.vaccineLastdate"
+                    class="input-form-field"
+                    type="date"
+                    :disabled="inputEdit()"
+                  />
+                </div>
+              </div>
+
+              <div class="field-row">
+                <div class="thirtyDesk" style="display: inline-flex; flex-direction: row">
+                  <div class=" field">
+                    <label class="required"> Patient Admitted </label>
+                    <div style="display: inline-flex; align-items: center">
+                      <input
+                        id="noAdmit"
+                        v-model="formData.patient.admitStatus"
+                        value="noAdmit"
+                        class="input-radio"
+                        name="admitStatus"
+                        type="radio"
+                        :disabled="inputEdit()"
+                      />
+                      <label for="noAdmit"> No </label>
+                    </div>
+                    <div style="display: inline-flex; align-items: center">
+                      <input
+                        id="yesAdmit"
+                        v-model="formData.patient.admitStatus"
+                        value="yesAdmit"
+                        class="input-radio"
+                        name="admitStatus"
+                        type="radio"
+                        :disabled="inputEdit()"
+                      />
+                      <label for="yesAdmit"> Yes </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="patientConsultDate-field field">
+                  <label for="patientConsultDate">
+                    Date Admitted / Seen / Consulted
+                  </label>
+                  <input
+                    id="dateAdmitted"
+                    v-model="formData.cases.dateAdmitted"
+                    class="input-form-field"
+                    type="date"
+                    :disabled="inputEdit()"
+                  />
+                </div>
+                <div class="indigenousGroup-field field" style="width: 40%">
+                    
+                  </div>
+              </div>
+              <div class="field-row" style="width:50%">
+                <div class="dateOnset-field field">
+                  <label for="dateOnset" class="required">
+                    Date onset of Illness (first Symptom/s)
+                  </label>
+                  <input
+                    id="dateAdmitted"
+                    v-model="formData.cases.dateOnset"
+                    class="input-form-field"
+                    type="date"
+                    :disabled="inputEdit()"
+                  />
+                </div>
+              </div>
+            </div>
+          </form>
+          <hr v-if="pageNum == Object.keys(disease.formNames).length" />
+
+          <form v-if="pageNum == 4 || pageNum == Object.keys(disease.formNames).length" id="dengue6" type="submit">
+            <div id="case-investigation-form" class="center">
+              <h2 id="form-header">
+                {{ Object.values(disease.formNames)[6] }}
+              </h2>
+              <div class="field" style="display: inline-flex; flex-direction: row">
+                <label for="labSpecimen" class="required">
+                  Please select the specimen collected with the following information
+                </label>
+                <select id="labSpecimen" v-model="formData.caseData.labSpecimen" name="labSpecimen" style="width: 300px" :disabled="inputEdit()">
+                  <option value="Serum">Serum</option>
+                  <option value="Dried Blood Spot">Dried Blood Spot</option>
+                  <option value="Oropharyngeal">Oropharyngeal / Nasopharyngeal Swab</option>
+                </select>
+              </div>
+
+              <div class="field-row-straight">
+                <div class="field">
+                  <label for="labDateCollected" class="required">
+                    Date Collected
+                  </label>
+                  <input
+                    id="labDateCollected"
+                    v-model="formData.cases.labDateCollected"
+                    class="input-form-field"
+                    type="date"
+                    :disabled="inputEdit()"
+                  />
+                </div>
+                <div class="field">
+                  <label for="labDateSent" class="required">
+                    Date sent to RITM
+                  </label>
+                  <input
+                    id="labDateSent"
+                    v-model="formData.cases.labDateSent"
+                    class="input-form-field"
+                    type="date"
+                    :disabled="inputEdit()"
+                  />
+                </div>
+                <div class="field">
+                  <label for="labDateReceived" class="required">
+                    Date received in RITM
+                  </label>
+                  <input
+                    id="labDateReceived"
+                    v-model="formData.cases.labDateReceived"
+                    class="input-form-field"
+                    type="date"
+                    :disabled="inputEdit()"
+                  />
+                </div>
+              </div>
+
+              <div class="field-row-straight">
+                <div class="field">
+                  <label for="labMeaslesResult" class="required">
+                    Measles IgM result
+                  </label>
+                  <input
+                    id="labMeaslesResult"
+                    v-model="formData.cases.labMeaslesResult"
+                    class="input-form-field"
+                    type="text"
+                    :disabled="inputEdit()"
+                  />
+                </div>
+                <div class="field">
+                  <label for="labRubellaResult" class="required">
+                    Rubella IgM result
+                  </label>
+                  <input
+                    id="labRubellaResult"
+                    v-model="formData.cases.labRubellaResult"
+                    class="input-form-field"
+                    type="text"
+                    :disabled="inputEdit()"
+                  />
+                </div>
+              </div>
+
+              <div class="field-row-straight">
+                <div class="field">
+                  <label for="labVirusResult" class="required">
+                    Virus Isolation
+                  </label>
+                  <input
+                    id="labVirusResult"
+                    v-model="formData.cases.labVirusResult"
+                    class="input-form-field"
+                    type="text"
+                    :disabled="inputEdit()"
+                  />
+                </div>
+                <div class="field">
+                  <label for="labPCRResult" class="required">
+                    PRC Result
+                  </label>
+                  <input
+                    id="labPCRResult"
+                    v-model="formData.cases.labPCRResult"
+                    class="input-form-field"
+                    type="text"
+                    :disabled="inputEdit()"
+                  />
+                </div>
+              </div>
+
+              <div></div>
+            </div>
+          </form>
+          <hr v-if="pageNum == Object.keys(disease.formNames).length" />
+
+          <form v-if="pageNum == 5 || pageNum == Object.keys(disease.formNames).length" id="dengue7" type="submit">
+            <div id="case-investigation-form" class="center">
               <h2 id="form-header">
                 {{ Object.values(disease.formNames)[7] }}
               </h2>
@@ -841,12 +1077,185 @@
                         </ul>
                       </div>
                     </div>
+                    
+                    <!-- <div v-for="(value, name, i) in classification" :key="i" class="checkbox-options">
+                        <input
+                          :id="i"
+                          v-model="formData.caseData.finalClassification"
+                          :value="name"
+                          class="input-checkbox"
+                          name="finalClassification"
+                          type="radio"
+                          :disabled="inputEdit()"
+                        />
+                        <label :for="i">
+                          {{ name }}
+                        </label>
+                        <div class="tooltip">
+                          <img
+                            id="infofever"
+                            class="info-icon-img"
+                            src="~/assets/img/infoicon.png"
+                          />
+                          <span class="tooltipText" style="width: 500px">{{
+                            value
+                          }}</span>
+                        </div>
+                    </div> -->
+                    
+                    <!-- <div class="checkbox-options">
+                        <input
+                          id="Epi-linked Confirmed Measles"
+                          v-model="formData.caseData.finalClassification"
+                          value="Epi-linked Confirmed Measles"
+                          class="input-checkbox"
+                          name="finalClassification"
+                          type="radio"
+                          :disabled="inputEdit()"
+                        />
+                        <label for="Epi-linked Confirmed Measles">
+                          Epi-linked Confirmed Measles
+                        </label>
+                      </div>
+
+                      <div class="checkbox-options">
+                        <input
+                          id="Measles Compatible"
+                          v-model="formData.caseData.finalClassification"
+                          value="Measles Compatible"
+                          class="input-checkbox"
+                          name="finalClassification"
+                          type="radio"
+                          :disabled="inputEdit()"
+                        />
+                        <label for="Measles Compatible">
+                          Measles Compatible
+                        </label>
+                      </div>
+
+                      <div class="checkbox-options">
+                        <input
+                          id="Laboratory Confirmed Rubella"
+                          v-model="formData.caseData.finalClassification"
+                          value="Laboratory Confirmed Rubella"
+                          class="input-checkbox"
+                          name="finalClassification"
+                          type="radio"
+                          :disabled="inputEdit()"
+                        />
+                        <label for="Laboratory Confirmed Rubella">
+                          Laboratory Confirmed Rubella
+                        </label>
+                      </div>
+
+                      <div class="checkbox-options">
+                        <input
+                          id="Epi-linked Cofirmed Rubella"
+                          v-model="formData.caseData.finalClassification"
+                          value="Epi-linked Cofirmed Rubella"
+                          class="input-checkbox"
+                          name="finalClassification"
+                          type="radio"
+                          :disabled="inputEdit()"
+                        />
+                        <label for="Epi-linked Cofirmed Rubella">
+                          Epi-linked Cofirmed Rubella
+                        </label>
+                      </div>
+
+                      <div class="checkbox-options">
+                        <input
+                          id="Discarded Non Measles/Rubella"
+                          v-model="formData.caseData.finalClassification"
+                          value="Discarded Non Measles/Rubella"
+                          class="input-checkbox"
+                          name="finalClassification"
+                          type="radio"
+                          :disabled="inputEdit()"
+                        />
+                        <label for="Discarded Non Measles/Rubella">
+                          Discarded Non Measles/Rubella
+                        </label>
+                      </div>
+                    </div> -->
                   </div>
                 </div>
               </div>
             </div>
           </form>
           <hr v-if="pageNum == Object.keys(disease.formNames).length" />
+
+          <form v-if="pageNum == 6 || pageNum == Object.keys(disease.formNames).length" id="dengue9" type="submit">
+            <div id="case-investigation-form" class="center">
+              <h2 id="form-header">
+                {{ Object.values(disease.formNames)[9] }}
+              </h2>
+
+              <div class="field-row">
+                <div class="field">
+                  <label class="required"> Please select the outcome </label>
+                  <div style="display: inline-flex; flex-display: row; margin-right: 50px;">
+                    <div style="display: inline-flex; align-items: center; margin-right: 30px;">
+                      <input
+                        id="Alive"
+                        v-model="formData.caseData.outcome"
+                        value="Alive"
+                        class="input-radio"
+                        name="outcome"
+                        type="radio"
+                        :disabled="inputEdit()"
+                      />
+                      <label for="Alive"> Alive </label>
+                    </div>
+
+                    <div style="display: inline-flex; align-items: center; margin-right: 30px;">
+                      <input
+                        id="Dead"
+                        v-model="formData.caseData.outcome"
+                        value="Dead"
+                        class="input-radio"
+                        name="outcome"
+                        type="radio"
+                        :disabled="inputEdit()"
+                      />
+                      <label for="Dead"> Dead </label>
+                    </div>
+                  </div>
+
+                  <div v-if="formData.caseData.outcome == 'Dead'" class="field-row-straight">
+                    <div class="field" style="margin-left: 95px">
+                      <label for="dateDied" class="required"> Date died </label>
+                      <input
+                        id="dateDied"
+                        v-model="formData.cases.dateDied"
+                        class="input-form-field"
+                        style="width: 175px"
+                        type="date"
+                        :disabled="inputEdit()"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="field-row-straight">
+                <div class="field">
+                  <label for="finalDiagnosis" class="required">
+                    Final Diagnosis
+                  </label>
+                  <input
+                    id="finalDiagnosis"
+                    v-model="formData.cases.finalDiagnosis"
+                    class="input-form-field"
+                    style="width: 50%"
+                    type="text"
+                    :disabled="inputEdit()"
+                  />
+                </div>
+              </div>
+            </div>
+          </form>
+        
         </div>
 
         <!-- Bottom 2 buttons -->
@@ -987,7 +1396,10 @@ export default {
           form0: 'Search Patient',
           form1: 'Patient Record',
           form2: 'Patient Information',
-          form3: 'Final Classification',
+          form3: 'Vaccination History',
+          form4: 'Laboratory Tests',
+          form5: 'Final Classification',
+          form6: 'Outcome',
         },
       },
       classification: {},

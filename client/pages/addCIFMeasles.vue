@@ -1340,7 +1340,7 @@
           </form>
           <hr v-if="pageNum == Object.keys(disease.formNames).length" />
 
-          <form v-if=" pageNum == 5 || pageNum == Object.keys(disease.formNames).length " id="measles5" type="submit">
+          <form v-if="pageNum == 5 || pageNum == Object.keys(disease.formNames).length " id="measles5" type="submit">
             <div id="case-investigation-form" class="center">
               <h2 id="form-header">
                 {{ Object.values(disease.formNames)[5] }}
