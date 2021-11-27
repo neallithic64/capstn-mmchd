@@ -151,6 +151,7 @@ body {
   font-weight: 300;
   padding: 0px;
   margin: 0px;
+  background-image: none;
 }
 
 .pageHeader {

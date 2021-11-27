@@ -44,7 +44,7 @@
                 {{ Object.values(disease.formNames)[0] }}
               </h2>
 
-              <p style="margin-bottom: -20px">Search for Patient:</p>
+              <!-- <p style="margin-bottom: -20px">Search for Patient:</p> -->
 
               <div class="container">
                 <div class="bar">
@@ -222,6 +222,12 @@
               </div>
 
               <div class="field-row-straight">
+                <div class="name-field">
+                  <label for="currCity" class="required"> City </label>
+                  <select id="currCity" v-model="formData.patient.currCity" name="currCity" :disabled="inputEdit()">
+                    <option v-for="(city, i) in cityList" :key=i>{{city}}</option>
+                  </select>
+                </div>
                 <div class="field">
                   <label for="currBarangay" class="required"> Barangay </label>
                   <input
@@ -231,34 +237,6 @@
                     type="text"
                     :disabled="inputEdit()"
                   />
-                </div>
-                <div class="name-field">
-                  <label for="currCity" class="required"> City </label>
-                  <select id="currCity" v-model="formData.patient.currCity" name="currCity" :disabled="inputEdit()">
-                    <option value="Caloocan">Caloocan City</option>
-                    <option value="Las Piñas City">Las Piñas City</option>
-                    <option value="Makati City">Makati City</option>
-                    <option value="Malabon City">Malabon City</option>
-                    <option value="Mandaluyong City">Mandaluyong City</option>
-                    <option value="Manila City">Manila City</option>
-                    <option value="Marikina City">Marikina City</option>
-                    <option value="Muntinlupa City">Muntinlupa City</option>
-                    <option value="Navotas City">Navotas City</option>
-                    <option value="Parañaque City">Parañaque City</option>
-                    <option value="Pasay City">Pasay City</option>
-                    <option value="Pasig City">Pasig City</option>
-                    <option value="Quezon City City">Quezon City</option>
-                    <option value="San Juan City">San Juan City</option>
-                    <option value="Taguig City">Taguig City</option>
-                    <option value="Valenzuela City">Valenzuela City</option>
-                  </select>
-                  <!-- <input
-                    id="currCity"
-                    v-model="formData.patient.currCity"
-                    class="input-form-field"
-                    type="number"
-                    :disabled="inputEdit()"
-                  /> -->
                 </div>
               </div>
 
@@ -276,6 +254,17 @@
               </div>
 
               <div class="field-row-straight">
+                <div class="name-field">
+                  <label for="permCity"> City </label>
+                  <select
+                    id="permCity"
+                    v-model="formData.patient.permCity"
+                    name="permCity"
+                    :disabled="inputEdit()"
+                  >
+                  <option v-for="(city, i) in cityList" :key=i>{{city}}</option>
+                  </select>
+                </div>
                 <div class="field">
                   <label for="permBarangay"> Barangay </label>
                   <input
@@ -285,32 +274,6 @@
                     type="text"
                     :disabled="inputEdit()"
                   />
-                </div>
-                <div class="name-field">
-                  <label for="permCity"> City </label>
-                  <select
-                    id="permCity"
-                    v-model="formData.patient.permCity"
-                    name="permCity"
-                    :disabled="inputEdit()"
-                  >
-                    <option value="Caloocan City">Caloocan City</option>
-                    <option value="Las Piñas City">Las Piñas City</option>
-                    <option value="Makati City">Makati City</option>
-                    <option value="Malabon City">Malabon City</option>
-                    <option value="Mandaluyong City">Mandaluyong City</option>
-                    <option value="Manila City">Manila City</option>
-                    <option value="Marikina City">Marikina City</option>
-                    <option value="Muntinlupa City">Muntinlupa City</option>
-                    <option value="Navotas City">Navotas City</option>
-                    <option value="Parañaque City">Parañaque City</option>
-                    <option value="Pasay City">Pasay City</option>
-                    <option value="Pasig City">Pasig City</option>
-                    <option value="Quezon City">Quezon City</option>
-                    <option value="San Juan City">San Juan City</option>
-                    <option value="Taguig City">Taguig City</option>
-                    <option value="Valenzuela City">Valenzuela City</option>
-                  </select>
                 </div>
               </div>
 
@@ -2312,7 +2275,7 @@ export default {
         idname: 'Measles',
         name: 'Measles/Rubella',
         formNames: {
-          form0: 'Case Definition',
+          form0: 'Search Patient',
           form1: 'Patient Record',
           form2: 'Patient Information',
           form3: 'Clinical Data',
@@ -2325,6 +2288,24 @@ export default {
         },
       },
       classification: {},
+      cityList: [
+        'Caloocan City',
+        'Las Piñas City',
+        'Makati City',
+        'Malabon City',
+        'Mandaluyong City',
+        'Manila City',
+        'Marikina City',
+        'Muntinlupa City',
+        'Navotas City',
+        'Parañaque City',
+        'Pasay City',
+        'Pasig City',
+        'Quezon City',
+        'San Juan City',
+        'Taguig City',
+        'Valenzuela City',
+      ],
     }
   },
   async fetch() {
@@ -2433,6 +2414,7 @@ body {
   font-weight: 300;
   padding: 0px;
   margin: 0px;
+  background-image: none;
 }
 
 .case-container {

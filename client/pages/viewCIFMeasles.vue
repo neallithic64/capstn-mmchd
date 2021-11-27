@@ -45,10 +45,10 @@
               </select>
               <ul
                 class="CIFEdit"
-                style="margin-top: 7px"
+                style="margin-top: 7px;margin-left: 5px;"
                 @click="editCase = !editCase"
               >
-                <img src="~/assets/img/check.png" />
+                <img id="saveIcon" src="~/assets/img/save.png" />
               </ul>
             </div>
           </span>
@@ -249,6 +249,16 @@
 
             <div class="field-row-straight">
               <div class="field">
+                <label for="currCity" class="required"> City </label>
+                <select
+                  id="currCity"
+                  v-model="formData.patient.currCity"
+                  name="currCity"
+                  :disabled="inputEdit()"
+                >
+                </select>
+              </div>
+              <div class="field">
                 <label for="currBarangay" class="required"> Barangay </label>
                 <input
                   id="currBarangay"
@@ -257,39 +267,6 @@
                   type="text"
                   :disabled="inputEdit()"
                 />
-              </div>
-              <div class="name-field">
-                <label for="currCity" class="required"> City </label>
-                <select
-                  id="currCity"
-                  v-model="formData.patient.currCity"
-                  name="currCity"
-                  :disabled="inputEdit()"
-                >
-                  <option value="Caloocan">Caloocan</option>
-                  <option value="Las Piñas">Las Piñas</option>
-                  <option value="Makati">Makati</option>
-                  <option value="Malabon">Malabon</option>
-                  <option value="Mandaluyong">Mandaluyong</option>
-                  <option value="Manila">Manila</option>
-                  <option value="Marikina">Marikina</option>
-                  <option value="Muntinlupa">Muntinlupa</option>
-                  <option value="Navotas">Navotas</option>
-                  <option value="Parañaque">Parañaque</option>
-                  <option value="Pasay">Pasay</option>
-                  <option value="Pasig">Pasig</option>
-                  <option value="Quezon City">Quezon City</option>
-                  <option value="San Juan">San Juan</option>
-                  <option value="Taguig">Taguig</option>
-                  <option value="Valenzuela">Valenzuela</option>
-                </select>
-                <!-- <input
-                    id="currCity"
-                    v-model="formData.patient.currCity"
-                    class="input-form-field"
-                    type="number"
-                    :disabled="inputEdit()"
-                  /> -->
               </div>
             </div>
 
@@ -310,6 +287,16 @@
 
             <div class="field-row-straight">
               <div class="field">
+                <label for="permCity"> City </label>
+                <select
+                  id="permCity"
+                  v-model="formData.patient.permCity"
+                  name="permCity"
+                  :disabled="inputEdit()"
+                >
+                </select>
+              </div>
+              <div class="field">
                 <label for="permBarangay"> Barangay </label>
                 <input
                   id="permBarangay"
@@ -318,32 +305,6 @@
                   type="text"
                   :disabled="inputEdit()"
                 />
-              </div>
-              <div class="name-field">
-                <label for="permCity"> City </label>
-                <select
-                  id="permCity"
-                  v-model="formData.patient.permCity"
-                  name="permCity"
-                  :disabled="inputEdit()"
-                >
-                  <option value="Caloocan">Caloocan</option>
-                  <option value="Las Piñas">Las Piñas</option>
-                  <option value="Makati">Makati</option>
-                  <option value="Malabon">Malabon</option>
-                  <option value="Mandaluyong">Mandaluyong</option>
-                  <option value="Manila">Manila</option>
-                  <option value="Marikina">Marikina</option>
-                  <option value="Muntinlupa">Muntinlupa</option>
-                  <option value="Navotas">Navotas</option>
-                  <option value="Parañaque">Parañaque</option>
-                  <option value="Pasay">Pasay</option>
-                  <option value="Pasig">Pasig</option>
-                  <option value="Quezon City">Quezon City</option>
-                  <option value="San Juan">San Juan</option>
-                  <option value="Taguig">Taguig</option>
-                  <option value="Valenzuela">Valenzuela</option>
-                </select>
               </div>
             </div>
 
@@ -2174,6 +2135,30 @@
           </div>
         </form>
       </div>
+      <div class="CIF-statusHistory">
+        <h2 style="border-bottom: gray solid; width: fit-content; padding: 0 7px 0 5px;">Case Status History</h2>
+        <div style="border-top: gray solid;">
+          <table style="width: 100%;">
+            <thead>
+              <th>Date</th>
+              <th>From</th>
+              <th>To</th>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Nov 11, 2021</td>
+                <td>Probable</td>
+                <td>Suspected</td>
+              </tr>
+              <tr>
+                <td>Nov 11, 2021</td>
+                <td>Probable</td>
+                <td>Suspected</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -2443,6 +2428,7 @@ body {
   font-weight: 300;
   padding: 0px;
   margin: 0px;
+  background-image: none;
 }
 
 h3 {
@@ -2594,6 +2580,28 @@ b {
   padding: 5px;
 }
 
+/* #saveIcon:hover {
+  background: url("~/assets/img/saved.png");
+
+} */
+
+.CIF-statusHistory {
+  margin-top:10px;
+  margin-bottom:30px;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th, td {
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(odd) {background-color: #f2f2f2;}
+
 /* ALL FROM CIF */
 
 .case-investigation-form {
@@ -2666,6 +2674,7 @@ b {
   display: flex;
   flex-direction: column;
   padding-bottom: 5px;
+  align-items: baseline;
 }
 
 .halffield {

@@ -264,7 +264,37 @@ export default {
           patientNo: 123,
           submittedDate: '2020-12-10',
           updatedDate: '2020-1-10',
-          status: 'IDK',
+          status: 'Suspected aaa',
+        },
+        {
+          caseID: 19,
+          disease: 'Measles',
+          druID: 123,
+          city: 'Manila',
+          patientNo: 123,
+          submittedDate: '2020-12-10',
+          updatedDate: '2020-1-10',
+          status: 'aProbable aaa',
+        },
+        {
+          caseID: 19,
+          disease: 'Measles',
+          druID: 123,
+          city: 'Manila',
+          patientNo: 123,
+          submittedDate: '2020-12-10',
+          updatedDate: '2020-1-10',
+          status: 'secret',
+        },
+        {
+          caseID: 19,
+          disease: 'Measles',
+          druID: 123,
+          city: 'Manila',
+          patientNo: 123,
+          submittedDate: '2020-12-10',
+          updatedDate: '2020-1-10',
+          status: 'Confirmedd',
         },
       ],
       crfData: [
@@ -300,7 +330,7 @@ export default {
 	  rows[i].reportDate = rows[i].reportDate.substr(0, 10);
 	  rows[i].disease = rows[i].diseaseID;
 	}
-    this.allData = rows;
+  this.allData = rows;
 	this.tableOptions.columns = this.allColumns;
   },
   methods: {
@@ -326,6 +356,7 @@ body {
   font-weight: 300;
   padding: 0px;
   margin: 0px;
+  background-image: none;
 }
 
 .pageHeader {

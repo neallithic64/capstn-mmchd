@@ -77,7 +77,7 @@
                 </div>
               </div>
             </div>
-            <div v-if="column.key === 'status'">
+            <div v-if="column.title==='Case Status'">
               <a class="filterButton">
                 <img
                   src="~/assets/img/filter.png"
@@ -151,11 +151,24 @@
                   :href="'/view' + 'CRF' + data['disease']">
                   {{ data[column.key] }}
                 </a>
+                <a v-else-if="pageType === 'addcrfID'"
+                  style="color: #346083; text-decoration-line: underline"
+                  :href="'/add' + 'CRF' + data['disease'] + 'Case'">
+                  {{ data[column.key] }}
+                </a>
+                <a v-else-if="pageType === 'viewcrfID'"
+                  style="color: #346083; text-decoration-line: underline"
+                  :href="'/view' + 'CRF' + data['disease'] + 'Case'">
+                  {{ data[column.key] }}
+                </a>
                 <!-- <a
                   style="text-decoration: none"
                   v-bind:href="column.source + '/' + data[column.key]"
                   >{{ data[column.key] }}
                 </a> -->
+              </span>
+              <span v-else-if="column.title==='Case Status'" :class="caseStatusClass(data[column.key])">
+                {{ data[column.key] }}
               </span>
               <span v-else>
                 {{ data[column.key] }}
@@ -205,11 +218,27 @@ export default {
       cityOpen: false,
       statusOpen: false,
       diseaseFilters: {
-        options: ['Measles', 'Dengue', 'Hakdogness'],
+        options: ['Measles','Diphtheria','Neonatal Tetanus','Pertussis','Meningococcal Disease',
+        ],
         selected: [],
       },
       cityFilters: {
-        options: ['Manila', 'Makati', 'Everywhere'],
+        options: ['Caloocan City',
+        'Las Piñas City',
+        'Makati City',
+        'Malabon City',
+        'Mandaluyong City',
+        'Manila City',
+        'Marikina City',
+        'Muntinlupa City',
+        'Navotas City',
+        'Parañaque City',
+        'Pasay City',
+        'Pasig City',
+        'Quezon City',
+        'San Juan City',
+        'Taguig City',
+        'Valenzuela City',],
         selected: [],
       },
       statusFilters: {
@@ -247,6 +276,14 @@ export default {
     // this.readData();
   },
   methods: {
+    caseStatusClass(c) {
+      if (c) {
+        if (c.toString().includes('Suspected')) return 'caseStatus suspectedCase';
+        else if (c.toString().includes('Probable')) return 'caseStatus probableCase';
+        else if (c.toString().includes('Confirmed')) return 'caseStatus confirmedCase';
+        return 'none';
+      }
+    },
     getStartEnd() {
       this.showstart = this.pages[this.currentPage][1];
       this.showend = this.pages[this.currentPage][2];
@@ -454,6 +491,22 @@ export default {
 }
 </script>
 <style>
+.caseStatus {
+  color:white;
+  padding:2px 10px;
+  border-radius: 10px;
+  font-weight: 500;
+}
+.confirmedCase {
+  background: red;
+}
+.suspectedCase {
+  background: #FC8F00;
+}
+.probableCase {
+  background: #FDCE00;
+}
+
 .filterButton {
   width: 150px;
   height: 38px;
@@ -471,9 +524,10 @@ export default {
   position: absolute;
   display: block;
   border: white solid 0.5px;
-  padding: 7.5px;
+  padding: 12px;
+  padding-right:15px;
   /* margin-top: 5px; */
-  width: 150px;
+  /* width: 150px; */
   text-align: left;
   font-weight: 400;
   filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.25));
