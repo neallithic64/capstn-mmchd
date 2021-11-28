@@ -2136,28 +2136,33 @@
         </form>
       </div>
       <div class="CIF-statusHistory">
+        <div class="CIF-statusHistory">
         <h2 style="border-bottom: gray solid; width: fit-content; padding: 0 7px 0 5px;">Case Status History</h2>
         <div style="border-top: gray solid;">
           <table style="width: 100%;">
             <thead>
-              <th>Date</th>
-              <th>From</th>
-              <th>To</th>
+              <th style="width: 25%;">Date</th>
+              <th style="width: 25%;">From</th>
+              <th style="width: 25%;">To</th>
+              <th style="width: 25%;">By</th>
             </thead>
             <tbody>
               <tr>
                 <td>Nov 11, 2021</td>
                 <td>Probable</td>
                 <td>Suspected</td>
+                <td>me</td>
               </tr>
               <tr>
                 <td>Nov 11, 2021</td>
                 <td>Probable</td>
                 <td>Suspected</td>
+                <td>me</td>
               </tr>
             </tbody>
           </table>
         </div>
+      </div>
       </div>
     </div>
   </div>
