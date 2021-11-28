@@ -1,14 +1,14 @@
 <template>
   <div id="login">
     <img id="login-logo" class="center" src="~/assets/img/logo.png" />
-    <form id="user-login" type="submit" novalidate="true" method="post" @submit="submitForm">
+    <form id="user-login" type="submit" novalidate="true" method="post" @submit.stop.prevent="submitForm">
       <div id="login-form" class="center">
         <h2 id="login-header">Login</h2>
         <div class="login-field">
           <label> Email or Username </label>
           <input
             id="username"
-            v-model="email"
+            v-model="userEmail"
             class="login-form-field"
           />
           <p id="email-error" class="error-message" >
@@ -19,7 +19,7 @@
           <label> Password </label>
           <input
             id="password"
-            v-model="password"
+            v-model="userPassword"
             class="login-form-field"
             type="password"
           />
@@ -46,7 +46,7 @@
 
 <script>
 
-const axios = require('axios');
+// const axios = require('axios');
 
 export default {
   header: {
@@ -54,8 +54,8 @@ export default {
   },
   data() {
       return {
-          email: '',
-          password: '', 
+          userEmail: '',
+          userPassword: '', 
           genError: '',
           emailError: '',
           passError: ''
@@ -64,13 +64,13 @@ export default {
   methods: {
     checkForm(e) {
       let error = false;
-      if (this.email === "") {
+      if (this.userEmail === "") {
         this.emailError = "Email or Username is required.";
         error = true;
       }
-      else if (this.email.includes("@")) {
+      else if (this.userEmail.includes("@")) {
         const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        if (re.test(this.email) === false) {
+        if (re.test(this.userEmail) === false) {
           this.emailError = "Invalid email.";
           error = true;
         }
@@ -78,34 +78,36 @@ export default {
       }
       else this.emailError = "";
 
-      if (this.password === "") {
+      if (this.userPassword === "") {
         this.passError = "Password is required.";
         error = true;
       }
       else this.passError = "";
 
       return error;
-      
-      // e.preventDefault();
     },
-    submitForm(e) {
+    async submitForm(e) {
       if (!this.checkForm()) {
-        axios.post('http://localhost:8080/login', {
-          email: this.email,
-          password: this.password
-        })
-        .then((response) => {
+        try {
+          // const user = (await this.$axios.post('http://localhost:8080/login', {
+          //   email: this.email,
+          //   password: this.password
+          // })).data.user
+          await this.$auth.loginWith('cookie', { 
+            data: {
+              userEmail: this.userEmail,
+              userPassword: this.userPassword
+            },
+          })
+          this.$router.push('/');
+        } catch (e) {
           // eslint-disable-next-line no-console
-          console.log(response);
-        })
-        .catch((error) => {
-          // eslint-disable-next-line no-console
-          console.log(error.response);
-          this.genError = error.response.data;
-        });
+            console.log(e.response);
+            this.genError = e.response.data;
+        }
       }
       e.preventDefault();
-    }
+    },
     /* TODO: forgot pass func here */
   }
 }

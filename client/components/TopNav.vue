@@ -1,40 +1,70 @@
 <template>
   <div id="myTopnav" class="topnav">
-    <img id="logo" src="~/assets/img/doh-logo.png" />
-    <nuxt-link to="/"> Home </nuxt-link>
-    <div class="dropdown">
+    <nuxt-link to="/" style="padding: 0px; padding-bottom: 9px">
+      <img id="logo" src="~/assets/img/doh-logo.png" />
+    </nuxt-link>
+    <div 
+      v-if="$auth.user.userType === 'pidsrStaff' || $auth.user.userType === 'techStaff' ||
+      $auth.user.userType === 'BHS' || $auth.user.userType === 'RHU' || $auth.user.userType === 'CHO' ||
+      $auth.user.userType === 'govtHosp' || $auth.user.userType === 'privHosp' || $auth.user.userType === 'clinic' ||
+      $auth.user.userType === 'govtLab' || $auth.user.userType === 'privLab' || $auth.user.userType === 'airseaPort'"
+      class="dropdown"
+    >
       <button class="dropbtn">
         Disease Surveillance
         <i class="fa fa-caret-down"></i>
       </button>
       <div class="dropdown-content">
-        <nuxt-link to="/allcases"> View Cases </nuxt-link>
-        <nuxt-link to="/newcase"> Add Case </nuxt-link>
+        <nuxt-link to="/addCase"> Add Case </nuxt-link>
+        <nuxt-link to="/allCases"> View Case Reports </nuxt-link>
       </div>
     </div>
-    <div class="dropdown">
+    <div
+      v-if="$auth.user.userType === 'fhsisStaff' || $auth.user.userType === 'techStaff' ||
+      $auth.user.userType === 'BHS' || $auth.user.userType === 'RHU' || $auth.user.userType === 'CHO' || $auth.user.userType === 'clinic'" 
+      class="dropdown"
+    >
       <button class="dropbtn">
         Program Surveillance
         <i class="fa fa-caret-down"></i>
       </button>
       <div class="dropdown-content">
-        <nuxt-link to="/allprogreports"> View Reports </nuxt-link>
-        <nuxt-link to="/newprogreport"> Add Program Report </nuxt-link>
+        <nuxt-link to="/addProgReport"> Add Program Report </nuxt-link>
+        <nuxt-link to="/allProgReports"> View Program Reports </nuxt-link>
       </div>
     </div>
-    <nuxt-link to="/analysis"> Analysis and Visualization </nuxt-link>
-    <nuxt-link to="/bulletin"> Feedback Bulletin </nuxt-link>
-    <div class="dropdown">
+    <div 
+      v-if="$auth.user.userType === 'pidsrStaff' || $auth.user.userType === 'fhsisStaff' || $auth.user.userType === 'techStaff' ||
+      $auth.user.userType === 'BHS' || $auth.user.userType === 'RHU' || $auth.user.userType === 'CHO' ||
+      $auth.user.userType === 'govtHosp' || $auth.user.userType === 'privHosp' || $auth.user.userType === 'clinic' ||
+      $auth.user.userType === 'govtLab' || $auth.user.userType === 'privLab' || $auth.user.userType === 'airseaPort'"
+      class="dropdown">
       <button class="dropbtn">
         ESR
         <i class="fa fa-caret-down"></i>
       </button>
       <div class="dropdown-content">
-        <nuxt-link to="/allevents"> View Health Events </nuxt-link>
-        <nuxt-link to="/newevent"> New Health Event </nuxt-link>
+        <nuxt-link to="/addEvent"> Add Health Event </nuxt-link>
+        <nuxt-link to="/allEvents"> View Health Events </nuxt-link>
       </div>
     </div>
+    <nuxt-link 
+      v-if="$auth.user.userType === 'pidsrStaff' || $auth.user.userType === 'fhsisStaff' || $auth.user.userType === 'techStaff'"
+      to="/analysis"> 
+      Analysis and Visualization 
+    </nuxt-link>
+    <nuxt-link to="/bulletin"> Feedback Bulletin </nuxt-link>
     <nuxt-link to="/evaluation"> Evaluation </nuxt-link>
+    <div v-if="$auth.user.userType === 'techStaff'" class="dropdown">
+      <button class="dropbtn">
+        Users
+        <i class="fa fa-caret-down"></i>
+      </button>
+      <div class="dropdown-content">
+        <nuxt-link to="/addUser"> Add User </nuxt-link>
+        <nuxt-link to="/allUsers"> All Users </nuxt-link>
+      </div>
+    </div>
 
     <div class="topnav-right-inside">
       <nuxt-link to="/notification"> Notification </nuxt-link>
@@ -44,14 +74,14 @@
           <i class="fa fa-caret-down"></i>
         </button>
         <div class="dropdown-content">
-          <nuxt-link to="/myprofile"> My Profile </nuxt-link>
+          <nuxt-link to="/myProfile"> My Profile </nuxt-link>
           <nuxt-link to="/settings"> Settings </nuxt-link>
           <nuxt-link to="/logout"> Logout </nuxt-link>
         </div>
       </div>
     </div>
 
-    <a href="javascript:void(0);" class="icon" @click="myFunction()">&#9776;</a>
+    <a href="javascript:void(0);" class="icon" @click="responsive()">&#9776;</a>
 
     <div class="topnav-right">
       <button class="notification">
@@ -60,12 +90,18 @@
       </button>
       <div class="dropdown">
         <button id="profile-dropbtn">
-          <span id="user-initials">JE</span>
+          <span v-if="$auth.loggedIn" id="user-initials">
+            {{ $auth.user.firstName.charAt(0) }}
+          </span>
         </button>
         <div class="dropdown-content-profile">
-          <nuxt-link to="/myprofile"> My Profile </nuxt-link>
+          <nuxt-link v-if="$auth.loggedIn" to="/myprofile">
+            My Profile
+          </nuxt-link>
           <nuxt-link to="/settings"> Settings </nuxt-link>
-          <nuxt-link to="/logout"> Logout </nuxt-link>
+          <div v-if="$auth.loggedIn" style="width: inherit;" @click="$auth.logout()">
+            <nuxt-link to='/login'> Logout </nuxt-link> 
+          </div>
         </div>
       </div>
     </div>
@@ -75,12 +111,12 @@
 <script>
 export default {
   methods: {
-    myFunction() {
-      const x = document.getElementById('myTopnav')
+    responsive() {
+      const x = document.getElementById('myTopnav');
       if (x.className === 'topnav') {
-        x.className += ' responsive'
+        x.className += ' responsive';
       } else {
-        x.className = 'topnav'
+        x.className = 'topnav';
       }
     },
   },
@@ -88,6 +124,10 @@ export default {
 </script>
 
 <style>
+body {
+  background-image: none;
+}
+
 #myTopnav {
   z-index: 10;
   position: fixed;
@@ -287,6 +327,7 @@ export default {
   }
   .topnav.responsive .dropdown {
     float: none;
+    clear: both;
   }
   .topnav.responsive .dropdown-content {
     position: relative;

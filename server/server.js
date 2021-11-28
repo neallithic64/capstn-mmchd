@@ -9,9 +9,13 @@ require("dotenv").config();
 const PORT = process.env.PORT || 8080;
 app.use(express.static(__dirname + "/"));
 
+app.use(require('morgan')('dev'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
+
 app.use(cors({ 
 	credentials: true,
-	origin: true,
+	origin: ["http://localhost:3000", "https://localhost:3000"],
 	methods: "GET,HEAD,PUT,PATCH,POST,DELETE"
 }));
 app.use(cookieParser());
@@ -21,16 +25,15 @@ app.use(session({
 	resave: false,
 	saveUninitialized: true,
 	cookie: {
-		secure: true,
-		samesite: "lax"
+		secure: false,
+		httpOnly: true,
+		samesite: "lax",
+		maxAge: 2419200000
 	}
 }));
 
-app.use(bodyParser.urlencoded({extended: true}));
-app.use(bodyParser.json());
-
 const db = require("./models/db");
 const router = require("./routers/indexRouter");
-app.use("/", router);
+app.use("/api", router);
 
 app.listen(PORT, () => console.log("listening at " + PORT));

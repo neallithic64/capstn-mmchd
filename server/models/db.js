@@ -36,13 +36,13 @@ function makeWhereClause(obj) {
  * String "column1 LIKE '%value1%' AND column2 = '%value2%';"
  * NOTE: this only performs string matching for the moment
  */
-	function makeWhereLikeClause(obj) {
-		let entriesArr = [];
-		for (let [key, value] of Object.entries(obj)) {
-			entriesArr.push(key + " LIKE " + "'" + value + "%'");
-		}
-		return entriesArr.join(" AND ") + ";";
+function makeWhereLikeClause(obj) {
+	let entriesArr = [];
+	for (let [key, value] of Object.entries(obj)) {
+		entriesArr.push(key + " LIKE " + "'" + value + "%'");
 	}
+	return entriesArr.join(" AND ") + ";";
+}
 	
 /** Expected input:
 	Object {
@@ -85,7 +85,6 @@ const database = {
 	exec: async function(sql) {
 		try {
 			let [rows, fields] = await pool.execute(sql);
-			console.log(rows);
 			return rows;
 		} catch (e) {
 			console.log(e);
@@ -129,7 +128,7 @@ const database = {
 	 *  column Like '%value%'condition. Currently, the WHERE clause supports string types; integers are
 	 * not yet taken into account.
 	 */
-	 findRowsLike: async function(table, query) {
+	findRowsLike: async function(table, query) {
 		try {
 			let statement = "SELECT * FROM " + table + " WHERE " + makeWhereLikeClause(query);
 			let [rows, fields] = await pool.execute(statement);
