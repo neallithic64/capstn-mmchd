@@ -273,7 +273,7 @@ const indexFunctions = {
 	
 	getCases: async function(req, res) {
 		try {
-			let match = await db.findAll("mmchddb.CASES");
+			let match = await db.exec("SELECT * FROM mmchddb.CASES c INNER JOIN mmchddb.DISEASES d ON c.diseaseID = d.diseaseID;");
 			console.log(match);
 			res.status(200).send(match);
 		} catch (e) {

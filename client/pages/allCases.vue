@@ -328,7 +328,7 @@ export default {
 	  rows[i].city = "Placeholder";
 	  rows[i].updatedDate = "1111-11-11";
 	  rows[i].reportDate = rows[i].reportDate.substr(0, 10);
-	  rows[i].disease = rows[i].diseaseID;
+	  rows[i].disease = rows[i].diseaseName;
 	}
   this.allData = rows;
 	this.tableOptions.columns = this.allColumns;
