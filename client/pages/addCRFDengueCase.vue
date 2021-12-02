@@ -803,7 +803,7 @@
           </form>
           <hr v-if="pageNum == Object.keys(disease.formNames).length" />
 
-          <form v-if="pageNum == 3 || pageNum == Object.keys(disease.formNames).length" id="dengue4" type="submit">
+          <form v-if="pageNum == 3 || pageNum == Object.keys(disease.formNames).length" id="dengue3" type="submit">
             <div id="case-report-form" class="center">
               <h2 id="form-header"> {{ Object.values(disease.formNames)[3] }} </h2>
 
@@ -864,164 +864,10 @@
           </form>
           <hr v-if="pageNum == Object.keys(disease.formNames).length" />
 
-          <form v-if="pageNum == 4 || pageNum == Object.keys(disease.formNames).length" id="dengue6" type="submit">
+          <form v-if="pageNum == 4 || pageNum == Object.keys(disease.formNames).length" id="dengue4" type="submit">
             <div id="case-investigation-form" class="center">
               <h2 id="form-header">
                 {{ Object.values(disease.formNames)[4] }}
-              </h2>
-
-              <div class="field-row-straight" style="display: inline-flex; flex-direction: row">
-                <div style="width:10%; align-self:center;font-size:20px;font-weight:500">
-                  <label for="labSpecimen">
-                    NS1
-                  </label>
-                </div>
-                <div style="width:40%" class="field">
-                  <label for="ns1Date" class="required">
-                    Date done
-                  </label>
-                  <input
-                    id="ns1Date"
-                    v-model="formData.caseData.ns1Date"
-                    class="input-form-field"
-                    type="date"
-                    :disabled="inputEdit()"
-                  />
-                </div>
-                <div style="width:51%" class="field">
-                  <label for="ns1Result" class="required">
-                    Result
-                  </label>
-                  <select
-                    id="ns1Result"
-                    v-model="formData.caseData.ns1Result"
-                    name="ns1Result"
-                    :disabled="inputEdit()"
-                  >
-                    <option value="Single">Positive</option>
-                    <option value="Married">Negative</option>
-                    <option value="Separated">Equivocal</option>
-                    <option value="Widowed">Pending Result</option>
-                  </select>
-                </div>
-              </div>
-
-              <div class="field-row-straight" style="display: inline-flex; flex-direction: row">
-                <div style="width:10%; align-self:center;font-size:20px;font-weight:500">
-                  <label for="labSpecimen">
-                    IgG ELISA
-                  </label>
-                </div>
-                <div style="width:40%" class="field">
-                  <label for="iggDate" class="required">
-                    Date done
-                  </label>
-                  <input
-                    id="iggDate"
-                    v-model="formData.caseData.iggDate"
-                    class="input-form-field"
-                    type="date"
-                    :disabled="inputEdit()"
-                  />
-                </div>
-                <div style="width:51%" class="field">
-                  <label for="iggResult" class="required">
-                    Result
-                  </label>
-                  <select
-                    id="iggResult"
-                    v-model="formData.caseData.iggResult"
-                    name="iggResult"
-                    :disabled="inputEdit()"
-                  >
-                    <option value="Single">Positive</option>
-                    <option value="Married">Negative</option>
-                    <option value="Separated">Equivocal</option>
-                    <option value="Widowed">Pending Result</option>
-                  </select>
-                </div>
-              </div>
-
-              <div class="field-row-straight" style="display: inline-flex; flex-direction: row">
-                <div style="width:10%; align-self:center;font-size:20px;font-weight:500">
-                  <label for="igmDate">
-                    IgM ELISA
-                  </label>
-                </div>
-                <div style="width:40%" class="field">
-                  <label for="igmDate" class="required">
-                    Date done
-                  </label>
-                  <input
-                    id="igmDate"
-                    v-model="formData.caseData.igmDate"
-                    class="input-form-field"
-                    type="date"
-                    :disabled="inputEdit()"
-                  />
-                </div>
-                <div style="width:51%" class="field">
-                  <label for="igmResult" class="required">
-                    Result
-                  </label>
-                  <select
-                    id="igmResult"
-                    v-model="formData.caseData.igmResult"
-                    name="igmResult"
-                    :disabled="inputEdit()"
-                  >
-                    <option value="Single">Positive</option>
-                    <option value="Married">Negative</option>
-                    <option value="Separated">Equivocal</option>
-                    <option value="Widowed">Pending Result</option>
-                  </select>
-                </div>
-              </div>
-
-              <div class="field-row-straight" style="display: inline-flex; flex-direction: row">
-                <div style="width:10%; align-self:center;font-size:20px;font-weight:500">
-                  <label for="pcrDate">
-                    PCR
-                  </label>
-                </div>
-                <div style="width:40%" class="field">
-                  <label for="iggDate" class="required">
-                    Date done
-                  </label>
-                  <input
-                    id="pcrDate"
-                    v-model="formData.caseData.pcrDate"
-                    class="input-form-field"
-                    type="date"
-                    :disabled="inputEdit()"
-                  />
-                </div>
-                <div style="width:51%" class="field">
-                  <label for="pcrResult" class="required">
-                    Result
-                  </label>
-                  <select
-                    id="pcrResult"
-                    v-model="formData.caseData.pcrResult"
-                    name="pcrResult"
-                    :disabled="inputEdit()"
-                  >
-                    <option value="Single">Positive</option>
-                    <option value="Married">Negative</option>
-                    <option value="Separated">Equivocal</option>
-                    <option value="Widowed">Pending Result</option>
-                  </select>
-                </div>
-              </div>
-              
-            </div>
-          </form>
-          <hr v-if="pageNum == Object.keys(disease.formNames).length" />
-
-          <form v-if="pageNum == 5 || pageNum == Object.keys(disease.formNames).length" id="dengue7" type="submit">
-            <div id="case-investigation-form" class="center">
-              <h2 id="form-header">
-                {{ Object.values(disease.formNames)[5] }}
               </h2>
 
               <div class="field-row" style="display: inline-flex; margin-bottom: -1 px">
@@ -1068,55 +914,10 @@
           </form>
           <hr v-if="pageNum == Object.keys(disease.formNames).length" />
 
-          <form v-if="pageNum == 6 || pageNum == Object.keys(disease.formNames).length" id="dengue7" type="submit">
+          <form v-if="pageNum == 5 || pageNum == Object.keys(disease.formNames).length" id="dengue5" type="submit">
             <div id="case-investigation-form" class="center">
               <h2 id="form-header">
-                {{ Object.values(disease.formNames)[6] }}
-              </h2>
-
-              <div class="field-row" style="display: inline-flex; margin-bottom: -1 px">
-                <div class="field">
-                  <label class="required">
-                    Please select the case classification
-                  </label>
-                  <div>
-                    <!-- <div style="display: inline-flex; flex-direction: column"> -->
-                    <!-- CASE CLASSIFICATION -->
-                    <div>
-                      <div class="collpaseWrapper">
-                        <ul v-for="(value, name, i) in caseClassification" :key="i" style="displayLinline-flex">
-                          <li>
-                            <input :id="name" type="checkbox" class="collapseInput"/>
-                            <label :for="name" class="collapseLabel">
-                              <input
-                                :id="name"
-                                v-model="formData.caseData.caseClassification"
-                                :value="name"
-                                class="input-checkbox"
-                                name="finalClassification"
-                                type="radio"
-                                :disabled="inputEdit()"
-                              />
-                              {{ name }}
-                            </label>
-                            <ul>
-                              <li>{{ value }}</li>
-                            </ul>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </form>
-          <hr v-if="pageNum == Object.keys(disease.formNames).length" />
-
-          <form v-if="pageNum == 7 || pageNum == Object.keys(disease.formNames).length" id="dengue9" type="submit">
-            <div id="case-investigation-form" class="center">
-              <h2 id="form-header">
-                {{ Object.values(disease.formNames)[7] }}
+                {{ Object.values(disease.formNames)[5] }}
               </h2>
 
               <div class="field-row">
@@ -1183,7 +984,256 @@
               </div>
             </div>
           </form>
-        
+          <hr v-if="pageNum == Object.keys(disease.formNames).length" />
+
+          <form v-if="pageNum == 6 || pageNum == Object.keys(disease.formNames).length" id="dengue6" type="submit">
+            <div id="case-investigation-form" class="center">
+              <h2 id="form-header">
+                {{ Object.values(disease.formNames)[6] }}
+              </h2>
+
+              <div class="vaccine-field field">
+                <label class="required" style="margin-right: 50px">
+                  Do you have the lab result?
+                </label>
+                <div style="display: inline-flex; flex-direction: row">
+                  <div class="center-center">
+                    <input
+                      id="noLabTest"
+                      v-model="hasLabTest"
+                      value="No"
+                      class="input-radio"
+                      name="labTest"
+                      type="radio"
+                      :disabled="inputEdit()"
+                    />
+                    <label for="noLabTest"> No </label>
+                  </div>
+                  <div class="center-center" style="margin: 0 20px">
+                    <input
+                      id="yesLabTest"
+                      v-model="hasLabTest"
+                      value="Yes"
+                      class="input-radio"
+                      name="labTest"
+                      type="radio"
+                      :disabled="inputEdit()"
+                    />
+                    <label for="yesLabTest"> Yes </label>
+                  </div>
+                </div>
+              </div>
+
+              <div v-show="hasLabTest==='No'">
+                <div class="name-field" style="width:50%">
+                  <label for="investigatorLab" class="required"> Choose Lab to forward the case to </label>
+                  <select id="investigatorLab" v-model="formData.cases.investigatorLab" name="investigatorLab" :disabled="inputEdit()">
+                    <option v-for="(lab, i) in labList" :key=i>{{lab}}</option>
+                  </select>
+                </div>
+              </div>
+
+              <div v-show="hasLabTest==='Yes'" style="margin-left:7px;">
+                <!-- <div class="field" style="display: inline-flex; flex-direction: row">
+                  <label for="labSpecimen" class="required">
+                    Please select the specimen collected with the following information
+                  </label>
+                  <select id="labSpecimen" v-model="formData.caseData.labSpecimen" name="labSpecimen" style="width: 300px" :disabled="inputEdit()">
+                    <option value="Serum">Serum</option>
+                    <option value="Dried Blood Spot">Dried Blood Spot</option>
+                    <option value="Oropharyngeal">Oropharyngeal / Nasopharyngeal Swab</option>
+                  </select>
+                </div> -->
+                <div class="field-row-straight" style="display: inline-flex; flex-direction: row">
+                  <div style="width:10%; align-self:center;font-size:20px;font-weight:500">
+                    <label for="labSpecimen">
+                      NS1
+                    </label>
+                  </div>
+                  <div style="width:40%" class="field">
+                    <label for="ns1Date">
+                      Date done
+                    </label>
+                    <input
+                      id="ns1Date"
+                      v-model="formData.caseData.ns1Date"
+                      class="input-form-field"
+                      type="date"
+                      :disabled="inputEdit()"
+                    />
+                  </div>
+                  <div style="width:51%" class="field">
+                    <label for="ns1Result">
+                      Result
+                    </label>
+                    <select
+                      id="ns1Result"
+                      v-model="formData.caseData.ns1Result"
+                      name="ns1Result"
+                      :disabled="inputEdit()"
+                    >
+                      <option value="Single">Positive</option>
+                      <option value="Married">Negative</option>
+                      <option value="Separated">Equivocal</option>
+                      <option value="Widowed">Pending Result</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="field-row-straight" style="display: inline-flex; flex-direction: row">
+                  <div style="width:10%; align-self:center;font-size:20px;font-weight:500">
+                    <label for="labSpecimen">
+                      IgG ELISA
+                    </label>
+                  </div>
+                  <div style="width:40%" class="field">
+                    <label for="iggDate">
+                      Date done
+                    </label>
+                    <input
+                      id="iggDate"
+                      v-model="formData.caseData.iggDate"
+                      class="input-form-field"
+                      type="date"
+                      :disabled="inputEdit()"
+                    />
+                  </div>
+                  <div style="width:51%" class="field">
+                    <label for="iggResult">
+                      Result
+                    </label>
+                    <select
+                      id="iggResult"
+                      v-model="formData.caseData.iggResult"
+                      name="iggResult"
+                      :disabled="inputEdit()"
+                    >
+                      <option value="Single">Positive</option>
+                      <option value="Married">Negative</option>
+                      <option value="Separated">Equivocal</option>
+                      <option value="Widowed">Pending Result</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="field-row-straight" style="display: inline-flex; flex-direction: row">
+                  <div style="width:10%; align-self:center;font-size:20px;font-weight:500">
+                    <label for="igmDate">
+                      IgM ELISA
+                    </label>
+                  </div>
+                  <div style="width:40%" class="field">
+                    <label for="igmDate">
+                      Date done
+                    </label>
+                    <input
+                      id="igmDate"
+                      v-model="formData.caseData.igmDate"
+                      class="input-form-field"
+                      type="date"
+                      :disabled="inputEdit()"
+                    />
+                  </div>
+                  <div style="width:51%" class="field">
+                    <label for="igmResult">
+                      Result
+                    </label>
+                    <select
+                      id="igmResult"
+                      v-model="formData.caseData.igmResult"
+                      name="igmResult"
+                      :disabled="inputEdit()"
+                    >
+                      <option value="Single">Positive</option>
+                      <option value="Married">Negative</option>
+                      <option value="Separated">Equivocal</option>
+                      <option value="Widowed">Pending Result</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="field-row-straight" style="display: inline-flex; flex-direction: row">
+                  <div style="width:10%; align-self:center;font-size:20px;font-weight:500">
+                    <label for="pcrDate">
+                      PCR
+                    </label>
+                  </div>
+                  <div style="width:40%" class="field">
+                    <label for="iggDate">
+                      Date done
+                    </label>
+                    <input
+                      id="pcrDate"
+                      v-model="formData.caseData.pcrDate"
+                      class="input-form-field"
+                      type="date"
+                      :disabled="inputEdit()"
+                    />
+                  </div>
+                  <div style="width:51%" class="field">
+                    <label for="pcrResult">
+                      Result
+                    </label>
+                    <select
+                      id="pcrResult"
+                      v-model="formData.caseData.pcrResult"
+                      name="pcrResult"
+                      :disabled="inputEdit()"
+                    >
+                      <option value="Single">Positive</option>
+                      <option value="Married">Negative</option>
+                      <option value="Separated">Equivocal</option>
+                      <option value="Widowed">Pending Result</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              
+            </div>
+          </form>
+          <hr v-if="pageNum == Object.keys(disease.formNames).length" />
+
+          <form v-if="pageNum == 7 || pageNum == Object.keys(disease.formNames).length" id="dengue7" type="submit">
+            <div id="case-investigation-form" class="center">
+              <h2 id="form-header">
+                {{ Object.values(disease.formNames)[7] }}
+              </h2>
+
+              <div class="field-row" style="display: inline-flex; margin-bottom: -1 px">
+                <div class="field">
+                  <label class="required">
+                    Please select the case classification
+                  </label>
+                  <div>
+                    <!-- <div style="display: inline-flex; flex-direction: column"> -->
+                    <!-- CASE CLASSIFICATION -->
+                    <div>
+                      <div class="collpaseWrapper">
+                        <ul v-for="(value, name, i) in caseClassification" :key="i" style="displayLinline-flex">
+                          <li>
+                            <input :id="name" type="checkbox" class="collapseInput"/>
+                            <label :for="name" class="collapseLabel">
+                              <input
+                                :id="name"
+                                v-model="formData.caseData.caseClassification"
+                                :value="name"
+                                class="input-checkbox"
+                                name="finalClassification"
+                                type="radio"
+                                :disabled="inputEdit()"
+                              />
+                              {{ name }}
+                            </label>
+                            <ul>
+                              <li>{{ value }}</li>
+                            </ul>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+
         </div>
 
         <!-- Bottom 2 buttons -->
@@ -1220,6 +1270,7 @@ export default {
   },
   data() {
     return {
+      hasLabTest:'',
       isOpen: true,
       openCollapse: '',
       isDisabled: false,
@@ -1336,10 +1387,10 @@ export default {
           form1: 'Patient Record',
           form2: 'Patient Information',
           form3: 'Vaccination History',
-          form4: 'Laboratory Tests',
-          form5: 'Clinical Classification',
-          form6: 'Case Classification',
-          form7: 'Outcome',
+          form4: 'Clinical Classification',
+          form5: 'Outcome',
+          form6: 'Laboratory Tests',
+          form7: 'Case Classification',
         },
       },
       classification: {},
