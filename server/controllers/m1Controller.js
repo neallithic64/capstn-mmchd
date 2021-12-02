@@ -283,9 +283,15 @@ const indexFunctions = {
 	
 	getCases: async function(req, res) {
 		try {
-			let match = await db.exec(`SELECT * FROM mmchddb.CASES c
-					INNER JOIN mmchddb.DISEASES d ON c.diseaseID = d.diseaseID
-					INNER JOIN mmchddb.PATIENTS p ON c.patientID = p.patientID;`);
+			let match = await db.exec(`SELECT c.*, d.diseaseName,
+										CONCAT(p.lastName, ", ", p.firstName, " ", p.midName) AS patientName,
+										a.city, MAX(ca.dateModified) AS updatedDate
+										FROM mmchddb.CASES c
+										INNER JOIN mmchddb.DISEASES d ON c.diseaseID = d.diseaseID
+										INNER JOIN mmchddb.PATIENTS p ON c.patientID = p.patientID
+										INNER JOIN mmchddb.ADDRESSES a ON p.caddressID = a.addressID
+										INNER JOIN mmchddb.CASE_AUDIT ca ON c.caseID = ca.caseID
+										GROUP BY c.caseID;`);
 			console.log(match);
 			res.status(200).send(match);
 		} catch (e) {
