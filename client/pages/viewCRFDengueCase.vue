@@ -13,20 +13,20 @@
         <div class="CRFstatus" style="align-text: right">
           <span style="display: inline-flex; align-items: center"
             >Case Classification:&nbsp;
-            <div v-show="!editCase" class="CRFActionButtons">
+            <div v-show="!editStatus" class="CRFActionButtons">
               <h1 style="line-height: 1; align-items: center">
                 {{ formData.cases.caseLevel }}
               </h1>
               <ul
                 v-show="!isPrint"
                 class="CRFEdit"
-                @click="editCase = !editCase"
+                @click="popup()"
               >
                 <img src="~/assets/img/pen.png" />
               </ul>
             </div>
-            <div
-              v-show="editCase"
+            <!-- <div
+              v-show="editStatus"
               class="CRFActionButtons"
               style="margin-top: 5px"
             >
@@ -50,19 +50,14 @@
               >
                 <img id="saveIcon" src="~/assets/img/save.png" />
               </ul>
-            </div>
+            </div> -->
           </span>
-          <div v-show="!editCase && !isPrint" class="CRFActionButtons">
-            <!-- <ul class="CRFActionButton" @click="downloadPDF"> -->
+          <div v-show="!editStatus && !isPrint" class="CRFActionButtons">
             <img
               src="~/assets/img/print.png"
               class="printButton"
               @click="downloadPDF"
             />
-            <!-- </ul> -->
-            <!-- <ul class="CRFActionButton">
-              <img src="~/assets/img/csv.png" />
-            </ul> -->
           </div>
         </div>
       </div>
@@ -886,160 +881,6 @@
               {{ Object.values(disease.formNames)[4] }}
             </h2>
 
-            <div class="field-row-straight" style="display: inline-flex; flex-direction: row">
-              <div style="width:10%; align-self:center;font-size:20px;font-weight:500">
-                <label for="labSpecimen">
-                  NS1
-                </label>
-              </div>
-              <div style="width:40%" class="field">
-                <label for="ns1Date" class="required">
-                  Date done
-                </label>
-                <input
-                  id="ns1Date"
-                  v-model="formData.caseData.ns1Date"
-                  class="input-form-field"
-                  type="date"
-                  :disabled="inputEdit()"
-                />
-              </div>
-              <div style="width:51%" class="field">
-                <label for="ns1Result" class="required">
-                  Result
-                </label>
-                <select
-                  id="ns1Result"
-                  v-model="formData.caseData.ns1Result"
-                  name="ns1Result"
-                  :disabled="inputEdit()"
-                >
-                  <option value="Single">Positive</option>
-                  <option value="Married">Negative</option>
-                  <option value="Separated">Equivocal</option>
-                  <option value="Widowed">Pending Result</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="field-row-straight" style="display: inline-flex; flex-direction: row">
-              <div style="width:10%; align-self:center;font-size:20px;font-weight:500">
-                <label for="labSpecimen">
-                  IgG ELISA
-                </label>
-              </div>
-              <div style="width:40%" class="field">
-                <label for="iggDate" class="required">
-                  Date done
-                </label>
-                <input
-                  id="iggDate"
-                  v-model="formData.caseData.iggDate"
-                  class="input-form-field"
-                  type="date"
-                  :disabled="inputEdit()"
-                />
-              </div>
-              <div style="width:51%" class="field">
-                <label for="iggResult" class="required">
-                  Result
-                </label>
-                <select
-                  id="iggResult"
-                  v-model="formData.caseData.iggResult"
-                  name="iggResult"
-                  :disabled="inputEdit()"
-                >
-                  <option value="Single">Positive</option>
-                  <option value="Married">Negative</option>
-                  <option value="Separated">Equivocal</option>
-                  <option value="Widowed">Pending Result</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="field-row-straight" style="display: inline-flex; flex-direction: row">
-              <div style="width:10%; align-self:center;font-size:20px;font-weight:500">
-                <label for="igmDate">
-                  IgM ELISA
-                </label>
-              </div>
-              <div style="width:40%" class="field">
-                <label for="igmDate" class="required">
-                  Date done
-                </label>
-                <input
-                  id="igmDate"
-                  v-model="formData.caseData.igmDate"
-                  class="input-form-field"
-                  type="date"
-                  :disabled="inputEdit()"
-                />
-              </div>
-              <div style="width:51%" class="field">
-                <label for="igmResult" class="required">
-                  Result
-                </label>
-                <select
-                  id="igmResult"
-                  v-model="formData.caseData.igmResult"
-                  name="igmResult"
-                  :disabled="inputEdit()"
-                >
-                  <option value="Single">Positive</option>
-                  <option value="Married">Negative</option>
-                  <option value="Separated">Equivocal</option>
-                  <option value="Widowed">Pending Result</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="field-row-straight" style="display: inline-flex; flex-direction: row">
-              <div style="width:10%; align-self:center;font-size:20px;font-weight:500">
-                <label for="pcrDate">
-                  PCR
-                </label>
-              </div>
-              <div style="width:40%" class="field">
-                <label for="iggDate" class="required">
-                  Date done
-                </label>
-                <input
-                  id="pcrDate"
-                  v-model="formData.caseData.pcrDate"
-                  class="input-form-field"
-                  type="date"
-                  :disabled="inputEdit()"
-                />
-              </div>
-              <div style="width:51%" class="field">
-                <label for="pcrResult" class="required">
-                  Result
-                </label>
-                <select
-                  id="pcrResult"
-                  v-model="formData.caseData.pcrResult"
-                  name="pcrResult"
-                  :disabled="inputEdit()"
-                >
-                  <option value="Single">Positive</option>
-                  <option value="Married">Negative</option>
-                  <option value="Separated">Equivocal</option>
-                  <option value="Widowed">Pending Result</option>
-                </select>
-              </div>
-            </div>
-            
-          </div>
-        </form>
-        <hr v-if="isPrint" />
-
-        <form v-if="pageNum == 5 || isPrint" id="dengue5" type="submit">
-          <div id="case-investigation-form" class="center">
-            <h2 id="form-header">
-              {{ Object.values(disease.formNames)[5] }}
-            </h2>
-
             <div class="field-row" style="display: inline-flex; margin-bottom: -1 px">
               <div class="field">
                 <label class="required">
@@ -1074,49 +915,10 @@
         </form>
         <hr v-if="isPrint" />
 
-        <form v-if="pageNum == 6 || isPrint" id="dengue6" type="submit">
+        <form v-if="pageNum == 5 || isPrint" id="dengue5" type="submit">
           <div id="case-investigation-form" class="center">
             <h2 id="form-header">
-              {{ Object.values(disease.formNames)[6] }}
-            </h2>
-
-            <div class="field-row" style="display: inline-flex; margin-bottom: -1 px">
-              <div class="field">
-                <label class="required">
-                  Please select the case classification
-                </label>
-                <div>
-                  <!-- <div style="display: inline-flex; flex-direction: column"> -->
-                  <!-- CASE CLASSIFICATION -->
-                  <div>
-                    <div class="collpaseWrapper">
-                      <ul v-for="(value, name, i) in caseClassification" :key="i" style="displayLinline-flex">
-                        <label :for="name" class="collapseLabel">
-                          <input
-                            :id="name"
-                            v-model="formData.caseData.caseClassification"
-                            :value="name"
-                            class="input-checkbox"
-                            name="finalClassification"
-                            type="radio"
-                            :disabled="inputEdit()"
-                          />
-                          {{ name }}
-                        </label>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </form>
-        <hr v-if="isPrint" />
-
-        <form v-if="pageNum == 7 || isPrint" id="dengue7" type="submit">
-          <div id="case-investigation-form" class="center">
-            <h2 id="form-header">
-              {{ Object.values(disease.formNames)[7] }}
+              {{ Object.values(disease.formNames)[5] }}
             </h2>
 
             <div class="field-row">
@@ -1183,6 +985,239 @@
             </div>
           </div>
         </form>
+
+        <form v-if="pageNum == 6 || isPrint" id="dengue6" type="submit">
+          <div id="case-investigation-form" class="center">
+            <h2 id="form-header">
+              {{ Object.values(disease.formNames)[6] }}
+            </h2>
+
+            <div class="vaccine-field field">
+                <label class="required" style="margin-right: 50px">
+                  Do you have the lab result?
+                </label>
+                <div style="display: inline-flex; flex-direction: row">
+                  <div class="center-center">
+                    <input
+                      id="noLabTest"
+                      v-model="hasLabTest"
+                      value="No"
+                      class="input-radio"
+                      name="labTest"
+                      type="radio"
+                      :disabled="inputEdit()"
+                    />
+                    <label for="noLabTest"> No </label>
+                  </div>
+                  <div class="center-center" style="margin: 0 20px">
+                    <input
+                      id="yesLabTest"
+                      v-model="hasLabTest"
+                      value="Yes"
+                      class="input-radio"
+                      name="labTest"
+                      type="radio"
+                      :disabled="inputEdit()"
+                    />
+                    <label for="yesLabTest"> Yes </label>
+                  </div>
+                </div>
+              </div>
+
+              <div v-show="hasLabTest==='No'">
+                <div class="name-field" style="width:50%">
+                  <label for="investigatorLab" class="required"> Choose Lab to forward the case to </label>
+                  <select id="investigatorLab" v-model="formData.cases.investigatorLab" name="investigatorLab" :disabled="inputEdit()">
+                    <option v-for="(lab, i) in labList" :key=i>{{lab}}</option>
+                  </select>
+                </div>
+              </div>
+
+              <div v-show="hasLabTest==='Yes'" style="margin-left:7px;">
+                <div class="field-row-straight" style="display: inline-flex; flex-direction: row">
+                  <div style="width:10%; align-self:center;font-size:20px;font-weight:500">
+                    <label for="labSpecimen">
+                      NS1
+                    </label>
+                  </div>
+                  <div style="width:40%" class="field">
+                    <label for="ns1Date">
+                      Date done
+                    </label>
+                    <input
+                      id="ns1Date"
+                      v-model="formData.caseData.ns1Date"
+                      class="input-form-field"
+                      type="date"
+                      :disabled="inputEdit()"
+                    />
+                  </div>
+                  <div style="width:51%" class="field">
+                    <label for="ns1Result">
+                      Result
+                    </label>
+                    <select
+                      id="ns1Result"
+                      v-model="formData.caseData.ns1Result"
+                      name="ns1Result"
+                      :disabled="inputEdit()"
+                    >
+                      <option value="Single">Positive</option>
+                      <option value="Married">Negative</option>
+                      <option value="Separated">Equivocal</option>
+                      <option value="Widowed">Pending Result</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="field-row-straight" style="display: inline-flex; flex-direction: row">
+                  <div style="width:10%; align-self:center;font-size:20px;font-weight:500">
+                    <label for="labSpecimen">
+                      IgG ELISA
+                    </label>
+                  </div>
+                  <div style="width:40%" class="field">
+                    <label for="iggDate">
+                      Date done
+                    </label>
+                    <input
+                      id="iggDate"
+                      v-model="formData.caseData.iggDate"
+                      class="input-form-field"
+                      type="date"
+                      :disabled="inputEdit()"
+                    />
+                  </div>
+                  <div style="width:51%" class="field">
+                    <label for="iggResult">
+                      Result
+                    </label>
+                    <select
+                      id="iggResult"
+                      v-model="formData.caseData.iggResult"
+                      name="iggResult"
+                      :disabled="inputEdit()"
+                    >
+                      <option value="Single">Positive</option>
+                      <option value="Married">Negative</option>
+                      <option value="Separated">Equivocal</option>
+                      <option value="Widowed">Pending Result</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="field-row-straight" style="display: inline-flex; flex-direction: row">
+                  <div style="width:10%; align-self:center;font-size:20px;font-weight:500">
+                    <label for="igmDate">
+                      IgM ELISA
+                    </label>
+                  </div>
+                  <div style="width:40%" class="field">
+                    <label for="igmDate">
+                      Date done
+                    </label>
+                    <input
+                      id="igmDate"
+                      v-model="formData.caseData.igmDate"
+                      class="input-form-field"
+                      type="date"
+                      :disabled="inputEdit()"
+                    />
+                  </div>
+                  <div style="width:51%" class="field">
+                    <label for="igmResult">
+                      Result
+                    </label>
+                    <select
+                      id="igmResult"
+                      v-model="formData.caseData.igmResult"
+                      name="igmResult"
+                      :disabled="inputEdit()"
+                    >
+                      <option value="Single">Positive</option>
+                      <option value="Married">Negative</option>
+                      <option value="Separated">Equivocal</option>
+                      <option value="Widowed">Pending Result</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="field-row-straight" style="display: inline-flex; flex-direction: row">
+                  <div style="width:10%; align-self:center;font-size:20px;font-weight:500">
+                    <label for="pcrDate">
+                      PCR
+                    </label>
+                  </div>
+                  <div style="width:40%" class="field">
+                    <label for="iggDate">
+                      Date done
+                    </label>
+                    <input
+                      id="pcrDate"
+                      v-model="formData.caseData.pcrDate"
+                      class="input-form-field"
+                      type="date"
+                      :disabled="inputEdit()"
+                    />
+                  </div>
+                  <div style="width:51%" class="field">
+                    <label for="pcrResult">
+                      Result
+                    </label>
+                    <select
+                      id="pcrResult"
+                      v-model="formData.caseData.pcrResult"
+                      name="pcrResult"
+                      :disabled="inputEdit()"
+                    >
+                      <option value="Single">Positive</option>
+                      <option value="Married">Negative</option>
+                      <option value="Separated">Equivocal</option>
+                      <option value="Widowed">Pending Result</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            
+          </div>
+        </form>
+        <hr v-if="isPrint" />
+
+        <form v-if="pageNum == 7 || isPrint" id="dengue7" type="submit">
+          <div id="case-investigation-form" class="center">
+            <h2 id="form-header">
+              {{ Object.values(disease.formNames)[7] }}
+            </h2>
+
+            <div class="field-row" style="display: inline-flex; margin-bottom: -1 px">
+              <div class="field">
+                <label class="required">
+                  Please select the case classification
+                </label>
+                <div>
+                  <!-- <div style="display: inline-flex; flex-direction: column"> -->
+                  <!-- CASE CLASSIFICATION -->
+                  <div>
+                    <div class="collpaseWrapper">
+                      <ul v-for="(value, name, i) in caseClassification" :key="i" style="displayLinline-flex">
+                        <label :for="name" class="collapseLabel">
+                          <input
+                            :id="name"
+                            v-model="formData.caseData.caseClassification"
+                            :value="name"
+                            class="input-checkbox"
+                            name="finalClassification"
+                            type="radio"
+                            :disabled="inputEdit()"
+                          />
+                          {{ name }}
+                        </label>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+        <hr v-if="isPrint" />
       
       </div>
       <div class="CRF-statusHistory">
@@ -1213,6 +1248,54 @@
         </div>
       </div>
     </div>
+    <div v-show="editStatus" class="overlay">
+      <div class="overlay-form">
+        <button class="close" @click="status('cancel')">x</button>
+        <div class="field-row" style="display: inline-flex; margin-bottom: -1 px">
+          <div class="field">
+            <h2 id="form-header" class="required">
+              Please select the final classification
+            </h2>
+            <div>
+              <!-- <div style="display: inline-flex; flex-direction: column"> -->
+              <!-- CASE DEFINITION -->
+              <div>
+                <div class="collpaseWrapper">
+                  <ul v-for="(value, name, i) in caseClassification" :key="i" style="displayLinline-flex">
+                    <li>
+                      <input :id="name" type="checkbox" class="collapseInput"/>
+                      <label :for="name" class="collapseLabel">
+                        <input
+                          :id="name"
+                          v-model="newStatus"
+                          :value="name"
+                          class="input-checkbox"
+                          name="finalClassification"
+                          type="radio"
+                          :disabled="statusInputEdit(name)"
+                        />
+                        {{ name }}
+                      </label>
+                      <ul>
+                        <li style="background-color: lightgrey;">{{ value }}</li>
+                      </ul>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div style="margin: -10px 10 5px; float: right; margin-left: auto;">
+              <button class="back-button" type="button" @click="status('cancel')">
+                Cancel
+              </button>
+              <button class="next-button" type="button" @click="status('save')">
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -1223,12 +1306,16 @@
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
 export default {
+  middleware: 'is-auth',
   header: {
     title: 'View CRF',
   },
   compute: {},
   data() {
     return {
+      editStatus:false,
+      newStatus:'',
+      hasLabTest:'',
       isDisabled: false,
       editCase: false,
       isPrint: false,
@@ -1344,10 +1431,10 @@ export default {
           form1: 'Patient Record',
           form2: 'Patient Information',
           form3: 'Vaccination History',
-          form4: 'Laboratory Tests',
-          form5: 'Clinical Classification',
-          form6: 'Case Classification',
-          form7: 'Outcome',
+          form4: 'Clinical Classification',
+          form5: 'Outcome',
+          form6: 'Laboratory Tests',
+          form7: 'Case Classification',
         },
       },
       rowData: {
@@ -1390,7 +1477,25 @@ export default {
       this.pageNum = i
     },
     inputEdit() {
-      return true
+      if (this.pageNum===6) return false;
+      else return true;
+    },
+    statusInputEdit(value) {
+      if (this.editStatus & value!==this.formData.cases.caseLevel ) return false
+      else return true
+    },
+    popup() {
+      this.editStatus = !this.editStatus
+    },
+    status(change) {
+      if (change==='save') {
+        this.formData.caseData.finalClassification = this.newStatus;
+        this.formData.cases.caseLevel = this.newStatus;
+      }
+      if (change==='cancel') {
+        this.newStatus = this.formData.cases.caseLevel;
+      }
+      this.popup()
     },
     downloadPDF() {
       this.isPrint = !this.isPrint
@@ -1601,6 +1706,108 @@ th, td {
 }
 
 tr:nth-child(odd) {background-color: #f2f2f2;}
+
+/* POPUP BELOW */
+
+.close {
+  color: red;
+  position: relative;
+  float: right;
+  top: -15px;
+  font-weight: 800;
+}
+
+.overlay {
+  display: block;
+  z-index: 11;
+  margin: 0px;
+  padding: 90px;
+  width: -webkit-fill-available;
+  height: -webkit-fill-available;
+  /* background: gray; */
+  /* opacity: 55%; */
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: rgba(100, 100, 100, 0.4);
+  /* border: 100px solid rgba(100, 100, 100, 0.4); */
+}
+
+.overlay-form {
+  padding: 30px;
+  border-radius: 40px;
+  background: white;
+  width: -webkit-fill-available;
+  height: -webkit-fill-available;
+  overflow-y: auto;
+}
+
+
+/* COLLAPSE EME BELOW */
+
+.collpaseWrapper {
+  margin: 15px 0;
+  padding: 15px auto;
+  width: 99%;
+  /* background-color: lightgrey; */
+  /* border: lightgray solid 1px; */
+}
+
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.collapseLabel {
+  display: block;
+  cursor: pointer;
+  padding: 10px;
+  /* border: 1px solid #fff; */
+  border-bottom: none;
+  font-weight: 400;
+}
+
+.collapseLabel:hover {
+  background: #346083;
+  opacity: 0.85;
+  color: white;
+  font-weight: 600;
+}
+
+.collapseLabel.last {
+  border-bottom: 1px solid #fff;
+}
+
+ul ul li {
+  padding: 10px;
+  background: white;
+}
+
+.collapseInput[type='checkbox'] {
+  position: absolute;
+  left: -9999px;
+}
+
+.collapseInput[type='checkbox'] ~ ul {
+  height: 0;
+  transform: scaleY(0);
+}
+
+.collapseInput[type='checkbox']:checked ~ ul {
+  height: 100%;
+  transform-origin: top;
+  transition: transform 0.2s ease-out;
+  transform: scaleY(1);
+}
+
+.collapseInput[type='checkbox']:checked + label {
+  background: #346083;
+  opacity: 0.85;
+  color: white;
+  font-weight: 500;
+  border-bottom: 1px solid #fff;
+}
 
 /* ALL FROM CIF */
 
