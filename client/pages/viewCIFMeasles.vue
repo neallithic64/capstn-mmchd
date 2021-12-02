@@ -2487,7 +2487,8 @@ export default {
       this.pageNum = i
     },
     inputEdit() {
-      if (this.pageNum===9) return false;
+	  // not sure about the "this.cases"
+      if (this.pageNum === 9 && this.$auth.user.userID === this.cases.investigatorLab) return false;
       else return true;
     },
     statusInputEdit(value) {
