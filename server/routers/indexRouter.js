@@ -9,6 +9,7 @@ router.get("/", m1Cont.testConn);
 router.get("/mkdata", m1Cont.mkData);
 
 // GET Routes
+router.get("/getAllDiseases", m1Cont.getAllDiseases);
 router.get("/getDisease", m1Cont.getDisease);
 router.get("/getPatients", m1Cont.getPatients);
 router.get("/getPatientAutofill", m1Cont.getPatientAutofill);
