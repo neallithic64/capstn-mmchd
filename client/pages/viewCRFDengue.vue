@@ -2,7 +2,7 @@
   <div id="viewCRF">
     <!--Top Bar of the screen-->
     <TopNav />
-    <div class="viewcases-container">
+    <div ref="content" class="viewcases-container">
       <div class="viewCRF-details" style="align-text: left">
         <div class="CRFnumbers">
           <h1 style="margin: -10px 0">Case No. {{ crfNo }}</h1>
@@ -15,7 +15,7 @@
             <p>Last updated: {{ updatedDate }}</p>
           </div>
           <div v-show="!isPrint" class="CRFActionButtons">
-            <img src="~/assets/img/print.png" class="printButton" />
+            <img src="~/assets/img/print.png" class="printButton" @click="downloadPDF" />
           </div>
         </div>
       </div>
@@ -32,14 +32,20 @@
   </div>
 </template>
 
+<script src="https://code.jquery.com/jquery-1.12.3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/0.9.0rc1/jspdf.min.js"></script>
+
 <script>
+import jsPDF from 'jspdf'
+import html2canvas from 'html2canvas'
 import dataTable from './dataTable.vue'
 export default {
-  header: {
-    title: 'View CRF',
-  },
   components: {
     dataTable,
+  },
+  middleware: 'is-auth',
+  header: {
+    title: 'View CRF',
   },
   compute: {},
   data() {
@@ -152,7 +158,34 @@ export default {
     }
   },
   mounted() {},
-  methods: {},
+  methods: {
+    downloadPDF() {
+      this.isPrint = !this.isPrint
+
+      let pWidth = 595.28 // 595.28 is the width of a4
+      let srcWidth = this.$refs.content.scrollWidth
+      let margin = 12 // narrow margin - 1.27 cm (36);
+      let scale = (pWidth - margin * 2) / srcWidth
+
+      var doc = new jsPDF('p', 'pt', 'A4')
+      window.html2canvas = html2canvas
+
+      doc.html(this.$refs.content, {
+        x: margin,
+        y: margin,
+        html2canvas: {
+          scale: scale,
+        },
+        callback: function () {
+          window.open(doc.output('bloburl'))
+        },
+      })
+
+      // doc.save('test.pdf')
+      console.log(this.$refs.content)
+      setTimeout(() => (this.isPrint = !this.isPrint), 5000)
+    },
+  },
 }
 </script>
 
