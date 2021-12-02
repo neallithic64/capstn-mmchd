@@ -1,0 +1,722 @@
+<template>
+  <div>
+    <TopNav/>
+    <!--Everything below = main screen-->
+    <div class="case-container">
+      <!--SUMMARY: left side-->
+      <div class="form-summary-container">
+        <div class="form-summary">
+          <button id="login-submit" type="submit" style="width: 210px; text-align: left" @click="isOpen = !isOpen">
+            <h2 style="font-weight: 600">Diseases</h2>
+          </button>
+
+          <div v-if="isOpen" class="form-contents">
+            <div v-for="(value, name, i) in formSection.diseaseNames" :key="i">
+              <!-- <div v-if="i > 1" :id="name" :class="formColor(i - 1)"> -->
+              <button :id="name" :class="formColor(i)" @click="move(i)">
+                {{ i+1 }}. {{ value }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!--Everything in the right-->
+      <div class="form-section-container">
+        <!--Form itself-->
+        <div class="form-component" style="margin-top: 8px;">
+          <!-- User Type (Form 1) -->
+          <form v-if="pageNum == 0 || pageNum == Object.keys(formSection.diseaseNames).length" id="newUserType" type="submit">
+            <div id="new-user-form" class="center">
+              <h2 id="form-header"> {{ Object.values(formSection.diseaseNames)[0] }} </h2>
+              <div class="userType-field field">
+                <label class="required" style="margin-bottom: 3px;"> Please select the correct user type </label>
+                <hr>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+const axios = require('axios');
+
+export default {
+  middleware: 'is-auth',
+  data() {
+    return {
+      isOpen: true,
+      pageNum: 0,
+      formSection: {
+        diseaseNames: {
+          form1: 'User Type',
+          form2: 'User Details',
+          form3: 'Login Details'
+        }
+      },
+      caseDefs: {}
+    }
+  },
+  async fetch() {
+    const defs = (await axios.get('http://localhost:8080/api/getCaseDefs?diseaseID=' + this.diseaseID)).data;
+    for (let i = 0; i < defs.length; i++) {
+      this.classification[defs[i].class] = defs[i].definition;
+    }
+  },
+  methods: {
+    formColor(index) {
+      if (this.isOpen) {
+        if (index === this.pageNum) return 'formnum formnumcurr';
+        else if (index < this.pageNum) return 'formnum';
+        else if (index > this.pageNum) return 'formnum';
+      }
+    },
+    move(page) {
+      this.pageNum = page;
+      
+    },
+  }
+}
+</script>
+
+<style>
+body {
+    font-family: 'Work Sans', sans-serif;
+    font-weight: 300;
+    padding: 0px;
+    margin: 0px;
+    background-image: none;
+  }
+
+  .case-container {
+    margin: 70px 20px 5px 20px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    width: max-content;
+  }
+
+  @media only screen and (max-width: 800px) {
+    .case-container {
+      width: 100%;
+      flex-direction: column;
+      align-items: center;
+      margin: 0px;
+      margin-top: 85px;
+    }
+  }
+
+  .form-summary {
+    width: fit-content;
+    height: fit-content;
+    left: 23px;
+    top: 97px;
+    padding: 20px;
+    z-index: -1;
+
+    background: #f2f2f2;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 10px;
+  }
+  @media only screen and (max-width: 800px) {
+    .form-summary {
+      width: 100%;
+      position: unset;
+      height: fit-content;
+      z-index: 3;
+    }
+  }
+
+  .form-summary-container {
+    position: fixed;
+    width: fit-content;
+    margin: 5px;
+    padding: 5px;
+  }
+
+  @media only screen and (max-width: 800px) {
+    .form-summary-container {
+      width: 95%;
+      position: sticky;
+      margin: 0px;
+    }
+  }
+
+  .disease {
+    font-family: Work Sans;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 33px;
+    margin: 0;
+    color: #000000;
+    text-align: center;
+  }
+
+  .error-message {
+        color: #da4944;
+        font-weight: 500;
+        font-size: 12px;
+  }
+
+  .formnum {
+    width: 200px;
+    height: fit-content;
+    margin: 5px;
+    background: #ffffff;
+    border: 1px solid #c4c4c4;
+    box-sizing: border-box;
+    border-radius: 10px;
+    line-height: 30px;
+    color: rgba(49, 49, 49, 0.5);
+    padding: 2px;
+    padding-left: 15px;
+    font-family: 'Roboto', 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    display: flex;
+  }
+
+  /* .formnum:hover {
+    color: #000000;
+    font-weight: 800;
+  } */
+
+  @media only screen and (max-width: 800px) {
+    .formnum {
+      width: 98%;
+      min-width: 200px;
+    }
+  }
+
+  .formnumdone {
+    background-color: #346083;
+    color: white;
+  }
+
+  .formnumcurr {
+    background-color: #53a262;
+    color: white;
+  }
+
+  .form-section-container {
+    left: 275px;
+    position: relative;
+    width: calc(100vw - 320px);
+    /* margin: 5px; */
+    padding: 5px;
+  }
+
+  @media only screen and (max-width: 800px) {
+    .form-section-container {
+      left: 0px;
+      width: 95%;
+    }
+  }
+
+  .disease-name {
+    position: relative;
+    top: -3px;
+    z-index: 3;
+  }
+  @media only screen and (max-width: 800px) {
+    .disease-name {
+      position: relative;
+      top: 0px;
+    }
+  }
+
+  .form-component {
+    position: relative;
+    height: fit-content;
+    width: 100%;
+    top: -3px;
+
+    filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.25));
+    background-color: #f2f2f2;
+    border-radius: 15px;
+    padding: 15px;
+    z-index: 2;
+    min-height: calc(100vh - 220px);
+  }
+  @media only screen and (max-width: 800px) {
+    .form-component {
+      position: relative;
+      top: 0px;
+      min-height: fit-content;
+    }
+  }
+
+  .new-user-form {
+    margin-top: 5px;
+    width: 100%;
+  }
+
+  #form-header {
+    text-align: left;
+    padding-left: 5px;
+    font-weight: 600;
+    font-size: 20px;
+    background-color: #008d41;
+    color: transparent;
+    text-shadow: 1px 1px, -1px -1px rgba(0, 0, 0, 0.25);
+    -webkit-background-clip: text;
+    -moz-background-clip: text;
+    background-clip: text;
+  }
+
+  @media only screen and (max-width: 950px) {
+    #form-header {
+      text-align: center;
+    }
+  }
+
+  .field-row-straight {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    margin: 0 7px 6px 0px;
+  }
+
+  @media only screen and (max-width: 950px) {
+    .field-row-straight {
+      /* flex-direction: column; */
+      margin: 0;
+      width: 98%;
+    }
+  }
+
+  .field-row {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    margin: 0 7px 6px 5px;
+  }
+
+  @media only screen and (max-width: 950px) {
+    .field-row {
+      flex-direction: column;
+      margin: 0 0 10px;
+    }
+  }
+
+  .usertype-column {
+    display: flex; 
+    flex-direction: column; 
+    margin-right: 50px;
+  }
+
+  @media only screen and (max-width: 950px) {
+    .usertype-column {
+      display: flex; 
+      flex-direction: column; 
+      margin-right: 0px;
+    }
+  }
+
+  .name-field {
+    width: 100%;
+    padding: 0px 7px;
+    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 5px;
+  }
+
+  .field {
+    width: 100%;
+    padding: 0px 7px;
+    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 5px;
+  }
+
+  .halffield {
+    width: 50%;
+    padding: 0px 7px;
+    font-size: 14px;
+    display: flex;
+    padding-bottom: 5px;
+  }
+
+  @media only screen and (max-width: 950px) {
+    .name-field {
+      width: 98%;
+    }
+
+    .halffield {
+      width: 100%;
+      flex-direction: column;
+    }
+  }
+
+  .input-form-field,
+  select {
+    width: 100%;
+    height: 30px;
+    font-size: 16px;
+    font-family: 'Work Sans', sans-serif;
+    padding-right: 5px;
+    padding-left: 5px;
+    /* border: 1p x solid rgba(0, 0, 0, 0.25); */
+    border: 1px solid #a3a3a3;
+    box-sizing: border-box;
+    border-radius: 9px;
+  }
+
+  .input-radio {
+    /* width: 10%; */
+    height: 15px;
+    font-size: 16px;
+    font-family: 'Work Sans', sans-serif;
+    padding-right: 5px;
+    padding-left: 5px;
+    /* border: 1p x solid rgba(0, 0, 0, 0.25); */
+    border: 1px solid #a3a3a3;
+    box-sizing: border-box;
+    border-radius: 9px;
+    margin: 0 5px;
+  }
+
+  .input-checkbox {
+    /* width: 10%; */
+    height: 15px;
+    font-size: 16px;
+    font-family: 'Work Sans', sans-serif;
+    padding-right: 5px;
+    padding-left: 5px;
+    /* border: 1p x solid rgba(0, 0, 0, 0.25); */
+    border: 1px solid #a3a3a3;
+    box-sizing: border-box;
+    border-radius: 9px;
+    margin: 0 5px;
+  }
+
+  .half-half {
+    display: inline-flex;
+  }
+
+  .half-half1 {
+    width: 45%;
+  }
+
+  .half-half2 {
+    width: 55%;
+  }
+
+  .userType-field {
+    /* width: 15%; */
+    width: 100%;
+  }
+
+  @media only screen and (max-width: 950px) {
+    .half-half,
+    .half-half1,
+    .half-half2 {
+      width: 100%;
+    }
+    .userType-field {
+      width: 50%;
+    }
+  }
+
+  .info-icon-img {
+    width: 10px;
+    height: 10px;
+    margin: 0 5px;
+  }
+
+  .tooltip {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 40px;
+    cursor: pointer;
+  }
+
+  .tooltipText {
+    background-color: #fff;
+    position: absolute;
+    bottom: 130%;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: 14px;
+    opacity: 0;
+    transition: all 0.5s;
+  }
+
+  .tooltip:hover .tooltipText {
+    opacity: 1;
+    transform: translateY(-10px);
+  }
+
+  .tooltipText::after {
+    content: '';
+    border-width: 5px;
+    border-style: solid;
+    border-color: #fff transparent transparent transparent;
+    position: absolute;
+    top: 100%;
+    left: 40%;
+    margin-left: 5%;
+  }
+
+  img:hover + .info-desc {
+    display: block;
+  }
+
+  .info-desc {
+    display: none;
+    background-color: #fff;
+    position: absolute;
+    bottom: 130%;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: 14px;
+    opacity: 0;
+    transition: all 0.5s;
+  }
+
+  .infodesc-outside {
+    position: relative;
+    background: #adadad;
+    color: white;
+    border-radius: 10px;
+    font-size: 11px;
+    padding: 2px 7px;
+    top: -20px;
+    left: -20px;
+  }
+
+  label {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .required:after {
+    content: '*';
+    color: red;
+  }
+
+  h3 {
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .next-button {
+    width: 150px;
+    height: 38px;
+    max-width: 100%;
+    font-size: 16px;
+    margin-top: 30px;
+    font-family: 'Work Sans', sans-serif;
+    font-weight: 600;
+    background-color: #346083;
+    color: white;
+    border: #346083 solid 0.75px;
+  }
+
+  .next-button:hover {
+    background-color: #346083;
+  }
+
+  .back-button {
+    width: 150px;
+    height: 38px;
+    max-width: 100%;
+    font-size: 16px;
+    margin-top: 30px;
+    font-family: 'Work Sans', sans-serif;
+    font-weight: 600;
+    background-color: white;
+    color: #346083;
+  }
+
+  .back-button:hover {
+    border: #346083 solid 1px;
+  }
+
+  input:disabled,
+  select:disabled {
+    background: #dddddd;
+  }
+
+  hr {
+    margin: 20px 0;
+  }
+
+  .center-center {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .show {
+    display: unset;
+  }
+
+  .hide {
+    display: none;
+  }
+
+  /* COLLAPSE EME BELOW */
+
+  .collpaseWrapper {
+    margin: 15px 0;
+    padding: 15px auto;
+    width: 100%;
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .collapseLabel {
+    display: block;
+    cursor: pointer;
+    padding: 10px;
+    /* border: 1px solid #fff; */
+    border-bottom: none;
+    font-weight: 400;
+  }
+
+  .collapseLabel:hover {
+    background: #346083;
+    opacity: 0.85;
+    color: white;
+    font-weight: 600;
+  }
+
+  .collapseLabel.last {
+    border-bottom: 1px solid #fff;
+  }
+
+  ul ul li {
+    padding: 10px;
+    background: white;
+  }
+
+  .collapseInput[type='checkbox'] {
+    position: absolute;
+    left: -9999px;
+  }
+
+  .collapseInput[type='checkbox'] ~ ul {
+    height: 0;
+    transform: scaleY(0);
+  }
+
+  .collapseInput[type='checkbox']:checked ~ ul {
+    height: 100%;
+    transform-origin: top;
+    transition: transform 0.2s ease-out;
+    transform: scaleY(1);
+  }
+
+  .collapseInput[type='checkbox']:checked + label {
+    background: #346083;
+    opacity: 0.85;
+    color: white;
+    font-weight: 500;
+    border-bottom: 1px solid #fff;
+  }
+
+  /* SEARCH BAR ALL BELOW */
+
+  .searchbar {
+    background: #ffffff;
+    border: 1px solid #a3a3a3;
+    box-sizing: border-box;
+    border-radius: 40px;
+    width: 100%;
+    height: 40px;
+    padding: 10px 20px 10px 40px;
+
+    height: 45px;
+    border: none;
+    font-size: 16px;
+    outline: none;
+    margin-top: -1px;
+
+    /* background-image: url(../assets/img/search.svg); */
+    background-image: url(https://cdn1.iconfinder.com/data/icons/hawcons/32/698956-icon-111-search-512.png);
+    background-size: 20px;
+    background-repeat: no-repeat;
+    background-position: 15px 12.5px;
+  }
+
+  .bar {
+    margin: 0 auto;
+    width: 100%;
+    height: 45px;
+    border-radius: 40px;
+    /* border: 1px solid #dcdcdc; */
+
+    position: relative;
+  }
+  .bar:hover {
+    box-shadow: 1px 1px 8px 1px #dcdcdc;
+  }
+  .bar:focus-within {
+    box-shadow: 1px 1px 8px 1px #dcdcdc;
+    outline: none;
+  }
+
+  .container {
+    background: white;
+    border-radius: 40px;
+    width: 60%;
+    margin: 0 auto;
+  }
+
+  #input_img {
+    position: absolute;
+    bottom: 8px;
+    left: 10px;
+    width: 30px;
+    height: 30px;
+  }
+
+  .searchResult {
+    padding: 5px 10px;
+    border-bottom: 1px solid lightgray;
+    display: inline-flex;
+    flex-direction: row;
+  }
+
+  .searchResult:hover {
+    background: #eeeeee;
+  }
+
+  .searchResultInfo {
+    display: inline-flex;
+    flex-direction: column;
+  }
+
+  .searchPerson {
+    font-size: 16px;
+    margin-bottom: -5px;
+    font-weight: 400;
+  }
+
+  .searchAddress {
+    font-size: 12px;
+    font-weight: 200;
+  }
+
+  .searchPersonIcon {
+    content: url('~/assets/img/personIcon.png');
+    height: 25px;
+    width: 25px;
+    margin: auto 5px auto 0;
+  }
+</style>

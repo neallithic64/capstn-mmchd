@@ -46,6 +46,7 @@ export default {
   components: {
     dataTable,
   },
+  middleware: 'is-auth',
   data() {
     return {
       selectAdd: true,
