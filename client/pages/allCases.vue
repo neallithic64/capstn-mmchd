@@ -325,7 +325,7 @@ export default {
     const rows = (await axios.get('http://localhost:8080/api/getCases')).data;
 	for (let i = 0; i < rows.length; i++) {
 	  rows[i].type = "CIF";
-	  rows[i].city = "Placeholder";
+	  rows[i].city = rows[i].lastName + ", " + rows[i].firstName + " " + rows[i].midName;
 	  rows[i].updatedDate = "1111-11-11";
 	  rows[i].reportDate = rows[i].reportDate.substr(0, 10);
 	  rows[i].disease = rows[i].diseaseName;

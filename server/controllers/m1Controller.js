@@ -208,6 +208,16 @@ const indexFunctions = {
 		console.log(r);
 		res.status(200).send("exec done");
 	},
+	
+	getAllDiseases: async function(req, res) {
+		try {
+			let match = await db.findAll("mmchddb.DISEASES", {});
+			res.status(200).send(match);
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
 
 	getDisease: async function(req, res) {
 		try {
@@ -273,7 +283,9 @@ const indexFunctions = {
 	
 	getCases: async function(req, res) {
 		try {
-			let match = await db.exec("SELECT * FROM mmchddb.CASES c INNER JOIN mmchddb.DISEASES d ON c.diseaseID = d.diseaseID;");
+			let match = await db.exec(`SELECT * FROM mmchddb.CASES c
+					INNER JOIN mmchddb.DISEASES d ON c.diseaseID = d.diseaseID
+					INNER JOIN mmchddb.PATIENTS p ON c.patientID = p.patientID;`);
 			console.log(match);
 			res.status(200).send(match);
 		} catch (e) {
