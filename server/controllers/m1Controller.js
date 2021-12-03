@@ -290,7 +290,7 @@ const indexFunctions = {
 										INNER JOIN mmchddb.DISEASES d ON c.diseaseID = d.diseaseID
 										INNER JOIN mmchddb.PATIENTS p ON c.patientID = p.patientID
 										INNER JOIN mmchddb.ADDRESSES a ON p.caddressID = a.addressID
-										INNER JOIN mmchddb.CASE_AUDIT ca ON c.caseID = ca.caseID
+										LEFT JOIN mmchddb.CASE_AUDIT ca ON c.caseID = ca.caseID
 										GROUP BY c.caseID;`);
 			console.log(match);
 			res.status(200).send(match);

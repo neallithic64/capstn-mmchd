@@ -390,7 +390,7 @@
                   </label>
                   <input
                     id="reporterNum"
-                    v-model="formData.cases.reportContact"
+                    v-model="formData.cases.reporterContact"
                     class="input-form-field"
                     type="number"
                     :disabled="inputEdit()"
@@ -432,7 +432,7 @@
                             type="checkbox"
                             :disabled="inputEdit()"
                           />
-                          <label for="source">Alcoholism</label>
+                          <label for="LAlcoholism">Alcoholism</label>
                         </div>
 
                         <div style="padding-left: 7px">
@@ -500,7 +500,7 @@
                             type="checkbox"
                             :disabled="inputEdit()"
                           />
-                          <label for="Others"> Asthma </label>
+                          <label for="CAsthma"> Asthma </label>
                         </div>
 
                         <div style="display: flex; align-items: center">
@@ -513,7 +513,7 @@
                             type="checkbox"
                             :disabled="inputEdit()"
                           />
-                          <label for="Others"> Hereditary </label>
+                          <label for="CHereditary"> Hereditary </label>
                         </div>
 
                         <div style="display: flex; align-items: center">

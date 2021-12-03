@@ -346,11 +346,12 @@ export default {
   },
   async mounted() {
     const rows = (await axios.get('http://localhost:8080/api/getCases')).data;
+	console.log("all cases count: " + rows.length);
 	for (let i = 0; i < rows.length; i++) {
 	  rows[i].type = "CIF";
-	  // rows[i].patientName = rows[i].patientName;
-	  rows[i].updatedDate = rows[i].updatedDate.substr(0, 10);
 	  rows[i].reportDate = rows[i].reportDate.substr(0, 10);
+	  // default to reportDate if updatedDate is null
+	  rows[i].updatedDate = rows[i].updatedDate ? rows[i].updatedDate.substr(0, 10) : rows[i].reportDate;
 	  rows[i].disease = rows[i].diseaseName;
 	}
     this.allData = rows;
