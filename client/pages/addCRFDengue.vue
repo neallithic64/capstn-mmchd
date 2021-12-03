@@ -40,13 +40,13 @@
 import dataTable from './dataTable.vue'
 const axios = require('axios')
 export default {
-  header: {
-    title: 'View CRF',
-  },
   components: {
     dataTable,
   },
   middleware: 'is-auth',
+  header: {
+    title: 'View CRF',
+  },
   data() {
     return {
       selectAdd: true,
