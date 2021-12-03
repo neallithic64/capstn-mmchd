@@ -353,7 +353,7 @@ export default {
 	  rows[i].reportDate = rows[i].reportDate.substr(0, 10);
 	  rows[i].disease = rows[i].diseaseName;
 	}
-  this.allData = rows;
+    this.allData = rows;
 	this.tableOptions.columns = this.allColumns;
   },
   methods: {
