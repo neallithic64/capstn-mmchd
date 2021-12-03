@@ -6,7 +6,7 @@
       <!--SUMMARY: left side-->
       <div class="form-summary-container">
         <div class="form-summary">
-          <button id="login-submit" type="submit" style="width: 210px; text-align: left" @click="isOpen = !isOpen">
+          <button id="login-submit" type="submit" style="width: 210px; text-align: left" @click="instruct()">
             <h2 style="font-weight: 600">Diseases</h2>
           </button>
 
@@ -23,43 +23,71 @@
 
       <!--Everything in the right-->
       <div class="form-section-container">
-        <!--Form itself-->
-        <div v-if="Object.keys(diseaseDefs).length > 0" class="form-component" style="margin-top: 8px;">
-          <!-- User Type (Form 1) -->
-          <form v-if="pageNum == 0" id="newUserType" type="submit">
+        <div class="form-component" style="margin-top: 8px;">
+          <!-- Instructions -->
+          <form v-if="pageNum === -1" id="instructEdit" type="submit">
             <div id="new-user-form" class="center">
-              <h2 id="form-header"> {{ Object.values(formSection.diseaseNames)[0] }} </h2>
+                <h2 id="form-header"> Instructions </h2>
               <div>
-                <div class="collpaseWrapper">
+                <ul v-for="(value, name, i) in instructions" :key="i" style="displayLinline-flex">
+                    <li>
+                      <label :for="name" class="defsLabel">
+                        {{ name }}
+                      </label>
+                    </li>
+                     <ul>
+                        <li>
+                          {{ value }}
+                        </li>
+                     </ul>
+                </ul>
+              </div>
+            </div>
+          </form>
+          <!-- Form for CaseDefs -->
+          <form v-if="pageNum >= 0" id="editCaseDefs" type="submit">
+            <div id="edit-casedefs-form" class="center">
+              <div style="display: flex; flex-direction: row; justify-content:space-between;">
+                <h2 id="form-header"> {{ Object.values(formSection.diseaseNames)[pageNum] }} </h2>
+                <div>
+                  <button id="instructButton" class="instruct-button" type="button" @click="instruct()">
+                    Instructions
+                  </button>
+                  <button id="editButton" class="defsButton" type="button" @click="editable()">
+                    Edit
+                  </button>
+                </div>
+              </div>
+              <div>
+                <div>
                   <ul v-for="(value, name, i) in diseaseDefs" :key="i" style="displayLinline-flex">
                     <li>
-                      <input :id="name" type="checkbox" class="collapseInput"/>
-                      <label :for="name" class="collapseLabel">
-                        <input
-                          :id="name"
-                          v-model="newDefs"
-                          :value="name"
-                          class="input-checkbox"
-                          name="finalClassification"
-                          type="radio"
-                          
-                        />
+                      <label :for="name" class="defsLabel">
                         {{ name }}
                       </label>
                       <ul>
-                        <li>{{ value }}</li>
+                        <li>
+                          <textarea
+                          :id="name"
+                          v-model="diseaseDefs[name]"
+                          class="defsTextArea"
+                          readOnly = true
+                          name="newDefs"
+                          type="text"
+                          rows="4" cols="200"
+                          wrap="soft">
+                          </textarea>
+                        </li>
                       </ul>
                     </li>
                   </ul>
                 </div>
               </div>
-            </div>
-          </form>
-          <!-- User Type (Form 1) -->
-          <form v-if="pageNum == 1 || pageNum == Object.keys(formSection.diseaseNames).length" id="newUserType" type="submit">
-            <div id="new-user-form" class="center">
-              <h2 id="form-header"> {{ Object.values(formSection.diseaseNames)[1] }} </h2>
-              
+              <div id="forSaveButton" style="margin-top: 10px; display: flex; justify-content: flex-end; visibility: hidden;">
+                <button id="saveButton" class="defsButton" type="button" @click="save()">
+                    Save
+                </button>
+              </div>
             </div>
           </form>
         </div>
@@ -76,14 +104,20 @@ export default {
   data() {
     return {
       isOpen: true,
-      pageNum: 0,
+      pageNum: -1,
       formSection: {
         diseaseNames: {
         }
       },
       allCaseDefs: {},
-      newDefs: {},
-      diseaseDefs: {} 
+      diseaseDefs: {},
+      instructions: {
+        'Step 1': 'Click on a disease in the list on the left side to see its case definitions.',
+        'Step 2': 'Click on the "Edit" button if you wish to edit the case definitions of the disease.',
+        'Step 3': 'Click on a case definition to start editing it.',
+        'Step 4': 'Lastly, click "Save" to save your changes.',
+        'Step 5': 'In case there are issues, please contact the IT Staff.'
+      }
     }
   },
   async fetch() {
@@ -110,7 +144,7 @@ export default {
     }
 
     // eslint-disable-next-line no-console
-      console.log(this.diseaseDefs);
+    // console.log(this.diseaseDefs);
   },
   methods: {
     formColor(index) {
@@ -135,8 +169,44 @@ export default {
       }
 
       // eslint-disable-next-line no-console
+      console.log(this.newDefs);
+    },
+    editable() {
+      const elements = document.getElementsByClassName('defsTextArea');
+      for (let i = 0; i < elements.length; i++) {
+        elements[i].readOnly = false;
+        elements[i].style.border = "3px solid #c4c4c4";
+      }
+      document.getElementById("editButton").style.visibility = "hidden";
+      document.getElementById("forSaveButton").style.visibility = "visible";
+      const leftButtons = document.getElementsByClassName('formnum');
+      for (let i = 0; i < leftButtons.length; i++) {
+        leftButtons[i].disabled = true;
+      }
+    },
+    save() {
+      const elements = document.getElementsByClassName('defsTextArea');
+      for (let i = 0; i < elements.length; i++) {
+        elements[i].readOnly = true;
+        elements[i].style.border = "none";
+      }
+      document.getElementById("editButton").style.visibility = "visible";
+      document.getElementById("forSaveButton").style.visibility = "hidden";
+      const leftButtons = document.getElementsByClassName('formnum');
+      for (let i = 0; i < leftButtons.length; i++) {
+        leftButtons[i].disabled = false;
+      }
+
+      // TODO: machi postUpdateCaseDefs diseaseID unknown where to get hehe
+    
+      // const result = await axios.post('http://localhost:8080/api/updateCaseStatus', {formData: this.diseaseDefs, diseaseID});
+
+      // eslint-disable-next-line no-console
       console.log(this.diseaseDefs);
     },
+    instruct() {
+      this.pageNum = -1;
+    }
   }
 }
 </script>
@@ -203,6 +273,12 @@ body {
       margin: 0px;
     }
   }
+
+  .defsTextArea {
+    max-width: 100%;
+  }
+
+  
 
   .disease {
     font-family: Work Sans;
@@ -569,12 +645,12 @@ body {
     font-weight: 600;
   }
 
-  .next-button {
-    width: 150px;
-    height: 38px;
+  .defsButton {
+    width: 100px;
+    height: 30px;
     max-width: 100%;
-    font-size: 16px;
-    margin-top: 30px;
+    font-size: 14px;
+    margin-top: 0px;
     font-family: 'Work Sans', sans-serif;
     font-weight: 600;
     background-color: #346083;
@@ -586,19 +662,19 @@ body {
     background-color: #346083;
   }
 
-  .back-button {
-    width: 150px;
-    height: 38px;
+  .instruct-button {
+    width: 100px;
+    height: 30px;
     max-width: 100%;
-    font-size: 16px;
-    margin-top: 30px;
+    font-size: 14px;
+    margin-top: 0px;
     font-family: 'Work Sans', sans-serif;
     font-weight: 600;
-    background-color: white;
+    background-color: #f2f2f2;
     color: #346083;
   }
 
-  .back-button:hover {
+  .instruct-button:hover {
     border: #346083 solid 1px;
   }
 
@@ -639,23 +715,28 @@ body {
     padding: 0;
   }
 
-  .collapseLabel {
+  .defsLabel {
     display: block;
-    cursor: pointer;
+    /* cursor: pointer; */
     padding: 10px;
     /* border: 1px solid #fff; */
     border-bottom: none;
     font-weight: 400;
-  }
-
-  .collapseLabel:hover {
+    margin-top: 5px;
     background: #346083;
     opacity: 0.85;
     color: white;
     font-weight: 600;
   }
 
-  .collapseLabel.last {
+  /* .collapseLabel:hover {
+    background: #346083;
+    opacity: 0.85;
+    color: white;
+    font-weight: 600;
+  } */
+
+  .defsLabel.last {
     border-bottom: 1px solid #fff;
   }
 
