@@ -13,7 +13,7 @@
           <div v-if="isOpen" class="form-contents">
             <div v-for="(value, name, i) in formSection.diseaseNames" :key="i">
               <!-- <div v-if="i > 1" :id="name" :class="formColor(i - 1)"> -->
-              <button :id="name" :class="formColor(i)" @click="move(i)">
+              <button :id="name" :class="formColor(i)" @click="move(i, value)">
                 {{ i+1 }}. {{ value }}
               </button>
             </div>
@@ -24,15 +24,42 @@
       <!--Everything in the right-->
       <div class="form-section-container">
         <!--Form itself-->
-        <div class="form-component" style="margin-top: 8px;">
+        <div v-if="Object.keys(diseaseDefs).length > 0" class="form-component" style="margin-top: 8px;">
           <!-- User Type (Form 1) -->
-          <form v-if="pageNum == 0 || pageNum == Object.keys(formSection.diseaseNames).length" id="newUserType" type="submit">
+          <form v-if="pageNum == 0" id="newUserType" type="submit">
             <div id="new-user-form" class="center">
               <h2 id="form-header"> {{ Object.values(formSection.diseaseNames)[0] }} </h2>
-              <div class="userType-field field">
-                <label class="required" style="margin-bottom: 3px;"> Please select the correct user type </label>
-                <hr>
+              <div>
+                <div class="collpaseWrapper">
+                  <ul v-for="(value, name, i) in diseaseDefs" :key="i" style="displayLinline-flex">
+                    <li>
+                      <input :id="name" type="checkbox" class="collapseInput"/>
+                      <label :for="name" class="collapseLabel">
+                        <input
+                          :id="name"
+                          v-model="newDefs"
+                          :value="name"
+                          class="input-checkbox"
+                          name="finalClassification"
+                          type="radio"
+                          
+                        />
+                        {{ name }}
+                      </label>
+                      <ul>
+                        <li>{{ value }}</li>
+                      </ul>
+                    </li>
+                  </ul>
+                </div>
               </div>
+            </div>
+          </form>
+          <!-- User Type (Form 1) -->
+          <form v-if="pageNum == 1 || pageNum == Object.keys(formSection.diseaseNames).length" id="newUserType" type="submit">
+            <div id="new-user-form" class="center">
+              <h2 id="form-header"> {{ Object.values(formSection.diseaseNames)[1] }} </h2>
+              
             </div>
           </form>
         </div>
@@ -52,19 +79,38 @@ export default {
       pageNum: 0,
       formSection: {
         diseaseNames: {
-          form1: 'User Type',
-          form2: 'User Details',
-          form3: 'Login Details'
         }
       },
-      caseDefs: {}
+      allCaseDefs: {},
+      newDefs: {},
+      diseaseDefs: {} 
     }
   },
   async fetch() {
-    const defs = (await axios.get('http://localhost:8080/api/getCaseDefs?diseaseID=' + this.diseaseID)).data;
-    for (let i = 0; i < defs.length; i++) {
-      this.classification[defs[i].class] = defs[i].definition;
+    // getting all diseases to print in left side
+    const diseases = (await axios.get('http://localhost:8080/api/getAllDiseases')).data;
+    
+    // setting diseaseNames
+    const temp = {};
+    for (let i = 0; i < diseases.length; i++) {
+      temp[i] = diseases[i].diseaseName;
     }
+    this.formSection.diseaseNames = temp;
+
+    // putting all caseDefs in one object
+    let defs;
+    for (let i = 0; i < diseases.length; i++) {
+      defs = (await axios.get('http://localhost:8080/api/getCaseDefs?diseaseID=' + diseases[i].diseaseID)).data;
+      this.allCaseDefs[this.formSection.diseaseNames[i]] = defs;
+    }
+
+    // setting initial disease (first disease)
+    for (let i = 0; i < this.allCaseDefs[this.formSection.diseaseNames[0]].length; i++) {
+      this.diseaseDefs[this.allCaseDefs[this.formSection.diseaseNames[0]][i].class] = this.allCaseDefs[this.formSection.diseaseNames[0]][i].definition;
+    }
+
+    // eslint-disable-next-line no-console
+      console.log(this.diseaseDefs);
   },
   methods: {
     formColor(index) {
@@ -74,9 +120,22 @@ export default {
         else if (index > this.pageNum) return 'formnum';
       }
     },
-    move(page) {
+    move(page, value) {
       this.pageNum = page;
+
+      // getting the caseDefs of clicked disease
+      const tempo = this.allCaseDefs[value];
       
+      // deleting values of initial diseaseDefs
+      for (const member in this.diseaseDefs) delete this.diseaseDefs[member];
+      
+      // re-populating diseaseDefs with newly clicked disease
+      for (let j = 0; j < tempo.length; j++) {
+        this.diseaseDefs[tempo[j].class] = tempo[j].definition;
+      }
+
+      // eslint-disable-next-line no-console
+      console.log(this.diseaseDefs);
     },
   }
 }
