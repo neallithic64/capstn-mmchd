@@ -530,35 +530,19 @@ const indexFunctions = {
 	},
 
 	postUpdateCaseDef: async function(req, res) {
-		let { caseDef, diseaseID } = req.body;
+		let { diseaseDefs, diseaseID } = req.body;
+		let arrDefs = Object.keys(diseaseDefs), result = true, query = {
+			diseaseID: diseaseID,
+			class: null
+		};
 
 		try {
-			caseDef.forEach(function (element) {
-				Object.keys(element).forEach(key => {
-					let value = element[key];
-					let hasProperties = value && Object.keys(value).length > 0;
-					if (value === null) {
-						delete element[key];
-					} else if ((typeof value !== "string") && hasProperties) {
-						removeNullProperties(value);
-					}
-				});
-			});
-			let i = 0;
-			let query = {
-				diseaseID: diseaseID,
-				class: null
-			};
-
-			while(result && caseDef.length < i) {
-				query.class = caseDef[i].class;
-				result = await db.updateRows("mmchddb.CASE_DEFINITIONS", query, caseDef[i]);
-				i++;
+			for (let i = 0; result && i < arrDefs.length; i++) {
+				query.class = arrDefs[i];
+				result = await db.updateRows("mmchddb.CASE_DEFINITIONS", query, diseaseDefs[i]);
 			}
-			if (result)
-				res.status(200).send("Update disease success");
-			else 
-				res.status(500).send("Update Case Definition");
+			if (result) res.status(200).send("Update disease success");
+			else res.status(500).send("Update Case Definition error!");
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
