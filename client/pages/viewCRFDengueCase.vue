@@ -1661,6 +1661,7 @@ b {
   flex-direction: row;
   justify-content: flex-end;
   align-items: center;
+  cursor: pointer;
 }
 
 .CRFActionButton {
@@ -1668,11 +1669,12 @@ b {
   height: 50px;
   padding: 10px;
   border-radius: 30px;
+  cursor: pointer;
 }
 
-.CRFActionButton:hover {
+/* .CRFActionButton:hover {
   background: #a3a3a3;
-}
+} */
 
 .printButton {
   width: 30px;

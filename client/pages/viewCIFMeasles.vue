@@ -2672,6 +2672,7 @@ b {
   flex-direction: row;
   justify-content: flex-end;
   align-items: center;
+  cursor: pointer;
 }
 
 .CIFActionButton {
@@ -2679,6 +2680,7 @@ b {
   height: 50px;
   padding: 10px;
   border-radius: 30px;
+  cursor: pointer;
 }
 
 .CIFActionButton:hover {

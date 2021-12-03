@@ -221,6 +221,7 @@ body {
   flex-direction: row;
   justify-content: flex-end;
   align-items: center;
+  cursor: pointer;
 }
 
 h1 {
