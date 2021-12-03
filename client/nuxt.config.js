@@ -27,7 +27,6 @@ export default {
   plugins: [
     { src: '@/plugins/vue-html2pdf', mode: 'client' },
     '~/plugins/vue-datatable.js'
-
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
