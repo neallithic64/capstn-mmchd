@@ -2488,7 +2488,7 @@ export default {
     },
     inputEdit() {
 	  // not sure about the "this.cases"
-      if (this.pageNum === 9 && this.$auth.user.userID === this.cases.investigatorLab) return false;
+      if (this.pageNum === 9 && this.$auth.user.userID === this.formData.cases.investigatorLab) return false;
       else return true;
     },
     statusInputEdit(value) {
@@ -2502,6 +2502,13 @@ export default {
       if (change==='save') {
         this.formData.caseData.finalClassification = this.newStatus;
         this.formData.cases.caseLevel = this.newStatus;
+
+        // TODO: add notification here -julia
+        // TODO: add notif/alert checking here 
+        // notif message: The case level of <disease name> <case no> has been updated to <new caselevel>.
+        // notif type: updateStatus
+        // receiver: dru who submitted the case
+        // redirectTo: viewCIF/CRF url of the case that was updated
       }
       if (change==='cancel') {
         this.newStatus = this.formData.cases.caseLevel;

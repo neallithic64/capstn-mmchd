@@ -1491,6 +1491,8 @@ export default {
       if (change==='save') {
         this.formData.caseData.finalClassification = this.newStatus;
         this.formData.cases.caseLevel = this.newStatus;
+        // TODO: add notification here -julia
+        // TODO: add notif/alert checking here 
       }
       if (change==='cancel') {
         this.newStatus = this.formData.cases.caseLevel;
