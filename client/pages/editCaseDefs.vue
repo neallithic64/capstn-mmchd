@@ -214,7 +214,7 @@ export default {
 </script>
 
 <style>
-body {
+  body {
     font-family: 'Work Sans', sans-serif;
     font-weight: 300;
     padding: 0px;

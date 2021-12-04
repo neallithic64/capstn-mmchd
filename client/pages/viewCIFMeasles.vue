@@ -2504,6 +2504,7 @@ export default {
         this.formData.cases.caseLevel = this.newStatus;
 
         // TODO: add notification here -julia
+        // TODO: add notif/alert checking here 
         // notif message: The case level of <disease name> <case no> has been updated to <new caselevel>.
         // notif type: updateStatus
         // receiver: dru who submitted the case

@@ -17,6 +17,7 @@
       <div class="dropdown-content">
         <nuxt-link to="/addCase"> Add Case </nuxt-link>
         <nuxt-link to="/allCases"> View Case Reports </nuxt-link>
+        <nuxt-link to="/allCases"> Outbreaks </nuxt-link>
       </div>
     </div>
     <div

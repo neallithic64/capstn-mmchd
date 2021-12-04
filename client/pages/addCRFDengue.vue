@@ -278,6 +278,7 @@ export default {
     },
     submit() {
       // TODO: this submit is the one that will send the cases to CHD/will make the cases visible to CHD
+      // TODO: add notif/alert checking here 
     }
   },
 }
