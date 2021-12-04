@@ -23,9 +23,9 @@
         <div class="additionalButtons">
           <button class="addText"><a href="/addCRFDengueCase">+ add a case</a></button>
           <div class="CRFendButton">
-            <button class="save-button" type="button" @click="save()">
+            <!-- <button class="save-button" type="button" @click="save()">
               Save
-            </button>
+            </button> -->
             <button class="submit-button" type="button" @click="submit()">
               Submit
             </button>
@@ -276,6 +276,9 @@ export default {
       this.formData.patient.guardianContact = patient.guardianContact
       this.pageNum++
     },
+    submit() {
+      // TODO: this submit is the one that will send the cases to CHD/will make the cases visible to CHD
+    }
   },
 }
 </script>
