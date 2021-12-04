@@ -291,8 +291,11 @@ const indexFunctions = {
 										INNER JOIN mmchddb.PATIENTS p ON c.patientID = p.patientID
 										INNER JOIN mmchddb.ADDRESSES a ON p.caddressID = a.addressID
 										LEFT JOIN mmchddb.CASE_AUDIT ca ON c.caseID = ca.caseID
+										LEFT JOIN mmchddb.CRFS cr ON c.caseID = cr.caseID
 										GROUP BY c.caseID;`);
-			console.log(match);
+			// CRFs have been JOINed, have to label the cases now as CIF or CRF.
+			for (let i = 0; i < match.length; i++) match[i].type = match[i].CRFID ? "CRF" : "CIF";
+			// console.log(match);
 			res.status(200).send(match);
 		} catch (e) {
 			console.log(e);
