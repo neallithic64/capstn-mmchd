@@ -131,7 +131,12 @@
                 <component :is="column.name" :row="data"></component>
               </span>
               <span v-else-if="column.type === 'clickable'">
-                <a v-if="pageType === 'all' && data['type'] === 'CIF'"
+                <a v-if="data['disease'] === 'Measles/Rubella'"
+                  style="color: #346083; text-decoration-line: underline"
+                  :href="'/view' + 'CIFMeasles'">
+                  {{ data[column.key] }}
+                </a>
+                <a v-else-if="pageType === 'all' && data['type'] === 'CIF'"
                   style="color: #346083; text-decoration-line: underline"
                   :href="'/view' + data['type'] + data['disease']">
                   {{ data[column.key] }}

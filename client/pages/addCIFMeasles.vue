@@ -1749,7 +1749,7 @@
                       v-model="formData.caseData.sourceInfection"
                       :value="source"
                       name="product"
-                      type="checkbox"
+                      type="radio"
                       :disabled="inputEdit()"
                     />
                     <label :for="source">{{ source }}</label>

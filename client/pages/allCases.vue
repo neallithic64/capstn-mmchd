@@ -19,7 +19,7 @@
         <div v-show="!isPrint" class="CRFActionButtons">
           <ul class="CRFActionButton" @click="downloadPDF">
           <img
-            src="~/assets/img/print.png"
+            src="~/assets/img/pdf.png"
             class="printButton"
             @click="downloadPDF"
           />
@@ -27,6 +27,7 @@
           <ul class="CRFActionButton">
             <img src="~/assets/img/csv.png" 
             class="printButton"
+            @click="csvExport(getTable())"
           />
           </ul>
         </div>
@@ -92,7 +93,7 @@ export default {
           source: 'cases',
           uniqueField: 'id',
         },
-		{
+		    {
           title: 'Case ID',
           key: 'caseID',
           type: 'clickable',
@@ -396,6 +397,40 @@ export default {
       console.log(this.$refs.content)
       setTimeout(() => (this.isPrint = !this.isPrint), 3000)
    },
+    getCols() {
+      var colName, columns='';
+      if (this.caseTab==='all') colName = this.allColumns;
+      else if (this.caseTab==='cif') colName = this.cifColumns;
+      else if (this.caseTab==='crf') colName = this.crfColumns;
+
+      for (let i=0; i<Object.keys(colName).length; i++) {
+        columns += colName[i].title;
+        if (i+1!==Object.keys(colName)) columns += ','
+      }
+      return columns;
+    },
+    csvExport(arrData) {
+      let csvContent = "data:text/csv;charset=utf-8,";
+      let header = this.getCols();
+      // let header = Object.keys(arrData[0]).join(",");
+      csvContent += [
+        header,
+        ...arrData.map(item => Object.values(item).join(","))
+      ]
+        .join("\n")
+        .replace(/(^\[)|(\]$)/gm, "");
+
+      const data = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", data);
+      link.setAttribute("download", this.caseTab+".csv");
+      link.click();
+    },
+    getTable() {
+      if (this.caseTab==='all') return this.allData;
+      else if (this.caseTab==='cif') return this.cifData;
+      else if (this.caseTab==='crf') return this.crfData;
+    }
   },
 }
 </script>
@@ -501,6 +536,7 @@ body {
 .CRFActionButtons {
   display: inline-flex;
   flex-direction: row;
+  cursor: pointer;
 }
 
 .printButton {

@@ -54,7 +54,7 @@
           </span>
           <div v-show="!editStatus && !isPrint" class="CRFActionButtons">
             <img
-              src="~/assets/img/print.png"
+              src="~/assets/img/pdf.png"
               class="printButton"
               @click="downloadPDF"
             />
@@ -881,36 +881,49 @@
               {{ Object.values(disease.formNames)[4] }}
             </h2>
 
-            <div class="field-row" style="display: inline-flex; margin-bottom: -1 px">
+            <div
+              class="field-row"
+              style="display: inline-flex; margin-bottom: -1 px"
+            >
               <div class="field">
                 <label class="required">
                   Please select the clinical classification
                 </label>
                 <div>
-                  <!-- <div style="display: inline-flex; flex-direction: column"> -->
-                  <!-- CLINICAL CLASSIFICATION -->
-                  <div>
-                    <div class="collpaseWrapper">
-                      <ul v-for="(value, i) in clinicalClassification" :key="i" style="displayLinline-flex">
-                        
-                        <label :for="value.name" class="collapseLabel">
-                          <input
-                            :id="value.name"
-                            v-model="formData.caseData.clinicalClassification"
-                            :value="name"
-                            class="input-checkbox"
-                            name="finalClassification"
-                            type="radio"
-                            :disabled="inputEdit()"
-                          />
-                          {{ value.name }}
-                        </label>
-                      </ul>
+                  <div style="display: inline-flex; flex-direction: column">
+                    <div
+                      v-for="(value, name, i) in clinicalClassification"
+                      :key="i"
+                      class="checkbox-options"
+                    >
+                      <input
+                        :id="i"
+                        v-model="formData.caseData.clinicalClassification"
+                        :value="name"
+                        class="input-checkbox"
+                        name="clinicalClassification"
+                        type="radio"
+                        :disabled="inputEdit()"
+                      />
+                      <label :for="i">
+                        {{ value.name }}
+                      </label>
+                      <!-- <div class="tooltip">
+                        <img
+                          id="infofever"
+                          class="info-icon-img"
+                          src="~/assets/img/infoicon.png"
+                        />
+                        <span class="tooltipText" style="width: 500px">{{
+                          value
+                        }}</span>
+                      </div> -->
                     </div>
                   </div>
                 </div>
               </div>
             </div>
+
           </div>
         </form>
         <hr v-if="isPrint" />
@@ -1186,35 +1199,49 @@
               {{ Object.values(disease.formNames)[7] }}
             </h2>
 
-            <div class="field-row" style="display: inline-flex; margin-bottom: -1 px">
+            <div
+              class="field-row"
+              style="display: inline-flex; margin-bottom: -1 px"
+            >
               <div class="field">
                 <label class="required">
                   Please select the case classification
                 </label>
                 <div>
-                  <!-- <div style="display: inline-flex; flex-direction: column"> -->
-                  <!-- CASE CLASSIFICATION -->
-                  <div>
-                    <div class="collpaseWrapper">
-                      <ul v-for="(value, name, i) in caseClassification" :key="i" style="displayLinline-flex">
-                        <label :for="name" class="collapseLabel">
-                          <input
-                            :id="name"
-                            v-model="formData.caseData.caseClassification"
-                            :value="name"
-                            class="input-checkbox"
-                            name="finalClassification"
-                            type="radio"
-                            :disabled="inputEdit()"
-                          />
-                          {{ name }}
-                        </label>
-                      </ul>
+                  <div style="display: inline-flex; flex-direction: column">
+                    <div
+                      v-for="(value, name, i) in caseClassification"
+                      :key="i"
+                      class="checkbox-options"
+                    >
+                      <input
+                        :id="i"
+                        v-model="formData.caseData.caseClassification"
+                        :value="name"
+                        class="input-checkbox"
+                        name="caseClassification"
+                        type="radio"
+                        :disabled="inputEdit()"
+                      />
+                      <label :for="i">
+                        {{ name }}
+                      </label>
+                      <div class="tooltip">
+                        <img
+                          id="infofever"
+                          class="info-icon-img"
+                          src="~/assets/img/infoicon.png"
+                        />
+                        <span class="tooltipText" style="width: 500px">{{
+                          value
+                        }}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
+
           </div>
         </form>
         <hr v-if="isPrint" />
@@ -1663,6 +1690,7 @@ b {
   flex-direction: row;
   justify-content: flex-end;
   align-items: center;
+  cursor: pointer;
 }
 
 .CRFActionButton {
@@ -1670,11 +1698,12 @@ b {
   height: 50px;
   padding: 10px;
   border-radius: 30px;
+  cursor: pointer;
 }
 
-.CRFActionButton:hover {
+/* .CRFActionButton:hover {
   background: #a3a3a3;
-}
+} */
 
 .printButton {
   width: 30px;
@@ -2106,6 +2135,7 @@ select {
   opacity: 1;
   transform: translateY(-10px);
   z-index: 3;
+  margin-left: 300px;
 }
 
 .tooltipText::after {
@@ -2116,7 +2146,7 @@ select {
   position: absolute;
   top: 100%;
   left: 40%;
-  margin-left: 5%;
+  margin-left: -21%;
 }
 
 img:hover + .info-desc {
