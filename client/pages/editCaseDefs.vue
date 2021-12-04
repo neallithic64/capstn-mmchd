@@ -197,12 +197,14 @@ export default {
         leftButtons[i].disabled = false;
       }
 
-      // TODO: machi postUpdateCaseDefs diseaseID unknown where to get hehe
-    
-      // const result = await axios.post('http://localhost:8080/api/updateCaseStatus', {formData: this.diseaseDefs, diseaseID});
+      // TODO: add notif send to all drus that a case definition was edited
+      // notif message: The case definitions of <disease> have been updated.
+      // notif type: updateNotif
+      // receiver: all DRUs
+      // redirectTo: addCIF/CRF url of the disease that was updated
 
       // eslint-disable-next-line no-console
-      console.log(this.diseaseDefs);
+      // console.log(this.diseaseDefs);
     },
     instruct() {
       this.pageNum = -1;
