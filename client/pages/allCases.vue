@@ -2,18 +2,34 @@
   <div id="viewCases">
     <!--Top Bar of the screen-->
     <TopNav />
-    <div class="viewcases-container">
+    <div ref="content" class="viewcases-container">
       <h1 class="pageHeader">View Cases</h1>
-      <div class="CIF-SummaryContainer">
-        <ul :class="formListClass('all')" @click="clickTab('all')">
-          ALL
-        </ul>
-        <ul :class="formListClass('cif')" @click="clickTab('cif')">
-          CIF
-        </ul>
-        <ul :class="formListClass('crf')" @click="clickTab('crf')">
-          CRF
-        </ul>
+      <div class="exportButtons">
+        <div class="CIF-SummaryContainer">
+          <ul :class="formListClass('all')" @click="clickTab('all')">
+            ALL
+          </ul>
+          <ul :class="formListClass('cif')" @click="clickTab('cif')">
+            CIF
+          </ul>
+          <ul :class="formListClass('crf')" @click="clickTab('crf')">
+            CRF
+          </ul>
+        </div>
+        <div v-show="!isPrint" class="CRFActionButtons">
+          <ul class="CRFActionButton" @click="downloadPDF">
+          <img
+            src="~/assets/img/print.png"
+            class="printButton"
+            @click="downloadPDF"
+          />
+          </ul>
+          <ul class="CRFActionButton">
+            <img src="~/assets/img/csv.png" 
+            class="printButton"
+          />
+          </ul>
+        </div>
       </div>
       <div class="viewcases-component">
         <div v-if="allData.length > 0" id="vue-root">
@@ -41,20 +57,27 @@
   </div>
 </template>
 
+<script src="https://code.jquery.com/jquery-1.12.3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/0.9.0rc1/jspdf.min.js"></script>
+
 <script>
+import jsPDF from 'jspdf'
+import html2canvas from 'html2canvas'
 import dataTable from './dataTable.vue'
 const axios = require('axios');
 
 export default {
-  header: {
-    title: 'Add Case',
-  },
   components: {
     dataTable,
+  },
+  middleware: 'is-auth',
+  header: {
+    title: 'Add Case',
   },
   compute: {},
   data() {
     return {
+      isPrint: false,
       caseTab: 'all',
       tableOptions: {
         tableName: 'cases',
@@ -95,7 +118,7 @@ export default {
         },
         {
           title: 'Patient',
-          key: 'patientID',
+          key: 'patientName',
           type: 'text',
           source: 'cases',
         },
@@ -325,10 +348,10 @@ export default {
     const rows = (await axios.get('http://localhost:8080/api/getCases')).data;
 	for (let i = 0; i < rows.length; i++) {
 	  rows[i].type = "CIF";
-	  rows[i].city = "Placeholder";
-	  rows[i].updatedDate = "1111-11-11";
+	  // rows[i].patientName = rows[i].patientName;
+	  rows[i].updatedDate = rows[i].updatedDate.substr(0, 10);
 	  rows[i].reportDate = rows[i].reportDate.substr(0, 10);
-	  rows[i].disease = rows[i].diseaseID;
+	  rows[i].disease = rows[i].diseaseName;
 	}
   this.allData = rows;
 	this.tableOptions.columns = this.allColumns;
@@ -346,6 +369,32 @@ export default {
       if (caseTab === this.caseTab) return 'formSummaryItems selected';
       else return 'formSummaryItems';
     },
+    downloadPDF() {
+      // this.isPrint = !this.isPrint
+
+      let pWidth = 595.28 // 595.28 is the width of a4
+      let srcWidth = this.$refs.content.scrollWidth
+      let margin = 12 // narrow margin - 1.27 cm (36);
+      let scale = (pWidth - margin * 2) / srcWidth
+
+      var doc = new jsPDF('p', 'pt', 'A4')
+      window.html2canvas = html2canvas
+
+      doc.html(this.$refs.content, {
+        x: margin,
+        y: margin,
+        html2canvas: {
+          scale: scale,
+        },
+        callback: function () {
+          window.open(doc.output('bloburl'))
+        },
+      })
+
+      // doc.save('test.pdf')
+      console.log(this.$refs.content)
+      setTimeout(() => (this.isPrint = !this.isPrint), 3000)
+   },
   },
 }
 </script>
@@ -446,6 +495,23 @@ body {
 
 #datatabale {
   width: -webkit-fill-available;
+}
+
+.CRFActionButtons {
+  display: inline-flex;
+  flex-direction: row;
+}
+
+.printButton {
+  width: 30px;
+  height: 30px;
+  margin: 0 5px;
+}
+
+.exportButtons {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 /* h2 {

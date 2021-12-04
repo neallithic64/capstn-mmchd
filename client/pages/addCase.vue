@@ -64,6 +64,7 @@
 
 <script>
 export default {
+  middleware: 'is-auth',
   header: {
     title: 'Add Case',
   },
@@ -72,13 +73,13 @@ export default {
       diseases: {
         cif: {
           Measles: '/addCIFMeasles',
-          Diphtheria: '/addCIFDiphtheria',
-          'Neonatal Tetanus': '/addCIFNeonatalTetanus',
+          Malaria: '/addCIFMalaria',
           Pertussis: '/addCIFPertussis',
-          'Meningococcal Disease': '/addCIFMeningococcal',
         },
         crf: {
           Dengue: '/addCRFDengue',
+          Leptospirosis: '/addCRFLeptospirosis',
+          'Acute Viral Hepatitis': '/addCRFAVHepatitis'
         },
       },
     }

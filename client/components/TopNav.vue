@@ -53,9 +53,22 @@
       to="/analysis"> 
       Analysis and Visualization 
     </nuxt-link>
+    <nuxt-link
+      v-if="$auth.user.userType === 'lhsdChief' || $auth.user.userType === 'aehmdChief' || 
+      $auth.user.userType === 'resuHead' || $auth.user.userType === 'chdDirector'"
+      to="/reports"> 
+      Reports
+    </nuxt-link>
     <nuxt-link to="/bulletin"> Feedback Bulletin </nuxt-link>
     <nuxt-link to="/evaluation"> Evaluation </nuxt-link>
-    <div v-if="$auth.user.userType === 'techStaff'" class="dropdown">
+    <nuxt-link
+      v-if="$auth.user.userType === 'lhsdChief' || $auth.user.userType === 'aehmdChief' || 
+      $auth.user.userType === 'resuHead' || $auth.user.userType === 'chdDirector'"
+      to="/editCaseDefs"> 
+      Case Definitions
+    </nuxt-link>
+    <div v-if="$auth.user.userType === 'lhsdChief' || $auth.user.userType === 'aehmdChief' || 
+      $auth.user.userType === 'resuHead' || $auth.user.userType === 'chdDirector' || $auth.user.userType === 'techStaff'" class="dropdown">
       <button class="dropbtn">
         Users
         <i class="fa fa-caret-down"></i>
@@ -74,9 +87,9 @@
           <i class="fa fa-caret-down"></i>
         </button>
         <div class="dropdown-content">
-          <nuxt-link to="/myProfile"> My Profile </nuxt-link>
-          <nuxt-link to="/settings"> Settings </nuxt-link>
-          <nuxt-link to="/logout"> Logout </nuxt-link>
+          <nuxt-link v-if="$auth.loggedIn" to="/myProfile"> My Profile </nuxt-link>
+          <nuxt-link v-if="$auth.loggedIn" to="/settings"> Settings </nuxt-link>
+          <nuxt-link v-if="$auth.loggedIn" to="/logout" @click="$auth.logout()"> Logout </nuxt-link>
         </div>
       </div>
     </div>
@@ -146,10 +159,12 @@ body {
 .topnav-right {
   display: flex;
   justify-content: flex-end;
+  background-image: none;
 }
 
 .topnav-right-inside {
   display: none;
+  background-image: none;
 }
 
 .topnav {
@@ -162,6 +177,7 @@ body {
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
   border-radius: 0px 0px 10px 10px;
   font-family: 'Work Sans', sans-serif;
+  background-image: none;
 }
 
 /* Style the links inside the navigation bar */
