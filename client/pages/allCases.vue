@@ -19,7 +19,7 @@
         <div v-show="!isPrint" class="CRFActionButtons">
           <ul class="CRFActionButton" @click="downloadPDF">
           <img
-            src="~/assets/img/print.png"
+            src="~/assets/img/pdf.png"
             class="printButton"
             @click="downloadPDF"
           />

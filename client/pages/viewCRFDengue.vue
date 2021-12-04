@@ -15,7 +15,7 @@
             <p>Last updated: {{ updatedDate }}</p>
           </div>
           <div v-show="!isPrint" class="CRFActionButtons">
-            <img src="~/assets/img/print.png" class="printButton" @click="downloadPDF" />
+            <img src="~/assets/img/pdf.png" class="printButton" @click="downloadPDF" />
           </div>
         </div>
       </div>
