@@ -2281,6 +2281,8 @@ export default {
       if (result.status === 200) {
         alert('case submitted!');
         window.location.href = '/allCases';
+
+        // TODO: add notif/alert checking here 
       } else {
         // eslint-disable-next-line no-console
         console.log(result);

@@ -80,7 +80,7 @@
     </div>
 
     <div class="topnav-right-inside">
-      <nuxt-link to="/notification"> Notification </nuxt-link>
+      <nuxt-link to="/notifications"> Notification </nuxt-link>
       <div class="dropdown">
         <button class="dropbtn">
           My Account
@@ -97,7 +97,7 @@
     <a href="javascript:void(0);" class="icon" @click="responsive()">&#9776;</a>
 
     <div class="topnav-right">
-      <button class="notification">
+      <button class="notification" @click="goToNotifs()">
         <i class="fa fa-bell fa-sm"></i>
         <span id="notif-num" class="badge">10+</span>
       </button>
@@ -132,6 +132,9 @@ export default {
         x.className = 'topnav';
       }
     },
+    goToNotifs() {
+      window.location.href = 'http://localhost:3000/notifications';
+    }
   },
 }
 </script>
