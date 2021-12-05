@@ -390,7 +390,7 @@
                   </label>
                   <input
                     id="reporterNum"
-                    v-model="formData.cases.reportContact"
+                    v-model="formData.cases.reporterContact"
                     class="input-form-field"
                     type="number"
                     :disabled="inputEdit()"
@@ -432,7 +432,7 @@
                             type="checkbox"
                             :disabled="inputEdit()"
                           />
-                          <label for="source">Alcoholism</label>
+                          <label for="LAlcoholism">Alcoholism</label>
                         </div>
 
                         <div style="padding-left: 7px">
@@ -500,7 +500,7 @@
                             type="checkbox"
                             :disabled="inputEdit()"
                           />
-                          <label for="Others"> Asthma </label>
+                          <label for="CAsthma"> Asthma </label>
                         </div>
 
                         <div style="display: flex; align-items: center">
@@ -513,7 +513,7 @@
                             type="checkbox"
                             :disabled="inputEdit()"
                           />
-                          <label for="Others"> Hereditary </label>
+                          <label for="CHereditary"> Hereditary </label>
                         </div>
 
                         <div style="display: flex; align-items: center">
@@ -1749,7 +1749,7 @@
                       v-model="formData.caseData.sourceInfection"
                       :value="source"
                       name="product"
-                      type="checkbox"
+                      type="radio"
                       :disabled="inputEdit()"
                     />
                     <label :for="source">{{ source }}</label>
@@ -2281,6 +2281,8 @@ export default {
       if (result.status === 200) {
         alert('case submitted!');
         window.location.href = '/allCases';
+
+        // TODO: add notif/alert checking here 
       } else {
         // eslint-disable-next-line no-console
         console.log(result);

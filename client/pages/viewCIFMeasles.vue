@@ -25,60 +25,28 @@
                 <img src="~/assets/img/pen.png" />
               </ul>
             </div>
-            <!-- <div
-              v-show="editCase"
-              class="CIFActionButtons"
-              style="margin-top: 5px"
-            >
-              <select
-                v-model="formData.cases.caseLevel"
-                style="margin: -10px 0 -15px"
-              >
-                <option
-                  v-for="(name, value, index) in classification"
-                  :key="index"
-                  :value="value"
-                  selected="formData.cases.caseLevel"
-                >
-                  {{ value }}
-                </option>
-              </select>
-              <ul
-                class="CIFEdit"
-                style="margin-top: 7px;margin-left: 5px;"
-                @click="editCase = !editCase"
-              >
-                <img id="saveIcon" src="~/assets/img/save.png" />
-              </ul>
-            </div> -->
           </span>
           <div v-show="!editStatus && !isPrint" class="CIFActionButtons">
-            <!-- <ul class="CIFActionButton" @click="downloadPDF"> -->
             <img
-              src="~/assets/img/print.png"
+              src="~/assets/img/pdf.png"
               class="printButton"
               @click="downloadPDF"
             />
-            <!-- </ul> -->
-            <!-- <ul class="CIFActionButton">
-              <img src="~/assets/img/csv.png" />
-            </ul> -->
           </div>
         </div>
       </div>
-      <div class="CIFreports">
-        <!-- <div class="CIFreports"> -->
-        <p>
-          Reported by: <b>{{ formData.cases.reporterName }}</b>
-        </p>
-        <p>Type: <b>Private Laboratory</b></p>
-        <!-- </div>
-        <div class="CIFreports"> -->
-        <!-- <p>Case Level: <b>1</b></p> -->
-        <p>
-          Reported Date: <b>{{ formData.cases.reportDate }}</b>
-        </p>
-        <!-- </div> -->
+      <div class="viewCIF-details" style="align-text: left">
+        <div class="CIFnumbers">
+          <p>DRU City: <b>Manila</b></p>
+          <p>DRU Name: <b>HAKDOG</b></p>
+          <p>DRU Type: <b>type</b></p>
+          <p>DRU Address: <b>house</b></p>
+        </div>
+        <div class="CIFstatus" style="align-text: right">
+          
+          <p>Reported Date: <b>{{ formData.cases.reportDate }}</b></p>
+          <p>Last Updated: <b>{{ formData.cases.updatedDate }}</b></p>
+        </div>
       </div>
       <div v-show="!isPrint" class="CIF-SummaryContainer">
         <ul
@@ -1831,7 +1799,7 @@
                           class="info-icon-img"
                           src="~/assets/img/infoicon.png"
                         />
-                        <span class="tooltipText" style="width: 500px">{{
+                        <span class="tooltipText" style="width: 650px">{{
                           value
                         }}</span>
                       </div>
@@ -2488,7 +2456,7 @@ export default {
     },
     inputEdit() {
 	  // not sure about the "this.cases"
-      if (this.pageNum === 9 && this.$auth.user.userID === this.cases.investigatorLab) return false;
+      if (this.pageNum === 9 && this.$auth.user.userID === this.formData.cases.investigatorLab) return false;
       else return true;
     },
     statusInputEdit(value) {
@@ -2502,6 +2470,13 @@ export default {
       if (change==='save') {
         this.formData.caseData.finalClassification = this.newStatus;
         this.formData.cases.caseLevel = this.newStatus;
+
+        // TODO: add notification here -julia
+        // TODO: add notif/alert checking here 
+        // notif message: The case level of <disease name> <case no> has been updated to <new caselevel>.
+        // notif type: updateStatus
+        // receiver: dru who submitted the case
+        // redirectTo: viewCIF/CRF url of the case that was updated
       }
       if (change==='cancel') {
         this.newStatus = this.formData.cases.caseLevel;
@@ -2672,6 +2647,7 @@ b {
   flex-direction: row;
   justify-content: flex-end;
   align-items: center;
+  cursor: pointer;
 }
 
 .CIFActionButton {
@@ -2679,6 +2655,7 @@ b {
   height: 50px;
   padding: 10px;
   border-radius: 30px;
+  cursor: pointer;
 }
 
 .CIFActionButton:hover {
@@ -2688,6 +2665,8 @@ b {
 .printButton {
   width: 30px;
   height: 30px;
+  margin-top: 10px;
+  margin-bottom: -10px;
 }
 
 .CIFEdit {
@@ -3116,6 +3095,7 @@ select {
   opacity: 1;
   transform: translateY(-10px);
   z-index: 3;
+  margin-left: 300px;
 }
 
 .tooltipText::after {
@@ -3126,7 +3106,7 @@ select {
   position: absolute;
   top: 100%;
   left: 40%;
-  margin-left: 5%;
+  margin-left: -14%;
 }
 
 img:hover + .info-desc {

@@ -172,7 +172,7 @@ async function generateID(table, checkObj) {
 			id += rowcount.toString();
 			retObj.id = id;
 		}
-		
+		console.log(retObj);
 		return retObj;
 	} catch (e) {
 		console.log(e);
@@ -290,9 +290,12 @@ const indexFunctions = {
 										INNER JOIN mmchddb.DISEASES d ON c.diseaseID = d.diseaseID
 										INNER JOIN mmchddb.PATIENTS p ON c.patientID = p.patientID
 										INNER JOIN mmchddb.ADDRESSES a ON p.caddressID = a.addressID
-										INNER JOIN mmchddb.CASE_AUDIT ca ON c.caseID = ca.caseID
+										LEFT JOIN mmchddb.CASE_AUDIT ca ON c.caseID = ca.caseID
+										LEFT JOIN mmchddb.CRFS cr ON c.caseID = cr.caseID
 										GROUP BY c.caseID;`);
-			console.log(match);
+			// CRFs have been JOINed, have to label the cases now as CIF or CRF.
+			for (let i = 0; i < match.length; i++) match[i].type = match[i].CRFID ? "CRF" : "CIF";
+			// console.log(match);
 			res.status(200).send(match);
 		} catch (e) {
 			console.log(e);
@@ -435,13 +438,15 @@ const indexFunctions = {
 				brgy: formData.patient.currBrgy,
 				city: formData.patient.currCity
 			});
+			console.log("currAddrID inside postNewCase");
+			console.log(currAddrID);
 			formData.patient.caddressID = currAddrID.id;
 			if (!currAddrID.exists) {
 				let currAddr = new Address(currAddrID, formData.patient.currHouseStreet, formData.patient.currBrgy, formData.patient.currCity);
 				result = await db.insertOne("mmchddb.ADDRESSES", currAddr);
 			}
 			
-			if (result) {
+			if (result || currAddrID.exists) {
 				let permAddrID = await generateID("mmchddb.ADDRESSES", {
 					houseStreet: formData.patient.permHouseStreet,
 					brgy: formData.patient.permBrgy,
@@ -453,7 +458,7 @@ const indexFunctions = {
 					result = await db.insertOne("mmchddb.ADDRESSES", permAddr);
 				}
 				
-				if (result) {
+				if (result || permAddrID.exists) {
 					delete formData.patient.currHouseStreet;
 					delete formData.patient.currBrgy;
 					delete formData.patient.currCity;
@@ -464,14 +469,17 @@ const indexFunctions = {
 					// temp fix for occuAddr
 					formData.patient.occuAddrID = null;
 					let genPatientID = await generateID("mmchddb.PATIENTS", {
-						
+						lastName: formData.patient.lastName,
+						firstName: formData.patient.firstName,
+						midName: formData.patient.midName,
+						caddressID: formData.patient.caddressID
 					});
 					formData.patient.patientID = genPatientID.id;
 					if (!genPatientID.exists) {
 						result = await db.insertOne("mmchddb.PATIENTS", formData.patient);
 					}
 					
-					if (result) {
+					if (result || genPatientID.exists) {
 						formData.cases.caseID = await generateID("mmchddb.CASES");
 						formData.cases.patientID = formData.patient.patientID;
 						// formData.cases.reportedBy = req.session.user.userID;
@@ -494,48 +502,52 @@ const indexFunctions = {
 								
 								if (result) {
 									res.status(200).send("Add case success");
-								} else res.status(500).send("Add risk factor failed");
-							} else res.status(500).send("Add case data failed");
-						} else res.status(500).send("Add case failed");
-					} else res.status(500).send("Add patient failed");
-				} else res.status(500).send("Add perm address failed");
-			} else res.status(500).send("Add curr address failed");
+								} else {
+									console.log("Add risk factor failed");
+									res.status(500).send("Add risk factor failed");
+								}
+							} else {
+								console.log("Add case data failed");
+								res.status(500).send("Add case data failed");
+							}
+						} else {
+							console.log("Add case failed");
+							res.status(500).send("Add case failed");
+						}
+					} else {
+						console.log("Add patient failed");
+						res.status(500).send("Add patient failed");
+					}
+				} else {
+					console.log("Add perm address failed");
+					res.status(500).send("Add perm address failed");
+				}
+			} else {
+				console.log("Add curr address failed");
+				res.status(500).send("Add curr address failed");
+			}
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
 		}
 	},
 
-	postUpdateCaseDef: async function(req, res) {
-		let { caseDef, diseaseID } = req.body;
+	postEditDiseaseDef: async function(req, res) {
+		let { diseaseDefs, diseaseID } = req.body;
+		let arrDefs = Object.keys(diseaseDefs), result = true, query = {
+			diseaseID: diseaseID,
+			class: null
+		};
 
 		try {
-			caseDef.forEach(function (element) {
-				Object.keys(element).forEach(key => {
-					let value = element[key];
-					let hasProperties = value && Object.keys(value).length > 0;
-					if (value === null) {
-						delete element[key];
-					} else if ((typeof value !== "string") && hasProperties) {
-						removeNullProperties(value);
-					}
+			for (let i = 0; result && i < arrDefs.length; i++) {
+				query.class = arrDefs[i];
+				let result = await db.updateRows("mmchddb.CASE_DEFINITIONS", query, {
+					definition: Object.values(diseaseDefs)[i]
 				});
-			});
-			let i = 0;
-			let query = {
-				diseaseID: diseaseID,
-				class: null
-			};
-
-			while(result && caseDef.length < i) {
-				query.class = caseDef[i].class;
-				result = await db.updateRows("mmchddb.CASE_DEFINITIONS", query, caseDef[i]);
-				i++;
 			}
-			if (result)
-				res.status(200).send("Update disease success");
-			else 
-				res.status(500).send("Update Case Definition");
+			if (result) res.status(200).send("Update disease success");
+			else res.status(500).send("Update Case Definition error!");
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
