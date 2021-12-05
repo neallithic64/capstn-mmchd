@@ -1749,7 +1749,7 @@
                       v-model="formData.caseData.sourceInfection"
                       :value="source"
                       name="product"
-                      type="checkbox"
+                      type="radio"
                       :disabled="inputEdit()"
                     />
                     <label :for="source">{{ source }}</label>
@@ -2281,6 +2281,8 @@ export default {
       if (result.status === 200) {
         alert('case submitted!');
         window.location.href = '/allCases';
+
+        // TODO: add notif/alert checking here 
       } else {
         // eslint-disable-next-line no-console
         console.log(result);
