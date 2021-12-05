@@ -187,12 +187,13 @@
               <span v-else-if="column.key === 'action'">
                 <div class="actionButtons">
                   <ul v-if="data[column.key]==='add submit' || data[column.key]==='add'" class="CRFActionButton">
-                    <a :href="'/add' + 'CRF' + data['disease'] + 'Case'">
-                      <img src="~/assets/img/add.png" class="button"/>
+                    <a :href="'/add' + 'CRF' + data['disease'] + 'Case'"> Add Case
+                      <!-- <img src="~/assets/img/add.png" class="button"/> -->
                     </a>
                   </ul>
+                  <ul v-if="data[column.key]==='add submit'">&nbsp;|&nbsp;</ul>
                   <ul v-if="data[column.key]==='add submit' || data[column.key]==='submit'" class="CRFActionButton">
-                    <img src="~/assets/img/upload.png" class="button" @click="submit()"/>
+                    <!-- <img src="~/assets/img/upload.png" class="button" @click="submit()"/> --> Submit
                   </ul>
                 </div>
               </span>
@@ -291,7 +292,7 @@ export default {
       submitStatusOpen: false,
       reportStatusOpen: false,
       diseaseFilters: {
-        options: ['Measles/Rubella','Diphtheria','Neonatal Tetanus','Pertussis','Meningococcal Disease',
+        options: ['Measles/Rubella','Malaria','Pertussis','Dengue','Leptospirosis','Acute Viral Hepatitis',
         ],
         selected: [],
       },
@@ -581,6 +582,15 @@ export default {
   text-align: center;
   display: inline-flex;
   flex-direction: row;
+}
+
+.CRFActionButton {
+  cursor: pointer;
+}
+
+.CRFActionButton:hover {
+  color:#346083;
+  font-weight: 600;
 }
 
 .button {
