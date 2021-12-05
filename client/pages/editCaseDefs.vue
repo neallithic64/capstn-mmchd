@@ -202,7 +202,7 @@ export default {
 	    diseaseDefs: this.diseaseDefs,
 		diseaseID: this.formSection.diseaseIDs[this.pageNum]
       });
-	  
+	  console.log(result);
       // TODO: add notif send to all drus that a case definition was edited
       // notif message: The case definitions of <disease> have been updated.
       // notif type: updateNotif
