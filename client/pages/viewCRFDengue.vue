@@ -7,18 +7,29 @@
         <div class="CRFnumbers">
           <h1 style="margin: -10px 0">Case No. {{ crfNo }}</h1>
           <h2 style="margin-top: -1px">Disease: {{ disease }}</h2>
-          <h3 style="margin-top: -1px">Week No: {{ weekNo }}</h3>
         </div>
+         
         <div class="CRFstatus" style="align-text: right">
-          <div class="CRFstatus">
-            <p>Submitted on: {{ submittedDate }}</p>
-            <p>Last updated: {{ updatedDate }}</p>
-          </div>
+          <h3>Week No: {{ weekNo }} </h3>
           <div v-show="!isPrint" class="CRFActionButtons">
-            <img src="~/assets/img/pdf.png" class="printButton" @click="downloadPDF" />
+            <img src="~/assets/img/pdf.png" class="printCRFButton" @click="downloadPDF" />
           </div>
         </div>
       </div>
+
+      <div class="viewCRF-details" style="align-text: left">
+        <div class="CIFnumbers">
+          <p>DRU City: <b>Manila</b></p>
+          <p>DRU Name: <b>HAKDOG</b></p>
+          <p>DRU Type: <b>type</b></p>
+          <p>DRU Address: <b>house</b></p>
+        </div>
+        <div class="CRFstatus" style="align-text: right">
+          <p>Submitted on: <b> {{ submittedDate }} </b> </p>
+          <p>Last updated: <b> {{ updatedDate }} </b> </p>
+        </div>
+      </div>
+
       <div class="viewcases-component">
         <div id="vue-root">
           <dataTable
@@ -237,13 +248,21 @@ h2 {
 }
 
 h3 {
-  font-size: 15px;
+  font-size: 24px;
   font-weight: 600;
 }
 
-.printButton {
+b {
+  /* color: #346083; */
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.printCRFButton {
   width: 30px;
   height: 30px;
+  margin-top: 10px;
+  margin-bottom: -15px;
 }
 
 .viewcases-container {
@@ -340,5 +359,6 @@ h3 {
   -moz-background-clip: text;
   background-clip: text;
 } */
+
 </style>
 

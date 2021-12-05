@@ -83,17 +83,71 @@
                   src="~/assets/img/filter.png"
                   alt="filter.png"
                   style="width: 16px; height: 16px"
-                  @click="statusOpen = !statusOpen"
+                  @click="caseStatusOpen = !caseStatusOpen"
                 />
               </a>
-              <div v-if="statusOpen" style="position: absolute">
+              <div v-if="caseStatusOpen" style="position: absolute">
                 <div class="arrow-up"></div>
                 <div class="filterDropdown">
                   <b>Select Status:</b>
-                  <div v-for="(value, i) in statusFilters.options" :key="i" style="padding-left: 7px">
+                  <div v-for="(value, i) in caseStatusFilters.options" :key="i" style="padding-left: 7px">
                     <input
                       :id="value"
-                      v-model="statusFilters.selected"
+                      v-model="caseStatusFilters.selected"
+                      :value="value"
+                      name="filter"
+                      type="checkbox"
+                      @change="filter()"
+                    />
+                    <label :for="value">{{ value }}</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div v-if="column.title==='Submit Status'">
+              <a class="filterButton">
+                <img
+                  src="~/assets/img/filter.png"
+                  alt="filter.png"
+                  style="width: 16px; height: 16px"
+                  @click="submitStatusOpen = !submitStatusOpen"
+                />
+              </a>
+              <div v-if="submitStatusOpen" style="position: absolute">
+                <div class="arrow-up"></div>
+                <div class="filterDropdown">
+                  <b>Select Status:</b>
+                  <div v-for="(value, i) in submitStatusFilters.options" :key="i" style="padding-left: 7px">
+                    <input
+                      :id="value"
+                      v-model="submitStatusFilters.selected"
+                      :value="value"
+                      name="filter"
+                      type="checkbox"
+                      @change="filter()"
+                    />
+                    <label :for="value">{{ value }}</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div v-if="column.title==='Report Status'">
+              <a class="filterButton">
+                <img
+                  src="~/assets/img/filter.png"
+                  alt="filter.png"
+                  style="width: 16px; height: 16px"
+                  @click="reportStatusOpen = !reportStatusOpen"
+                />
+              </a>
+              <div v-if="reportStatusOpen" style="position: absolute">
+                <div class="arrow-up"></div>
+                <div class="filterDropdown">
+                  <b>Select Status:</b>
+                  <div v-for="(value, i) in reportStatusFilters.options" :key="i" style="padding-left: 7px">
+                    <input
+                      :id="value"
+                      v-model="reportStatusFilters.selected"
                       :value="value"
                       name="filter"
                       type="checkbox"
@@ -130,6 +184,18 @@
               <span v-if="column.type === 'component'">
                 <component :is="column.name" :row="data"></component>
               </span>
+              <span v-else-if="column.key === 'action'">
+                <div class="actionButtons">
+                  <ul v-if="data[column.key]==='add submit' || data[column.key]==='add'" class="CRFActionButton">
+                    <a :href="'/add' + 'CRF' + data['disease'] + 'Case'">
+                      <img src="~/assets/img/add.png" class="button"/>
+                    </a>
+                  </ul>
+                  <ul v-if="data[column.key]==='add submit' || data[column.key]==='submit'" class="CRFActionButton">
+                    <img src="~/assets/img/upload.png" class="button" @click="submit()"/>
+                  </ul>
+                </div>
+              </span>
               <span v-else-if="column.type === 'clickable'">
                 <a v-if="data['disease'] === 'Measles/Rubella'"
                   style="color: #346083; text-decoration-line: underline"
@@ -141,7 +207,7 @@
                   :href="'/view' + data['type'] + data['disease']">
                   {{ data[column.key] }}
                 </a>
-                <a v-else-if="(pageType === 'all' && data['type'] === 'CRF') || pageType === 'crfCase'"
+                <a v-else-if="(pageType === 'all' && data['type'] !== 'CIF') || pageType === 'crfCase'"
                   style="color: #346083; text-decoration-line: underline"
                   :href="'/view' + 'CRF' + data['disease'] + 'Case'">
                   {{ data[column.key] }}
@@ -151,7 +217,7 @@
                   :href="'/view' + 'CIF' + data['disease']">
                   {{ data[column.key] }}
                 </a>
-                <a v-else-if="pageType === 'crf'"
+                <a v-else-if="pageType === 'crfDRU' || pageType === 'crfCHD'"
                   style="color: #346083; text-decoration-line: underline"
                   :href="'/view' + 'CRF' + data['disease']">
                   {{ data[column.key] }}
@@ -221,9 +287,11 @@ export default {
       pageType: '',
       diseaseOpen: false,
       cityOpen: false,
-      statusOpen: false,
+      caseStatusOpen: false,
+      submitStatusOpen: false,
+      reportStatusOpen: false,
       diseaseFilters: {
-        options: ['Measles','Diphtheria','Neonatal Tetanus','Pertussis','Meningococcal Disease',
+        options: ['Measles/Rubella','Diphtheria','Neonatal Tetanus','Pertussis','Meningococcal Disease',
         ],
         selected: [],
       },
@@ -246,10 +314,20 @@ export default {
         'Valenzuela City',],
         selected: [],
       },
-      statusFilters: {
+      caseStatusFilters: {
         options: ['Suspected', 'Probable', 'Confirmed'],
         selected: [],
       },
+      submitStatusFilters: {
+        options: ['Ongoing', 'Pushed', 'Submitted'],
+        selected: [],
+      },
+      reportStatusFilters: {
+        options: ['None', 'Zero Report', 'Case Submitted'],
+        selected: [],
+      },
+      dataFiltered: [],
+      dataSearched: [],
       dataSets: [],
       requestParams: {
         take: 10,
@@ -272,6 +350,8 @@ export default {
     this.pageType = this.casetype;
     // this.requestParams.sortedKey = this.options.columns[0].key;
     this.filterOff();
+    this.dataFiltered = this.datavalues;
+    this.dataSearched = this.datavalues;
     this.dataSets = this.datavalues;
 	console.log(this.datavalues);
     this.sortedKeyValue(this.requestParams.sortedKey, this.requestParams.sortedType);
@@ -330,30 +410,9 @@ export default {
       // axios.post(this.options.source, this.requestParams).then(function (response) {}).catch(function (err) {console.log(err);});
     },
     search() {
-      this.currentPage = 1;
       // this.readData();
-      this.dataSets = [];
+      this.dataSearched = [];
       // IF NO FILTERS
-      if (this.diseaseFilters.selected.length === 0 && this.cityFilters.selected.length === 0 && this.statusFilters.selected.length === 0)
-        for (let i = 0; i < Object.keys(this.datavalues).length; i++)
-          for (let j = 0; j < this.options.columns.length; j++) {
-            const key = this.options.columns[j].key;
-            let value = this.datavalues[i][key];
-            if (typeof value !== 'undefined') {
-              value = value.toString();
-              if (value.includes(this.requestParams.search)) {
-                this.dataSets.push(this.datavalues[i]);
-                break;
-              }
-            }
-          }
-      // IF HAVE FILTERS
-      else this.filterSearch();
-      this.totalCount = Object.keys(this.dataSets).length;
-    },
-    searchFilter() {
-      this.dataSets = [];
-      // search
       for (let i = 0; i < Object.keys(this.datavalues).length; i++)
         for (let j = 0; j < this.options.columns.length; j++) {
           const key = this.options.columns[j].key;
@@ -361,72 +420,90 @@ export default {
           if (typeof value !== 'undefined') {
             value = value.toString();
             if (value.includes(this.requestParams.search)) {
-              this.dataSets.push(this.datavalues[i]);
+              this.dataSearched.push(this.datavalues[i]);
               break;
             }
           }
         }
-      const filtered = this.dataSets;
-      this.dataSets = [];
-      // filter
-      for (let i = 0; i < Object.keys(filtered).length; i++)
-        if (
-          (this.diseaseFilters.selected !== null && this.diseaseFilters.selected.includes(this.datavalues[i].disease)) ||
-          (this.cityFilters.selected !== null && this.cityFilters.selected.includes(this.datavalues[i].city)) ||
-          (this.statusFilters.selected !== null && this.statusFilters.selected.includes(this.datavalues[i].status))) {
-          this.dataSets.push(filtered[i]);
-        }
-      this.totalCount = Object.keys(this.dataSets).length;
-    },
-    filterSearch() {
-      this.dataSets = [];
-      // search
-      for (let i = 0; i < Object.keys(this.datavalues).length; i++)
-        if (
-          (this.diseaseFilters.selected !== null && this.diseaseFilters.selected.includes(this.datavalues[i].disease)) ||
-          (this.cityFilters.selected !== null && this.cityFilters.selected.includes(this.datavalues[i].city)) ||
-          (this.statusFilters.selected !== null && this.statusFilters.selected.includes(this.datavalues[i].status))) {
-          this.dataSets.push(this.datavalues[i]);
-        }
-      const searched = this.dataSets;
-      this.dataSets = [];
-      // search
-      for (let i = 0; i < Object.keys(searched).length; i++)
-        for (let j = 0; j < this.options.columns.length; j++) {
-          const key = this.options.columns[j].key;
-          let value = searched[i][key];
-          if (typeof value !== 'undefined') {
-            value = value.toString();
-            if (value.includes(this.requestParams.search)) {
-              this.dataSets.push(searched[i]);
-              break;
-            }
-          }
-        }
-      this.totalCount = Object.keys(this.dataSets).length;
+      this.getDataSet();
     },
     filter() {
-      this.currentPage = 1;
-      this.dataSets = [];
       // this.readData();
-      // IF FILTER NONE
-      if (this.diseaseFilters.selected.length === 0 && this.cityFilters.selected.length === 0 && this.statusFilters.selected.length === 0) {
-        if (this.requestParams.search !== '') this.search();
-        else this.dataSets = this.datavalues;
-      }
-      // NO SEARCH
-      else if (this.requestParams.search === '') {
+      this.dataFiltered = [];
+
+      if (this.diseaseFilters.selected.length === 0 && this.cityFilters.selected.length === 0 && this.caseStatusFilters.selected.length === 0
+        && this.submitStatusFilters.selected.length === 0 && this.reportStatusFilters.selected.length === 0)
+        this.dataFiltered = this.datavalues;
+
+      else if (this.pageType === 'crfCase' || this.pageType === 'addcrfID') {
         for (let i = 0; i < Object.keys(this.datavalues).length; i++)
-          if ((this.diseaseFilters.selected !== null && this.diseaseFilters.selected.includes(this.datavalues[i].disease)) ||
-            (this.cityFilters.selected !== null && this.cityFilters.selected.includes(this.datavalues[i].city)) ||
-            (this.statusFilters.selected !== null && this.statusFilters.selected.includes(this.datavalues[i].status))) {
-            this.dataSets.push(this.datavalues[i]);
+          if ((this.cityFilters.selected.length === 0 || this.cityFilters.selected.includes(this.datavalues[i].city)) &&
+            (this.caseStatusFilters.selected.length === 0 || this.caseStatusFilters.selected.includes(this.datavalues[i].status))) {
+            this.dataFiltered.push(this.datavalues[i]);
           }
       }
-      // HAVE SEARCH
-      else this.searchFilter();
+      
+      else if (this.pageType === 'crfDRU') {
+        for (let i = 0; i < Object.keys(this.datavalues).length; i++)
+          if ((this.diseaseFilters.selected.length === 0 || this.diseaseFilters.selected.includes(this.datavalues[i].disease)) &&
+            (this.submitStatusFilters.selected.length === 0 || this.submitStatusFilters.selected.includes(this.datavalues[i].submitStatus)) &&
+            (this.reportStatusFilters.selected.length === 0 || this.reportStatusFilters.selected.includes(this.datavalues[i].reportStatus))) {
+            this.dataFiltered.push(this.datavalues[i]);
+          }
+      }
 
+      else if (this.pageType === 'crfCHD') {
+        for (let i = 0; i < Object.keys(this.datavalues).length; i++)
+          if ((this.diseaseFilters.selected.length === 0 || this.diseaseFilters.selected.includes(this.datavalues[i].disease)) &&
+            (this.cityFilters.selected.length === 0 || this.cityFilters.selected.includes(this.datavalues[i].city)) &&
+            (this.submitStatusFilters.selected.length === 0 || this.submitStatusFilters.selected.includes(this.datavalues[i].submitStatus)) &&
+            (this.reportStatusFilters.selected.length === 0 || this.reportStatusFilters.selected.includes(this.datavalues[i].reportStatus))) {
+            this.dataFiltered.push(this.datavalues[i]);
+          }
+      }
+
+      else 
+        for (let i = 0; i < Object.keys(this.datavalues).length; i++)
+          if ((this.diseaseFilters.selected.length === 0 || this.diseaseFilters.selected.includes(this.datavalues[i].disease)) &&
+            (this.cityFilters.selected.length === 0 || this.cityFilters.selected.includes(this.datavalues[i].city)) &&
+            (this.caseStatusFilters.selected.length === 0 || this.caseStatusFilters.selected.includes(this.datavalues[i].caseLevel))) {
+            this.dataFiltered.push(this.datavalues[i]);
+          }
+
+      this.getDataSet();
+    },
+    getDataSet() {
+      this.dataSets = [];
+
+      if (Object.keys(this.datavalues).length === Object.keys(this.dataSearched).length && 
+          Object.keys(this.datavalues).length === Object.keys(this.dataFiltered).length)
+          this.dataSets = this.datavalues;
+
+      else if (Object.keys(this.datavalues).length === Object.keys(this.dataFiltered).length)
+          this.dataSets = this.dataSearched;
+
+      else if (Object.keys(this.datavalues).length === Object.keys(this.dataSearched).length)
+          this.dataSets = this.dataFiltered;
+      
+      else if (this.pageType.includes('crf')) {
+        for (let i=0; i< Object.keys(this.dataFiltered).length; i++)
+          for (let j=0; j< Object.keys(this.dataSearched).length; j++)
+            if (this.dataFiltered[i].crfNo === this.dataSearched[j].crfNo)
+              this.dataSets.push(this.dataFiltered[i]);
+      }
+
+      else {
+        for (let i=0; i< Object.keys(this.dataFiltered).length; i++)
+          for (let j=0; j< Object.keys(this.dataSearched).length; j++)
+            if (this.dataFiltered[i].caseID === this.dataSearched[j].caseID)
+              this.dataSets.push(this.dataFiltered[i]);
+      }
+
+      // else this.dataSets = this.dataFiltered.concat(this.dataSearched)
+
+      this.currentPage = 1;
       this.totalCount = Object.keys(this.dataSets).length;
+      console.log('DATA:' + this.dataSets)
     },
     filterOff() {
       this.filters = [];
@@ -492,10 +569,28 @@ export default {
 
       return rangeWithDots;
     },
+    submit () {
+      // TO DO: Submit CRF
+    }
   },
 }
 </script>
 <style>
+.actionButtons {
+  vertical-align:middle;
+  text-align: center;
+  display: inline-flex;
+  flex-direction: row;
+}
+
+.button {
+  width: 15px;
+  height: 15px;
+  /* margin: 0 5px; */
+  margin: -5px 5px 5px;
+  cursor: pointer;
+}
+
 .caseStatus {
   color:white;
   padding:2px 10px;
