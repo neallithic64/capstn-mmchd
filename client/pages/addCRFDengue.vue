@@ -22,12 +22,30 @@
         </div>
         <div class="additionalButtons">
           <button class="addText"><a href="/addCRFDengueCase">+ add a case</a></button>
-          <div class="CRFendButton">
-            <!-- <button class="save-button" type="button" @click="save()">
-              Save
-            </button> -->
-            <button class="submit-button" type="button" @click="submit()">
-              Submit
+        </div>
+        <div class="CRFendButton">
+          <button class="save-button" type="button" @click="save()">
+            Save
+          </button>
+          <button class="submit-button" type="button" @click="submit()">
+            Submit
+          </button>
+        </div>
+      </div>
+    </div>
+    <div v-show="popupOpen" class="overlay">
+      <div class="overlay-form">
+        <!-- <button class="close" @click="popup()">x</button> -->
+        <h2 style="color:red; text-align:center">!! POP UP THING !!</h2>
+        <hr style="border-color: inherit;"/>
+        <div>
+          <p> By checking this eme you eme</p>
+          <div class="popupButtons">
+            <button class="back-button" type="button" @click="popup()">
+              Not allow
+            </button>
+            <button class="next-button" type="button" @click="popup()">
+              Allow
             </button>
           </div>
         </div>
@@ -49,6 +67,7 @@ export default {
   },
   data() {
     return {
+      popupOpen: true,
       selectAdd: true,
       isPrint: false,
       patients: [],
@@ -230,7 +249,7 @@ export default {
   mounted() {},
   methods: {
     popup() {
-      this.selectAdd = !this.selectAdd
+      this.popupOpen = !this.popupOpen
     },
     inputEdit() {
       return false
@@ -312,7 +331,7 @@ hr {
   display: block;
   z-index: 11;
   margin: 0px;
-  padding: 90px;
+  padding: 20% 35%;
   width: -webkit-fill-available;
   height: -webkit-fill-available;
   /* background: gray; */
@@ -324,6 +343,12 @@ hr {
   /* border: 100px solid rgba(100, 100, 100, 0.4); */
 }
 
+@media only screen and (max-width:1000px) {
+  .overlay  {
+    padding: 30% 15%;
+  }
+}
+
 .overlay-form {
   padding: 30px;
   border-radius: 40px;
@@ -331,6 +356,12 @@ hr {
   width: -webkit-fill-available;
   height: -webkit-fill-available;
   overflow-y: auto;
+}
+
+.popupButtons {
+  /* margin: -10px 0 5px; */
+  margin: 10px auto;
+  text-align: center;
 }
 
 .pageHeader {
@@ -464,8 +495,8 @@ h3 {
 }
 
 .additionalButtons {
-  position: relative;
-  /* position: absolute; */
+  /* position: relative; */
+  position: absolute;
   margin-top: -115px;
   margin-left: 15px;
 }
@@ -478,12 +509,12 @@ h3 {
 .CRFendButton {
   /* margin: -10px 0 5px; */
   float: right;
-  margin-top: 65px;
+  margin-top: -40px;
   margin-right: 16px;
   margin-bottom: 50px;
 }
 
-.submit-button {
+.submit-button, .next-button {
   width: 150px;
   height: 38px;
   max-width: 100%;
@@ -496,11 +527,11 @@ h3 {
   border: #346083 solid 0.75px;
 }
 
-.submit-button:hover {
+.submit-button:hover, .next-button:hover {
   background-color: #346083;
 }
 
-.save-button {
+.save-button, .back-button {
   width: 150px;
   height: 38px;
   max-width: 100%;
@@ -512,7 +543,7 @@ h3 {
   color: #346083;
 }
 
-.save-button:hover {
+.save-button:hover, .back-button:hover {
   border: #346083 solid 1px;
 }
 

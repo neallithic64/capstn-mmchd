@@ -12,8 +12,11 @@
           <ul :class="formListClass('cif')" @click="clickTab('cif')">
             CIF
           </ul>
-          <ul :class="formListClass('crf')" @click="clickTab('crf')">
-            CRF
+          <ul :class="formListClass('crfDRU')" @click="clickTab('crfDRU')">
+            CRF DRU
+          </ul>
+          <ul :class="formListClass('crfCHD')" @click="clickTab('crfCHD')">
+            CRF CHD
           </ul>
         </div>
         <div v-show="!isPrint" class="CRFActionButtons">
@@ -47,10 +50,16 @@
             :casetype="'cif'"
           />
           <dataTable
-            v-show="caseTab === 'crf'"
+            v-show="caseTab === 'crfDRU'"
             :options="tableOptions"
-            :datavalues="crfData"
-            :casetype="'crf'"
+            :datavalues="crfDRUData"
+            :casetype="'crfDRU'"
+          />
+          <dataTable
+            v-show="caseTab === 'crfCHD'"
+            :options="tableOptions"
+            :datavalues="crfCHDData"
+            :casetype="'crfCHD'"
           />
         </div>
       </div>
@@ -278,6 +287,125 @@ export default {
           sortable: true,
         },
       ],
+      crfDRUColumns: [
+        {
+          title: 'Week No.',
+          key: 'weekNo',
+          type: 'text',
+          sortable: true,
+        },
+        {
+          title: 'CRF No.',
+          key: 'crfNo',
+          type: 'clickable',
+          source: 'cases',
+          uniqueField: 'id',
+          sortable: true,
+        },
+        {
+          title: 'Disease',
+          key: 'disease',
+          type: 'text',
+          source: 'cases',
+          uniqueField: 'id',
+          sortable: true,
+          filter: true,
+        },
+        {
+          title: 'Submit Status',
+          key: 'submitStatus',
+          type: 'text',
+          filter: true,
+        },
+        {
+          title: 'Submitted on',
+          key: 'submittedDate',
+          type: 'text',
+          dateFormat: true,
+          currentFormat: 'YYYY-MM-DD',
+          expectFormat: 'DD MMM YYYY',
+          // sortable: true,
+        },
+        {
+          title: 'Report Status',
+          key: 'reportStatus',
+          type: 'text',
+          dateFormat: true,
+          currentFormat: 'YYYY-MM-DD',
+          expectFormat: 'DD MMM YYYY',
+          filter: true,
+        },
+        {
+          title: 'Action',
+          key: 'action',
+          type: 'text',
+        },
+      ],
+      crfCHDColumns: [
+        {
+          title: 'Week No.',
+          key: 'weekNo',
+          type: 'text',
+          sortable: true,
+        },
+        {
+          title: 'CRF No.',
+          key: 'crfNo',
+          type: 'clickable',
+          source: 'cases',
+          uniqueField: 'id',
+          sortable: true,
+        },
+        {
+          title: 'Disease',
+          key: 'disease',
+          type: 'text',
+          source: 'cases',
+          uniqueField: 'id',
+          sortable: true,
+          filter: true,
+        },
+        {
+          title: 'DRU ID',
+          key: 'druID',
+          type: 'text',
+          source: 'cases',
+          uniqueField: 'id',
+        },
+        {
+          title: 'City',
+          key: 'city',
+          type: 'text',
+          source: 'cases',
+          uniqueField: 'id',
+          sortable: true,
+          filter: true,
+        },
+        {
+          title: 'Submit Status',
+          key: 'submitStatus',
+          type: 'text',
+          filter: true,
+        },
+        {
+          title: 'Submitted on',
+          key: 'submittedDate',
+          type: 'text',
+          dateFormat: true,
+          currentFormat: 'YYYY-MM-DD',
+          expectFormat: 'DD MMM YYYY',
+          // sortable: true,
+        },
+        {
+          title: 'Report Status',
+          key: 'reportStatus',
+          type: 'text',
+          dateFormat: true,
+          currentFormat: 'YYYY-MM-DD',
+          expectFormat: 'DD MMM YYYY',
+          filter: true,
+        },
+      ],
       allData: [],
       cifData: [
         {
@@ -319,6 +447,97 @@ export default {
           submittedDate: '2020-12-10',
           updatedDate: '2020-1-10',
           status: 'Confirmedd',
+        },
+      ],
+      crfDRUData: [
+        {
+          weekNo: '2021-21',
+          crfNo: 35,
+          disease: 'Dengue',
+          submitStatus: 'Ongoing',
+          submittedDate: '2020-11-10',
+          reportStatus: 'None',
+          action: 'add submit'
+        },
+        {
+          weekNo: '2021-22',
+          crfNo: 15,
+          disease: 'Dengue',
+          submitStatus: 'Pushed',
+          submittedDate: '2020-11-10',
+          reportStatus: 'Case Submitted',
+          action: 'add'
+        },
+        {
+          weekNo: '2021-31',
+          crfNo: 25,
+          disease: 'Dengue',
+          submitStatus: 'Submitted',
+          submittedDate: '2020-11-10',
+          reportStatus: 'Zero Report',
+          action: 'submit'
+        },
+      ],
+      crfCHDData: [
+        {
+          weekNo: '2021-21',
+          crfNo: 35,
+          disease: 'Diphtheria',
+          druID: 'ABC',
+          city: 'Manila City',
+          submitStatus: 'Submitted',
+          submittedDate: '2020-11-10',
+          reportStatus: 'Case Submitted',
+        },
+        {
+          weekNo: '2021-21',
+          crfNo: 35,
+          disease: 'Diphtheria',
+          druID: 'ABC',
+          city: 'Manila City',
+          submitStatus: 'Submitted',
+          submittedDate: '2020-11-10',
+          reportStatus: 'Case Submitted',
+        },
+        {
+          weekNo: '2021-23',
+          crfNo: 55,
+          disease: 'Dengue',
+          druID: 'ABC',
+          city: 'Manila City',
+          submitStatus: 'Pushed',
+          submittedDate: '2020-11-20',
+          reportStatus: 'Zero Report',
+        },
+        {
+          weekNo: '2021-23',
+          crfNo: 55,
+          disease: 'Neonatal Tetanus',
+          druID: 'ABC',
+          city: 'Malabon City',
+          submitStatus: 'Pushed',
+          submittedDate: '2020-11-20',
+          reportStatus: 'Case Submitted',
+        },
+        {
+          weekNo: '2021-23',
+          crfNo: 55,
+          disease: 'Pertussis',
+          druID: 'ABC',
+          city: 'Makati City',
+          submitStatus: 'Pushed',
+          submittedDate: '2020-11-20',
+          reportStatus: 'Case Submitted',
+        },
+        {
+          weekNo: '2021-23',
+          crfNo: 55,
+          disease: 'Pertussis',
+          druID: 'ABC',
+          city: 'Makati City',
+          submitStatus: 'Pushed',
+          submittedDate: '2020-11-20',
+          reportStatus: 'Case Submitted',
         },
       ],
       crfData: [
@@ -364,8 +583,10 @@ export default {
       if (this.caseTab === 'all') this.tableOptions.columns = this.allColumns;
       else if (this.caseTab === 'cif')
         this.tableOptions.columns = this.cifColumns;
-      else if (this.caseTab === 'crf')
-        this.tableOptions.columns = this.crfColumns;
+      else if (this.caseTab === 'crfDRU')
+        this.tableOptions.columns = this.crfDRUColumns;
+      else if (this.caseTab === 'crfCHD')
+        this.tableOptions.columns = this.crfCHDColumns;
     },
     formListClass(caseTab) {
       if (caseTab === this.caseTab) return 'formSummaryItems selected';
@@ -401,7 +622,8 @@ export default {
       var colName, columns='';
       if (this.caseTab==='all') colName = this.allColumns;
       else if (this.caseTab==='cif') colName = this.cifColumns;
-      else if (this.caseTab==='crf') colName = this.crfColumns;
+      else if (this.caseTab==='crfDRU') colName = this.crfDRUColumns;
+      else if (this.caseTab==='crfCHD') colName = this.crfCHDColumns;
 
       for (let i=0; i<Object.keys(colName).length; i++) {
         columns += colName[i].title;
@@ -429,7 +651,8 @@ export default {
     getTable() {
       if (this.caseTab==='all') return this.allData;
       else if (this.caseTab==='cif') return this.cifData;
-      else if (this.caseTab==='crf') return this.crfData;
+      else if (this.caseTab==='crfDRU') return this.crfDRUData;
+      else if (this.caseTab==='crfCHD') return this.crfCHDData;
     }
   },
 }
@@ -542,7 +765,8 @@ body {
 .printButton {
   width: 30px;
   height: 30px;
-  margin: 0 5px;
+  /* margin: 0 5px; */
+  margin: -5px 5px 5px;
 }
 
 .exportButtons {

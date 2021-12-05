@@ -25,55 +25,28 @@
                 <img src="~/assets/img/pen.png" />
               </ul>
             </div>
-            <!-- <div
-              v-show="editStatus"
-              class="CRFActionButtons"
-              style="margin-top: 5px"
-            >
-              <select
-                v-model="formData.cases.caseLevel"
-                style="margin: -10px 0 -15px"
-              >
-                <option
-                  v-for="(name, value, index) in caseClassification"
-                  :key="index"
-                  :value="value"
-                  selected="formData.cases.caseLevel"
-                >
-                  {{ value }}
-                </option>
-              </select>
-              <ul
-                class="CRFEdit"
-                style="margin-top: 7px;margin-left: 5px;"
-                @click="editCase = !editCase"
-              >
-                <img id="saveIcon" src="~/assets/img/save.png" />
-              </ul>
-            </div> -->
           </span>
           <div v-show="!editStatus && !isPrint" class="CRFActionButtons">
             <img
               src="~/assets/img/pdf.png"
-              class="printButton"
+              class="printCaseButton"
               @click="downloadPDF"
             />
           </div>
         </div>
       </div>
-      <div class="CRFreports">
-        <!-- <div class="CRFreports"> -->
-        <p>
-          Reported by: <b>{{ formData.cases.reporterName }}</b>
-        </p>
-        <p>Type: <b>Private Laboratory</b></p>
-        <!-- </div>
-        <div class="CRFreports"> -->
-        <!-- <p>Case Level: <b>1</b></p> -->
-        <p>
-          Reported Date: <b>{{ formData.cases.reportDate }}</b>
-        </p>
-        <!-- </div> -->
+      <div class="viewCRF-details" style="align-text: left">
+        <div class="CIFnumbers">
+          <p>DRU City: <b>Manila</b></p>
+          <p>DRU Name: <b>HAKDOG</b></p>
+          <p>DRU Type: <b>type</b></p>
+          <p>DRU Address: <b>house</b></p>
+        </div>
+        <div class="CRFstatus" style="align-text: right">
+          <p>Week No: <b> {{ weekNo }} </b> </p>
+          <p>Reported Date: <b>{{ formData.cases.reportDate }}</b></p>
+          <p>Last Updated: <b>{{ formData.cases.updatedDate }}</b></p>
+        </div>
       </div>
       <div v-show="!isPrint" class="CRF-SummaryContainer">
         <ul
@@ -1673,9 +1646,9 @@ h2 {
 }
 
 b {
-  color: #346083;
+  /* color: #346083; */
   font-size: 18px;
-  font-weight: 400;
+  font-weight: 600;
 }
 
 .CRFreports {
@@ -1705,9 +1678,11 @@ b {
   background: #a3a3a3;
 } */
 
-.printButton {
+.printCaseButton {
   width: 30px;
   height: 30px;
+  margin-top: 10px;
+  margin-bottom: -10px;
 }
 
 .CRFEdit {
