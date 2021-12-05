@@ -532,7 +532,7 @@ const indexFunctions = {
 		}
 	},
 
-	postUpdateCaseDef: async function(req, res) {
+	postEditDiseaseDef: async function(req, res) {
 		let { diseaseDefs, diseaseID } = req.body;
 		let arrDefs = Object.keys(diseaseDefs), result = true, query = {
 			diseaseID: diseaseID,
@@ -542,7 +542,9 @@ const indexFunctions = {
 		try {
 			for (let i = 0; result && i < arrDefs.length; i++) {
 				query.class = arrDefs[i];
-				result = await db.updateRows("mmchddb.CASE_DEFINITIONS", query, diseaseDefs[i]);
+				let result = await db.updateRows("mmchddb.CASE_DEFINITIONS", query, {
+					definition: Object.values(diseaseDefs)[i]
+				});
 			}
 			if (result) res.status(200).send("Update disease success");
 			else res.status(500).send("Update Case Definition error!");
