@@ -106,8 +106,8 @@ export default {
       isOpen: true,
       pageNum: -1,
       formSection: {
-        diseaseNames: {
-        }
+        diseaseNames: {},
+		diseaseIDs: {}
       },
       allCaseDefs: {},
       diseaseDefs: {},
@@ -125,11 +125,14 @@ export default {
     const diseases = (await axios.get('http://localhost:8080/api/getAllDiseases')).data;
     
     // setting diseaseNames
-    const temp = {};
+    const tempA = {};
+	const tempB = {};
     for (let i = 0; i < diseases.length; i++) {
-      temp[i] = diseases[i].diseaseName;
+      tempA[i] = diseases[i].diseaseName;
+	  tempB[i] = diseases[i].diseaseID;
     }
-    this.formSection.diseaseNames = temp;
+    this.formSection.diseaseNames = tempA;
+    this.formSection.diseaseIDs = tempB;
 
     // putting all caseDefs in one object
     let defs;
@@ -143,8 +146,6 @@ export default {
       this.diseaseDefs[this.allCaseDefs[this.formSection.diseaseNames[0]][i].class] = this.allCaseDefs[this.formSection.diseaseNames[0]][i].definition;
     }
 
-    // eslint-disable-next-line no-console
-    // console.log(this.diseaseDefs);
   },
   methods: {
     formColor(index) {
@@ -161,7 +162,7 @@ export default {
       const tempo = this.allCaseDefs[value];
       
       // deleting values of initial diseaseDefs
-      for (const member in this.diseaseDefs) delete this.diseaseDefs[member];
+      for (const m in this.diseaseDefs) delete this.diseaseDefs[m];
       
       // re-populating diseaseDefs with newly clicked disease
       for (let j = 0; j < tempo.length; j++) {
@@ -169,7 +170,7 @@ export default {
       }
 
       // eslint-disable-next-line no-console
-      console.log(this.newDefs);
+      // console.log(this.diseaseDefs);
     },
     editable() {
       const elements = document.getElementsByClassName('defsTextArea');
@@ -184,7 +185,7 @@ export default {
         leftButtons[i].disabled = true;
       }
     },
-    save() {
+    async save() {
       const elements = document.getElementsByClassName('defsTextArea');
       for (let i = 0; i < elements.length; i++) {
         elements[i].readOnly = true;
@@ -197,14 +198,17 @@ export default {
         leftButtons[i].disabled = false;
       }
 
+      const result = await axios.post('http://localhost:8080/api/editDiseaseDef', {
+	    diseaseDefs: this.diseaseDefs,
+		diseaseID: this.formSection.diseaseIDs[this.pageNum]
+      });
+	  console.log(result);
       // TODO: add notif send to all drus that a case definition was edited
       // notif message: The case definitions of <disease> have been updated.
       // notif type: updateNotif
       // receiver: all DRUs
       // redirectTo: addCIF/CRF url of the disease that was updated
 
-      // eslint-disable-next-line no-console
-      // console.log(this.diseaseDefs);
     },
     instruct() {
       this.pageNum = -1;

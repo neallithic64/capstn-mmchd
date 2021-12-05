@@ -26,7 +26,7 @@ router.post("/newPatient", m1Cont.postAddPatient);
 router.post("/newEvent", m1Cont.postAddEvent);
 router.post("/newCase", m1Cont.postNewCase);
 
-router.post("/updateDisease", m1Cont.postUpdateCaseDef);
+router.post("/editDiseaseDef", m1Cont.postEditDiseaseDef);
 router.post("/updateCaseStatus", m1Cont.postUpdateCaseStatus);
 
 
