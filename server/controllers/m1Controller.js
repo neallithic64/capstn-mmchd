@@ -106,6 +106,16 @@ function Event(eventID, userID, addressID, remarks, caseStatus, dateSubmitted) {
 	this.dateSubmitted = dateSubmitted;
 }
 
+function Notification(notificationID, receiverID, type, message, caseID, dateCreated, redirectTo){
+	this.notificationID = notificationID;
+	this.receiverID = receiverID;
+	this.type = type;
+	this.message = message;
+	this.caseID = caseID;
+	this.dateCreated = dateCreated;
+	this.redirectTo = redirectTo;
+}
+
 /** ON ID CREATION
 */
 function getPrefix(table) {
@@ -303,6 +313,30 @@ const indexFunctions = {
 		}
 	},
 	
+	getAllNotifs: async function(req,res){
+		try {
+			let match = await db.findRows("mmchddb.NOTIFICATIONS", {receiverID: req.query.userID});
+
+			res.status(200).send(rows);
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
+
+	getNotification: async function(req,res){
+		try {
+			let match = await db.findRows("mmchddb.NOTIFICATIONS", {notificationID : req.query.notificationID});
+
+			if (match.length > 0)
+				res.status(200).send(match);
+			else
+				res.status(500).send("No notifications found");
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
 	/*
 	 * POST METHODS
 	 */
@@ -580,7 +614,19 @@ const indexFunctions = {
 					// TODO: sending of notification as well to the bodies involved
 					// another insert, but this time at the NOTIFS table!
 					// await db.insertOne("mmchddb.NOTIFS", { something something });
-					res.status(200).send("Case has been updated!");
+					let disease = await db.findRows("mmchddb.DISEASES",{diseaseID:caseAudit.diseaseID});
+					let notification = new Notification(null, caseData.reportedBy,'updateNotif', 
+						'The case level of ' + disease[0].diseaseName + ' Case ' + caseId + 'has been updated to ' + newStatus + '.', 
+						caseId, caseAudit.dateModified, "testing");
+					notification.caseID = (await generateID("mmchddb.NOTIFICATIONS")).id;
+					let newNotif = db.insertOne("mmchddb.NOTIFICATIONS", notification);
+					if(newNotif){
+						res.status(200).send("Case has been updated!");
+					}
+					else{
+						console.log("Add Notification failed");
+						res.status(500).send("Add Notification failed");
+					} 
 				} else res.status(500).send("Error making db transaction.");
 			} else res.status(404).send("No case with such ID found.");
 		} catch (e) {
