@@ -43,7 +43,14 @@ function makeWhereLikeClause(obj) {
 	}
 	return entriesArr.join(" AND ") + ";";
 }
-	
+
+function makeWhereOrClause(obj, field) {
+	let entriesArr = [];
+	for (let [key, value] of Object.entries(obj)) {
+		entriesArr.push(field + " = " + "'" + value + "'");
+	}
+	return entriesArr.join(" OR ") + ";";
+}
 /** Expected input:
 	Object {
 		column1: "value1",
@@ -230,7 +237,38 @@ const database = {
 			console.log(e);
 			return false;
 		}
-	}
+	},
+
+	/**
+	 * Returns rows from patients that matches the pattern of the name
+	 */
+	 findUserIDsWithType: async function(userType) {
+		try {
+			let statement = "SELECT userID FROM mmchddb.USERS  WHERE " + makeWhereOrClause(userType, 'userType');
+			let [rows, fields] = await pool.execute(statement);
+			return rows;
+		} catch (e) {
+			console.log(e);
+			return false;
+		}
+	},
+
+	/** Inserts mutiple rows into Notification
+	 *  TODO : Convert function into a more generalized function
+	 */
+	 insertNotificationData: async function(object) {
+		try {
+			console.log(object);
+			let statement = "INSERT INTO mmchddb.NOTIFICATIONS (notificationID, receiverID, type, message, caseID, dateCreated, redirectTo) VALUES ?";
+			let [rows, fields] = await pool.query(statement, [object]);
+			console.log("Inserted " + rows.affectedRows + " rows");
+			// if (rows.serverStatus === 2)
+			return true;
+		} catch (e) {
+			console.log(e);
+			return false;
+		}
+	},
 };
 
 module.exports = database;
