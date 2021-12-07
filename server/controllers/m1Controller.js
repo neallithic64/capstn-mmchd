@@ -260,23 +260,10 @@ const indexFunctions = {
 	},
 	
 	mkData: async function(req, res) {
-		try {
-			let disease = await db.findRows("mmchddb.DISEASES",{"diseaseID" : 'DI-0000000000001'});
-			let result = await sendBulkNotifs(DRUUserTypes, 'updateNotif', 'The case definitions of ' + 
-							disease[0].diseaseName + ' have been updated', null);
-			if(result)
-			{
-				res.status(200).send("Update Disease Case Successful");
-			}
-			else res.status(500).send("Add Notifications Failed");
-		} catch (error) {
-			console.log(error);
-			res.status(500).send("Server error");
-		}
-		// let r = await db.findAll("mmchddb.TARGETS_REF");
-		// // let r = await db.updateRows("mmchddb.TARGETS_REF", {targetDesc: "desc1"}, {targetDesc: "desc999"});
-		// console.log(r);
-		// res.status(200).send("exec done");
+		let r = await db.findAll("mmchddb.TARGETS_REF");
+		// let r = await db.updateRows("mmchddb.TARGETS_REF", {targetDesc: "desc1"}, {targetDesc: "desc999"});
+		console.log(r);
+		res.status(200).send("exec done");
 	},
 	
 	getAllDiseases: async function(req, res) {
