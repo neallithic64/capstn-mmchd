@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express();
-
+const cron = require('node-cron');
 const m1Cont = require("../controllers/m1Controller");
 // const middleware = require("../middlewares/indexMiddleware");
 
@@ -16,6 +16,8 @@ router.get("/getPatientAutofill", m1Cont.getPatientAutofill);
 router.get("/getCaseDefs", m1Cont.getCaseDefinitions);
 router.get("/getUser", m1Cont.getUser);
 router.get("/getCases", m1Cont.getCases);
+router.get("/getNotifs",m1Cont.getAllNotifs);
+router.get("/getNotification", m1Cont.getNotification);
 
 // POST Routes
 router.post("/login", m1Cont.postLogin);
@@ -29,7 +31,9 @@ router.post("/newCase", m1Cont.postNewCase);
 router.post("/editDiseaseDef", m1Cont.postEditDiseaseDef);
 router.post("/updateCaseStatus", m1Cont.postUpdateCaseStatus);
 
-
+//Cron Routes
+cron.schedule("00 14 * * 3", m1Cont.cronCRFDeadlineNotif);
+cron.schedule("00 17 * * 5", m1Cont.cronCRFPushData);
 /* 404 PAGE
 router.get("*", function(req, res) {
 	res.send("page not found!");
