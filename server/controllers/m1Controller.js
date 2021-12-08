@@ -3,6 +3,7 @@ const saltRounds = 10;
 
 const db = require("../models/db");
 
+const DRUUserTypes = ['BHS','RHU','CHO', 'govtHosp', 'privHosp', 'clinic', 'privLab', 'airseaPort'];
 /** OBJECT CONSTRUCTORS
 */
 
@@ -106,6 +107,16 @@ function Event(eventID, userID, addressID, remarks, caseStatus, dateSubmitted) {
 	this.dateSubmitted = dateSubmitted;
 }
 
+function Notification(notificationID, receiverID, type, message, caseID, dateCreated, redirectTo){
+	this.notificationID = notificationID;
+	this.receiverID = receiverID;
+	this.type = type;
+	this.message = message;
+	this.caseID = caseID;
+	this.dateCreated = dateCreated;
+	this.redirectTo = redirectTo;
+}
+
 /** ON ID CREATION
 */
 function getPrefix(table) {
@@ -167,7 +178,7 @@ async function generateID(table, checkObj) {
 		if (!retObj.exists) {
 			let rowcount = await db.findRowCount(table);
 			let id = getPrefix(table);
-			for (let i = 0; i < 13 - rowcount.toString.length; i++)
+			for (let i = 0; i < 13 - rowcount.toString().length; i++)
 				id += '0';
 			id += rowcount.toString();
 			retObj.id = id;
@@ -175,6 +186,28 @@ async function generateID(table, checkObj) {
 		console.log(retObj);
 		return retObj;
 	} catch (e) {
+		console.log(e);
+		return false;
+	}
+}
+
+async function generateIDs(table, numRows){
+	try{
+		let rowcount = await db.findRowCount(table);
+		let ids = [];
+		if(numRows > 0) {
+			for(i = 0; i < numRows; i++) {
+				let tempID = getPrefix(table);
+				let suffix = rowcount + i;
+				for (let j = 0; j < 13 - suffix.toString().length; j++)
+					tempID += '0';
+				tempID += suffix.toString();
+				ids.push(tempID);
+			}
+			return ids;
+		}
+		else return false;
+	}catch(e){
 		console.log(e);
 		return false;
 	}
@@ -189,6 +222,30 @@ async function createCase(cases) {
 		console.log(e);
 		return false;
 	}
+}
+
+async function sendBulkNotifs(userTypes, notificationType, message, caseID) {
+	try {
+		let userIDs = await db.findUserIDsWithType(userTypes);
+		let newNotifications = Object.entries(await generateIDs("mmchddb.NOTIFICATIONS", userIDs.length));
+		let dateCreated = new Date();
+
+		newNotifications.forEach(function (element,index) {
+			element.push(userIDs[index].userID);
+			element.push(notificationType);
+			element.push(message);
+			element.push(caseID);
+			element.push(dateCreated);
+			element.push('http://localhost:8080/api/getNotification?notificationID=' + element[1]);
+			element.shift();
+		});
+
+		let result = await db.insertNotificationData(newNotifications);
+		return result;
+	} catch (error) {
+		console.log(error);
+		return false;
+	}	
 }
 
 const indexFunctions = {
@@ -303,6 +360,30 @@ const indexFunctions = {
 		}
 	},
 	
+	getAllNotifs: async function(req,res){
+		try {
+			let match = await db.findRows("mmchddb.NOTIFICATIONS", {receiverID: req.query.userID});
+
+			res.status(200).send(rows);
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
+
+	getNotification: async function(req,res){
+		try {
+			let match = await db.findRows("mmchddb.NOTIFICATIONS", {notificationID : req.query.notificationID});
+
+			if (match.length > 0)
+				res.status(200).send(match);
+			else
+				res.status(500).send("No notifications found");
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
 	/*
 	 * POST METHODS
 	 */
@@ -546,7 +627,14 @@ const indexFunctions = {
 					definition: Object.values(diseaseDefs)[i]
 				});
 			}
-			if (result) res.status(200).send("Update disease success");
+			if (result){
+				let disease = await db.findRows("mmchddb.DISEASES",{"diseaseID" : diseaseID});
+				result = await sendBulkNotifs(DRUUserTypes, 'updateNotif', 'The case definitions of ' + 
+								disease[0].diseaseName + ' have been updated', null);
+				if(result)
+					res.status(200).send("Update disease Successful");
+				else res.status(500).send("Add Notifications Failed");
+			}
 			else res.status(500).send("Update Case Definition error!");
 		} catch (e) {
 			console.log(e);
@@ -580,7 +668,19 @@ const indexFunctions = {
 					// TODO: sending of notification as well to the bodies involved
 					// another insert, but this time at the NOTIFS table!
 					// await db.insertOne("mmchddb.NOTIFS", { something something });
-					res.status(200).send("Case has been updated!");
+					let disease = await db.findRows("mmchddb.DISEASES",{diseaseID:caseAudit.diseaseID});
+					let notification = new Notification(null, caseData.reportedBy,'updateNotif', 
+						'CASE UPDATE: The case level of ' + disease[0].diseaseName + ' Case ' + caseId + 'has been updated to ' + newStatus + '.', 
+						caseId, caseAudit.dateModified, "testing");
+					notification.caseID = (await generateID("mmchddb.NOTIFICATIONS")).id;
+					let newNotif = db.insertOne("mmchddb.NOTIFICATIONS", notification);
+					if(newNotif){
+						res.status(200).send("Case has been updated!");
+					}
+					else{
+						console.log("Add Notification failed");
+						res.status(500).send("Add Notification failed");
+					} 
 				} else res.status(500).send("Error making db transaction.");
 			} else res.status(404).send("No case with such ID found.");
 		} catch (e) {
@@ -608,7 +708,66 @@ const indexFunctions = {
 			console.log(e);
 			res.status(500).send("Server error.");
 		}
-	}
+	},
+	
+	postSubmitCRF: async function(req, res) {
+		try {
+			// let {} = req.body;
+			/* MORBIDITY (monthly and quarterly, 62) (after cases are done)
+					FK: LGU/userID 
+					FK: diseaseID
+					Month/Quarter
+					Year
+					FK: Age range ID ("0-6 days")
+					City/Location
+					Sex
+					Count
+					dateCreated
+			*/
+			// let morbid = await db.insertOne("mmchddb.MORBIDITY", );
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error.");
+		}
+	},
+
+	/*
+	 * CRON METHODS
+	 */
+	cronCRFDeadlineNotif : async function() {
+		try {
+			let result = await sendBulkNotifs(DRUUserTypes,'deadlineNotif', 
+										'REMINDER: Please submit your Case Report Forms by Friday. If not submitted, forms will be automatically collected by Friday at 5:00PM.', null);
+			if(result) {
+				result = await sendBulkNotifs(['pidsrStaff', 'fhsisStaff'],'deadlineNotif', 'REMINDER: Please start reminding DRUs to submit their Case Report Forms', null);
+				if(result){
+					console.log("Adding notification success");
+				}else console.log("Adding Notification to Staff Failed");
+			} else console.log("Adding Notification to DRU Failed");
+		} catch (e) {
+			console.log(e);
+			console.log("Server Error");
+		}
+	},
+	cronCRFPushData : async function() {
+		try {
+			// TODO: Implement Automatic Push Data Approach
+
+			let date = new Date();
+			let JanOne = new Date(date.getFullYear(),0,1);
+			let numDay = Math.floor((date - JanOne) / (24 * 60 * 60 * 1000));
+			let week = Math.ceil((date.getDay() + 1 + numDay) / 7);
+			let result = await sendBulkNotifs(DRUUserTypes,'pushDataNotif', 
+										'SUBMISSION UPDATE: Your Case Report Forms for Week ' + week + ' has been automatically pushed to MMCHD-RESU', null);
+			if(result) 
+				console.log("Adding notification success");
+			else console.log("Adding Notification to DRU Failed");
+
+		} catch (e) {
+			console.log(e);
+			console.log("Server Error");
+		}
+	},
 };
 
 module.exports = indexFunctions;
