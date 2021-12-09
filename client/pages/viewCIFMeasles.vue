@@ -7,7 +7,7 @@
         <div class="CIFnumbers">
           <h1 style="margin: -10px 0">Case No. {{ formData.cases.caseID }}</h1>
           <h2 style="margin-top: -1px">
-            Patient No. {{ formData.patient.patientID }}
+            Patient No. <a href="/patient" class="patientlink"> {{ formData.patient.patientID }} </a>
           </h2>
         </div>
         <div class="CIFstatus" style="align-text: right">
@@ -2525,6 +2525,15 @@ body {
 h3 {
   font-size: 15px;
   font-weight: 600;
+}
+
+.patientlink {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.patientlink:hover {
+  text-decoration: underline;
 }
 
 .viewCIF-container {
