@@ -77,7 +77,7 @@
             </div>
           </form>
 
-          <form v-if="pageNum == 1 || pageNum == Object.keys(disease.formNames).length" id="measles1" type="submit" ref='page1'>
+          <form v-if="pageNum == 1 || pageNum == Object.keys(disease.formNames).length" id="measles1" ref='page1' type="submit">
             <div id="case-investigation-form" class="center">
               <h2 id="form-header">
                 {{ Object.values(disease.formNames)[1] }}
@@ -183,7 +183,7 @@
                       <input
                         id="Not Pregnant"
                         v-model="formData.caseData.pregWeeks"
-                        v-bind:value="0"
+                        :value="0"
                         name="pregWeeks"
                         type="radio"
                         :disabled="inputEdit()"
@@ -197,7 +197,7 @@
                       <input
                         id="pregnancyWeeks"
                         v-model="formData.caseData.pregWeeks"
-                        v-bind:value="-1"
+                        :value="-1"
                         name="pregWeeks"
                         type="radio"
                         :disabled="inputEdit()"

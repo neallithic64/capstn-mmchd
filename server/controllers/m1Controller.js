@@ -236,7 +236,7 @@ async function sendBulkNotifs(userTypes, notificationType, message, caseID) {
 			element.push(caseID);
 			element.push(dateCreated);
 			if(notificationType == 'updateNotif')
-				element.push('http://localhost:3000/editCaseDefs');
+				element.push('http://localhost:3000/caseDefs');
 			else
 				element.push('http://localhost:3000/allCases');
 			element.push(false);
