@@ -19,8 +19,9 @@
             :class="formListClass('crfDRU')" @click="clickTab('crfDRU')">
             CRF DRU
           </ul>
-          <ul v-if="$auth.user.userType === 'pidsrStaff' || $auth.user.userType === 'fhsisStaff' || $auth.user.userType === 'techStaff'">
-            CRF CHD
+          <ul v-if="$auth.user.userType === 'pidsrStaff' || $auth.user.userType === 'fhsisStaff' || $auth.user.userType === 'techStaff'"
+           :class="formListClass('crfCHD')" @click="clickTab('crfCHD')"> 
+           CRF CHD
           </ul>
         </div>
         <div v-show="!isPrint" class="CRFActionButtons">
