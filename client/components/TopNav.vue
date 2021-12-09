@@ -62,12 +62,7 @@
     </nuxt-link>
     <nuxt-link to="/bulletin"> Feedback Bulletin </nuxt-link>
     <nuxt-link to="/evaluation"> Evaluation </nuxt-link>
-    <nuxt-link
-      v-if="$auth.user.userType === 'lhsdChief' || $auth.user.userType === 'aehmdChief' || 
-      $auth.user.userType === 'resuHead' || $auth.user.userType === 'chdDirector'"
-      to="/editCaseDefs"> 
-      Case Definitions
-    </nuxt-link>
+    <nuxt-link to="/editCaseDefs"> Case Definitions </nuxt-link>
     <div v-if="$auth.user.userType === 'lhsdChief' || $auth.user.userType === 'aehmdChief' || 
       $auth.user.userType === 'resuHead' || $auth.user.userType === 'chdDirector' || $auth.user.userType === 'techStaff'" class="dropdown">
       <button class="dropbtn">
