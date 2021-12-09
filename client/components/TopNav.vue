@@ -128,7 +128,6 @@ export default {
   async fetch(){
     // get number of new notifications
     const count = (await axios.get('http://localhost:8080/api/getNewNotifs?userID=' + this.$auth.user.userID)).data;
-    console.log(count);
     this.newNotifs = count.newNotifCount;
   },
   methods: {
