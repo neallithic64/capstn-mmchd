@@ -1459,7 +1459,7 @@ export default {
       // TODO: this submit is the "save" type, the cases should only be visible to the DRU, not yet submitted to MMCHD
       this.formData.cases.diseaseID = this.diseaseID;
       this.formData.cases.reportedBy = this.$auth.user.userID;
-      const result = await axios.post('http://localhost:8080/api/newCase', {formData: this.formData});
+      const result = await axios.post('http://localhost:8080/api/newCase', {formData: this.formData, CRFID: this.$route.query.CRF});
       if (result.status === 200) {
         alert('case submitted!');
         window.location.href = '/allCases';

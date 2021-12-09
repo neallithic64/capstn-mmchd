@@ -21,7 +21,7 @@
           </div>
         </div>
         <div class="additionalButtons">
-          <button class="addText"><a href="/addCRFDengueCase">+ add a case</a></button>
+          <button class="addText"><a :href="'/addCRFDengueCase?CRFID=' + CRFID">+ add a case</a></button>
         </div>
         <div class="CRFendButton">
           <button class="save-button" type="button" @click="save()">
@@ -78,7 +78,7 @@ export default {
       patients: [],
       patientResult: [],
       disease: 'Dengue',
-      crfNo: '35',
+      CRFID: "",
       druID: 'ABC',
       submittedDate: 'Nov 11,2021',
       updatedDate: 'Nov 10, 2020',
