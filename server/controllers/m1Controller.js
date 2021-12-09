@@ -192,23 +192,21 @@ async function generateID(table, checkObj) {
 	}
 }
 
-async function generateIDs(table, numRows){
-	try{
+async function generateIDs(table, numRows) {
+	try {
 		let rowcount = await db.findRowCount(table);
 		let ids = [];
-		if(numRows > 0) {
-			for(i = 0; i < numRows; i++) {
+		if (numRows > 0) {
+			for (i = 0; i < numRows; i++) {
 				let tempID = getPrefix(table);
 				let suffix = rowcount + i;
 				for (let j = 0; j < 13 - suffix.toString().length; j++)
 					tempID += '0';
 				tempID += suffix.toString();
 				ids.push(tempID);
-			}
-			return ids;
-		}
-		else return false;
-	}catch(e){
+			} return ids;
+		} else return false;
+	} catch(e) {
 		console.log(e);
 		return false;
 	}
@@ -265,10 +263,23 @@ const indexFunctions = {
 	},
 	
 	mkData: async function(req, res) {
-		let r = await db.findAll("mmchddb.TARGETS_REF");
-		// let r = await db.updateRows("mmchddb.TARGETS_REF", {targetDesc: "desc1"}, {targetDesc: "desc999"});
-		console.log(r);
-		res.status(200).send("exec done");
+		Date.prototype.getWeek = function() {
+			let d = new Date(Date.UTC(this.getFullYear(), this.getMonth(), this.getDate()));
+			let dayNum = d.getUTCDay() || 7;
+			d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+			let yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+			return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+		}
+		let thisDate = new Date(), firstCRF = {
+			CRFID: (await generateID("mmchddb.CRFS")).id,
+			diseaseID: "DI-0000000000003",
+			userID: "US-0000000000000",
+			week: thisDate.getWeek(),
+			year: thisDate.getFullYear()
+		}
+		let r = await db.insertOne("mmchddb.CRFS", firstCRF);
+		if (r) res.status(200).send("exec done");
+		else res.status(500).send("problems");
 	},
 	
 	getAllDiseases: async function(req, res) {
@@ -353,12 +364,32 @@ const indexFunctions = {
 										INNER JOIN mmchddb.PATIENTS p ON c.patientID = p.patientID
 										INNER JOIN mmchddb.ADDRESSES a ON p.caddressID = a.addressID
 										LEFT JOIN mmchddb.CASE_AUDIT ca ON c.caseID = ca.caseID
-										LEFT JOIN mmchddb.CRFS cr ON c.caseID = cr.caseID
+										LEFT JOIN mmchddb.CRFS cr ON c.CRFID = cr.CRFID
 										GROUP BY c.caseID;`);
 			// CRFs have been JOINed, have to label the cases now as CIF or CRF.
 			for (let i = 0; i < match.length; i++) match[i].type = match[i].CRFID ? "CRF" : "CIF";
 			// console.log(match);
 			res.status(200).send(match);
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
+	
+	getCIF: async function(req, res) {
+		try {
+			let rows = await db.findRows("mmchddb.CASES", {caseID: req.query.caseID});
+			// console.log(rows);
+			res.status(200).send(rows);
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
+	
+	getCRF: async function(req, res) {
+		try {
+			
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
@@ -419,10 +450,8 @@ const indexFunctions = {
 					console.log(result);
 					if (result) {
 						req.session.user = match[0];
-						console.log(req.session);
-						// res.status(200).send("Login successful.");
-						// // ALTERNATIVE (to reconsider user type checking):
 						res.status(200).send({user: match[0]});
+						// res.status(200).send("Login successful.");
 					} else res.status(403).send("Incorrect password.");
 				});
 			} else res.status(403).send("No user found.");
@@ -525,7 +554,7 @@ const indexFunctions = {
 			- O : Others
 	*/
 	postNewCase: async function(req, res) {
-		let { formData } = req.body;
+		let { formData, CRFID } = req.body;
 		console.log(formData);
 		let result;
 
@@ -580,6 +609,7 @@ const indexFunctions = {
 						formData.cases.caseID = await generateID("mmchddb.CASES");
 						formData.cases.patientID = formData.patient.patientID;
 						// formData.cases.reportedBy = req.session.user.userID;
+						formData.cases.CRFID = CRFID ? CRFID : null;
 						result = await createCase(formData.cases);
 						
 						if (result) {
@@ -770,15 +800,13 @@ const indexFunctions = {
 			// TODO: Implement Automatic Push Data Approach
 
 			let date = new Date();
-			let JanOne = new Date(date.getFullYear(),0,1);
+			let JanOne = new Date(date.getFullYear(), 0, 1);
 			let numDay = Math.floor((date - JanOne) / (24 * 60 * 60 * 1000));
 			let week = Math.ceil((date.getDay() + 1 + numDay) / 7);
 			let result = await sendBulkNotifs(DRUUserTypes,'pushDataNotif', 
 										'SUBMISSION UPDATE: Your Case Report Forms for Week ' + week + ' has been automatically pushed to MMCHD-RESU', null);
-			if(result) 
-				console.log("Adding notification success");
+			if (result) console.log("Adding notification success");
 			else console.log("Adding Notification to DRU Failed");
-
 		} catch (e) {
 			console.log(e);
 			console.log("Server Error");

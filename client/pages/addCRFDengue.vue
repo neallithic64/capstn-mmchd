@@ -21,7 +21,7 @@
           </div>
         </div>
         <div class="additionalButtons">
-          <button class="addText"><a href="/addCRFDengueCase">+ add a case</a></button>
+          <button class="addText"><a :href="'/addCRFDengueCase?CRFID=' + CRFID">+ add a case</a></button>
         </div>
         <div class="CRFendButton">
           <button class="save-button" type="button" @click="save()">
@@ -36,16 +36,21 @@
     <div v-show="popupOpen" class="overlay">
       <div class="overlay-form">
         <!-- <button class="close" @click="popup()">x</button> -->
-        <h2 style="color:red; text-align:center">!! POP UP THING !!</h2>
+        <h2 style="color:red; text-align:center"> PUSH DATA APPROACH CONSENT </h2>
         <hr style="border-color: inherit;"/>
-        <div>
-          <p> By checking this eme you eme</p>
+        <div style="padding:10px; text-align:justify;">
+          <p style="margin:10px 5px; font-size:16px"> If you agree, all details will be pushed to MMCHD-RESU.
+             Otherwise, data that will identify the person 
+             (e.g. patient name, complete address) will not be pushed.</p>
+          <p style="margin:10px 5px; font-size:16px"> Only data that is necessary for 
+            time, place, and person analysis will be pushed.</p>
+          <p style="margin:10px 5px; font-size:12px"> You can update this in your settings anytime.</p>
           <div class="popupButtons">
             <button class="back-button" type="button" @click="popup()">
-              Not allow
+              Disagree
             </button>
             <button class="next-button" type="button" @click="popup()">
-              Allow
+              Agree
             </button>
           </div>
         </div>
@@ -73,7 +78,7 @@ export default {
       patients: [],
       patientResult: [],
       disease: 'Dengue',
-      crfNo: '35',
+      CRFID: "",
       druID: 'ABC',
       submittedDate: 'Nov 11,2021',
       updatedDate: 'Nov 10, 2020',
@@ -331,7 +336,7 @@ hr {
   display: block;
   z-index: 11;
   margin: 0px;
-  padding: 20% 35%;
+  padding: 15% 30% 20%;
   width: -webkit-fill-available;
   height: -webkit-fill-available;
   /* background: gray; */
@@ -353,8 +358,8 @@ hr {
   padding: 30px;
   border-radius: 40px;
   background: white;
-  width: -webkit-fill-available;
-  height: -webkit-fill-available;
+  /* width: -webkit-fill-available;
+  height: -webkit-fill-available; */
   overflow-y: auto;
 }
 

@@ -12,11 +12,16 @@
           <ul :class="formListClass('cif')" @click="clickTab('cif')">
             CIF
           </ul>
-          <ul :class="formListClass('crfDRU')" @click="clickTab('crfDRU')">
+          <ul v-if="$auth.user.userType === 'pidsrStaff' || $auth.user.userType === 'techStaff' ||
+            $auth.user.userType === 'BHS' || $auth.user.userType === 'RHU' || $auth.user.userType === 'CHO' ||
+            $auth.user.userType === 'govtHosp' || $auth.user.userType === 'privHosp' || $auth.user.userType === 'clinic' ||
+            $auth.user.userType === 'govtLab' || $auth.user.userType === 'privLab' || $auth.user.userType === 'airseaPort'"
+            :class="formListClass('crfDRU')" @click="clickTab('crfDRU')">
             CRF DRU
           </ul>
-          <ul :class="formListClass('crfCHD')" @click="clickTab('crfCHD')">
-            CRF CHD
+          <ul v-if="$auth.user.userType === 'pidsrStaff' || $auth.user.userType === 'fhsisStaff' || $auth.user.userType === 'techStaff'"
+           :class="formListClass('crfCHD')" @click="clickTab('crfCHD')"> 
+           CRF CHD
           </ul>
         </div>
         <div v-show="!isPrint" class="CRFActionButtons">
@@ -568,8 +573,7 @@ export default {
     const rows = (await axios.get('http://localhost:8080/api/getCases')).data;
 	console.log("all cases count: " + rows.length);
 	for (let i = 0; i < rows.length; i++) {
-	  rows[i].type = "CIF";
-	  rows[i].reportDate = rows[i].reportDate.substr(0, 10);
+	  rows[i].reportDate = rows[i].reportDate ? rows[i].reportDate.substr(0, 10) : "undefined";
 	  // default to reportDate if updatedDate is null
 	  rows[i].updatedDate = rows[i].updatedDate ? rows[i].updatedDate.substr(0, 10) : rows[i].reportDate;
 	  rows[i].disease = rows[i].diseaseName;
