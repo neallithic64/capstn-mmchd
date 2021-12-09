@@ -568,7 +568,7 @@ export default {
     const rows = (await axios.get('http://localhost:8080/api/getCases')).data;
 	console.log("all cases count: " + rows.length);
 	for (let i = 0; i < rows.length; i++) {
-	  rows[i].type = "CIF";
+	  // rows[i].type = "CIF";
 	  rows[i].reportDate = rows[i].reportDate ? rows[i].reportDate.substr(0, 10) : "undefined";
 	  // default to reportDate if updatedDate is null
 	  rows[i].updatedDate = rows[i].updatedDate ? rows[i].updatedDate.substr(0, 10) : rows[i].reportDate;

@@ -360,6 +360,26 @@ const indexFunctions = {
 		}
 	},
 	
+	getCIF: async function(req, res) {
+		try {
+			let rows = await db.findRows("mmchddb.CASES", {caseID: req.query.caseID});
+			// console.log(rows);
+			res.status(200).send(rows);
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
+	
+	getCRF: async function(req, res) {
+		try {
+			
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
+	
 	getAllNotifs: async function(req,res){
 		try {
 			let match = await db.findRows("mmchddb.NOTIFICATIONS", {receiverID: req.query.userID});
@@ -403,10 +423,8 @@ const indexFunctions = {
 					console.log(result);
 					if (result) {
 						req.session.user = match[0];
-						console.log(req.session);
-						// res.status(200).send("Login successful.");
-						// // ALTERNATIVE (to reconsider user type checking):
 						res.status(200).send({user: match[0]});
+						// res.status(200).send("Login successful.");
 					} else res.status(403).send("Incorrect password.");
 				});
 			} else res.status(403).send("No user found.");
