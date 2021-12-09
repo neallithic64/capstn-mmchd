@@ -21,7 +21,7 @@ router.get("/getNotification", m1Cont.getNotification);
 router.get("/getCIF", m1Cont.getCIF);
 router.get("/getCRF", m1Cont.getCRF);
 router.get("/getNewNotifs",m1Cont.getNewNotifs);
-
+router.get("/getCIF",m1Cont.getCIF);
 // POST Routes
 router.post("/login", m1Cont.postLogin);
 router.post("/newUser", m1Cont.postRegUser);

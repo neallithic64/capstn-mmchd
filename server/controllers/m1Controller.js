@@ -212,6 +212,10 @@ async function generateIDs(table, numRows) {
 	}
 }
 
+function dateToString(date){
+	let dateString = new Date(date);
+	return dateString.getFullYear()+'-'+dateString.getMonth().toString().padStart(2,'0')+'-'+dateString.getDate().toString().padStart(2,'0');
+}
 async function createCase(cases) {
 	try {
 		cases.caseID = (await generateID("mmchddb.CASES")).id;
@@ -376,11 +380,60 @@ const indexFunctions = {
 		}
 	},
 	
+	/**
+	 * Collects the following information for the Case Investigation Form
+	 *  Case Information (mmchddb.CASES) Dates and Address
+	 * 		reportdate
+	 * 		dateAdmitted
+	 * 		dateOnset
+	 *  Patient Info (mmchddb.Patient) Dates and Address causing issues
+	 *  Risk Factors (mmchddb.RISK_FACTORS) DONE
+	 *  caseData (mmchddb.CaseData)
+	 */
 	getCIF: async function(req, res) {
 		try {
+			//collect relevant data
 			let rows = await db.findRows("mmchddb.CASES", {caseID: req.query.caseID});
+
+			let patientData = await db.exec("SELECT p.*, "
+					+ "a1.houseStreet AS currHouseStreet, a1.brgy AS currBrgy, a1.city AS "
+					+ "currCity, a2.houseStreet AS permHouseStreet, a2.brgy AS permBrgy, "
+					+ "a2.city AS permCity FROM mmchddb.PATIENTS p INNER JOIN "
+					+ "mmchddb.ADDRESSES a1 ON p.caddressID = a1.addressID "
+					+ "INNER JOIN mmchddb.ADDRESSES a2 ON p.paddressID = a2.addressID "+
+					"WHERE p.patientID = '" + rows[0].patientID + "';");
+			let riskFactorsData = await db.findRows("mmchddb.RISK_FACTORS", {caseID: req.query.caseID});
+			let caseData = await db.findRows("mmchddb.CASE_DATA", {caseID: req.query.caseID});
+			let caseAudit = await db.findRows("mmchddb.CASE_AUDIT", {caseID: req.query.Case});
+
+			// console.log(patientData);
+			
+			let caseDataObj = {};
+			
+			caseData.forEach(function(element) {
+				caseDataObj[element.fieldName] = element.value;
+			});
+
+			let data = {
+				cases: rows[0],
+				patient: patientData[0],
+				// caseData: caseData,
+				caseData: caseDataObj,
+				caseAudit: caseAudit,
+				riskFactors: riskFactorsData[0]
+			}
+
+			// fixing dates
+			data.cases.reportDate = dateToString(data.cases.reportDate);
+			if(data.cases.investigationDate)
+				data.cases.investigationDate = dateToString(data.cases.investigationDate);
+			if(data.cases.dateOnset)
+				data.cases.dateOnset = dateToString(data.cases.dateOnset);
+			if(data.cases.dateAdmitted)
+				data.cases.dateAdmitted = dateToString(data.cases.dateAdmitted);
+			data.patient.birthDate = dateToString(data.patient.birthDate);
 			// console.log(rows);
-			res.status(200).send(rows);
+			res.status(200).send(data);
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
