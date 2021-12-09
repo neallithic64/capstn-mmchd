@@ -107,7 +107,7 @@ function Event(eventID, userID, addressID, remarks, caseStatus, dateSubmitted) {
 	this.dateSubmitted = dateSubmitted;
 }
 
-function Notification(notificationID, receiverID, type, message, caseID, dateCreated, redirectTo){
+function Notification(notificationID, receiverID, type, message, caseID, dateCreated, redirectTo, viewed){
 	this.notificationID = notificationID;
 	this.receiverID = receiverID;
 	this.type = type;
@@ -115,6 +115,7 @@ function Notification(notificationID, receiverID, type, message, caseID, dateCre
 	this.caseID = caseID;
 	this.dateCreated = dateCreated;
 	this.redirectTo = redirectTo;
+	this.viewed = viewed;
 }
 
 /** ON ID CREATION
@@ -236,7 +237,11 @@ async function sendBulkNotifs(userTypes, notificationType, message, caseID) {
 			element.push(message);
 			element.push(caseID);
 			element.push(dateCreated);
-			element.push('http://localhost:8080/api/getNotification?notificationID=' + element[1]);
+			if(notificationType == 'updateNotif')
+				element.push('http://localhost:3000/editCaseDefs');
+			else
+				element.push('http://localhost:3000/allCases');
+			element.push(false);
 			element.shift();
 		});
 
@@ -363,8 +368,8 @@ const indexFunctions = {
 	getAllNotifs: async function(req,res){
 		try {
 			let match = await db.findRows("mmchddb.NOTIFICATIONS", {receiverID: req.query.userID});
-
-			res.status(200).send(rows);
+			let update = await db.updateRows("mmchddb.NOTIFICATIONS", {receiverID: req.query.userID}, {viewed:true});
+			res.status(200).send(match.reverse());
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
@@ -384,6 +389,17 @@ const indexFunctions = {
 			res.status(500).send("Server error");
 		}
 	},
+
+	getNewNotifs: async function(req,res){
+		try {
+			let newNotifCount = await db.findNewNotifsCount(req.query.userID);
+			res.status(200).send({newNotifCount:newNotifCount});
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
+
 	/*
 	 * POST METHODS
 	 */
@@ -671,7 +687,7 @@ const indexFunctions = {
 					let disease = await db.findRows("mmchddb.DISEASES",{diseaseID:caseAudit.diseaseID});
 					let notification = new Notification(null, caseData.reportedBy,'updateNotif', 
 						'CASE UPDATE: The case level of ' + disease[0].diseaseName + ' Case ' + caseId + 'has been updated to ' + newStatus + '.', 
-						caseId, caseAudit.dateModified, "testing");
+						caseId, caseAudit.dateModified, "http://localhost:3000/viewCIF",false);
 					notification.caseID = (await generateID("mmchddb.NOTIFICATIONS")).id;
 					let newNotif = db.insertOne("mmchddb.NOTIFICATIONS", notification);
 					if(newNotif){

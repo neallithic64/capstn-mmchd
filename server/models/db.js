@@ -63,7 +63,14 @@ function makeWhereOrClause(obj, field) {
 function makeSetClause(obj) {
 	let entriesArr = [];
 	for (let [key, value] of Object.entries(obj)) {
-		entriesArr.push(key + " = " + "'" + value + "'");
+		if(typeof(value)=='boolean'){
+			if(value)
+				entriesArr.push(key + " = 1");
+			else
+				entriesArr.push(key + " = 0");
+		}
+		else
+			entriesArr.push(key + " = " + "'" + value + "'");
 	}
 	return entriesArr.join(", ");
 }
@@ -259,11 +266,24 @@ const database = {
 	 insertNotificationData: async function(object) {
 		try {
 			console.log(object);
-			let statement = "INSERT INTO mmchddb.NOTIFICATIONS (notificationID, receiverID, type, message, caseID, dateCreated, redirectTo) VALUES ?";
+			let statement = "INSERT INTO mmchddb.NOTIFICATIONS (notificationID, receiverID, type, message, caseID, dateCreated, redirectTo, viewed) VALUES ?";
 			let [rows, fields] = await pool.query(statement, [object]);
 			console.log("Inserted " + rows.affectedRows + " rows");
 			// if (rows.serverStatus === 2)
 			return true;
+		} catch (e) {
+			console.log(e);
+			return false;
+		}
+	},
+	/**
+	 * Returns rows from patients that matches the pattern of the name
+	 */
+	 findNewNotifsCount: async function(receiverID) {
+		try {
+			let statement = "SELECT Count(notificationID) AS 'newNotifCount' from mmchddb.NOTIFICATIONS where viewed = 0 AND receiverID = '" + receiverID + "'";
+			let [rows, fields] = await pool.execute(statement);
+			return rows[0].newNotifCount;
 		} catch (e) {
 			console.log(e);
 			return false;

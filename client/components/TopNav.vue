@@ -62,12 +62,7 @@
     </nuxt-link>
     <nuxt-link to="/bulletin"> Feedback Bulletin </nuxt-link>
     <nuxt-link to="/evaluation"> Evaluation </nuxt-link>
-    <nuxt-link
-      v-if="$auth.user.userType === 'lhsdChief' || $auth.user.userType === 'aehmdChief' || 
-      $auth.user.userType === 'resuHead' || $auth.user.userType === 'chdDirector'"
-      to="/editCaseDefs"> 
-      Case Definitions
-    </nuxt-link>
+    <nuxt-link to="/editCaseDefs"> Case Definitions </nuxt-link>
     <div v-if="$auth.user.userType === 'lhsdChief' || $auth.user.userType === 'aehmdChief' || 
       $auth.user.userType === 'resuHead' || $auth.user.userType === 'chdDirector' || $auth.user.userType === 'techStaff'" class="dropdown">
       <button class="dropbtn">
@@ -100,7 +95,7 @@
     <div class="topnav-right">
       <button class="notification" @click="goToNotifs()">
         <i class="fa fa-bell fa-sm"></i>
-        <span id="notif-num" class="badge">10+</span>
+        <span id="notif-num" class="badge">{{ newNotifs }}</span>
       </button>
       <div class="dropdown">
         <button id="profile-dropbtn">
@@ -123,7 +118,18 @@
 </template>
 
 <script>
+const axios = require('axios');
 export default {
+   data() {
+    return {
+      newNotifs: 0
+    }
+  },
+  async fetch(){
+    // get number of new notifications
+    const count = (await axios.get('http://localhost:8080/api/getNewNotifs?userID=' + this.$auth.user.userID)).data;
+    this.newNotifs = count.newNotifCount;
+  },
   methods: {
     responsive() {
       const x = document.getElementById('myTopnav');
