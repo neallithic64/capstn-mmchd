@@ -3,11 +3,22 @@
     <TopNav/>
     <div class="notif-container">
       <ul>
+        <li v-for="(value, name, i) in notifs" :key="i" class="each-notif" @click="goTo(value.redirectTo)">
+          <img v-if="value.type==='pushDataNotif'" class="notif-icon" src="../assets/img/pushdata.png"/>
+          <img v-if="value.type==='updateNotif'" class="notif-icon" src="../assets/img/update.png"/>
+          <img v-if="value.type==='caseNotif'" class="notif-icon" src="../assets/img/case.png"/>
+          <img v-if="value.type==='deadlineNotif'" class="notif-icon" src="../assets/img/deadline.png"/>
+          <img v-if="value.type==='feedbackNotif'" class="notif-icon" src="../assets/img/feedback.png"/>
+          <!-- Message inside is only a sample -->
+          <div class="notif-msg"> {{value.message}} </div>
+          <div class="notif-time"> {{value.dateString}} </div>
+        </li>
+
         <!-- one notif item -->
-        <li class="each-notif" @click="goTo('http://localhost:3000/editCaseDefs')">
+        <!-- <li class="each-notif" @click="goTo('http://localhost:3000/editCaseDefs')"> -->
           <!-- place v-ifs to check which icon to display in the notif -->
           <!-- v-if notifType=pushDataNotif -->
-          <img class="notif-icon" src="../assets/img/pushdata.png"/>
+          <!-- <img class="notif-icon" src="../assets/img/pushdata.png"/> -->
           <!-- v-if notifType=updateNotif
           <img class="notif-icon" src="../assets/img/update.png"/>
           v-if notifType=caseNumNotif
@@ -18,12 +29,12 @@
           <img class="notif-icon" src="../assets/img/feedback.png"/> -->
 
           <!-- Message inside is only a sample -->
-          <div class="notif-msg"> <b> SUBMISSION UPDATE: </b> Your Case Report Forms for Week 21 has been automatically pushed to MMCHD-RESU. </div>
+          <!-- <div class="notif-msg"> <b> SUBMISSION UPDATE: </b> Your Case Report Forms for Week 21 has been automatically pushed to MMCHD-RESU. </div>
           <div class="notif-time"> 1h </div>
-        </li>
+        </li> -->
 
         <!-- All stuff below are just for examples. -->
-        <li class="each-notif">
+        <!-- <li class="each-notif">
           <img class="notif-icon" src="../assets/img/case.png"/>
           <div class="notif-msg"> <b> WARNING: </b> RITM submitted the 15th Malaria case detected in Taguig City. </div>
           <div class="notif-time"> 1h </div>
@@ -43,12 +54,14 @@
           <div class="notif-msg"> <b> CASE UPDATE: </b> The case level of Malaria Case No. 12345 has been updated to Laboratory-confirmed. </div>
           <div class="notif-time"> 1h </div>
         </li>
+         -->
       </ul>
     </div>
   </div>
 </template>
 
 <script>
+const axios = require('axios');
 export default {
   middleware: 'is-auth',
   data() {
@@ -56,8 +69,23 @@ export default {
       notifs: {}
     }
   },
-  fetch() {
+  async fetch() {
     // need to fetch notifs here
+    this.notifs = (await axios.get('http://localhost:8080/api/getNotifs?userID=' + this.$auth.user.userID)).data;
+    // create dateString for notif-time
+    const currentDate = new Date();
+    this.notifs.forEach(function(element, index) {
+      const dateDiff = currentDate - new Date(element.dateCreated);
+
+      if(dateDiff < 1000 * 60 * 60) // within an hour
+        element.dateString = Math.floor(dateDiff / (1000 * 60)) + "min";
+      else if(dateDiff < (1000 * 60 * 60 * 24)) // within the day
+        element.dateString = Math.floor(dateDiff / (1000 * 60 * 60)) + "h";
+      else if(dateDiff < (1000 * 60 * 60 * 24 * 14)) // within 14 days
+        element.dateString = Math.floor(dateDiff / (1000 * 60 * 60 * 24)) + "d";
+      else this.notifs.splice(index,1);
+    });
+    // console.log(this.notifs);
   },
   methods: {
     goTo(link) {
