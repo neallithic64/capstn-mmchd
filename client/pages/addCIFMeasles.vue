@@ -77,7 +77,7 @@
             </div>
           </form>
 
-          <form v-if="pageNum == 1 || pageNum == Object.keys(disease.formNames).length" id="measles1" type="submit">
+          <form v-if="pageNum == 1 || pageNum == Object.keys(disease.formNames).length" id="measles1" type="submit" ref='page1'>
             <div id="case-investigation-form" class="center">
               <h2 id="form-header">
                 {{ Object.values(disease.formNames)[1] }}
@@ -92,6 +92,7 @@
                     class="input-form-field"
                     type="text"
                     :disabled="inputEdit()"
+                    required
                   />
                 </div>
                 <div class="name-field">
@@ -174,7 +175,7 @@
                       <input
                         id="Not Pregnant"
                         v-model="formData.caseData.pregWeeks"
-                        value="Not Pregnant"
+                        v-bind:value="0"
                         class="input-radio"
                         name="pregWeeks"
                         type="radio"
@@ -185,8 +186,9 @@
 
                     <div style="display: inline-flex; align-items: center">
                       <input
-                        id="Pregnant"
-                        value="Pregnant"
+                        id="pregnancyWeeks"
+                        v-model="formData.caseData.pregWeeks"
+                        v-bind:value="-1"
                         class="input-radio"
                         name="pregWeeks"
                         type="radio"
@@ -194,7 +196,7 @@
                       />
                       <label for="pregnancyWeeks" style="display: inline-flex">
                         <input
-                          id="pregnancy"
+                          id="pregnancyWeeks"
                           v-model="formData.patient.pregWeeks"
                           class="input-form-field"
                           type="number"
@@ -1233,6 +1235,7 @@
                         class="input-radio"
                         name="noMCVreason"
                         type="checkbox"
+                        :disabled="inputEdit()"
                       />
                       <label v-if="i > 0" :for="reason" style="display: inline-flex">
                         {{ reason }}
@@ -2029,13 +2032,13 @@
           <button v-if="pageNum == 0" class="back-button" type="button">
             <nuxt-link to="/addCase"> Cancel </nuxt-link>
           </button>
-          <button v-if="pageNum != 0" class="back-button" type="button" @click="move(pageNum - 1)">
+          <button v-if="pageNum != 0" class="back-button" type="button" @click="move(pageNum - 1)" >
             Back
           </button>
           <button v-if="pageNum < Object.keys(disease.formNames).length - 1" class="next-button" type="button" @click="move(pageNum + 1)">
             Next
           </button>
-          <button v-if="pageNum == Object.keys(disease.formNames).length - 1" class="next-button" type="button" @click="move(pageNum + 1)">
+          <button v-if="pageNum == Object.keys(disease.formNames).length - 1" class="next-button" type="button" @click="move(pageNum + 1)" >
             Review
           </button>
           <button v-if="pageNum == Object.keys(disease.formNames).length" class="next-button" type="button" @click="submit()">
@@ -2067,6 +2070,7 @@ export default {
       patientResult: [],
       pageNum: 0,
       formPart: 'Measles0',
+      pageDone: [true,false,false,false,false,false,false,false,false,true,true],
       formData: {
         cases: {
           caseID: '',
@@ -2289,17 +2293,22 @@ export default {
       }
     },
     move(page) {
-      if (page < Object.keys(this.disease.formNames).length && this.pageNum < Object.keys(this.disease.formNames).length) {
-        // const prevFormId = this.disease.name + this.pageNum;
-        const prevFormNum = 'form' + this.pageNum;
-        // document.getElementById(prevFormId).className = 'hide';
-        document.getElementById(prevFormNum).className = 'formnum formnumdone';
-        // const currFormId = this.disease.name + page;
-        const currFormNum = 'form' + page;
-        // document.getElementById(currFormId).className = 'show';
-        document.getElementById(currFormNum).className = 'formnum formnumcurr';
+      this.validateForm();
+      if (this.pageDone[this.pageNum] || this.pageDone[page] || this.pageNum ===10) {
+        if (page < Object.keys(this.disease.formNames).length && this.pageNum < Object.keys(this.disease.formNames).length) {
+          // const prevFormId = this.disease.name + this.pageNum;
+          const prevFormNum = 'form' + this.pageNum;
+          // document.getElementById(prevFormId).className = 'hide';
+          document.getElementById(prevFormNum).className = 'formnum formnumdone';
+          // const currFormId = this.disease.name + page;
+          const currFormNum = 'form' + page;
+          // document.getElementById(currFormId).className = 'show';
+          document.getElementById(currFormNum).className = 'formnum formnumcurr';
+        }
+        this.pageNum = page;
       }
-      this.pageNum = page;
+      else alert('Please fill up the required fields');
+      console.log(this.pageDone)
     },
     inputEdit() {
       if (this.pageNum === Object.keys(this.disease.formNames).length) {
@@ -2310,6 +2319,125 @@ export default {
         // }
         return true;
       } else return false;
+    },
+    validateForm() {
+      switch (this.pageNum) {
+        case 1:
+          if (this.formData.patient.lastName!=='' &&
+          this.formData.patient.firstName!=='' &&
+          this.formData.patient.midName!=='' &&
+          this.formData.patient.birthDate!=='' &&
+          this.formData.patient.ageNo!=='' &&
+          this.formData.patient.sex!=='' &&
+          this.formData.patient.pregWeeks>-1 &&
+          this.formData.patient.currHouseStreet!=='' &&
+          this.formData.patient.currCity!=='' &&
+          this.formData.patient.currBrgy!=='' &&
+          this.formData.patient.guardianName!=='' &&
+          this.formData.patient.guardianContact!=='' &&
+          this.formData.patient.lastName!== null &&
+          this.formData.patient.firstName!== null &&
+          this.formData.patient.midName!== null &&
+          this.formData.patient.birthDate!== null &&
+          this.formData.patient.ageNo!== null &&
+          this.formData.patient.sex!== null &&
+          this.formData.patient.pregWeeks!== null &&
+          this.formData.patient.currHouseStreet!== null &&
+          this.formData.patient.currCity!== null &&
+          this.formData.patient.currBrgy!== null &&
+          this.formData.patient.guardianName!== null &&
+          this.formData.patient.guardianContact!== null
+          ) this.pageDone[this.pageNum] = true;
+          else this.pageDone[this.pageNum] = false;
+          console.log(this.formData.patient.pregWeeks);
+          break;
+        case 2:
+          if (this.formData.caseData.patientAdmitted!=='' &&
+          this.formData.cases.dateAdmitted!=='' &&
+          this.formData.cases.reportDate!=='' &&
+          this.formData.cases.reporterName!=='' &&
+          this.formData.cases.reporterContact!==''
+          ) this.pageDone[this.pageNum] = true;
+          else this.pageDone[this.pageNum] = false;
+          break;
+        case 3:
+          if (this.formData.caseData.sympFever ||
+          this.formData.caseData.sympRash ||
+          this.formData.caseData.sympLymph ||
+          this.formData.caseData.sympCough ||
+          this.formData.caseData.sympKoplik ||
+          this.formData.caseData.sympRunnynose ||
+          this.formData.caseData.sympRedeye ||
+          this.formData.caseData.sympArthritis
+          ) this.pageDone[this.pageNum] = true;
+          else this.pageDone[this.pageNum] = false;
+          break;
+        case 4:
+          if (this.formData.caseData.MCVaccine!=='' &&
+          this.formData.cases.dateAdmitted!=='' &&
+          this.formData.cases.reportDate!=='' &&
+          this.formData.cases.reporterName!==''
+          ) {
+            if (this.formData.caseData.MCVaccine==='No' && this.formData.caseData.noMCVreason!=='') this.pageDone[this.pageNum] = true;
+            else if (this.formData.caseData.MCVaccine==='Yes' && 
+              this.formData.caseData.MCVlastDoseDate!=='' &&
+              this.formData.caseData.MCVvalidation!==''
+              ) this.pageDone[this.pageNum] = true;
+            else this.pageDone[this.pageNum] = false;
+            }
+          else this.pageDone[this.pageNum] = false;
+          break;
+        case 5:
+          if (this.formData.caseData.travelHistory!=='' &&
+          this.formData.cases.expContactMeasles!=='' &&
+          this.formData.cases.expContactRubella!=='' &&
+          this.formData.cases.otherCommunityCases!==''
+          ) {
+            if (this.formData.caseData.travelHistory==='No') {
+              this.pageDone[this.pageNum] = true;
+              break;
+            }
+            if ((this.formData.caseData.travelHistory==='No' || 
+                (this.formData.caseData.travelHistory==='Yes' && 
+                this.formData.caseData.travelHistoryPlace!=='' &&
+                this.formData.caseData.travelHistoryDate!=='' &&
+                this.formData.caseData.travelDaysRashOnset!==''))
+                &&
+                (this.formData.caseData.expContactRubella==='No' || 
+                (this.formData.caseData.expContactRubella==='Yes' && 
+                this.formData.caseData.expContactName!=='' &&
+                this.formData.caseData.expContactPlace!=='' &&
+                this.formData.caseData.expContactDate!=='' &&
+                this.formData.caseData.expPlaceType!=='')
+                )) this.pageDone[this.pageNum] = true;
+            else this.pageDone[this.pageNum] = false;
+            }
+          else this.pageDone[this.pageNum] = false;
+          break;
+        case 6:
+          if (this.formData.caseData.finalClassification!=='')
+            this.pageDone[this.pageNum] = true;
+          else this.pageDone[this.pageNum] = false;
+          break;
+        case 7:
+          if (this.formData.caseData.sourceInfection!=='')
+            this.pageDone[this.pageNum] = true;
+          else this.pageDone[this.pageNum] = false;
+          break;
+        case 8:
+          if (this.formData.caseData.outcome!=='' &&
+              this.formData.cases.finalDiagnosis!=='')
+            if (this.formData.caseData.outcome==='Dead' &&
+                this.formData.cases.dateDied!=='')
+              this.pageDone[this.pageNum] = true;
+            else this.pageDone[this.pageNum] = false;
+          else this.pageDone[this.pageNum] = false;
+          break;
+      }
+    },
+    bottombutton() {
+      if (this.pageNum===0) return false;
+      else return !this.pageDone[this.pageNum];
     },
     autoFillPatient(patient) {
       // console.log(patient);
@@ -2880,9 +3008,9 @@ h3 {
   border: #346083 solid 0.75px;
 }
 
-.next-button:hover {
+/* .next-button:hover {
   background-color: #346083;
-}
+} */
 
 .back-button {
   width: 150px;
@@ -3087,4 +3215,11 @@ ul ul li {
   width: 25px;
   margin: auto 5px auto 0;
 }
+
+:disabled {
+  background: #ffffff;
+  border: 1px solid #c4c4c4;
+  color:#c4c4c4;
+}
+
 </style>
