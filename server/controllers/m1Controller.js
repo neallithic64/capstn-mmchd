@@ -527,7 +527,7 @@ const indexFunctions = {
 			- O : Others
 	*/
 	postNewCase: async function(req, res) {
-		let { formData } = req.body;
+		let { formData, CRFID } = req.body;
 		console.log(formData);
 		let result;
 
@@ -582,6 +582,7 @@ const indexFunctions = {
 						formData.cases.caseID = await generateID("mmchddb.CASES");
 						formData.cases.patientID = formData.patient.patientID;
 						// formData.cases.reportedBy = req.session.user.userID;
+						formData.cases.CRFID = CRFID ? CRFID : null;
 						result = await createCase(formData.cases);
 						
 						if (result) {
@@ -772,15 +773,13 @@ const indexFunctions = {
 			// TODO: Implement Automatic Push Data Approach
 
 			let date = new Date();
-			let JanOne = new Date(date.getFullYear(),0,1);
+			let JanOne = new Date(date.getFullYear(), 0, 1);
 			let numDay = Math.floor((date - JanOne) / (24 * 60 * 60 * 1000));
 			let week = Math.ceil((date.getDay() + 1 + numDay) / 7);
 			let result = await sendBulkNotifs(DRUUserTypes,'pushDataNotif', 
 										'SUBMISSION UPDATE: Your Case Report Forms for Week ' + week + ' has been automatically pushed to MMCHD-RESU', null);
-			if(result) 
-				console.log("Adding notification success");
+			if (result) console.log("Adding notification success");
 			else console.log("Adding Notification to DRU Failed");
-
 		} catch (e) {
 			console.log(e);
 			console.log("Server Error");
