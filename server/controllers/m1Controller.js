@@ -236,7 +236,10 @@ async function sendBulkNotifs(userTypes, notificationType, message, caseID) {
 			element.push(message);
 			element.push(caseID);
 			element.push(dateCreated);
-			element.push('http://localhost:8080/api/getNotification?notificationID=' + element[1]);
+			if(notificationType == 'updateNotif')
+				element.push('http://localhost:3000/editCaseDefs');
+			else
+				element.push('http://localhost:3000/allCases');
 			element.shift();
 		});
 
@@ -383,8 +386,7 @@ const indexFunctions = {
 	getAllNotifs: async function(req,res){
 		try {
 			let match = await db.findRows("mmchddb.NOTIFICATIONS", {receiverID: req.query.userID});
-
-			res.status(200).send(rows);
+			res.status(200).send(match.reverse());
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
@@ -690,7 +692,7 @@ const indexFunctions = {
 					let disease = await db.findRows("mmchddb.DISEASES",{diseaseID:caseAudit.diseaseID});
 					let notification = new Notification(null, caseData.reportedBy,'updateNotif', 
 						'CASE UPDATE: The case level of ' + disease[0].diseaseName + ' Case ' + caseId + 'has been updated to ' + newStatus + '.', 
-						caseId, caseAudit.dateModified, "testing");
+						caseId, caseAudit.dateModified, "http://localhost:3000/viewCIF");
 					notification.caseID = (await generateID("mmchddb.NOTIFICATIONS")).id;
 					let newNotif = db.insertOne("mmchddb.NOTIFICATIONS", notification);
 					if(newNotif){
