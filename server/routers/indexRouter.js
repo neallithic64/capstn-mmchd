@@ -18,7 +18,7 @@ router.get("/getUser", m1Cont.getUser);
 router.get("/getCases", m1Cont.getCases);
 router.get("/getNotifs",m1Cont.getAllNotifs);
 router.get("/getNotification", m1Cont.getNotification);
-
+router.get("/getNewNotifs",m1Cont.getNewNotifs);
 // POST Routes
 router.post("/login", m1Cont.postLogin);
 router.post("/newUser", m1Cont.postRegUser);
