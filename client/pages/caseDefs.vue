@@ -49,7 +49,7 @@
             <div id="edit-casedefs-form" class="center">
               <div style="display: flex; flex-direction: row; justify-content:space-between;">
                 <h2 id="form-header"> {{ Object.values(formSection.diseaseNames)[pageNum] }} </h2>
-                <div>
+                <div v-if="$auth.user.userType === 'lhsdChief' || $auth.user.userType === 'resuHead' || $auth.user.userType === 'chdDirector'"> 
                   <button id="instructButton" class="instruct-button" type="button" @click="instruct()">
                     Instructions
                   </button>
@@ -199,10 +199,11 @@ export default {
       }
 
       const result = await axios.post('http://localhost:8080/api/editDiseaseDef', {
-	    diseaseDefs: this.diseaseDefs,
-		diseaseID: this.formSection.diseaseIDs[this.pageNum]
+          diseaseDefs: this.diseaseDefs,
+          diseaseID: this.formSection.diseaseIDs[this.pageNum]
       });
-	  console.log(result);
+	    // eslint-disable-next-line no-console
+	    console.log(result);
       // TODO: add notif send to all drus that a case definition was edited
       // notif message: The case definitions of <disease> have been updated.
       // notif type: updateNotif

@@ -18,6 +18,11 @@
         <nuxt-link to="/addCase"> Add Case </nuxt-link>
         <nuxt-link to="/allCases"> View Case Reports </nuxt-link>
         <nuxt-link to="/allCases"> Outbreaks </nuxt-link>
+        <nuxt-link v-if="$auth.user.userType === 'pidsrStaff' || $auth.user.userType === 'techStaff' ||
+        $auth.user.userType === 'BHS' || $auth.user.userType === 'RHU' || $auth.user.userType === 'CHO' ||
+        $auth.user.userType === 'govtHosp' || $auth.user.userType === 'privHosp' || $auth.user.userType === 'clinic' ||
+        $auth.user.userType === 'govtLab' || $auth.user.userType === 'privLab' || $auth.user.userType === 'airseaPort'" 
+        to="/caseDefs"> Case Definitions </nuxt-link>
       </div>
     </div>
     <div
@@ -45,8 +50,8 @@
         <i class="fa fa-caret-down"></i>
       </button>
       <div class="dropdown-content">
-        <nuxt-link to="/addEvent"> Add Health Event </nuxt-link>
-        <nuxt-link to="/allEvents"> View Health Events </nuxt-link>
+        <nuxt-link to="/addHealthEvent"> Add Health Event </nuxt-link>
+        <nuxt-link to="/allHealthEvents"> View Health Events </nuxt-link>
       </div>
     </div>
     <nuxt-link 
@@ -62,7 +67,7 @@
     </nuxt-link>
     <nuxt-link to="/bulletin"> Feedback Bulletin </nuxt-link>
     <nuxt-link to="/evaluation"> Evaluation </nuxt-link>
-    <nuxt-link to="/editCaseDefs"> Case Definitions </nuxt-link>
+    <nuxt-link v-if="$auth.user.userType === 'lhsdChief' || $auth.user.userType === 'resuHead' || $auth.user.userType === 'chdDirector'" to="/caseDefs"> Case Definitions </nuxt-link>
     <div v-if="$auth.user.userType === 'lhsdChief' || $auth.user.userType === 'aehmdChief' || 
       $auth.user.userType === 'resuHead' || $auth.user.userType === 'chdDirector' || $auth.user.userType === 'techStaff'" class="dropdown">
       <button class="dropbtn">

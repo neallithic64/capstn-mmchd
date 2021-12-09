@@ -77,7 +77,7 @@
             </div>
           </form>
 
-          <form v-if="pageNum == 1 || pageNum == Object.keys(disease.formNames).length" id="measles1" type="submit" ref='page1'>
+          <form v-if="pageNum == 1 || pageNum == Object.keys(disease.formNames).length" id="measles1" ref='page1' type="submit">
             <div id="case-investigation-form" class="center">
               <h2 id="form-header">
                 {{ Object.values(disease.formNames)[1] }}
@@ -175,7 +175,7 @@
                       <input
                         id="Not Pregnant"
                         v-model="formData.caseData.pregWeeks"
-                        v-bind:value="0"
+                        :value="0"
                         class="input-radio"
                         name="pregWeeks"
                         type="radio"
@@ -188,7 +188,7 @@
                       <input
                         id="pregnancyWeeks"
                         v-model="formData.caseData.pregWeeks"
-                        v-bind:value="-1"
+                        :value="-1"
                         class="input-radio"
                         name="pregWeeks"
                         type="radio"
@@ -2308,6 +2308,7 @@ export default {
         this.pageNum = page;
       }
       else alert('Please fill up the required fields');
+      // eslint-disable-next-line no-console
       console.log(this.pageDone)
     },
     inputEdit() {
@@ -2349,6 +2350,7 @@ export default {
           this.formData.patient.guardianContact!== null
           ) this.pageDone[this.pageNum] = true;
           else this.pageDone[this.pageNum] = false;
+          // eslint-disable-next-line no-console
           console.log(this.formData.patient.pregWeeks);
           break;
         case 2:
