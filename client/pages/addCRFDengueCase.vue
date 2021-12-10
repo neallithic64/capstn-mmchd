@@ -1212,7 +1212,7 @@
                             <label :for="name" class="collapseLabel">
                               <input
                                 :id="name"
-                                v-model="formData.caseData.caseClassification"
+                                v-model="formData.caseData.caseLevel"
                                 :value="name"
                                 class="input-checkbox"
                                 name="finalClassification"
@@ -1364,7 +1364,6 @@ export default {
           // Page 6++
           finalClassification: '',
           clinicalClassification:'',
-          caseClassification:'',
           sourceInfection: [],
           outcome: '',
           dateDied: '',
@@ -1457,8 +1456,10 @@ export default {
     },
     async submit() {
       // TODO: this submit is the "save" type, the cases should only be visible to the DRU, not yet submitted to MMCHD
+	  const now = new Date();
       this.formData.cases.diseaseID = this.diseaseID;
       this.formData.cases.reportedBy = this.$auth.user.userID;
+	  this.formData.cases.reportDate = now.getFullYear() + '-' + (now.getMonth()+1) + '-' + now.getDate();
       const result = await axios.post('http://localhost:8080/api/newCase', {formData: this.formData, CRFID: this.$route.query.CRFID});
       if (result.status === 200) {
         alert('case submitted!');

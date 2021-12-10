@@ -87,7 +87,7 @@ export default {
         tableName: 'crf',
         columns: [
           {
-            title: 'CRF ID',
+            title: 'Case ID',
             key: 'caseID',
             type: 'clickable',
             source: 'crf',
@@ -156,19 +156,7 @@ export default {
         // source: 'http://demo.datatable/api/users',
         search: true,
       },
-      crfData: [
-        {
-          crfID: 35,
-          disease: 'Dengue',
-          patientNo: '1123',
-          age: '12',
-          sex: 'F',
-          city: 'Manila',
-          addDate:'2020-02-10',
-          updatedDate: '2020-11-10',
-          status: 'Probable',
-        },
-      ],
+      crfData: [],
       formData: {
         patient: {
           patientID: '',
