@@ -80,16 +80,15 @@ export default {
       disease: 'Dengue',
       CRFID: "",
       druID: 'ABC',
-      submittedDate: 'Nov 11,2021',
+      submittedDate: 'Nov 11, 2021',
       updatedDate: 'Nov 10, 2020',
       weekNo: '2020-21',
-
       tableOptions: {
         tableName: 'crf',
         columns: [
           {
             title: 'CRF ID',
-            key: 'crfID',
+            key: 'caseID',
             type: 'clickable',
             source: 'crf',
             uniqueField: 'id',
@@ -97,7 +96,7 @@ export default {
           },
           {
             title: 'Patient',
-            key: 'patientNo',
+            key: 'patientName',
             type: 'number',
             source: 'crf',
           },
@@ -112,7 +111,7 @@ export default {
           },
           {
             title: 'Age',
-            key: 'age',
+            key: 'ageNo',
             type: 'number',
             source: 'crf',
             uniqueField: 'id',
@@ -128,7 +127,7 @@ export default {
           },
           {
             title: 'Date added',
-            key: 'addDate',
+            key: 'reportDate',
             type: 'text',
             dateFormat: true,
             currentFormat: 'YYYY-MM-DD',
@@ -146,7 +145,7 @@ export default {
           },
           {
             title: 'Case Status',
-            key: 'status',
+            key: 'caseLevel',
             type: 'text',
             source: 'cases',
             uniqueField: 'id',
@@ -167,28 +166,6 @@ export default {
           city: 'Manila',
           addDate:'2020-02-10',
           updatedDate: '2020-11-10',
-          status: 'Probable',
-        },
-        {
-          crfID: 55,
-          disease: 'Dengue',
-          patientNo: '234',
-          age: '50',
-          sex: 'M',
-          city: 'Makati',
-          addDate:'2020-02-10',
-          updatedDate: '2022-11-12',
-          status: 'Confirmed',
-        },
-        {
-          crfID: 35,
-          disease: 'Dengue',
-          patientNo: '1123',
-          age: '12',
-          sex: 'F',
-          city: 'Manila',
-          addDate:'2020-02-10',
-          updatedDate: '2022-11-12',
           status: 'Probable',
         },
       ],
@@ -238,19 +215,18 @@ export default {
     }
   },
   async fetch() {
-    let rows = (
-      await axios.get(
-        'http://localhost:8080/api/getCaseDefs?diseaseID=' + this.diseaseID
-      )
-    ).data
-    for (let i = 0; i < rows.length; i++) {
-      this.classification[rows[i].class] = rows[i].definition
-    }
-    rows = (await axios.get('http://localhost:8080/api/getPatients')).data
-    this.patients = rows
+    const rows = (await axios.get('http://localhost:8080/api/getCRFPage', {
+	  params: {
+	    diseaseID: "DI-0000000000003",
+	    userID: this.$auth.user.userID
+	  }
+	})).data;
+	console.log(rows);
+    this.crfData = rows.crfData;
+	this.weekNo = rows.CRF.year + "-" + rows.CRF.week;
+	this.CRFID = rows.CRF.CRFID;
   },
   compute: {},
-
   mounted() {},
   methods: {
     popup() {

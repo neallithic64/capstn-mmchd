@@ -445,7 +445,7 @@
                             type="checkbox"
                             :disabled="inputEdit()"
                           />
-                          <label for="source">Alcoholism</label>
+                          <label for="LAlcoholism">Alcoholism</label>
                         </div>
 
                         <div style="padding-left: 7px">
@@ -513,7 +513,7 @@
                             type="checkbox"
                             :disabled="inputEdit()"
                           />
-                          <label for="Others"> Asthma </label>
+                          <label for="CAsthma"> Asthma </label>
                         </div>
 
                         <div style="display: flex; align-items: center">
@@ -526,7 +526,7 @@
                             type="checkbox"
                             :disabled="inputEdit()"
                           />
-                          <label for="Others"> Hereditary </label>
+                          <label for="CHereditary"> Hereditary </label>
                         </div>
 
                         <div style="display: flex; align-items: center">
@@ -1459,7 +1459,7 @@ export default {
       // TODO: this submit is the "save" type, the cases should only be visible to the DRU, not yet submitted to MMCHD
       this.formData.cases.diseaseID = this.diseaseID;
       this.formData.cases.reportedBy = this.$auth.user.userID;
-      const result = await axios.post('http://localhost:8080/api/newCase', {formData: this.formData, CRFID: this.$route.query.CRF});
+      const result = await axios.post('http://localhost:8080/api/newCase', {formData: this.formData, CRFID: this.$route.query.CRFID});
       if (result.status === 200) {
         alert('case submitted!');
         window.location.href = '/allCases';
@@ -1499,6 +1499,7 @@ export default {
       this.formData.patient.birthDate = patient.birthDate.substr(0, 10);
       this.formData.patient.ageNo = patient.ageNo;
       this.formData.patient.sex = patient.sex;
+	  this.formData.patient.civilStatus = patient.civilStatus;
       this.formData.patient.pregWeeks = patient.pregWeeks;
       this.formData.patient.currHouseStreet = patient.currHouseStreet;
       this.formData.patient.currBrgy = patient.currBrgy;

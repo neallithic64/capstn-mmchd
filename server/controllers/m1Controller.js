@@ -357,15 +357,15 @@ const indexFunctions = {
 	getCases: async function(req, res) {
 		try {
 			let match = await db.exec(`SELECT c.*, d.diseaseName,
-										CONCAT(p.lastName, ", ", p.firstName, " ", p.midName) AS patientName,
-										a.city, MAX(ca.dateModified) AS updatedDate
-										FROM mmchddb.CASES c
-										INNER JOIN mmchddb.DISEASES d ON c.diseaseID = d.diseaseID
-										INNER JOIN mmchddb.PATIENTS p ON c.patientID = p.patientID
-										INNER JOIN mmchddb.ADDRESSES a ON p.caddressID = a.addressID
-										LEFT JOIN mmchddb.CASE_AUDIT ca ON c.caseID = ca.caseID
-										LEFT JOIN mmchddb.CRFS cr ON c.CRFID = cr.CRFID
-										GROUP BY c.caseID;`);
+									CONCAT(p.lastName, ", ", p.firstName, " ", p.midName) AS patientName,
+									a.city, MAX(ca.dateModified) AS updatedDate
+									FROM mmchddb.CASES c
+									INNER JOIN mmchddb.DISEASES d ON c.diseaseID = d.diseaseID
+									INNER JOIN mmchddb.PATIENTS p ON c.patientID = p.patientID
+									INNER JOIN mmchddb.ADDRESSES a ON p.caddressID = a.addressID
+									LEFT JOIN mmchddb.CASE_AUDIT ca ON c.caseID = ca.caseID
+									LEFT JOIN mmchddb.CRFS cr ON c.CRFID = cr.CRFID
+									GROUP BY c.caseID;`);
 			// CRFs have been JOINed, have to label the cases now as CIF or CRF.
 			for (let i = 0; i < match.length; i++) match[i].type = match[i].CRFID ? "CRF" : "CIF";
 			// console.log(match);
@@ -396,10 +396,39 @@ const indexFunctions = {
 		}
 	},
 	
-	getAllNotifs: async function(req,res){
+	getCRFPage: async function(req, res) {
 		try {
-			let match = await db.findRows("mmchddb.NOTIFICATIONS", {receiverID: req.query.userID});
-			let update = await db.updateRows("mmchddb.NOTIFICATIONS", {receiverID: req.query.userID}, {viewed:true});
+			let r = await db.findRows("mmchddb.CRFS", {
+				diseaseID: req.query.diseaseID,
+				userID: req.query.userID
+			});
+			if (r) {
+				// collect the cases with that CRFID
+				let data = await db.exec(`SELECT c.*, d.diseaseName,
+									CONCAT(p.lastName, ", ", p.firstName, " ", p.midName) AS patientName,
+									p.ageNo, p.sex, a.city, MAX(ca.dateModified) AS updatedDate
+									FROM mmchddb.CASES c
+									INNER JOIN mmchddb.DISEASES d ON c.diseaseID = d.diseaseID
+									INNER JOIN mmchddb.PATIENTS p ON c.patientID = p.patientID
+									INNER JOIN mmchddb.ADDRESSES a ON p.caddressID = a.addressID
+									LEFT JOIN mmchddb.CASE_AUDIT ca ON c.caseID = ca.caseID
+									WHERE c.CRFID = '${r[r.length - 1].CRFID}'
+									GROUP BY c.caseID;`);
+				res.status(200).send({
+					CRF: r[r.length - 1],
+					crfData: data
+				});
+			} else res.status(404).send("Not found");
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
+	
+	getAllNotifs: async function(req, res) {
+		try {
+			let match = await db.exec("mmchddb.NOTIFICATIONS", {receiverID: req.query.userID});
+			let update = await db.updateRows("mmchddb.NOTIFICATIONS", {receiverID: req.query.userID}, {viewed: true});
 			res.status(200).send(match.reverse());
 		} catch (e) {
 			console.log(e);
