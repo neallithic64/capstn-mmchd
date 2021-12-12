@@ -15,7 +15,7 @@
         </li>
 
         <!-- one notif item -->
-        <!-- <li class="each-notif" @click="goTo('http://localhost:3000/editCaseDefs')"> -->
+        <!-- <li class="each-notif"> -->
           <!-- place v-ifs to check which icon to display in the notif -->
           <!-- v-if notifType=pushDataNotif -->
           <!-- <img class="notif-icon" src="../assets/img/pushdata.png"/> -->
