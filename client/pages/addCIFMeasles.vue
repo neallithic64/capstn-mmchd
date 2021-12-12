@@ -1271,7 +1271,7 @@
                       <input
                         v-if="i > 0"
                         :id="reason"
-                        v-model="formData.caseData.noMCVreason"
+                        v-model="formData.caseData.noMCVreason[i]"
                         :value="reason"
                         class="input-radio"
                         name="noMCVreason"
@@ -1288,20 +1288,17 @@
                     <div style="display: flex; align-items: center">
                       <input
                         id="Others"
-                        value="Others"
                         class="input-radio"
                         name="noMCVreason"
                         type="checkbox"
                         :disabled="inputEdit()"
-                        :class="optionsRequired()"
-                        required
                       />
                       <label for="Others">
                         <div style="display: inline-flex">
                           Others, specify:
                           <input
+                            v-model="formData.caseData.noMCVreason[10]"
                             id="Others"
-                            v-model="formData.caseData.noMCVreason[0]"
                             class="input-form-field"
                             type="text"
                             style="width: 150px; height: 20px; margin: 0 2px"
@@ -2535,7 +2532,8 @@ export default {
             if (this.formData.caseData.MCVaccine==='No' &&
                 this.formData.caseData.noMCVreason!=='' &&
                 this.formData.caseData.noMCVreason!==null &&
-                this.formData.caseData.noMCVreason.length!==0)
+                this.formData.caseData.noMCVreason.length!==0 &&
+                this.formData.caseData.noMCVreason.length>0)
                 this.pageDone[page] = true;
             else if (this.formData.caseData.MCVaccine==='Yes' && 
               this.formData.caseData.MCVlastDoseDate!=='' &&

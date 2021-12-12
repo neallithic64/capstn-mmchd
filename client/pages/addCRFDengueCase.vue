@@ -934,7 +934,7 @@
                               <input
                                 :id="value.name"
                                 v-model="formData.caseData.clinicalClassification"
-                                :value="name"
+                                :value="value"
                                 class="input-checkbox"
                                 name="finalClassification"
                                 type="radio"
@@ -1061,7 +1061,7 @@
                       name="labTest"
                       type="radio"
                       :disabled="inputEdit()"
-                      :class="isRequired()"
+                      :class="optionsRequired()"
                       required
                     />
                     <label for="noLabTest"> No </label>
@@ -1628,7 +1628,8 @@ export default {
             if (this.formData.caseData.outcome==='Alive' ||
                 (this.formData.caseData.outcome==='Dead' &&
                 this.formData.cases.dateDied!=='' &&
-                this.formData.cases.dateDied!==null))
+                this.formData.cases.dateDied!==null &&
+                this.formData.cases.dateDied!==undefined))
               this.pageDone[page] = true;
             else this.pageDone[page] = false;
           }
