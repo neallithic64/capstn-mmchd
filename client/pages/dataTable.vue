@@ -1,6 +1,6 @@
 <template>
   <div class="datatable">
-    <div class="search">
+    <div v-if="pageType !== 'patient'" class="search">
       Show
       <select id="rows" v-model="showDataAmount" class="form-control" @change="selectedDataAmount">
         <option value="10">10</option>
@@ -203,12 +203,17 @@
                   :href="'/view' + 'CIFMeasles'">
                   {{ data[column.key] }}
                 </a>
-                <a v-else-if="pageType === 'all' && data['type'] === 'CIF'"
+                <a v-else-if="(pageType === 'patients')"
+                  style="color: #346083; text-decoration-line: underline"
+                  :href="'/patient'">
+                  {{ data[column.key] }}
+                </a>
+                <a v-else-if="(pageType === 'all' || pageType === 'patient') && data['type'] === 'CIF'"
                   style="color: #346083; text-decoration-line: underline"
                   :href="'/view' + data['type'] + data['disease']">
                   {{ data[column.key] }}
                 </a>
-                <a v-else-if="(pageType === 'all' && data['type'] !== 'CIF') || pageType === 'crfCase'"
+                <a v-else-if="((pageType === 'all' || pageType === 'patient') && data['type'] !== 'CIF') || pageType === 'crfCase'"
                   style="color: #346083; text-decoration-line: underline"
                   :href="'/view' + 'CRF' + data['disease'] + 'Case'">
                   {{ data[column.key] }}

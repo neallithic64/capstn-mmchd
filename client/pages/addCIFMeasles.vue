@@ -767,7 +767,7 @@
                           type="checkbox"
                           :disabled="inputEdit()"
                         />
-                        <label for="OWasteMgmt"> OVacCoverage </label>
+                        <label for="OWasteMgmt"> Lack of waste management </label>
                       </div>
 
                       <div style="display: flex; align-items: center">
