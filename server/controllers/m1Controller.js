@@ -480,7 +480,7 @@ const indexFunctions = {
 	
 	getAllNotifs: async function(req, res) {
 		try {
-			let match = await db.exec("mmchddb.NOTIFICATIONS", {receiverID: req.query.userID});
+			let match = await db.findRows("mmchddb.NOTIFICATIONS", {receiverID: req.query.userID});
 			let update = await db.updateRows("mmchddb.NOTIFICATIONS", {receiverID: req.query.userID}, {viewed: true});
 			res.status(200).send(match.reverse());
 		} catch (e) {
@@ -491,7 +491,7 @@ const indexFunctions = {
 
 	getNotification: async function(req,res){
 		try {
-			let match = await db.findRows("mmchddb.NOTIFICATIONS", {notificationID : req.query.notificationID});
+			let match = await db.findRows("mmchddb.NOTIFICATIONS", {notificationID: req.query.notificationID});
 
 			if (match.length > 0)
 				res.status(200).send(match);
