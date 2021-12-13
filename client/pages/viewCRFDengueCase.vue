@@ -1480,7 +1480,7 @@ export default {
       this.pageNum = i
     },
     inputEdit() {
-      if (this.pageNum===6) return false;
+      if (this.pageNum === 6 && this.$auth.user.userID === this.formData.cases.investigatorLab) return false;
       else return true;
     },
     statusInputEdit(value) {
