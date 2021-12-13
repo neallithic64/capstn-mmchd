@@ -107,7 +107,7 @@ function Event(eventID, userID, addressID, remarks, caseStatus, dateSubmitted) {
 	this.dateSubmitted = dateSubmitted;
 }
 
-function Notification(notificationID, receiverID, type, message, caseID, dateCreated, redirectTo, viewed){
+function Notification(notificationID, receiverID, type, message, caseID, dateCreated, redirectTo, viewed) {
 	this.notificationID = notificationID;
 	this.receiverID = receiverID;
 	this.type = type;
@@ -212,7 +212,7 @@ async function generateIDs(table, numRows) {
 	}
 }
 
-function dateToString(date){
+function dateToString(date) {
 	let dateString = new Date(date);
 	return dateString.getFullYear()+'-'+dateString.getMonth().toString().padStart(2,'0')+'-'+dateString.getDate().toString().padStart(2,'0');
 }
@@ -480,7 +480,7 @@ const indexFunctions = {
 	
 	getAllNotifs: async function(req, res) {
 		try {
-			let match = await db.exec("mmchddb.NOTIFICATIONS", {receiverID: req.query.userID});
+			let match = await db.findRows("mmchddb.NOTIFICATIONS", {receiverID: req.query.userID});
 			let update = await db.updateRows("mmchddb.NOTIFICATIONS", {receiverID: req.query.userID}, {viewed: true});
 			res.status(200).send(match.reverse());
 		} catch (e) {
@@ -489,9 +489,9 @@ const indexFunctions = {
 		}
 	},
 
-	getNotification: async function(req,res){
+	getNotification: async function(req, res) {
 		try {
-			let match = await db.findRows("mmchddb.NOTIFICATIONS", {notificationID : req.query.notificationID});
+			let match = await db.findRows("mmchddb.NOTIFICATIONS", {notificationID: req.query.notificationID});
 
 			if (match.length > 0)
 				res.status(200).send(match);
@@ -503,7 +503,7 @@ const indexFunctions = {
 		}
 	},
 
-	getNewNotifs: async function(req,res){
+	getNewNotifs: async function(req, res) {
 		try {
 			let newNotifCount = await db.findNewNotifsCount(req.query.userID);
 			res.status(200).send({newNotifCount:newNotifCount});
@@ -755,7 +755,7 @@ const indexFunctions = {
 					definition: Object.values(diseaseDefs)[i]
 				});
 			}
-			if (result){
+			if (result) {
 				let disease = await db.findRows("mmchddb.DISEASES",{"diseaseID" : diseaseID});
 				result = await sendBulkNotifs(DRUUserTypes, 'updateNotif', 'The case definitions of ' + 
 								disease[0].diseaseName + ' have been updated', null);
@@ -799,13 +799,12 @@ const indexFunctions = {
 					let disease = await db.findRows("mmchddb.DISEASES",{diseaseID:caseAudit.diseaseID});
 					let notification = new Notification(null, caseData.reportedBy,'updateNotif', 
 						'CASE UPDATE: The case level of ' + disease[0].diseaseName + ' Case ' + caseId + 'has been updated to ' + newStatus + '.', 
-						caseId, caseAudit.dateModified, "http://localhost:3000/viewCIF",false);
+						caseId, caseAudit.dateModified, "http://localhost:3000/viewCIF", false);
 					notification.caseID = (await generateID("mmchddb.NOTIFICATIONS")).id;
 					let newNotif = db.insertOne("mmchddb.NOTIFICATIONS", notification);
-					if(newNotif){
+					if (newNotif) {
 						res.status(200).send("Case has been updated!");
-					}
-					else{
+					} else {
 						console.log("Add Notification failed");
 						res.status(500).send("Add Notification failed");
 					} 
@@ -868,7 +867,7 @@ const indexFunctions = {
 										'REMINDER: Please submit your Case Report Forms by Friday. If not submitted, forms will be automatically collected by Friday at 5:00PM.', null);
 			if(result) {
 				result = await sendBulkNotifs(['pidsrStaff', 'fhsisStaff'],'deadlineNotif', 'REMINDER: Please start reminding DRUs to submit their Case Report Forms', null);
-				if(result){
+				if(result) {
 					console.log("Adding notification success");
 				}else console.log("Adding Notification to Staff Failed");
 			} else console.log("Adding Notification to DRU Failed");
