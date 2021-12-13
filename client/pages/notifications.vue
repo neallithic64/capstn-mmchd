@@ -2,7 +2,7 @@
   <div>
     <TopNav/>
     <div class="notif-container">
-      <p v-if="notifs.length === 0"> No notifications available. </p>
+      <p v-if="notifs.length === 0" style="padding: 20px;"> No notifications available. </p>
       <ul v-if="notifs.length > 0">
         <li v-for="(value, name, i) in notifs" :key="i" class="each-notif" @click="goTo(value.redirectTo)">
           <img v-if="value.type==='pushDataNotif'" class="notif-icon" src="../assets/img/pushdata.png"/>
