@@ -1314,6 +1314,8 @@ export default {
   data() {
     return {
       editStatus:false,
+      weekNo: '2021-20',
+      labList: ['a','b','c','d'],
       newStatus:'',
       hasLabTest:'',
       isDisabled: false,
@@ -1337,6 +1339,7 @@ export default {
           reporterContact: '',
           investigatorName: '',
           investigatorContact: '',
+          investigatorLab:'',
         },
         patient: {
           patientID: '',
