@@ -1349,6 +1349,7 @@ export default {
       pageNum: 0,
       formPart: 'Dengue0',
       pageDone: [true,true,true,true,true,true,true,true,false],
+      pageColor: [true,false,false,false,false,false,false,false,false],
       formData: {
         cases: {
           caseID: '',
@@ -1520,8 +1521,8 @@ export default {
     formColor(index) {
       if (this.isOpen) {
         if (index === this.pageNum) return 'formnum formnumcurr';
-        else if (index < this.pageNum) return 'formnum formnumdone';
-        else if (index > this.pageNum) return 'formnum';
+        else if (this.pageColor[index]) return 'formnum formnumdone';
+        else return 'formnum';
       }
     },
     async submit() {
@@ -1543,19 +1544,21 @@ export default {
       this.validateForm(this.pageNum);
       this.validateForm(page);
       if (this.pageDone[this.pageNum] || this.pageDone[page] || page===0 || this.pageNum ===0) {
-        if (page < Object.keys(this.disease.formNames).length && this.pageNum < Object.keys(this.disease.formNames).length) {
-          // const prevFormId = this.disease.name + this.pageNum;
-          const prevFormNum = 'form' + this.pageNum;
-          // document.getElementById(prevFormId).className = 'hide';
-          document.getElementById(prevFormNum).className = 'formnum formnumdone';
-          // const currFormId = this.disease.name + page;
-          const currFormNum = 'form' + page;
-          // document.getElementById(currFormId).className = 'show';
-          document.getElementById(currFormNum).className = 'formnum formnumcurr';
+        if (page===8) {
+          if (!this.pageColor[8]) alert('Please fill up the required fields in all pages');
+          else this.pageNum = page;
         }
-        this.pageDone[this.pageNum] = true;
-        this.pageDone[page] = true;
-        this.pageNum = page;
+        else if (page < Object.keys(this.disease.formNames).length && this.pageNum < Object.keys(this.disease.formNames).length) {
+          const prevFormNum = 'form' + this.pageNum;
+          document.getElementById(prevFormNum).className = 'formnum formnumdone';
+          const currFormNum = 'form' + page;
+          document.getElementById(currFormNum).className = 'formnum formnumcurr';
+
+          if (this.pageDone[this.pageNum]) this.pageColor[this.pageNum]=true;
+          this.pageDone[this.pageNum] = true;
+          this.pageDone[page] = true;
+          this.pageNum = page;
+        }
       }
       else {
         alert('Please fill up the required fields');
@@ -1657,10 +1660,16 @@ export default {
         case 7:
           if (this.formData.caseData.caseClassification!=='' &&
               this.formData.caseData.caseClassification!== null &&
-              this.formData.caseData.caseClassification.length!== 0)
+              this.formData.caseData.caseClassification !== undefined)
             this.pageDone[page] = true;
           else this.pageDone[page] = false;
           break;
+        case 8:
+          if(this.pageColor[1] && this.pageColor[2] && this.pageColor[3] && this.pageColor[4]
+             && this.pageColor[5] && this.pageColor[6] && this.pageColor[7]) {
+               this.pageColor[8] = true;
+               this.pageDone[8] = true;
+             }
       }
     },
     isRequired() {
