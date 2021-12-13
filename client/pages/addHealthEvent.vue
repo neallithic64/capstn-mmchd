@@ -43,23 +43,24 @@
                   <label for="dateCaptured" class="required"> Date Captured </label>
                   <input id="dateCaptured" 
                     v-model="healthEvent.dateCaptured"
-                    class="input-form-field"
+                    :class="isRequired()"
                     type="date"
                     name="dateCaptured"
                     :disabled="inputEdit()"
+                    required
                     @change="validateTime()"/>
-                    
                 </div>
 
                 <div class="field">
-                  <label for="timeCaptured" class="required"> Time Captured </label>
+                  <label for="timeCaptured" class="required"> Time Captured</label>
                   <input 
                     id="timeCaptured"
                     v-model="healthEvent.timeCaptured"
-                    class="input-form-field"
+                    :class="isRequired()"
                     type="time"
                     name="timeCaptured"
                     :disabled="inputEdit()"
+                    required
                   />
                 </div>
               </div>
@@ -72,9 +73,11 @@
                     v-model="healthEvent.source"
                     value="Print"
                     class="input-radio"
+                    :class="optionsRequired()"
                     name="source"
                     type="radio"
                     :disabled="inputEdit()"
+                    required
                   />
                   <label for="print"> Print </label>
                 </div>
@@ -84,9 +87,11 @@
                     v-model="healthEvent.source"
                     value="Internet"
                     class="input-radio"
+                    :class="optionsRequired()"
                     name="source"
                     type="radio"
                     :disabled="inputEdit()"
+                    required
                   />
                   <label for="internet"> Internet </label>
                 </div>
@@ -96,9 +101,11 @@
                     v-model="healthEvent.source"
                     value="Television"
                     class="input-radio"
+                    :class="optionsRequired()"
                     name="source"
                     type="radio"
                     :disabled="inputEdit()"
+                    required
                   />
                   <label for="television"> Television </label>
                 </div>
@@ -108,9 +115,11 @@
                     v-model="healthEvent.source"
                     value="Radio"
                     class="input-radio"
+                    :class="optionsRequired()"
                     name="source"
                     type="radio"
                     :disabled="inputEdit()"
+                    required
                   />
                   <label for="radioSource"> Radio </label>
                 </div>
@@ -120,9 +129,11 @@
                     v-model="healthEvent.source"
                     value="DOH"
                     class="input-radio"
+                    :class="optionsRequired()"
                     name="source"
                     type="radio"
                     :disabled="inputEdit()"
+                    required
                   />
                   <label for="doh"> DOH </label>
                 </div>
@@ -132,18 +143,26 @@
                     v-model="healthEvent.source"
                     value="Public"
                     class="input-radio"
+                    :class="optionsRequired()"
                     name="source"
                     type="radio"
                     :disabled="inputEdit()"
+                    required
                   />
                   <label for="public"> Public </label>
                 </div>
               </div>
 
               <div class="name-field">
-                  <label for="reportSource" class="required"> Reporting Source </label>
-                  <input id="reportSource"  v-model="healthEvent.reportSource" class="input-form-field" type="text" name="reportSource" :disabled="inputEdit()"/>
-                    
+                <label for="reportSource" class="required"> Reporting Source </label>
+                <input id="reportSource" 
+                  v-model="healthEvent.reportSource"
+                  :class="isRequired()"
+                  type="text"
+                  name="reportSource"
+                  :disabled="inputEdit()"
+                  required
+                />
               </div>
             </div>
           </form>
@@ -154,10 +173,17 @@
               <h2 id="form-header"> {{ Object.values(formSection.formNames)[1] }} </h2>
 
               <div class="name-field">
-                  <label for="eventDetails" class="required"> Health Event </label>
-                  <textarea 
-                    id="eventDetails"
-                    v-model="healthEvent.eventDetails" class="textarea-form-field" type="text" name="eventDetails" :disabled="inputEdit()"/>
+                <label for="eventDetails" class="required"> Health Event </label>
+                <textarea 
+                  id="eventDetails"
+                  v-model="healthEvent.eventDetails"
+                  class="textarea-form-field"
+                  :class="textareaRequired()"
+                  type="text"
+                  name="eventDetails"
+                  :disabled="inputEdit()"
+                  required
+                />
               </div>
 
               <!-- Location -->
@@ -169,9 +195,10 @@
                   <input
                     id="locHouseStreet"
                     v-model="healthEvent.locHouseStreet"
-                    class="input-form-field"
+                    :class="isRequired()"
                     type="text"
                     :disabled="inputEdit()"
+                    required
                   />
                 </div>
               </div>
@@ -179,7 +206,12 @@
               <div class="field-row-straight">
                 <div class="name-field">
                   <label for="locCity" class="required"> City </label>
-                  <select id="locCity" v-model="healthEvent.locCity" name="locCity" :disabled="inputEdit()" @change="getLocBrgyList()">
+                  <select id="locCity" v-model="healthEvent.locCity"
+                    :class="isRequired()"
+                    name="locCity"
+                    :disabled="inputEdit()"
+                    required
+                    @change="getLocBrgyList()">
                     <option value="Caloocan">Caloocan</option>
                     <option value="Las Piñas">Las Piñas</option>
                     <option value="Makati">Makati</option>
@@ -201,7 +233,15 @@
 
                 <div class="field">
                   <label for="locBrgy" class="required"> Barangay </label>
-                  <select v-if="true" id="locBrgy" v-model="healthEvent.locBrgy" name="locBrgy" :disabled="inputEdit()">
+                  <select
+                    v-if="true"
+                    id="locBrgy"
+                    v-model="healthEvent.locBrgy"
+                    :class="isRequired()"
+                    name="locBrgy"
+                    :disabled="inputEdit()"
+                    required
+                  >
                     <!-- <option v-for="(brgy, i) in brgyList" :key = "i" :value="brgy"> 
                       {{ brgy }} 
                     </option> -->
@@ -218,10 +258,11 @@
                   <input
                     id="numCases"
                     v-model="healthEvent.numCases"
-                    class="input-form-field"
+                    :class="isRequired()"
                     type="number"
                     min="0"
                     :disabled="inputEdit()"
+                    required
                   />
                 </div>
                 <div class="field">
@@ -231,10 +272,11 @@
                   <input
                     id="numDeaths"
                     v-model="healthEvent.numDeaths"
-                    class="input-form-field"
+                    :class="isRequired()"
                     type="number"
                     min="0"
                     :disabled="inputEdit()"
+                    required
                   />
                 </div>
               </div>
@@ -248,7 +290,10 @@
                   <textarea 
                     id="remarks"
                     v-model="healthEvent.remarks"
-                    class="textarea-form-field" type="text" name="remarks" :disabled="inputEdit()"/>
+                    class="textarea-form-field"
+                    type="text"
+                    name="remarks"
+                    :disabled="inputEdit()"/>
                 </div>
               </div>
             </div>
@@ -289,7 +334,7 @@ export default {
       isOpen: true,
       pageNum: 0,
       locBrgyList: [],
-      pageDone: [false,false],
+      pageDone: [true,true],
       healthEvent: {
         dateCaptured: '',
         timeCaptured: '',
@@ -335,8 +380,6 @@ export default {
       }
     },
     validateForm() {
-      // eslint-disable-next-line no-console
-      console.log(this.pageNum);
       switch (this.pageNum) {
         case 0:
           if (this.healthEvent.dateCaptured !== '' &&
@@ -344,10 +387,12 @@ export default {
           this.healthEvent.source !== null &&
           this.healthEvent.reportSource !== ''
           ) this.pageDone[this.pageNum] = true;
-          else this.pageDone[this.pageNum] = false;
+          else {
+            this.pageDone[this.pageNum] = false;
+          }
         break;
         case 1:
-          if (this.healthEvent.healthEvent !== '' &&
+          if (this.healthEvent.eventDetails !== '' &&
           this.healthEvent.locHouseStreet !== '' &&
           this.healthEvent.locCity !== '' &&
           (this.healthEvent.locBrgy !== '' && this.healthEvent.locBrgy !== "Choose Barangay") &&
@@ -403,19 +448,26 @@ export default {
       }
     },
     move(page) {
+      // eslint-disable-next-line no-console
+      console.log(page);
       this.validateForm();
-      if (this.pageDone[this.pageNum] || this.pageDone[page] || this.pageNum === 2) {
+      if (this.pageDone[this.pageNum] || this.pageNum === 2) {
         this.pageNum = page;
-      } else alert('Please fill up the required fields');
+      } else {
+        alert('Please fill up the required fields');
+        this.$forceUpdate(); 
+      }
+      // eslint-disable-next-line no-console
+      console.log(this.healthEvent.locBrgy);
       this.$nextTick(() => {
-        if ((page === 1 || page === 2) && this.healthEvent.locBrgy != null) {
+        if ((page === 1 || page === 3) && this.healthEvent.locBrgy != null) {
           for (let i = 0; i < this.locBrgyList.length; i++) {
             const option = document.createElement('option');
             option.text = this.locBrgyList[i];
             option.value = this.locBrgyList[i];
             document.getElementById('locBrgy').add(option);
             if (this.healthEvent.locBrgy === this.locBrgyList[i])
-              document.getElementById('locBrgy').selectedIndex = i+1;
+              document.getElementById('locBrgy').selectedIndex = i;
           }
         }
 
@@ -453,17 +505,28 @@ export default {
         return true;
       } else return false;
     },
+    isRequired() {
+      if (this.pageDone[this.pageNum]) return "input-form-field";
+      else return "input-form-field input-required";
+    },
+    optionsRequired() {
+      if (!this.pageDone[this.pageNum]) return "input-required";
+    },
+    textareaRequired() {
+      if (this.pageDone[this.pageNum]) return "textarea-form-field";
+      else return "textarea-form-field input-required";
+    },
     getLocBrgyList() {
       // eslint-disable-next-line no-console
       console.log(this.healthEvent.locCity);
-      const dropdown = document.getElementById('locBrgy');
-      while (dropdown.firstChild) dropdown.removeChild(dropdown.firstChild);
+      const dropdown1 = document.getElementById('locBrgy');
+      while (dropdown1.firstChild) dropdown1.removeChild(dropdown1.firstChild);
 
       const defaultOption = document.createElement('option');
       defaultOption.text = 'Choose Barangay';
 
-      dropdown.add(defaultOption);
-      dropdown.selectedIndex = 0;
+      dropdown1.add(defaultOption);
+      dropdown1.selectedIndex = 0;
 
       axios.get('barangays.json').then(res => {
           let option;
@@ -474,7 +537,7 @@ export default {
             option = document.createElement('option');
             option.text = this.locBrgyList[i];
             option.value = this.locBrgyList[i];
-            dropdown.add(option);
+            dropdown1.add(option);
           }
         })
         // eslint-disable-next-line no-console
@@ -491,6 +554,16 @@ export default {
     padding: 0px;
     margin: 0px;
     background-image: none;
+  }
+
+  .input-required:invalid { 
+    box-shadow: 0 0 5px #d45252;
+    border-color: hsl(0, 76%, 50%);
+    /* background-color: #ff6961; */
+  }
+
+  .input-required{
+    border-color: hsl(0, 76%, 50%);
   }
 
   .case-container {
@@ -841,73 +914,11 @@ export default {
   }
 
   .info-icon-img {
-    width: 10px;
-    height: 10px;
-    margin: 0 5px;
-  }
-
-  .tooltip {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-right: 40px;
-    cursor: pointer;
-  }
-
-  .tooltipText {
-    background-color: #fff;
-    position: absolute;
-    bottom: 130%;
-    padding: 10px 15px;
-    border-radius: 5px;
-    font-size: 14px;
-    opacity: 0;
-    transition: all 0.5s;
-  }
-
-  .tooltip:hover .tooltipText {
-    opacity: 1;
-    transform: translateY(-10px);
-  }
-
-  .tooltipText::after {
-    content: '';
-    border-width: 5px;
-    border-style: solid;
-    border-color: #fff transparent transparent transparent;
-    position: absolute;
-    top: 100%;
-    left: 40%;
-    margin-left: 5%;
-  }
-
-  img:hover + .info-desc {
-    display: block;
-  }
-
-  .info-desc {
-    display: none;
-    background-color: #fff;
-    position: absolute;
-    bottom: 130%;
-    padding: 10px 15px;
-    border-radius: 5px;
-    font-size: 14px;
-    opacity: 0;
-    transition: all 0.5s;
-  }
-
-  .infodesc-outside {
-    position: relative;
-    background: #adadad;
-    color: white;
-    border-radius: 10px;
-    font-size: 11px;
-    padding: 2px 7px;
-    top: -20px;
-    left: -20px;
-  }
+  width: 10px;
+  height: 10px;
+  margin: 0 5px;
+  z-index: 1;
+}
 
   label {
     display: inline-flex;
