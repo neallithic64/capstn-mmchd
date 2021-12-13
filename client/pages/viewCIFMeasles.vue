@@ -1839,7 +1839,7 @@
                     v-model="formData.caseData.sourceInfection"
                     :value="source"
                     name="product"
-                    type="checkbox"
+                    type="radio"
                     :disabled="inputEdit()"
                   />
                   <label :for="source">{{ source }}</label>
@@ -1963,6 +1963,18 @@
                     :disabled="inputEdit()"
                   />
                   <label for="noLabTest"> No </label>
+                </div>
+                <div class="center-center" style="margin: 0 20px">
+                  <input
+                    id="processingLabTest"
+                    v-model="hasLabTest"
+                    value="Processing"
+                    class="input-radio"
+                    name="labTest"
+                    type="radio"
+                    :disabled="inputEdit()"
+                  />
+                  <label for="processingLabTest"> Processing </label>
                 </div>
                 <div class="center-center" style="margin: 0 20px">
                   <input

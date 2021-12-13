@@ -80,16 +80,15 @@ export default {
       disease: 'Dengue',
       CRFID: "",
       druID: 'ABC',
-      submittedDate: 'Nov 11,2021',
+      submittedDate: 'Nov 11, 2021',
       updatedDate: 'Nov 10, 2020',
       weekNo: '2020-21',
-
       tableOptions: {
         tableName: 'crf',
         columns: [
           {
-            title: 'CRF ID',
-            key: 'crfID',
+            title: 'Case ID',
+            key: 'caseID',
             type: 'clickable',
             source: 'crf',
             uniqueField: 'id',
@@ -97,7 +96,7 @@ export default {
           },
           {
             title: 'Patient',
-            key: 'patientNo',
+            key: 'patientName',
             type: 'number',
             source: 'crf',
           },
@@ -112,7 +111,7 @@ export default {
           },
           {
             title: 'Age',
-            key: 'age',
+            key: 'ageNo',
             type: 'number',
             source: 'crf',
             uniqueField: 'id',
@@ -128,7 +127,7 @@ export default {
           },
           {
             title: 'Date added',
-            key: 'addDate',
+            key: 'reportDate',
             type: 'text',
             dateFormat: true,
             currentFormat: 'YYYY-MM-DD',
@@ -146,7 +145,7 @@ export default {
           },
           {
             title: 'Case Status',
-            key: 'status',
+            key: 'caseLevel',
             type: 'text',
             source: 'cases',
             uniqueField: 'id',
@@ -157,41 +156,7 @@ export default {
         // source: 'http://demo.datatable/api/users',
         search: true,
       },
-      crfData: [
-        {
-          crfID: 35,
-          disease: 'Dengue',
-          patientNo: '1123',
-          age: '12',
-          sex: 'F',
-          city: 'Manila',
-          addDate:'2020-02-10',
-          updatedDate: '2020-11-10',
-          status: 'Probable',
-        },
-        {
-          crfID: 55,
-          disease: 'Dengue',
-          patientNo: '234',
-          age: '50',
-          sex: 'M',
-          city: 'Makati',
-          addDate:'2020-02-10',
-          updatedDate: '2022-11-12',
-          status: 'Confirmed',
-        },
-        {
-          crfID: 35,
-          disease: 'Dengue',
-          patientNo: '1123',
-          age: '12',
-          sex: 'F',
-          city: 'Manila',
-          addDate:'2020-02-10',
-          updatedDate: '2022-11-12',
-          status: 'Probable',
-        },
-      ],
+      crfData: [],
       formData: {
         patient: {
           patientID: '',
@@ -238,19 +203,18 @@ export default {
     }
   },
   async fetch() {
-    let rows = (
-      await axios.get(
-        'http://localhost:8080/api/getCaseDefs?diseaseID=' + this.diseaseID
-      )
-    ).data
-    for (let i = 0; i < rows.length; i++) {
-      this.classification[rows[i].class] = rows[i].definition
-    }
-    rows = (await axios.get('http://localhost:8080/api/getPatients')).data
-    this.patients = rows
+    const rows = (await axios.get('http://localhost:8080/api/getCRFPage', {
+	  params: {
+	    diseaseID: "DI-0000000000003",
+	    userID: this.$auth.user.userID
+	  }
+	})).data;
+	console.log(rows);
+    this.crfData = rows.crfData;
+	this.weekNo = rows.CRF.year + "-" + rows.CRF.week;
+	this.CRFID = rows.CRF.CRFID;
   },
   compute: {},
-
   mounted() {},
   methods: {
     popup() {
@@ -336,7 +300,7 @@ hr {
   display: block;
   z-index: 11;
   margin: 0px;
-  padding: 15% 30% 20%;
+  padding: 10% 30% 20%;
   width: -webkit-fill-available;
   height: -webkit-fill-available;
   /* background: gray; */
@@ -350,7 +314,7 @@ hr {
 
 @media only screen and (max-width:1000px) {
   .overlay  {
-    padding: 30% 15%;
+    padding: 20% 15%;
   }
 }
 
@@ -361,6 +325,7 @@ hr {
   /* width: -webkit-fill-available;
   height: -webkit-fill-available; */
   overflow-y: auto;
+  box-shadow: 1px 4px 8px rgb(0 0 0 / 40%);
 }
 
 .popupButtons {

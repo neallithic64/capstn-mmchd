@@ -92,6 +92,8 @@
                     class="input-form-field"
                     type="text"
                     :disabled="inputEdit()"
+                    :class="isRequired()"
+                    required
                   />
                 </div>
                 <div class="name-field">
@@ -102,6 +104,8 @@
                     class="input-form-field"
                     type="text"
                     :disabled="inputEdit()"
+                    :class="isRequired()"
+                    required
                   />
                 </div>
                 <div class="name-field">
@@ -112,6 +116,8 @@
                     class="input-form-field"
                     type="text"
                     :disabled="inputEdit()"
+                    :class="isRequired()"
+                    required
                   />
                 </div>
               </div>
@@ -126,6 +132,8 @@
                       class="input-form-field"
                       type="date"
                       :disabled="inputEdit()"
+                      :class="isRequired()"
+                      required
                     />
                   </div>
                   <div class="age-field field">
@@ -136,6 +144,8 @@
                       class="input-form-field"
                       type="number"
                       :disabled="inputEdit()"
+                      :class="isRequired()"
+                      required
                     />
                   </div>
                   <div class="sex-field field">
@@ -149,6 +159,8 @@
                         name="sex"
                         type="radio"
                         :disabled="inputEdit()"
+                        :class="optionsRequired()"
+                        required
                       />
                       <label for="female"> Female </label>
                     </div>
@@ -161,6 +173,8 @@
                         name="sex"
                         type="radio"
                         :disabled="inputEdit()"
+                        :class="optionsRequired()"
+                        required
                       />
                       <label for="male"> Male </label>
                     </div>
@@ -177,6 +191,8 @@
                       v-model="formData.patient.civilStatus"
                       name="civilStatus"
                       :disabled="inputEdit()"
+                      :class="isRequired()"
+                      required
                     >
                       <option value="Single">Single</option>
                       <option value="Married">Married</option>
@@ -206,6 +222,8 @@
                     class="input-form-field"
                     type="text"
                     :disabled="inputEdit()"
+                    :class="isRequired()"
+                    required
                   />
                 </div>
               </div>
@@ -213,7 +231,12 @@
               <div class="field-row-straight">
                 <div class="name-field">
                   <label for="currCity" class="required"> City </label>
-                  <select id="currCity" v-model="formData.patient.currCity" name="currCity" :disabled="inputEdit()">
+                  <select id="currCity" 
+                      v-model="formData.patient.currCity" 
+                      name="currCity" 
+                      :disabled="inputEdit()"
+                      :class="isRequired()"
+                      required>
                     <option v-for="(city, i) in cityList" :key=i>{{city}}</option>
                   </select>
                 </div>
@@ -225,6 +248,8 @@
                     class="input-form-field"
                     type="text"
                     :disabled="inputEdit()"
+                    :class="isRequired()"
+                    required
                   />
                 </div>
               </div>
@@ -275,6 +300,8 @@
                     class="input-form-field"
                     type="text"
                     :disabled="inputEdit()"
+                    :class="isRequired()"
+                    required
                   />
                 </div>
                 <div class="name-field">
@@ -285,6 +312,8 @@
                     class="input-form-field"
                     type="number"
                     :disabled="inputEdit()"
+                    :class="isRequired()"
+                    required
                   />
                 </div>
               </div>
@@ -309,6 +338,8 @@
                         name="patientConsulted"
                         type="radio"
                         :disabled="inputEdit()"
+                        :class="optionsRequired()"
+                        required
                       />
                       <label for="noConsult"> No </label>
                     </div>
@@ -321,6 +352,8 @@
                         name="patientConsulted"
                         type="radio"
                         :disabled="inputEdit()"
+                        :class="optionsRequired()"
+                        required
                       />
                       <label for="yesConsult"> Yes </label>
                     </div>
@@ -363,6 +396,8 @@
                         name="admitStatus"
                         type="radio"
                         :disabled="inputEdit()"
+                        :class="optionsRequired()"
+                        required
                       />
                       <label for="noAdmit"> No </label>
                     </div>
@@ -375,6 +410,8 @@
                         name="admitStatus"
                         type="radio"
                         :disabled="inputEdit()"
+                        :class="optionsRequired()"
+                        required
                       />
                       <label for="yesAdmit"> Yes </label>
                     </div>
@@ -407,6 +444,8 @@
                     class="input-form-field"
                     type="date"
                     :disabled="inputEdit()"
+                    :class="isRequired()"
+                    required
                   />
                 </div>
               </div>
@@ -445,7 +484,7 @@
                             type="checkbox"
                             :disabled="inputEdit()"
                           />
-                          <label for="source">Alcoholism</label>
+                          <label for="LAlcoholism">Alcoholism</label>
                         </div>
 
                         <div style="padding-left: 7px">
@@ -513,7 +552,7 @@
                             type="checkbox"
                             :disabled="inputEdit()"
                           />
-                          <label for="Others"> Asthma </label>
+                          <label for="CAsthma"> Asthma </label>
                         </div>
 
                         <div style="display: flex; align-items: center">
@@ -526,7 +565,7 @@
                             type="checkbox"
                             :disabled="inputEdit()"
                           />
-                          <label for="Others"> Hereditary </label>
+                          <label for="CHereditary"> Hereditary </label>
                         </div>
 
                         <div style="display: flex; align-items: center">
@@ -820,6 +859,8 @@
                         name="patientConsulted"
                         type="radio"
                         :disabled="inputEdit()"
+                        :class="optionsRequired()"
+                        required
                       />
                       <label for="noVaccine"> No </label>
                     </div>
@@ -832,13 +873,15 @@
                         name="patientConsulted"
                         type="radio"
                         :disabled="inputEdit()"
+                        :class="optionsRequired()"
+                        required
                       />
                       <label for="yesVaccine"> Yes </label>
                     </div>
                   </div>
                 </div>
                 <div v-if="formData.caseData.vaccine==='Yes'" class="field" style="width:39%">
-                  <label for="vaccineFirstDate">
+                  <label for="vaccineFirstDate" class="required">
                     Date First Vaccinated
                   </label>
                   <input
@@ -847,16 +890,20 @@
                     class="input-form-field"
                     type="date"
                     :disabled="inputEdit()"
+                    :class="isRequired()"
+                    required
                   />
                 </div>
                 <div v-if="formData.caseData.vaccine==='Yes'" class="field" style="width:39%">
-                  <label for="patientConsultPlace"> Date Last Vaccinated </label>
+                  <label for="patientConsultPlace" class="required"> Date Last Vaccinated </label>
                   <input
                     id="patientConsultPlace"
                     v-model="formData.patient.vaccineLastdate"
                     class="input-form-field"
                     type="date"
                     :disabled="inputEdit()"
+                    :class="isRequired()"
+                    required
                   />
                 </div>
               </div>
@@ -887,11 +934,13 @@
                               <input
                                 :id="value.name"
                                 v-model="formData.caseData.clinicalClassification"
-                                :value="name"
+                                :value="value"
                                 class="input-checkbox"
                                 name="finalClassification"
                                 type="radio"
                                 :disabled="inputEdit()"
+                                :class="optionsRequired()"
+                                required
                               />
                               {{ value.name }}
                             </label>
@@ -933,6 +982,8 @@
                         name="outcome"
                         type="radio"
                         :disabled="inputEdit()"
+                        :class="optionsRequired()"
+                        required
                       />
                       <label for="Alive"> Alive </label>
                     </div>
@@ -946,6 +997,8 @@
                         name="outcome"
                         type="radio"
                         :disabled="inputEdit()"
+                        :class="optionsRequired()"
+                        required
                       />
                       <label for="Dead"> Dead </label>
                     </div>
@@ -961,6 +1014,8 @@
                         style="width: 175px"
                         type="date"
                         :disabled="inputEdit()"
+                        :class="isRequired()"
+                        required
                       />
                     </div>
                   </div>
@@ -1006,6 +1061,8 @@
                       name="labTest"
                       type="radio"
                       :disabled="inputEdit()"
+                      :class="optionsRequired()"
+                      required
                     />
                     <label for="noLabTest"> No </label>
                   </div>
@@ -1018,6 +1075,8 @@
                       name="labTest"
                       type="radio"
                       :disabled="inputEdit()"
+                      :class="optionsRequired()"
+                      required
                     />
                     <label for="yesLabTest"> Yes </label>
                   </div>
@@ -1027,7 +1086,12 @@
               <div v-show="hasLabTest==='No'">
                 <div class="name-field" style="width:50%">
                   <label for="investigatorLab" class="required"> Choose Lab to forward the case to </label>
-                  <select id="investigatorLab" v-model="formData.cases.investigatorLab" name="investigatorLab" :disabled="inputEdit()">
+                  <select id="investigatorLab" 
+                      v-model="formData.cases.investigatorLab" 
+                      name="investigatorLab" 
+                      :disabled="inputEdit()"
+                      :class="isRequired()"
+                      required>
                     <option v-for="(lab, i) in labList" :key=i>{{lab}}</option>
                   </select>
                 </div>
@@ -1185,6 +1249,7 @@
                   </div>
                 </div>
               </div>
+              <div v-if="noLabTest" class="errorLab"> Please input atleast 1 lab test </div>
               
             </div>
           </form>
@@ -1212,12 +1277,14 @@
                             <label :for="name" class="collapseLabel">
                               <input
                                 :id="name"
-                                v-model="formData.caseData.caseClassification"
+                                v-model="formData.caseData.caseLevel"
                                 :value="name"
                                 class="input-checkbox"
                                 name="finalClassification"
                                 type="radio"
                                 :disabled="inputEdit()"
+                                :class="optionsRequired()"
+                                required
                               />
                               {{ name }}
                             </label>
@@ -1271,14 +1338,18 @@ export default {
   data() {
     return {
       hasLabTest:'',
+      noLabTest:false,
       isOpen: true,
       openCollapse: '',
       isDisabled: false,
       diseaseID: 'DI-0000000000000',
       patients: [],
       patientResult: [],
+      labList:['a','b','c','d'],
       pageNum: 0,
       formPart: 'Dengue0',
+      pageDone: [true,true,true,true,true,true,true,true,false],
+      pageColor: [true,false,false,false,false,false,false,false,false],
       formData: {
         cases: {
           caseID: '',
@@ -1364,7 +1435,6 @@ export default {
           // Page 6++
           finalClassification: '',
           clinicalClassification:'',
-          caseClassification:'',
           sourceInfection: [],
           outcome: '',
           dateDied: '',
@@ -1451,15 +1521,17 @@ export default {
     formColor(index) {
       if (this.isOpen) {
         if (index === this.pageNum) return 'formnum formnumcurr';
-        else if (index < this.pageNum) return 'formnum formnumdone';
-        else if (index > this.pageNum) return 'formnum';
+        else if (this.pageColor[index]) return 'formnum formnumdone';
+        else return 'formnum';
       }
     },
     async submit() {
       // TODO: this submit is the "save" type, the cases should only be visible to the DRU, not yet submitted to MMCHD
+	  const now = new Date();
       this.formData.cases.diseaseID = this.diseaseID;
       this.formData.cases.reportedBy = this.$auth.user.userID;
-      const result = await axios.post('http://localhost:8080/api/newCase', {formData: this.formData, CRFID: this.$route.query.CRF});
+	  this.formData.cases.reportDate = now.getFullYear() + '-' + (now.getMonth()+1) + '-' + now.getDate();
+      const result = await axios.post('http://localhost:8080/api/newCase', {formData: this.formData, CRFID: this.$route.query.CRFID});
       if (result.status === 200) {
         alert('case submitted!');
         window.location.href = '/allCases';
@@ -1469,17 +1541,143 @@ export default {
       }
     },
     move(page) {
-      if (page < Object.keys(this.disease.formNames).length && this.pageNum < Object.keys(this.disease.formNames).length) {
-        // const prevFormId = this.disease.name + this.pageNum;
-        const prevFormNum = 'form' + this.pageNum;
-        // document.getElementById(prevFormId).className = 'hide';
-        document.getElementById(prevFormNum).className = 'formnum formnumdone';
-        // const currFormId = this.disease.name + page;
-        const currFormNum = 'form' + page;
-        // document.getElementById(currFormId).className = 'show';
-        document.getElementById(currFormNum).className = 'formnum formnumcurr';
+      this.validateForm(this.pageNum);
+      this.validateForm(page);
+      if (this.pageDone[this.pageNum] || this.pageDone[page] || page===0 || this.pageNum ===0) {
+        if (page===8) {
+          if (!this.pageColor[8]) alert('Please fill up the required fields in all pages');
+          else this.pageNum = page;
+        }
+        else if (page < Object.keys(this.disease.formNames).length && this.pageNum < Object.keys(this.disease.formNames).length) {
+          const prevFormNum = 'form' + this.pageNum;
+          document.getElementById(prevFormNum).className = 'formnum formnumdone';
+          const currFormNum = 'form' + page;
+          document.getElementById(currFormNum).className = 'formnum formnumcurr';
+
+          if (this.pageDone[this.pageNum]) this.pageColor[this.pageNum]=true;
+          this.pageDone[this.pageNum] = true;
+          this.pageDone[page] = true;
+          this.pageNum = page;
+        }
       }
-      this.pageNum = page;
+      else {
+        alert('Please fill up the required fields');
+        // document.getElementsByClassName('input-form-field').className = 'input-form-field input-required';
+        this.$forceUpdate();
+      }
+      console.log(this.pageDone)
+    },
+    validateForm(page) {
+      switch (page) {
+        case 1:
+          if (this.formData.patient.lastName!=='' &&
+          this.formData.patient.firstName!=='' &&
+          this.formData.patient.midName!=='' &&
+          this.formData.patient.birthDate!=='' &&
+          this.formData.patient.ageNo!=='' &&
+          this.formData.patient.sex!=='' &&
+          this.formData.patient.civilStatus!=='' &&
+          this.formData.patient.currHouseStreet!=='' &&
+          this.formData.patient.currCity!=='' &&
+          this.formData.patient.currBrgy!=='' &&
+          this.formData.patient.guardianName!=='' &&
+          this.formData.patient.guardianContact!=='' &&
+          this.formData.patient.lastName!== null &&
+          this.formData.patient.firstName!== null &&
+          this.formData.patient.midName!== null &&
+          this.formData.patient.birthDate!== null &&
+          this.formData.patient.ageNo!== null &&
+          this.formData.patient.sex!== null &&
+          this.formData.patient.civilStatus!== null &&
+          this.formData.patient.currHouseStreet!== null &&
+          this.formData.patient.currCity!== null &&
+          this.formData.patient.currBrgy!== null &&
+          this.formData.patient.guardianName!== null &&
+          this.formData.patient.guardianContact!== null
+          ) this.pageDone[page] = true;
+          else this.pageDone[page] = false;
+          if (this.formData.patient.ageNo<0) {this.formData.patient.ageNo = ''; this.pageDone[page] = false;}
+          if (this.formData.patient.guardianContact<0) {this.formData.patient.guardianContact = ''; this.pageDone[page] = false;}
+          break;
+        case 2:
+          if (this.formData.caseData.patientConsulted!=='' &&
+          this.formData.patient.admitStatus!=='' &&
+          this.formData.cases.dateOnset!==''
+          ) this.pageDone[page] = true;
+          else this.pageDone[page] = false;
+          break;
+        case 3:
+          if (this.formData.caseData.vaccine!=='' &&
+              this.formData.caseData.vaccine!=='') {
+            if (this.formData.caseData.vaccine==='No' ||
+                (this.formData.caseData.vaccine==='Yes' &&
+                this.formData.cases.vaccineFirstDate!=='' &&
+                this.formData.cases.vaccineFirstDate!==null &&
+                this.formData.cases.vaccineLastdate!=='' &&
+                this.formData.patient.vaccineLastdate!==null))
+              this.pageDone[page] = true;
+            else this.pageDone[page] = false;
+            console.log(this.formData.cases.vaccineFirstDate!=='')
+          }
+          else this.pageDone[page] = false;
+          break;
+        case 4:
+          if (this.formData.caseData.clinicalClassification!=='' &&
+              this.formData.caseData.clinicalClassification!==null
+          ) this.pageDone[page] = true;
+          else this.pageDone[page] = false;
+          break;
+        case 5:
+          if (this.formData.caseData.outcome!=='') {
+            if (this.formData.caseData.outcome==='Alive' ||
+                (this.formData.caseData.outcome==='Dead' &&
+                this.formData.cases.dateDied!=='' &&
+                this.formData.cases.dateDied!==null &&
+                this.formData.cases.dateDied!==undefined))
+              this.pageDone[page] = true;
+            else this.pageDone[page] = false;
+          }
+          else this.pageDone[page] = false;
+          break;
+        case 6:
+          if (this.hasLabTest!=='') {
+            if (this.hasLabTest==='No' && this.formData.cases.investigatorLab!=='')
+              {this.pageDone[page] = true; this.errorLab = false;}
+            else if(this.formData.caseData.finalClassification!=='Yes' &&
+              (this.formData.caseData.ns1Date!== null ||
+                this.formData.caseData.ns1Result!== null ||
+                this.formData.caseData.iggDate!== null ||
+                this.formData.caseData.iggResult!== null ||
+                this.formData.caseData.igmDate!== null ||
+                this.formData.caseData.igmResult!== null ||
+                this.formData.caseData.pcrDate!== null ||
+                this.formData.caseData.pcrResult!== null))
+              {this.pageDone[page] = true; this.errorLab = false;}
+            else {this.pageDone[page] = false;this.errorLab = true;}
+          }
+          else {this.pageDone[page] = false; this.errorLab = true;}
+          break;
+        case 7:
+          if (this.formData.caseData.caseClassification!=='' &&
+              this.formData.caseData.caseClassification!== null &&
+              this.formData.caseData.caseClassification !== undefined)
+            this.pageDone[page] = true;
+          else this.pageDone[page] = false;
+          break;
+        case 8:
+          if(this.pageColor[1] && this.pageColor[2] && this.pageColor[3] && this.pageColor[4]
+             && this.pageColor[5] && this.pageColor[6] && this.pageColor[7]) {
+               this.pageColor[8] = true;
+               this.pageDone[8] = true;
+             }
+      }
+    },
+    isRequired() {
+      if (this.pageDone[this.pageNum]) return "input-form-field";
+      else return "input-form-field input-required";
+    },
+    optionsRequired() {
+      if (!this.pageDone[this.pageNum]) return "input-required";
     },
     inputEdit() {
       if (this.pageNum === Object.keys(this.disease.formNames).length) {
@@ -1499,6 +1697,7 @@ export default {
       this.formData.patient.birthDate = patient.birthDate.substr(0, 10);
       this.formData.patient.ageNo = patient.ageNo;
       this.formData.patient.sex = patient.sex;
+	  this.formData.patient.civilStatus = patient.civilStatus;
       this.formData.patient.pregWeeks = patient.pregWeeks;
       this.formData.patient.currHouseStreet = patient.currHouseStreet;
       this.formData.patient.currBrgy = patient.currBrgy;
@@ -1535,6 +1734,16 @@ export default {
   transition-delay: 5000ms;
   transition-timing-function: linear;
 } */
+
+.input-required:invalid, textarea:invalid { 
+    box-shadow: 0 0 5px #d45252;
+    border-color: hsl(0, 76%, 50%);
+    /* background-color: #ff6961; */
+}
+
+.input-required{
+  border-color: hsl(0, 76%, 50%);
+}
 
 body {
   font-family: 'Work Sans', sans-serif;
