@@ -300,7 +300,7 @@ hr {
   display: block;
   z-index: 11;
   margin: 0px;
-  padding: 15% 30% 20%;
+  padding: 10% 30% 20%;
   width: -webkit-fill-available;
   height: -webkit-fill-available;
   /* background: gray; */
@@ -314,7 +314,7 @@ hr {
 
 @media only screen and (max-width:1000px) {
   .overlay  {
-    padding: 30% 15%;
+    padding: 20% 15%;
   }
 }
 
@@ -325,6 +325,7 @@ hr {
   /* width: -webkit-fill-available;
   height: -webkit-fill-available; */
   overflow-y: auto;
+  box-shadow: 1px 4px 8px rgb(0 0 0 / 40%);
 }
 
 .popupButtons {
