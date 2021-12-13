@@ -38,7 +38,7 @@
       <div class="viewCIF-details" style="align-text: left">
         <div class="CIFnumbers">
           <p>DRU City: <b>Manila</b></p>
-          <p>DRU Name: <b>HAKDOG</b></p>
+          <p>DRU Name: <b>St.Lukes</b></p>
           <p>DRU Type: <b>type</b></p>
           <p>DRU Address: <b>house</b></p>
         </div>
@@ -218,13 +218,14 @@
             <div class="field-row-straight">
               <div class="field">
                 <label for="currCity" class="required"> City </label>
-                <select
+                <input
                   id="currCity"
                   v-model="formData.patient.currCity"
+                  class="input-form-field"
                   name="currCity"
                   :disabled="inputEdit()"
                 >
-                </select>
+                <!-- </select> -->
               </div>
               <div class="field">
                 <label for="currBarangay" class="required"> Barangay </label>
@@ -256,19 +257,20 @@
             <div class="field-row-straight">
               <div class="field">
                 <label for="permCity"> City </label>
-                <select
+                <input
                   id="permCity"
                   v-model="formData.patient.permCity"
+                  class="input-form-field"
                   name="permCity"
                   :disabled="inputEdit()"
                 >
-                </select>
+                <!-- </select> -->
               </div>
               <div class="field">
                 <label for="permBarangay"> Barangay </label>
                 <input
                   id="permBarangay"
-                  v-model="formData.patient.permBarangay"
+                  v-model="formData.patient.permBrgy"
                   class="input-form-field"
                   type="text"
                   :disabled="inputEdit()"
@@ -2239,6 +2241,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/0.9.0rc1/jspdf.min.js"></script>
 
 <script>
+const axios = require('axios');
+
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
 export default {
@@ -2458,6 +2462,17 @@ export default {
       },
     }
   },
+  async fetch() {
+    const data = (await axios.get('http://localhost:8080/api/getCIF?caseID=CA-0000000000001')).data;
+    this.formData.cases = data.cases;
+    this.formData.caseData = data.caseData;
+    this.formData.patient = data.patient;
+    this.formData.riskFactors = data.riskFactors; // working already
+
+    // fixing dates
+
+    console.log(data);
+  }, 
   methods: {
     formListClass(index) {
       if (index === this.pageNum) return 'formSummaryItems selected'
