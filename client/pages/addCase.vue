@@ -187,12 +187,12 @@ h3 {
 
 #CIF {
   border: none;
-  border-right: black 0.5px solid;
+  border-right: #b8b7b7 0.5px solid;
 }
 
 #CRF {
   border: none;
-  border-left: black 0.5px solid;
+  border-left: #b8b7b7 0.5px solid;
 }
 
 @media only screen and (max-width: 800px) {

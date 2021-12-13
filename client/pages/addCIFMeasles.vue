@@ -2693,7 +2693,7 @@ export default {
   transition-timing-function: linear;
 } */
 
-.input-required:invalid, textarea:invalid { 
+.input-required:invalid { 
     box-shadow: 0 0 5px #d45252;
     border-color: hsl(0, 76%, 50%);
     /* background-color: #ff6961; */
