@@ -17,11 +17,11 @@
             $auth.user.userType === 'govtHosp' || $auth.user.userType === 'privHosp' || $auth.user.userType === 'clinic' ||
             $auth.user.userType === 'govtLab' || $auth.user.userType === 'privLab' || $auth.user.userType === 'airseaPort'"
             :class="formListClass('crfDRU')" @click="clickTab('crfDRU')">
-            CRF DRU
+            CRF
           </ul>
           <ul v-if="$auth.user.userType === 'pidsrStaff' || $auth.user.userType === 'fhsisStaff' || $auth.user.userType === 'techStaff'"
            :class="formListClass('crfCHD')" @click="clickTab('crfCHD')"> 
-           CRF CHD
+           CRF
           </ul>
         </div>
         <div v-show="!isPrint" class="CRFActionButtons">
