@@ -51,7 +51,7 @@
                   v-model="formData.patient.lastName"
                   class="input-form-field"
                   type="text"
-                  :disabled="inputEdit()"
+                  disabled
                 />
               </div>
               <div class="name-field">
@@ -61,7 +61,7 @@
                   v-model="formData.patient.firstName"
                   class="input-form-field"
                   type="text"
-                  :disabled="inputEdit()"
+                  disabled
                 />
               </div>
               <div class="name-field">
@@ -71,7 +71,7 @@
                   v-model="formData.patient.midName"
                   class="input-form-field"
                   type="text"
-                  :disabled="inputEdit()"
+                  disabled
                 />
               </div>
             </div>

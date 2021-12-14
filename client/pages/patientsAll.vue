@@ -120,8 +120,6 @@ export default {
 	  rows[i].updatedDate = rows[i].updatedDate ? rows[i].updatedDate.substr(0, 10) : rows[i].reportDate;
 	  rows[i].disease = rows[i].diseaseName;
 	}
-    this.allData = rows;
-	this.tableOptions.columns = this.allColumns;
   },
   methods: {
     downloadPDF() {
