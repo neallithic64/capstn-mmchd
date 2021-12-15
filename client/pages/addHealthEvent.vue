@@ -40,7 +40,15 @@
               <h2 id="form-header"> {{ Object.values(formSection.formNames)[0] }} </h2>
               <div class="field-row-straight">
                 <div class="name-field">
-                  <label for="dateCaptured" class="required"> Date Captured </label>
+                  <div style="display: flex; flex-direction: row;">
+                    <label for="dateCaptured" class="required"> Date Captured </label>
+                    <button
+                        class="tooltip"
+                        data-tooltip="The date the health event was captured"
+                        data-tooltip-location="bottom">
+                        <img class="tooltip-icon-img" src="~/assets/img/infoicon.png" />    
+                    </button>
+                  </div>
                   <input id="dateCaptured" 
                     v-model="healthEvent.dateCaptured"
                     :class="isRequired()"
@@ -52,7 +60,15 @@
                 </div>
 
                 <div class="field">
-                  <label for="timeCaptured" class="required"> Time Captured</label>
+                  <div style="display: flex; flex-direction: row;">
+                    <label for="timeCaptured" class="required"> Time Captured</label>
+                    <button
+                        class="tooltip"
+                        data-tooltip="The time the health event was captured"
+                        data-tooltip-location="bottom">
+                        <img class="tooltip-icon-img" src="~/assets/img/infoicon.png" />    
+                    </button>
+                  </div>
                   <input 
                     id="timeCaptured"
                     v-model="healthEvent.timeCaptured"
@@ -66,7 +82,15 @@
               </div>
 
               <div class="field">
-                <label for="source" class="required"> Source </label>
+                <div style="display: flex; flex-direction: row;">
+                  <label for="source" class="required"> Source </label>
+                  <button
+                      class="tooltip"
+                      data-tooltip="The primary source of information"
+                      data-tooltip-location="bottom">
+                      <img class="tooltip-icon-img" src="~/assets/img/infoicon.png" />    
+                  </button>
+                </div>
                 <div style="display: inline-flex; align-items: center">
                   <input
                     id="print"
@@ -137,7 +161,7 @@
                   />
                   <label for="doh"> DOH </label>
                 </div>
-                <div style="display: inline-flex; align-items: center">
+                <div>
                   <input
                     id="public"
                     v-model="healthEvent.source"
@@ -154,7 +178,15 @@
               </div>
 
               <div class="name-field">
-                <label for="reportSource" class="required"> Reporting Source </label>
+                <div style="display: flex; flex-direction: row;">
+                  <label for="reportSource" class="required"> Reporting Source </label>
+                  <button
+                      class="tooltip"
+                      data-tooltip="The name of agency or facility reporting the event"
+                      data-tooltip-location="bottom">
+                      <img class="tooltip-icon-img" src="~/assets/img/infoicon.png" />    
+                  </button>
+                </div>
                 <input id="reportSource" 
                   v-model="healthEvent.reportSource"
                   :class="isRequired()"
@@ -173,7 +205,15 @@
               <h2 id="form-header"> {{ Object.values(formSection.formNames)[1] }} </h2>
 
               <div class="name-field">
-                <label for="eventDetails" class="required"> Health Event </label>
+                <div style="display: flex; flex-direction: row;">
+                  <label for="eventDetails" class="required"> Health Event </label>
+                  <button
+                      class="tooltip"
+                      data-tooltip="Describe the health event captured (e.g. chemical spillage, cases of fever, etc.)"
+                      data-tooltip-location="bottom">
+                      <img class="tooltip-icon-img" src="~/assets/img/infoicon.png" />    
+                  </button>
+                </div>
                 <textarea 
                   id="eventDetails"
                   v-model="healthEvent.eventDetails"
@@ -189,9 +229,15 @@
               <!-- Location -->
               <div class="field-row" style="margin-left: 0px">
                 <div class="field">
-                  <label for="locHouseStreet" class="required">
-                    Street / House No.
-                  </label>
+                  <div style="display: flex; flex-direction: row;">
+                    <label for="locHouseStreet" class="required"> Street / House No. </label>
+                    <button
+                      class="tooltip"
+                      data-tooltip="The place of the event"
+                      data-tooltip-location="bottom">
+                      <img class="tooltip-icon-img" src="~/assets/img/infoicon.png" />    
+                    </button>
+                  </div>
                   <input
                     id="locHouseStreet"
                     v-model="healthEvent.locHouseStreet"
@@ -252,9 +298,15 @@
               <!-- Cases -->
               <div class="field-row-straight">
                 <div class="field">
-                  <label for="numCases" class="required">
-                    Number of Cases
-                  </label>
+                  <div style="display: flex; flex-direction: row;">
+                    <label for="numCases" class="required"> Number of Cases </label>
+                    <button
+                      class="tooltip"
+                      data-tooltip="The number of people affected (this can be an estimate)"
+                      data-tooltip-location="bottom">
+                      <img class="tooltip-icon-img" src="~/assets/img/infoicon.png" />    
+                    </button>
+                  </div>
                   <input
                     id="numCases"
                     v-model="healthEvent.numCases"
@@ -266,9 +318,16 @@
                   />
                 </div>
                 <div class="field">
-                  <label for="numDeaths" class="required">
-                    Number of Deaths
-                  </label>
+                  <div style="display: flex; flex-direction: row;">
+                    <label for="numDeaths" class="required"> Number of Deaths </label>
+                    <button
+                      class="tooltip"
+                      data-tooltip="The number of reported deaths"
+                      data-tooltip-location="bottom">
+                      <img class="tooltip-icon-img" src="~/assets/img/infoicon.png" />    
+                    </button>
+                  </div>
+                  
                   <input
                     id="numDeaths"
                     v-model="healthEvent.numDeaths"
@@ -913,11 +972,11 @@ export default {
     }
   }
 
-  .info-icon-img {
+  .tooltip-icon-img {
   width: 10px;
   height: 10px;
-  margin: 0 5px;
-  z-index: 1;
+  margin-left: 5px;
+  margin-right: 5px;
 }
 
   label {
@@ -1144,5 +1203,192 @@ export default {
     height: 25px;
     width: 25px;
     margin: auto 5px auto 0;
+  }
+
+  [data-tooltip] {
+    position: relative;
+    z-index: 10;
+  }
+
+  /* Positioning and visibility settings of the tooltip */
+  [data-tooltip]:before,
+  [data-tooltip]:after {
+    position: absolute;
+    visibility: hidden;
+    opacity: 0;
+    left: 50%;
+    bottom: calc(100% + 5px); /* 5px is the size of the arrow */
+    pointer-events: none;
+    transition: 0.2s;
+    will-change: transform;
+    font-family: 'Work Sans', sans-serif;
+  }
+
+  /* The actual tooltip with a dynamic width */
+  [data-tooltip]:before {
+    content: attr(data-tooltip);
+    padding: 9px 10px;
+    min-width: 50px;
+    max-width: 300px;
+    width: max-content;
+    width: -moz-max-content;
+    border-radius: 6px;
+    font-size: 10px;
+    background-color: rgba(59, 72, 80, 0.9);
+    background-image: linear-gradient(30deg,
+      rgba(59, 72, 80, 0.44),
+      rgba(59, 68, 75, 0.44),
+      rgba(60, 82, 88, 0.44));
+    box-shadow: 0px 0px 24px rgba(0, 0, 0, 0.2);
+    color: #fff;
+    text-align: center;
+    white-space: pre-wrap;
+    transform: translate(-50%, -5px) scale(0.5);
+  }
+
+  /* Tooltip arrow */
+  [data-tooltip]:after {
+    content: '';
+    border-style: solid;
+    border-width: 5px 5px 0px 5px; /* CSS triangle */
+    border-color: rgba(55, 64, 70, 0.9) transparent transparent transparent;
+    transition-duration: 0s; /* If the mouse leaves the element, 
+                                the transition effects for the 
+                                tooltip arrow are "turned off" */
+    transform-origin: top;   /* Orientation setting for the
+                                slide-down effect */
+    transform: translateX(-50%) scaleY(0);
+  }
+
+  /* Tooltip becomes visible at hover */
+  [data-tooltip]:hover:before,
+  [data-tooltip]:hover:after {
+    visibility: visible;
+    opacity: 1;
+  }
+  /* Scales from 0.5 to 1 -> grow effect */
+  [data-tooltip]:hover:before {
+    transition-delay: 0.3s;
+    transform: translate(-50%, -5px) scale(1);
+  }
+  /* 
+    Arrow slide down effect only on mouseenter (NOT on mouseleave)
+  */
+  [data-tooltip]:hover:after {
+    transition-delay: 0.5s; /* Starting after the grow effect */
+    transition-duration: 0.2s;
+    transform: translateX(-50%) scaleY(1);
+  }
+  /*
+    That's it for the basic tooltip.
+
+    If you want some adjustability
+    here are some orientation settings you can use:
+  */
+
+  /* LEFT */
+  /* Tooltip + arrow */
+  [data-tooltip-location="left"]:before,
+  [data-tooltip-location="left"]:after {
+    left: auto;
+    right: calc(100% + 5px);
+    bottom: 50%;
+  }
+
+  /* Tooltip */
+  [data-tooltip-location="left"]:before {
+    transform: translate(-5px, 50%) scale(0.5);
+  }
+  [data-tooltip-location="left"]:hover:before {
+    transform: translate(-5px, 50%) scale(1);
+  }
+
+  /* Arrow */
+  [data-tooltip-location="left"]:after {
+    border-width: 5px 0px 5px 5px;
+    border-color: transparent transparent transparent rgba(55, 64, 70, 0.9);
+    transform-origin: left;
+    transform: translateY(50%) scaleX(0);
+  }
+  [data-tooltip-location="left"]:hover:after {
+    transform: translateY(50%) scaleX(1);
+  }
+
+
+
+  /* RIGHT */
+  [data-tooltip-location="right"]:before,
+  [data-tooltip-location="right"]:after {
+    left: calc(100% + 5px);
+    bottom: 50%;
+  }
+
+  [data-tooltip-location="right"]:before {
+    transform: translate(5px, 50%) scale(0.5);
+  }
+  [data-tooltip-location="right"]:hover:before {
+    transform: translate(5px, 50%) scale(1);
+  }
+
+  [data-tooltip-location="right"]:after {
+    border-width: 5px 5px 5px 0px;
+    border-color: transparent rgba(55, 64, 70, 0.9) transparent transparent;
+    transform-origin: right;
+    transform: translateY(50%) scaleX(0);
+  }
+  [data-tooltip-location="right"]:hover:after {
+    transform: translateY(50%) scaleX(1);
+  }
+
+  /* BOTTOM */
+  [data-tooltip-location="bottom"]:before,
+  [data-tooltip-location="bottom"]:after {
+    top: calc(100% + 5px);
+    bottom: auto;
+  }
+
+  [data-tooltip-location="bottom"]:before {
+    transform: translate(-50%, 5px) scale(0.5);
+  }
+  [data-tooltip-location="bottom"]:hover:before {
+    transform: translate(-50%, 5px) scale(1);
+  }
+
+  [data-tooltip-location="bottom"]:after {
+    border-width: 0px 5px 5px 5px;
+    border-color: transparent transparent rgba(55, 64, 70, 0.9) transparent;
+    transform-origin: bottom;
+  }
+
+  .tooltip {
+    cursor: pointer;
+    text-align: center;
+    border: none;
+    border-radius: 4px;
+    outline: inherit;
+    text-decoration: none;
+    font-family: Roboto, sans-serif;
+    font-size: 0.7em;
+    /* background-color: rgba(174, 184, 192, 0.55); */
+    background-color: transparent;
+    color: white;
+
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    transition: background 350ms ease-in-out, 
+                transform 150ms ease;
+  }
+  .tooltip:hover {
+    /* background-color: #484f56; */
+    background-color: transparent;
+  }
+  .tooltip:active {
+    transform: scale(0.98);
+  }
+  .tooltip:focus {
+    box-shadow: 0 0 2px 2px #298bcf;
+  }
+  .tooltip::-moz-focus-inner {
+    border: 0;
   }
 </style>
