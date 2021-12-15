@@ -215,12 +215,12 @@
                 </a>
                 <a v-else-if="((pageType === 'all' || pageType === 'patient') && data['type'] !== 'CIF') || pageType === 'crfCase'"
                   style="color: #346083; text-decoration-line: underline"
-                  :href="'/view' + 'CRF' + data['disease'] + 'Case'">
+                  :href="'/view' + 'CRF' + data['disease'] + 'Case?caseID=' + data[column.key]">
                   {{ data[column.key] }}
                 </a>
                 <a v-else-if="pageType === 'cif'"
                   style="color: #346083; text-decoration-line: underline"
-                  :href="'/view' + 'CIF' + data['disease']">
+                  :href="'/view' + 'CIFMeasles?caseID=' + data[column.key] ">
                   {{ data[column.key] }}
                 </a>
                 <a v-else-if="pageType === 'crfDRU' || pageType === 'crfCHD'"
@@ -235,7 +235,7 @@
                 </a>
                 <a v-else-if="pageType === 'viewcrfID'"
                   style="color: #346083; text-decoration-line: underline"
-                  :href="'/view' + 'CRF' + data['disease'] + 'Case'">
+                  :href="'/view' + 'CRF' + data['disease'] + 'Case?caseID=' + data[column.key] ">
                   {{ data[column.key] }}
                 </a>
                 <!-- <a
