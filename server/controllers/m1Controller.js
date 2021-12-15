@@ -908,10 +908,9 @@ const indexFunctions = {
 					diseaseID: caseData[0].diseaseID,
 					dateModified: new Date(),
 					fieldName: "caseLevel",
-					prevValue: caseData[0].status,
-					modifiedBy: req.session.user.userId
+					prevValue: caseData[0].caseLevel,
+					modifiedBy: caseData[0].reportedBy
 				};
-				console.table(caseAudit);
 				// inserting the case audit object to the db
 				let newCaseAudit = await db.insertOne("mmchddb.CASE_AUDIT", caseAudit);
 				// then updating the case object itself
@@ -919,21 +918,19 @@ const indexFunctions = {
 						{caseID: caseId},
 						{caseLevel: newStatus});
 				if (newCaseAudit && updateCase) {
-					// TODO: sending of notification as well to the bodies involved
-					// another insert, but this time at the NOTIFS table!
-					// await db.insertOne("mmchddb.NOTIFS", { something something });
-					let disease = await db.findRows("mmchddb.DISEASES",{diseaseID:caseAudit.diseaseID});
-					let notification = new Notification(null, caseData.reportedBy,'updateNotif', 
-						'CASE UPDATE: The case level of ' + disease[0].diseaseName + ' Case ' + caseId + 'has been updated to ' + newStatus + '.', 
-						caseId, caseAudit.dateModified, "http://localhost:3000/allCases", false);
-					notification.caseID = (await generateID("mmchddb.NOTIFICATIONS")).id;
-					let newNotif = db.insertOne("mmchddb.NOTIFICATIONS", notification);
+					// (notificationID, receiverID, type, message, caseID, dateCreated, redirectTo, viewed)
+					let disease = await db.findRows("mmchddb.DISEASES", {diseaseID: caseAudit.diseaseID});
+					let notification = new Notification(null, caseData.reportedBy, 'updateNotif',
+							'CASE UPDATE: The case level of ' + disease[0].diseaseName + ' Case ' + caseId + 'has been updated to ' + newStatus + '.',
+							caseId, caseAudit.dateModified, "http://localhost:3000/viewCIFMeasles?caseID=" + caseId, false);
+					notification.notificationID = (await generateID("mmchddb.NOTIFICATIONS")).id;
+					let newNotif = db.insertNotificationData(notification);
 					if (newNotif) {
 						res.status(200).send("Case has been updated!");
 					} else {
 						console.log("Add Notification failed");
 						res.status(500).send("Add Notification failed");
-					} 
+					}
 				} else res.status(500).send("Error making db transaction.");
 			} else res.status(404).send("No case with such ID found.");
 		} catch (e) {

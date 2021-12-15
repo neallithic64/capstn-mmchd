@@ -2331,7 +2331,7 @@ export default {
       }, 
       formData: {
         cases: {
-          caseID: 123,
+          caseID: '',
           diseaseID: '',
           reportedBy: '',
           caseLevel: 'Suspected Case',
@@ -2559,17 +2559,21 @@ export default {
     popup() {
       this.editStatus = !this.editStatus
     },
-    status(change) {
+    async status(change) {
       if (change==='save') {
         this.formData.caseData.finalClassification = this.newStatus;
         this.formData.cases.caseLevel = this.newStatus;
-
-        // TODO: add notification here -julia
-        // TODO: add notif/alert checking here 
-        // notif message: The case level of <disease name> <case no> has been updated to <new caselevel>.
-        // notif type: updateStatus
-        // receiver: dru who submitted the case
-        // redirectTo: viewCIF/CRF url of the case that was updated
+		const updateCase = await axios.post('http://localhost:8080/api/updateCaseStatus', {
+		  caseId: this.formData.cases.caseID,
+		  newStatus: this.newStatus
+		});
+        if (updateCase.status === 200) {
+          alert('CIF status updated!');
+          location.reload();
+        } else {
+          // eslint-disable-next-line no-console
+          console.log(result);
+        }
       }
       if (change==='cancel') {
         this.newStatus = this.formData.cases.caseLevel;
