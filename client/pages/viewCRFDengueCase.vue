@@ -1222,30 +1222,11 @@
       </div>
       <div class="CRF-statusHistory">
         <h2 style="border-bottom: gray solid; width: fit-content; padding: 0 7px 0 5px;">Case Status History</h2>
-        <div style="border-top: gray solid;">
-          <table style="width: 100%;">
-            <thead>
-              <th style="width: 25%;">Date</th>
-              <th style="width: 25%;">From</th>
-              <th style="width: 25%;">To</th>
-              <th style="width: 25%;">By</th>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Nov 11, 2021</td>
-                <td>Probable</td>
-                <td>Suspected</td>
-                <td>me</td>
-              </tr>
-              <tr>
-                <td>Nov 11, 2021</td>
-                <td>Probable</td>
-                <td>Suspected</td>
-                <td>me</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <dataTable
+          :options="tableOptions"
+          :datavalues="caseHistory"
+          :casetype="'patient'"
+        />
       </div>
     </div>
     <div v-show="editStatus" class="overlay">
@@ -1305,7 +1286,11 @@
 <script>
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
+import dataTable from './dataTable.vue'
 export default {
+  components: {
+    dataTable,
+  },
   middleware: 'is-auth',
   header: {
     title: 'View CRF',
@@ -1325,6 +1310,57 @@ export default {
       caseDefs: [],
       pageNum: 1,
       formPart: 'Dengue0',
+      tableOptions: {
+        tableName: 'cases',
+        columns: [
+          {
+            title: 'Date',
+            key: 'reportDate',
+            type: 'text',
+            dateFormat: true,
+            currentFormat: 'YYYY-MM-DD',
+            expectFormat: 'DD MMM YYYY',
+            // sortable: true,
+          },
+          {
+            title: 'From',
+            key: 'from',
+            type: 'text',
+            source: 'cases',
+            uniqueField: 'id',
+          },
+          {
+            title: 'To',
+            key: 'to',
+            type: 'text',
+            source: 'cases',
+            uniqueField: 'id',
+          },
+          {
+            title: 'Reported By',
+            key: 'reportedBy',
+            type: 'text',
+            source: 'cases',
+            uniqueField: 'id',
+          },
+        ],
+        // source: 'http://demo.datatable/api/users',
+        search: true,
+      },
+      caseHistory: [
+        {
+          reportDate: '2020-10-10',
+          from: 'a',
+          to: 'a',
+          reportedBy: 'a',
+        },
+        {
+          reportDate: '2021-10-10',
+          from: 'b',
+          to: 'b',
+          reportedBy: 'b',
+        }
+      ],
       formData: {
         cases: {
           caseID: '',

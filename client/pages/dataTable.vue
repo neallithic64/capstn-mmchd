@@ -369,7 +369,7 @@ export default {
   methods: {
     caseStatusClass(c) {
       if (c) {
-        if (c.toString().includes('Suspected')) return 'caseStatus suspectedCase';
+        if (c.toString().includes('Suspect')) return 'caseStatus suspectedCase';
         else if (c.toString().includes('Probable')) return 'caseStatus probableCase';
         else if (c.toString().includes('Confirmed')) return 'caseStatus confirmedCase';
         return 'none';
