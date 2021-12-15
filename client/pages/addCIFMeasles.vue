@@ -142,6 +142,7 @@
                       min="0"
                       :disabled="inputEdit()"
                       required
+                      @change="getAge()"
                     />
                   </div>
                 </div>
@@ -2423,6 +2424,10 @@ export default {
         else if (this.pageColor[index]) return 'formnum formnumdone';
         else return 'formnum';
       }
+    },
+    getAge() {
+      const today = new Date();
+      this.formData.patient.ageNo = today.getFullYear() - parseInt(this.formData.patient.birthDate.substr(0,4));
     },
     async submit() {
       this.formData.cases.diseaseID = this.diseaseID;

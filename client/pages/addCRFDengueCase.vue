@@ -131,9 +131,10 @@
                       v-model="formData.patient.birthDate"
                       class="input-form-field"
                       type="date"
-                      :disabled="inputEdit()"
                       :class="isRequired()"
                       required
+                      :disabled="inputEdit()"
+                      @change="getAge()"
                     />
                   </div>
                   <div class="age-field field">
@@ -1535,6 +1536,10 @@ export default {
         else if (this.pageColor[index]) return 'formnum formnumdone';
         else return 'formnum';
       }
+    },
+    getAge() {
+      const today = new Date();
+      this.formData.patient.ageNo = today.getFullYear() - parseInt(this.formData.patient.birthDate.substr(0,4));
     },
     async submit() {
       // TODO: this submit is the "save" type, the cases should only be visible to the DRU, not yet submitted to MMCHD
