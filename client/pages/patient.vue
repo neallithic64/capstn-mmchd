@@ -43,238 +43,364 @@
               Personal Information
             </h2>
 
-            <div class="field-row-straight">
-              <div class="name-field">
-                <label for="lastname" class="required"> Last Name </label>
-                <input
-                  id="lastname"
-                  v-model="formData.patient.lastName"
-                  class="input-form-field"
-                  type="text"
-                  disabled
-                />
-              </div>
-              <div class="name-field">
-                <label for="firstname" class="required"> First Name </label>
-                <input
-                  id="firstname"
-                  v-model="formData.patient.firstName"
-                  class="input-form-field"
-                  type="text"
-                  disabled
-                />
-              </div>
-              <div class="name-field">
-                <label for="middlename" class="required"> Middle Name </label>
-                <input
-                  id="middlename"
-                  v-model="formData.patient.midName"
-                  class="input-form-field"
-                  type="text"
-                  disabled
-                />
-              </div>
-            </div>
-
-            <div
-              class="field-row"
-              style="display: inline-flex; margin-bottom: -1 px"
-            >
-              <div class="half-half half-half1">
-                <div class="birthday-field field">
-                  <label for="birthdate" class="required">
-                    Date of Birth
-                  </label>
+              <div class="field-row-straight">
+                <div class="name-field">
+                  <label for="lastname" class="required"> Last Name </label>
                   <input
-                    id="birthdate"
-                    v-model="formData.patient.birthDate"
+                    id="lastname"
+                    v-model="formData.patient.lastName"
                     class="input-form-field"
-                    type="date"
+                    type="text"
                     disabled
                   />
                 </div>
-                <div class="age-field field">
-                  <label for="age" class="required"> Age </label>
+                <div class="name-field">
+                  <label for="firstname" class="required"> First Name </label>
                   <input
-                    id="age"
-                    v-model="ageNo"
+                    id="firstname"
+                    v-model="formData.patient.firstName"
                     class="input-form-field"
-                    type="number"
+                    type="text"
+                    disabled
+                  />
+                </div>
+                <div class="name-field">
+                  <label for="middlename" class="required"> Middle Name </label>
+                  <input
+                    id="middlename"
+                    v-model="formData.patient.midName"
+                    class="input-form-field"
+                    type="text"
                     disabled
                   />
                 </div>
               </div>
 
-              <div class="half-half half-half2">
-                <div class="sex-field field">
-                  <label class="required"> Sex </label>
-                  <div style="display: inline-flex; align-items: center">
+              <div class="field-row" style="display: inline-flex; margin-bottom: -1 px">
+                <div class="half-half half-half1">
+                  <div class="birthday-field field">
+                    <label for="birthdate" class="required"> Date of Birth </label>
                     <input
-                      id="Female"
-                      v-model="formData.patient.sex"
-                      value="Female"
-                      class="input-radio"
-                      name="sex"
-                      type="radio"
+                      id="birthdate"
+                      v-model="formData.patient.birthDate"
+                      :max="today"
+                      class="input-form-field"
+                      type="date"
                       disabled
                     />
-                    <label for="Female"> Female </label>
                   </div>
-                  <div style="display: inline-flex; align-items: center">
+                  <div class="age-field field">
+                    <label for="age" class="required"> Age </label>
                     <input
-                      id="Male"
-                      v-model="formData.patient.sex"
-                      value="Male"
-                      class="input-radio"
-                      name="sex"
-                      type="radio"
+                      id="age"
+                      v-model="formData.patient.ageNo"
+                      class="input-form-field"
+                      type="number"
+                      min="0"
                       disabled
                     />
-                    <label for="Male"> Male </label>
                   </div>
                 </div>
-                <div class="pregnancy-field field">
-                  <label class="required"> Pregnancy </label>
-                  <div style="display: inline-flex; align-items: center">
-                    <input
-                      id="Not Pregnant"
-                      v-model="formData.patient.pregWeeks"
-                      value="Not Pregnant"
-                      class="input-radio"
-                      name="pregnancy"
-                      type="radio"
-                      :disabled="inputEdit()"
-                    />
-                    <label for="Not Pregnant"> Not Pregnant </label>
-                  </div>
 
-                  <div style="display: inline-flex; align-items: center">
-                    <input
-                      id="Pregnant"
-                      value="pregnant"
-                      class="input-radio"
-                      name="pregnancy"
-                      type="radio"
-                      :disabled="inputEdit()"
-                    />
-                    <label for="pregnancyWeeks" style="display: inline-flex">
+                <div class="half-half half-half2">
+                  <div class="sex-field field">
+                    <label class="required"> Sex </label>
+                    <div style="display: inline-flex; align-items: center">
                       <input
-                        id="pregnancy"
-                        v-model="formData.patient.pregWeeks"
-                        class="input-form-field"
-                        type="number"
-                        style="width: 50px; height: 20px; margin: 0 2px"
-                        :disabled="inputEdit()"
+                        id="Female"
+                        v-model="formData.patient.sex"
+                        value="Female"
+                        class="input-radio"
+                        name="sex"
+                        type="radio"
+                        disabled
                       />
-                      Weeks Pregnant
-                    </label>
+                      <label for="Female"> Female </label>
+                    </div>
+                    <div style="display: inline-flex; align-items: center">
+                      <input
+                        id="Male"
+                        v-model="formData.patient.sex"
+                        value="Male"
+                        class="input-radio"
+                        name="sex"
+                        type="radio"
+                        disabled
+                      />
+                      <label for="Male"> Male </label>
+                    </div>
+                  </div>
+                  <div class="pregnancy-field field">
+                    <label class="required"> Pregnancy </label>
+                    <div style="display: inline-flex; align-items: center">
+                      <input
+                        id="Not Pregnant"
+                        v-model="formData.patient.pregWeeks"
+                        name="pregWeeks"
+                        type="radio"
+                        value="Not Pregnant"
+                        class="input-radio"
+                        :disabled="inputEdit()"
+                        required
+                      />
+                      <label for="Not Pregnant"> Not Pregnant </label>
+                    </div>
+
+                    <div style="display: inline-flex; align-items: center">
+                      <input
+                        id="pregnancyWeeks"
+                        name="pregWeeks"
+                        type="radio"
+                        :disabled="inputEdit()"
+                        required
+                      />
+                      <label for="pregnancyWeeks" style="display: inline-flex">
+                        <input
+                          id="pregnancyWeeks"
+                          v-model="formData.patient.pregWeeks"
+                          type="number"
+                          min="0"
+                          class="input-form-field"
+                          style="width: 50px; height: 20px; margin: 0 2px"
+                          :class="isRequired()"
+                          :disabled="inputEdit()"
+                          required
+                        />
+                        Weeks Pregnant
+                      </label>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div class="field-row">
-              <div class="field">
-                <label for="currentAddress" class="required">
-                  Current Address: Street / House No.
-                </label>
-                <input
-                  id="currentAddress"
-                  v-model="formData.patient.currHouseStreet"
-                  class="input-form-field"
-                  type="text"
-                  :disabled="inputEdit()"
-                />
+              <div class="field-row-straight">
+                <div class="status-field field">
+                  <label for="civilStatus" class="required">
+                    Civil Status
+                  </label>
+                  <select
+                    id="civilStatus"
+                    v-model="formData.patient.civilStatus"
+                    name="civilStatus"
+                    :disabled="inputEdit()"
+                    :class="isRequired()"
+                    required
+                  >
+                    <option value="Single">Single</option>
+                    <option value="Married">Married</option>
+                    <option value="Separated">Separated</option>
+                    <option value="Widowed">Widowed</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="indigenousGroup"> Indigenous Group </label>
+                  <input
+                    id="indigenousGroup"
+                    v-model="formData.patient.indGroup"
+                    class="input-form-field"
+                    type="text"
+                    :disabled="inputEdit()"
+                  />
+                </div>
               </div>
-            </div>
 
-            <div class="field-row-straight">
-              <div class="field">
-                <label for="currCity" class="required"> City </label>
-                <input
-                  id="currCity"
-                  v-model="formData.patient.currCity"
-                  class="input-form-field"
-                  name="currCity"
-                  :disabled="inputEdit()"
-                >
+              <div class="field-row-straight">
+                <div class="field">
+                  <label for="occupation" class="required"> Occupation </label>
+                  <input
+                    id="occupation"
+                    v-model="formData.patient.occupation"
+                    :class="isRequired()"
+                    type="text"
+                    :disabled="inputEdit()"
+                    required
+                  />
+                </div>
+                <div class="field">
+                  <label for="occuLoc" class="required"> Occupation Location (Work/School) </label>
+                  <input
+                    id="occuLoc"
+                    v-model="formData.patient.occuLoc"
+                    :class="isRequired()"
+                    type="text"
+                    :disabled="inputEdit()"
+                    required
+                  />
+                </div>
               </div>
-              <div class="field">
-                <label for="currBarangay" class="required"> Barangay </label>
-                <input
-                  id="currBarangay"
-                  v-model="formData.patient.currBrgy"
-                  class="input-form-field"
-                  type="text"
-                  :disabled="inputEdit()"
-                />
-              </div>
-            </div>
 
-            <div class="field-row">
-              <div class="field">
-                <label for="permAddress">
-                  Permanent Address: Street / House No.
-                </label>
-                <input
-                  id="permAddress"
-                  v-model="formData.patient.permHouseStreet"
-                  class="input-form-field"
-                  type="text"
-                  :disabled="inputEdit()"
-                />
-              </div>
-            </div>
+              <hr/>
 
-            <div class="field-row-straight">
-              <div class="field">
-                <label for="permCity"> City </label>
-                <input
-                  id="permCity"
-                  v-model="formData.patient.permCity"
-                  class="input-form-field"
-                  name="permCity"
-                  :disabled="inputEdit()"
-                >
+              <div class="field-row">
+                <div class="field">
+                  <label for="occuStreet" class="required"> Occupation Address: Street / House No. </label>
+                  <input
+                    id="occuStreet"
+                    v-model="formData.patient.occuStreet"
+                    :class="isRequired()"
+                    type="text"
+                    :disabled="inputEdit()"
+                    required
+                  />
+                </div>
               </div>
-              <div class="field">
-                <label for="permBarangay"> Barangay </label>
-                <input
-                  id="permBarangay"
-                  v-model="formData.patient.permBrgy"
-                  class="input-form-field"
-                  type="text"
-                  :disabled="inputEdit()"
-                />
-              </div>
-            </div>
 
-            <div class="field-row-straight">
-              <div class="field">
-                <label for="contactperson" class="required">
-                  Parent / Caregiver
-                </label>
-                <input
-                  id="contactperson"
-                  v-model="formData.patient.guardianName"
-                  class="input-form-field"
-                  type="text"
-                  :disabled="inputEdit()"
-                />
+              <div class="field-row-straight">
+                <div class="name-field">
+                  <label for="occuCity" class="required"> City </label>
+                  <select id="occuCity" v-model="formData.patient.occuCity" name="occuCity" :disabled="inputEdit()" :class="isRequired()" required>
+                    <option v-for="(city, i) in cityList" :key=i>{{city}}</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="occuBrgy" class="required"> Barangay </label>
+                  <input
+                    id="occuBrgy"
+                    v-model="formData.patient.occuBrgy"
+                    :class="isRequired()"
+                    type="text"
+                    :disabled="inputEdit()"
+                    required
+                  />
+                </div>
               </div>
-              <div class="name-field">
-                <label for="contactpersonNum" class="required">
-                  Contact No.
-                </label>
-                <input
-                  id="contactpersonNum"
-                  v-model="formData.patient.guardianContact"
-                  class="input-form-field"
-                  type="number"
-                  :disabled="inputEdit()"
-                />
+
+              <div class="field-row">
+                <div class="field">
+                  <label for="currentAddress" class="required"> Current Address: Street / House No. </label>
+                  <input
+                    id="currentAddress"
+                    v-model="formData.patient.currHouseStreet"
+                    :class="isRequired()"
+                    type="text"
+                    :disabled="inputEdit()"
+                    required
+                  />
+                </div>
               </div>
-            </div>
+
+              <div class="field-row-straight">
+                <div class="name-field">
+                  <label for="currCity" class="required"> City </label>
+                  <select id="currCity" v-model="formData.patient.currCity" name="currCity" :disabled="inputEdit()" :class="isRequired()" required>
+                    <option v-for="(city, i) in cityList" :key=i>{{city}}</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="currBarangay" class="required"> Barangay </label>
+                  <input
+                    id="currBarangay"
+                    v-model="formData.patient.currBrgy"
+                    :class="isRequired()"
+                    type="text"
+                    :disabled="inputEdit()"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div class="field-row-straight">
+                <div class="field-row-straight">
+                  <input
+                    id="sameAddress"
+                    v-model="sameAddress"
+                    :class="isRequired()"
+                    type="checkbox"
+                    :disabled="inputEdit()"
+                    style="width: auto; margin:0 5px;"
+                    @change="getAddress()"
+                  />
+                  <label for="sameAddress" style="font-size:12px"> Same permanent address as current address </label>
+                </div>
+              </div>
+
+              <div class="field-row">
+                <div class="field">
+                  <label for="permAddress"> Permanent Address: Street / House No. </label>
+                  <input
+                    id="permAddress"
+                    v-model="formData.patient.permHouseStreet"
+                    class="input-form-field"
+                    type="text"
+                    :disabled="inputEdit()"
+                  />
+                </div>
+              </div>
+
+              <div class="field-row-straight">
+                <div class="name-field">
+                  <label for="permCity"> City </label>
+                  <select
+                    id="permCity"
+                    v-model="formData.patient.permCity"
+                    name="permCity"
+                    :disabled="inputEdit()"
+                  >
+                  <option v-for="(city, i) in cityList" :key=i>{{city}}</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="permBarangay"> Barangay </label>
+                  <input
+                    id="permBarangay"
+                    v-model="formData.patient.permBrgy"
+                    class="input-form-field"
+                    type="text"
+                    :disabled="inputEdit()"
+                  />
+                </div>
+              </div>
+
+              <hr/>
+
+              <div class="field-row-straight">
+                <div class="field">
+                  <label for="contactperson" class="required"> Parent / Caregiver </label>
+                  <input
+                    id="contactperson"
+                    v-model="formData.patient.guardianName"
+                    :class="isRequired()"
+                    type="text"
+                    :disabled="inputEdit()"
+                    required
+                  />
+                </div>
+                <div class="name-field">
+                  <label for="contactpersonNum" class="required"> Contact No. </label>
+                  <input
+                    id="contactpersonNum"
+                    v-model="formData.patient.guardianContact"
+                    :class="isRequired()"
+                    type="number"
+                    :disabled="inputEdit()"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div class="field-row-straight">
+                <div class="field">
+                  <label for="HCPN"> HCPN </label>
+                  <input
+                    id="HCPN"
+                    v-model="formData.patient.HCPN"
+                    :class="isRequired()"
+                    type="text"
+                    :disabled="inputEdit()"
+                  />
+                </div>
+                <div class="field">
+                  <label for="ILHZ"> ILHZ </label>
+                  <input
+                    id="ILHZ"
+                    v-model="formData.patient.ILHZ"
+                    :class="isRequired()"
+                    type="text"
+                    :disabled="inputEdit()"
+                  />
+                </div>
+              </div>
+
           </div>
         </form>
         <hr />
@@ -853,7 +979,9 @@ export default {
           civilStatus: '',
           occupation: '',
           occuLoc: '',
-          occuAddrID: '',
+          occuStreet: '',
+          occuCity: '',
+          occuBrgy: '',
           guardianName: '',
           guardianContact: '',
           indGroup: '',
@@ -888,6 +1016,24 @@ export default {
           OOthers: '',
         },
       },
+      cityList: [
+        'Caloocan City',
+        'Las Piñas City',
+        'Makati City',
+        'Malabon City',
+        'Mandaluyong City',
+        'Manila City',
+        'Marikina City',
+        'Muntinlupa City',
+        'Navotas City',
+        'Parañaque City',
+        'Pasay City',
+        'Pasig City',
+        'Quezon City',
+        'San Juan City',
+        'Taguig City',
+        'Valenzuela City',
+      ],
     }
   },
   mounted() {
@@ -908,6 +1054,10 @@ export default {
 	  // not sure about the "this.cases"
       if (this.editCase) return false;
       else return true;
+    },
+    isRequired() {
+      if (this.editCase) return "input-form-field";
+      else return "input-form-field input-required";
     },
     update(action) {
       this.editCase=false
