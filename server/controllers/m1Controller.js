@@ -282,7 +282,7 @@ const indexFunctions = {
 			userID: "US-0000000000000",
 			week: thisDate.getWeek(),
 			year: thisDate.getFullYear()
-		}
+		};
 		let r = await db.insertOne("mmchddb.CRFS", firstCRF);
 		if (r) res.status(200).send("exec done");
 		else res.status(500).send("problems");
@@ -553,7 +553,7 @@ const indexFunctions = {
 				diseaseID: req.query.diseaseID,
 				userID: req.query.userID
 			});
-			if (r) {
+			if (r.length > 0) {
 				// collect the cases with that CRFID
 				let data = await db.exec(`SELECT c.*, d.diseaseName,
 									CONCAT(p.lastName, ", ", p.firstName, " ", p.midName) AS patientName,
@@ -569,7 +569,27 @@ const indexFunctions = {
 					CRF: r[r.length - 1],
 					crfData: data
 				});
-			} else res.status(404).send("Not found");
+			} else {
+				Date.prototype.getWeek = function() {
+					let d = new Date(Date.UTC(this.getFullYear(), this.getMonth(), this.getDate()));
+					let dayNum = d.getUTCDay() || 7;
+					d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+					let yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+					return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+				}
+				let thisDate = new Date(), firstCRF = {
+					CRFID: (await generateID("mmchddb.CRFS")).id,
+					diseaseID: req.query.diseaseID,
+					userID: req.query.userID,
+					week: thisDate.getWeek(),
+					year: thisDate.getFullYear()
+				};
+				let firstR = await db.insertOne("mmchddb.CRFS", firstCRF);
+				res.status(200).send({
+					CRF: firstCRF,
+					crfData: []
+				});
+			}
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
