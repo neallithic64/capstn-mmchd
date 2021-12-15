@@ -410,12 +410,14 @@ const indexFunctions = {
 					"WHERE u.userID='" + rows[0].reportedBy + "';");
 
 			// console.log(patientData);
-			console.log(caseAudit);
 			let caseDataObj = {};
 			
 			caseData.forEach(function(element) {
 				caseDataObj[element.fieldName] = element.value;
 			});
+
+			if(DRUData[0].druName == 'TestDRU' || DRUData[0].druName == '')
+				DRUData[0].druType = 'N/A';
 
 			let data = {
 				cases: rows[0],
