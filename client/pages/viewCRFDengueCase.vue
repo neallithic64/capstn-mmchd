@@ -1183,16 +1183,16 @@
                 <div>
                   <div style="display: inline-flex; flex-direction: column">
                     <div
-                      v-for="(value, name, i) in caseClassification"
+                      v-for="(value, name, i) in caseLevel"
                       :key="i"
                       class="checkbox-options"
                     >
                       <input
                         :id="i"
-                        v-model="formData.caseData.caseClassification"
+                        v-model="formData.caseData.caseLevel"
                         :value="name"
                         class="input-checkbox"
-                        name="caseClassification"
+                        name="caseLevel"
                         type="radio"
                         :disabled="inputEdit()"
                       />
@@ -1261,7 +1261,7 @@
               <!-- CASE DEFINITION -->
               <div>
                 <div class="collpaseWrapper">
-                  <ul v-for="(value, name, i) in caseClassification" :key="i" style="displayLinline-flex">
+                  <ul v-for="(value, name, i) in caseLevel" :key="i" style="displayLinline-flex">
                     <li>
                       <input :id="name" type="checkbox" class="collapseInput"/>
                       <label :for="name" class="collapseLabel">
@@ -1410,9 +1410,8 @@ export default {
           pcrResult:'',
           // Page 6++
           finalClassification: '',
-          clinicalClassification:'',
-          caseClassification:'',
-          sourceInfection: [],
+          clinicalClassification: '',
+          sourceInfection: '',
           outcome: '',
           dateDied: '',
           finalDiagnosis: '',
@@ -1464,7 +1463,7 @@ export default {
                     'Severe Bleeding: as evaluated by clinician',
                     'Severe Organ Involvement: such as AST or ALT ≥ 1000, impaired consciosness and failure of heart and other organs.']}
       ],
-      caseClassification: {
+      caseLevel: {
         'Suspect':'A previously well person with acute febrile illness of 2-7 days duration with clinical signs and symptoms of dengue',
         'Probable':'A suspected case with positive dengue IgM antibody test',
         'Confirmed':'Viral culture isolation, or Polymerase Chain Reaction (PCR), or Dengue NS1 antigen test',
@@ -1480,7 +1479,7 @@ export default {
       this.pageNum = i
     },
     inputEdit() {
-      if (this.pageNum===6) return false;
+      if (this.pageNum === 6 && this.$auth.user.userID === this.formData.cases.investigatorLab) return false;
       else return true;
     },
     statusInputEdit(value) {
