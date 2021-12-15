@@ -1313,7 +1313,6 @@ export default {
       caseDefs: [],
       pageNum: 1,
       formPart: 'Dengue0',
-<<<<<<< HEAD
       tableOptions: {
         tableName: 'cases',
         columns: [
@@ -1365,7 +1364,6 @@ export default {
           reportedBy: 'b',
         }
       ],
-=======
       CRFData:{
         CRFID: '',
         diseaseID: '',
@@ -1380,7 +1378,6 @@ export default {
         druCity:'',
         druAddress:''
       },
->>>>>>> 197d18fba817f5e81e0bec5781bbfc309ffc7d56
       formData: {
         cases: {
           caseID: '',
