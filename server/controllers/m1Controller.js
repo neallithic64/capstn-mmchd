@@ -405,9 +405,12 @@ const indexFunctions = {
 			let riskFactorsData = await db.findRows("mmchddb.RISK_FACTORS", {caseID: req.query.caseID});
 			let caseData = await db.findRows("mmchddb.CASE_DATA", {caseID: req.query.caseID});
 			let caseAudit = await db.findRows("mmchddb.CASE_AUDIT", {caseID: req.query.Case});
+			let DRUData = await db.exec("SELECT u.druName, userType AS 'druType', a.city AS 'druCity', CONCAT_WS(', ',a.houseStreet, a.brgy, a.city) AS 'druAddress' " +
+					"FROM mmchddb.USERS u INNER JOIN mmchddb.ADDRESSES a ON u.addressID = a.addressID " + 
+					"WHERE u.userID='" + rows[0].reportedBy + "';");
 
 			// console.log(patientData);
-			
+			console.log(caseAudit);
 			let caseDataObj = {};
 			
 			caseData.forEach(function(element) {
@@ -420,7 +423,8 @@ const indexFunctions = {
 				// caseData: caseData,
 				caseData: caseDataObj,
 				caseAudit: caseAudit,
-				riskFactors: riskFactorsData[0]
+				riskFactors: riskFactorsData[0],
+				DRUData: DRUData[0]
 			}
 
 			// fixing dates
@@ -452,21 +456,15 @@ const indexFunctions = {
 					+ "INNER JOIN mmchddb.ADDRESSES a2 ON p.paddressID = a2.addressID "+
 					"WHERE p.patientID = '" + rows[0].patientID + "';");
 			let riskFactorsData = await db.findRows("mmchddb.RISK_FACTORS", {caseID: rows[rows.length - 1].caseID});
-			let DRUData = await db.findRows("mmchddb.USERS", {userID : rows[0].reportedBy});
-			console.log(DRUData);
-			// console.log(patientData);
-			// let rowDataObj = {};
-
-			// rows.forEach(function(element, index){
-			// 	rowDataObj[index].caseID = element.caseID;
-			// 	rowData
-			// });
+			let DRUData = await db.exec("SELECT u.druName, userType AS 'druType', a.city AS 'druCity', CONCAT_WS(', ',a.houseStreet, a.brgy, a.city) AS 'druAddress' " +
+					"FROM mmchddb.USERS u INNER JOIN mmchddb.ADDRESSES a ON u.addressID = a.addressID " + 
+					"WHERE u.userID='" + rows[0].reportedBy + "';");
 
 			let data = {
 				rowData: rows,
 				patient: patientData[0],
 				riskFactors: riskFactorsData[0],
-				DRUData : DRUData
+				DRUData : DRUData[0]
 			}
 
 			// fixing dates

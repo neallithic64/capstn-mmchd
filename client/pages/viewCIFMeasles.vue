@@ -37,10 +37,10 @@
       </div>
       <div class="viewCIF-details" style="align-text: left">
         <div class="CIFnumbers">
-          <p>DRU City: <b>Manila</b></p>
-          <p>DRU Name: <b>St.Lukes</b></p>
-          <p>DRU Type: <b>type</b></p>
-          <p>DRU Address: <b>house</b></p>
+          <p>DRU City: <b>{{ DRUData.druCity }}</b></p>
+          <p>DRU Name: <b> {{ DRUData.druName }} </b></p>
+          <p>DRU Type: <b> {{ DRUData.druType }} </b></p>
+          <p>DRU Address: <b> {{ DRUData.druAddress }} </b></p>
         </div>
         <div class="CIFstatus" style="align-text: right">
           
@@ -2263,6 +2263,12 @@ export default {
       caseDefs: [],
       pageNum: 1,
       formPart: 'Measles0',
+      DRUData:{
+        druName:'',
+        druType:'',
+        druCity:'',
+        druAddress:''
+      }, 
       formData: {
         cases: {
           caseID: 123,
@@ -2468,7 +2474,7 @@ export default {
     this.formData.caseData = data.caseData;
     this.formData.patient = data.patient;
     this.formData.riskFactors = data.riskFactors; // working already
-
+    this.DRUData = data.DRUData;
     // fixing dates
 
     console.log(data);

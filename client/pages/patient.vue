@@ -32,8 +32,8 @@
       </div>
       <div class="viewPatient-details" style="align-text: left">
         <div class="patientNumbers">
-          <p>DRU City: <b>Manila</b></p>
-          <p>DRU Name: <b>HAKDOG</b></p>
+          <p>DRU City: <b>{{ DRUData.druCity }}</b></p>
+          <p>DRU Name: <b>{{ DRUData.druName }}</b></p>
         </div>
       </div>
       <div class="viewPatient-component">
@@ -811,6 +811,12 @@ export default {
       isDisabled: false,
       editCase: false,
       isPrint: false,
+      DRUData:{
+        druName:'',
+        druType:'',
+        druCity:'',
+        druAddress:''
+      }, 
       formData: {
         cases: {
           caseID: 123,
@@ -894,6 +900,7 @@ export default {
     // this.formData.caseData = data.caseData;
     this.formData.patient = data.patient;
     this.formData.riskFactors = data.riskFactors; // working already
+    this.DRUData = data.DRUData;
     console.log(data);
   }, 
   methods: {
