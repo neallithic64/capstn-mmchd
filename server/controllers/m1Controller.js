@@ -254,7 +254,7 @@ async function sendBulkNotifs(userTypes, notificationType, message, caseID) {
 	} catch (error) {
 		console.log(error);
 		return false;
-	}	
+	}
 }
 
 const indexFunctions = {
@@ -918,12 +918,18 @@ const indexFunctions = {
 						{caseLevel: newStatus});
 				if (newCaseAudit && updateCase) {
 					// (notificationID, receiverID, type, message, caseID, dateCreated, redirectTo, viewed)
-					let disease = await db.findRows("mmchddb.DISEASES", {diseaseID: caseAudit.diseaseID});
-					let notification = new Notification(null, caseData.reportedBy, 'updateNotif',
-							'CASE UPDATE: The case level of ' + disease[0].diseaseName + ' Case ' + caseId + 'has been updated to ' + newStatus + '.',
+					let disease = await db.exec(`SELECT * FROM mmchddb.CASES c
+							INNER JOIN mmchddb.DISEASES d ON c.diseaseID = d.diseaseID
+							WHERE c.caseID = '${caseId}';`);
+					console.log(disease);
+					
+					// actual notification object insertion
+					let notification = new Notification(null, caseData[0].reportedBy, 'updateNotif',
+							'CASE UPDATE: The case level of ' + disease[0].diseaseName + ' Case ' + caseId + ' has been updated to ' + newStatus + '.',
 							caseId, caseAudit.dateModified, "http://localhost:3000/viewCIFMeasles?caseID=" + caseId, false);
 					notification.notificationID = (await generateID("mmchddb.NOTIFICATIONS")).id;
-					let newNotif = db.insertNotificationData(notification);
+					let newNotif = await db.insertOne("mmchddb.NOTIFICATIONS", notification);
+					
 					if (newNotif) {
 						res.status(200).send("Case has been updated!");
 					} else {
