@@ -2477,7 +2477,7 @@ export default {
     this.DRUData = data.DRUData;
     // fixing dates
 
-    console.log(data);
+    // console.log(data);
   }, 
   methods: {
     formListClass(index) {
