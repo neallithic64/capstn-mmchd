@@ -365,7 +365,7 @@
                   </label>
                   <input
                     id="patientConsultDate"
-                    v-model="formData.cases.patientConsultDate"
+                    v-model="formData.caseData.patientConsultDate"
                     class="input-form-field"
                     type="date"
                     :disabled="inputEdit()"
@@ -375,7 +375,7 @@
                   <label for="patientConsultPlace"> Place of Consultation </label>
                   <input
                     id="patientConsultPlace"
-                    v-model="formData.patient.patientConsultPlace"
+                    v-model="formData.caseData.patientConsultPlace"
                     class="input-form-field"
                     type="text"
                     :disabled="inputEdit()"
@@ -886,7 +886,7 @@
                   </label>
                   <input
                     id="vaccineFirstDate"
-                    v-model="formData.cases.vaccineFirstDate"
+                    v-model="formData.caseData.vaccineFirstDate"
                     class="input-form-field"
                     type="date"
                     :disabled="inputEdit()"
@@ -895,9 +895,9 @@
                   />
                 </div>
                 <div v-if="formData.caseData.vaccine==='Yes'" class="field" style="width:39%">
-                  <label for="patientConsultPlace" class="required"> Date Last Vaccinated </label>
+                  <label for="vaccineLastdate" class="required"> Date Last Vaccinated </label>
                   <input
-                    id="patientConsultPlace"
+                    id="vaccineLastdate"
                     v-model="formData.patient.vaccineLastdate"
                     class="input-form-field"
                     type="date"
@@ -934,7 +934,7 @@
                               <input
                                 :id="value.name"
                                 v-model="formData.caseData.clinicalClassification"
-                                :value="value"
+                                :value="value.name"
                                 class="input-checkbox"
                                 name="clinicalClassification"
                                 type="radio"
@@ -1277,7 +1277,7 @@
                             <label :for="name" class="collapseLabel">
                               <input
                                 :id="name"
-                                v-model="formData.caseData.caseLevel"
+                                v-model="formData.cases.caseLevel"
                                 :value="name"
                                 class="input-checkbox"
                                 name="caseLevel"
@@ -1342,7 +1342,7 @@ export default {
       isOpen: true,
       openCollapse: '',
       isDisabled: false,
-      diseaseID: 'DI-0000000000000',
+      diseaseID: 'DI-0000000000003',
       patients: [],
       patientResult: [],
       labList:['a','b','c','d'],
@@ -1421,7 +1421,7 @@ export default {
         },
         caseData: {
           patientConsulted: '',
-          patientConultDate:'',
+          patientConsultDate:'',
           patientConsultPlace:'',
           // Lab
           ns1Date:'',
@@ -1439,6 +1439,9 @@ export default {
           outcome: '',
           dateDied: '',
           finalDiagnosis: '',
+		  vaccine: '',
+		  vaccineFirstDate: '',
+		  vaccineLastDate: '',
         },
       },
       info: {
@@ -1660,9 +1663,9 @@ export default {
           else {this.pageDone[page] = false; this.errorLab = true;}
           break;
         case 7:
-          if (this.formData.caseData.caseLevel !=='' &&
-              this.formData.caseData.caseLevel !== null &&
-              this.formData.caseData.caseLevel !== undefined)
+          if (this.formData.cases.caseLevel !=='' &&
+              this.formData.cases.caseLevel !== null &&
+              this.formData.cases.caseLevel !== undefined)
             this.pageDone[page] = true;
           else this.pageDone[page] = false;
           break;
