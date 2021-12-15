@@ -364,12 +364,12 @@ const indexFunctions = {
 		try {
 			let match = await db.exec(`SELECT c.*, d.diseaseName,
 									CONCAT(p.lastName, ", ", p.firstName, " ", p.midName) AS patientName,
-									a.city, MAX(ca.dateModified) AS updatedDate
+									a.city, MAX(al.dateModified) AS updatedDate
 									FROM mmchddb.CASES c
 									INNER JOIN mmchddb.DISEASES d ON c.diseaseID = d.diseaseID
 									INNER JOIN mmchddb.PATIENTS p ON c.patientID = p.patientID
 									INNER JOIN mmchddb.ADDRESSES a ON p.caddressID = a.addressID
-									LEFT JOIN mmchddb.CASE_AUDIT ca ON c.caseID = ca.caseID
+									LEFT JOIN mmchddb.AUDIT_LOG al ON c.caseID = al.editedID
 									LEFT JOIN mmchddb.CRFS cr ON c.CRFID = cr.CRFID
 									GROUP BY c.caseID;`);
 			// CRFs have been JOINed, have to label the cases now as CIF or CRF.
@@ -406,7 +406,7 @@ const indexFunctions = {
 					"WHERE p.patientID = '" + rows[0].patientID + "';");
 			let riskFactorsData = await db.findRows("mmchddb.RISK_FACTORS", {caseID: req.query.caseID});
 			let caseData = await db.findRows("mmchddb.CASE_DATA", {caseID: req.query.caseID});
-			let caseAudit = await db.findRows("mmchddb.CASE_AUDIT", {caseID: req.query.Case});
+			let caseAudit = await db.findRows("mmchddb.AUDIT_LOG", {editedID: req.query.Case});
 			let DRUData = await db.exec("SELECT u.druName, userType AS 'druType', a.city AS 'druCity', CONCAT_WS(', ',a.houseStreet, a.brgy, a.city) AS 'druAddress' " +
 					"FROM mmchddb.USERS u INNER JOIN mmchddb.ADDRESSES a ON u.addressID = a.addressID " + 
 					"WHERE u.userID='" + rows[0].reportedBy + "';");
@@ -502,7 +502,7 @@ const indexFunctions = {
 					"WHERE p.patientID = '" + rows[0].patientID + "';");
 			let riskFactorsData = await db.findRows("mmchddb.RISK_FACTORS", {caseID: req.query.caseID});
 			let caseData = await db.findRows("mmchddb.CASE_DATA", {caseID: req.query.caseID});
-			let caseAudit = await db.findRows("mmchddb.CASE_AUDIT", {caseID: req.query.Case});
+			let caseAudit = await db.findRows("mmchddb.AUDIT_LOG", {editedID: req.query.Case});
 			let crfData = await db.findRows("mmchddb.CRFS", {CRFID: rows[0].CRFID});
 			let DRUData = await db.exec("SELECT u.druName, userType AS 'druType', a.city AS 'druCity', CONCAT_WS(', ',a.houseStreet, a.brgy, a.city) AS 'druAddress' " +
 					"FROM mmchddb.USERS u INNER JOIN mmchddb.ADDRESSES a ON u.addressID = a.addressID " + 
@@ -557,12 +557,12 @@ const indexFunctions = {
 				// collect the cases with that CRFID
 				let data = await db.exec(`SELECT c.*, d.diseaseName,
 									CONCAT(p.lastName, ", ", p.firstName, " ", p.midName) AS patientName,
-									p.ageNo, p.sex, a.city, MAX(ca.dateModified) AS updatedDate
+									p.ageNo, p.sex, a.city, MAX(al.dateModified) AS updatedDate
 									FROM mmchddb.CASES c
 									INNER JOIN mmchddb.DISEASES d ON c.diseaseID = d.diseaseID
 									INNER JOIN mmchddb.PATIENTS p ON c.patientID = p.patientID
 									INNER JOIN mmchddb.ADDRESSES a ON p.caddressID = a.addressID
-									LEFT JOIN mmchddb.CASE_AUDIT ca ON c.caseID = ca.caseID
+									LEFT JOIN mmchddb.AUDIT_LOG al ON c.caseID = al.editedID
 									WHERE c.CRFID = '${r[r.length - 1].CRFID}'
 									GROUP BY c.caseID;`);
 				res.status(200).send({
@@ -904,15 +904,14 @@ const indexFunctions = {
 			if (caseData.length > 0) {
 				// constructing the case audit object
 				let caseAudit = {
-					caseID: caseId,
-					diseaseID: caseData[0].diseaseID,
+					editedID: caseId,
 					dateModified: new Date(),
 					fieldName: "caseLevel",
 					prevValue: caseData[0].caseLevel,
 					modifiedBy: caseData[0].reportedBy
 				};
 				// inserting the case audit object to the db
-				let newCaseAudit = await db.insertOne("mmchddb.CASE_AUDIT", caseAudit);
+				let newCaseAudit = await db.insertOne("mmchddb.AUDIT_LOG", caseAudit);
 				// then updating the case object itself
 				let updateCase = await db.updateRows("mmchddb.CASES",
 						{caseID: caseId},
