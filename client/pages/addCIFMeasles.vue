@@ -142,6 +142,7 @@
                       min="0"
                       :disabled="inputEdit()"
                       required
+                      @change="getAge()"
                     />
                   </div>
                 </div>
@@ -1297,8 +1298,8 @@
                         <div style="display: inline-flex">
                           Others, specify:
                           <input
-                            v-model="formData.caseData.noMCVreason[10]"
                             id="Others"
+                            v-model="formData.caseData.noMCVreason[10]"
                             class="input-form-field"
                             type="text"
                             style="width: 150px; height: 20px; margin: 0 2px"
@@ -2427,6 +2428,10 @@ export default {
         else if (this.pageColor[index]) return 'formnum formnumdone';
         else return 'formnum';
       }
+    },
+    getAge() {
+      const today = new Date();
+      this.formData.patient.ageNo = today.getFullYear() - parseInt(this.formData.patient.birthDate.substr(0,4));
     },
     async submit() {
       this.formData.cases.diseaseID = this.diseaseID;
