@@ -533,31 +533,6 @@ export default {
               document.getElementById('locBrgy').selectedIndex = i;
           }
         }
-
-        if ((page === 0) && this.healthEvent.timeCaptured != null) {
-          let today = new Date();
-          let dd = today.getDate();
-          let mm = today.getMonth()+1;
-          const yyyy = today.getFullYear();
-          let hours = today.getHours();
-          let mins = today.getMinutes();
-          if(dd<10){
-            dd='0'+dd
-          } if(mm<10) {
-            mm='0'+mm
-          } if(hours<10) {
-            hours='0'+hours
-          } if(mins<10) {
-            mins='0'+mins
-          } 
-
-          today = yyyy+'-'+mm+'-'+dd;
-          const time = hours+':'+mins;
-          document.getElementById('dateCaptured').setAttribute('max', today);
-          if (this.healthEvent.dateCaptured === today) {
-            document.getElementById('timeCaptured').value = time;
-          }
-        }
       })
 
       // eslint-disable-next-line no-console
