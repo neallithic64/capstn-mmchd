@@ -83,7 +83,7 @@ export default {
             filter: true,
           },
           {
-            title: 'Last interaction (?)',
+            title: 'Last Case Update',
             key: 'updatedDate',
             type: 'text',
             dateFormat: true,
