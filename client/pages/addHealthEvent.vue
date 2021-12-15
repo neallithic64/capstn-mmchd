@@ -395,6 +395,9 @@ export default {
       locBrgyList: [],
       pageDone: [true,true],
       healthEvent: {
+        eventID:'',
+        userID:'',
+        eventStatus:'forValidation',
         dateCaptured: '',
         timeCaptured: '',
         source: '',
@@ -497,7 +500,8 @@ export default {
     },
     async submit() {
       try {
-        const result = await axios.post('http://localhost:8080/api/newUser', {user: this.user});
+        this.healthEvent.userID = this.$auth.user.userID;
+        const result = await axios.post('http://localhost:8080/api/newEvent', {event: this.healthEvent});
         // eslint-disable-next-line no-console
         console.log(result);
         this.$router.push('/');
