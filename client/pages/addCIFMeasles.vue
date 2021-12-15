@@ -2339,7 +2339,7 @@ export default {
           labPCRResult: '',
           // Page 6++
           finalClassification: '',
-          sourceInfection: [],
+          sourceInfection: '',
           outcome: '',
           dateDied: '',
           finalDiagnosis: '',
@@ -2580,8 +2580,7 @@ export default {
           break;
         case 7:
           if (this.formData.caseData.sourceInfection!=='' &&
-              this.formData.caseData.sourceInfection!== null &&
-              this.formData.caseData.sourceInfection.length!== 0)
+              this.formData.caseData.sourceInfection!== null)
             this.pageDone[page] = true;
           else this.pageDone[page] = false;
           break;

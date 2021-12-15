@@ -1435,7 +1435,7 @@ export default {
           // Page 6++
           finalClassification: '',
           clinicalClassification:'',
-          sourceInfection: [],
+          sourceInfection: '',
           outcome: '',
           dateDied: '',
           finalDiagnosis: '',
@@ -1658,9 +1658,9 @@ export default {
           else {this.pageDone[page] = false; this.errorLab = true;}
           break;
         case 7:
-          if (this.formData.caseData.caseClassification!=='' &&
-              this.formData.caseData.caseClassification!== null &&
-              this.formData.caseData.caseClassification !== undefined)
+          if (this.formData.caseData.caseLevel !=='' &&
+              this.formData.caseData.caseLevel !== null &&
+              this.formData.caseData.caseLevel !== undefined)
             this.pageDone[page] = true;
           else this.pageDone[page] = false;
           break;

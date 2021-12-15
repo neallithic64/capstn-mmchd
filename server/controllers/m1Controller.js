@@ -696,7 +696,7 @@ const indexFunctions = {
 						
 						if (result) {
 							if (formData.caseData.noMCVreason) formData.caseData.noMCVreason = formData.caseData.noMCVreason.join(",");
-							if (formData.caseData.sourceInfection) formData.caseData.sourceInfection = formData.caseData.sourceInfection.join(",");
+							// if (formData.caseData.sourceInfection) formData.caseData.sourceInfection = formData.caseData.sourceInfection.join(",");
 							let newCaseData = Object.entries(formData.caseData);
 							
 							newCaseData.forEach(function (element) {
