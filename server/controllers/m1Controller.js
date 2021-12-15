@@ -439,6 +439,52 @@ const indexFunctions = {
 			res.status(500).send("Server error");
 		}
 	},
+
+	getPatientData: async function(req, res) {
+		try {
+			//collect relevant data
+			let rows = await db.findRows("mmchddb.CASES", {patientID: req.query.patientID});
+			let patientData = await db.exec("SELECT p.*, "
+					+ "a1.houseStreet AS currHouseStreet, a1.brgy AS currBrgy, a1.city AS "
+					+ "currCity, a2.houseStreet AS permHouseStreet, a2.brgy AS permBrgy, "
+					+ "a2.city AS permCity FROM mmchddb.PATIENTS p INNER JOIN "
+					+ "mmchddb.ADDRESSES a1 ON p.caddressID = a1.addressID "
+					+ "INNER JOIN mmchddb.ADDRESSES a2 ON p.paddressID = a2.addressID "+
+					"WHERE p.patientID = '" + rows[0].patientID + "';");
+			let riskFactorsData = await db.findRows("mmchddb.RISK_FACTORS", {caseID: rows[rows.length - 1].caseID});
+			let DRUData = await db.findRows("mmchddb.USERS", {userID : rows[0].reportedBy});
+			console.log(DRUData);
+			// console.log(patientData);
+			// let rowDataObj = {};
+
+			// rows.forEach(function(element, index){
+			// 	rowDataObj[index].caseID = element.caseID;
+			// 	rowData
+			// });
+
+			let data = {
+				rowData: rows,
+				patient: patientData[0],
+				riskFactors: riskFactorsData[0],
+				DRUData : DRUData
+			}
+
+			// fixing dates
+			data.rowData.reportDate = dateToString(data.rowData.reportDate);
+			if(data.rowData.investigationDate)
+				data.rowData.investigationDate = dateToString(data.rowData.investigationDate);
+			if(data.rowData.dateOnset)
+				data.rowData.dateOnset = dateToString(data.rowData.dateOnset);
+			if(data.rowData.dateAdmitted)
+				data.rowData.dateAdmitted = dateToString(data.rowData.dateAdmitted);
+			data.patient.birthDate = dateToString(data.patient.birthDate);
+
+			res.status(200).send(data);
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
 	
 	getCRF: async function(req, res) {
 		try {

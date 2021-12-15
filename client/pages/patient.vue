@@ -191,13 +191,13 @@
             <div class="field-row-straight">
               <div class="field">
                 <label for="currCity" class="required"> City </label>
-                <select
+                <input
                   id="currCity"
                   v-model="formData.patient.currCity"
+                  class="input-form-field"
                   name="currCity"
                   :disabled="inputEdit()"
                 >
-                </select>
               </div>
               <div class="field">
                 <label for="currBarangay" class="required"> Barangay </label>
@@ -229,19 +229,19 @@
             <div class="field-row-straight">
               <div class="field">
                 <label for="permCity"> City </label>
-                <select
+                <input
                   id="permCity"
                   v-model="formData.patient.permCity"
+                  class="input-form-field"
                   name="permCity"
                   :disabled="inputEdit()"
                 >
-                </select>
               </div>
               <div class="field">
                 <label for="permBarangay"> Barangay </label>
                 <input
                   id="permBarangay"
-                  v-model="formData.patient.permBarangay"
+                  v-model="formData.patient.permBrgy"
                   class="input-form-field"
                   type="text"
                   :disabled="inputEdit()"
@@ -696,6 +696,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/0.9.0rc1/jspdf.min.js"></script>
 
 <script>
+const axios = require('axios');
+
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
 import dataTable from './dataTable.vue'
@@ -886,6 +888,14 @@ export default {
     var today = new Date();
     this.ageNo = today.getFullYear() - parseInt(this.formData.patient.birthDate.substr(0,4));
   },
+  async fetch() {
+    const data = (await axios.get('http://localhost:8080/api/getPatientData?patientID=' + this.$route.query.patientID)).data;
+    // this.formData.cases = data.cases;
+    // this.formData.caseData = data.caseData;
+    this.formData.patient = data.patient;
+    this.formData.riskFactors = data.riskFactors; // working already
+    console.log(data);
+  }, 
   methods: {
     inputEdit() {
 	  // not sure about the "this.cases"
