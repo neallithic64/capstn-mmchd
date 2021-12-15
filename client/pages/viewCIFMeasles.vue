@@ -7,7 +7,7 @@
         <div class="CIFnumbers">
           <h1 style="margin: -10px 0">Case No. {{ formData.cases.caseID }}</h1>
           <h2 style="margin-top: -1px">
-            Patient No. <a href="/patient" class="patientlink"> {{ formData.patient.patientID }} </a>
+            Patient No. <a :href="'/patient?patientID=' + formData.patient.patientID" class="patientlink"> {{ formData.patient.patientID }} </a>
           </h2>
         </div>
         <div class="CIFstatus" style="align-text: right">
@@ -2463,7 +2463,7 @@ export default {
     }
   },
   async fetch() {
-    const data = (await axios.get('http://localhost:8080/api/getCIF?caseID=CA-0000000000001')).data;
+    const data = (await axios.get('http://localhost:8080/api/getCIF?caseID=' + this.$route.query.caseID)).data;
     this.formData.cases = data.cases;
     this.formData.caseData = data.caseData;
     this.formData.patient = data.patient;

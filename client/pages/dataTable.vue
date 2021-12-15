@@ -200,7 +200,7 @@
               <span v-else-if="column.type === 'clickable'">
                 <a v-if="data['disease'] === 'Measles/Rubella'"
                   style="color: #346083; text-decoration-line: underline"
-                  :href="'/view' + 'CIFMeasles'">
+                  :href="'/view' + 'CIFMeasles?caseID=' + data[column.key] ">
                   {{ data[column.key] }}
                 </a>
                 <a v-else-if="pageType === 'all' && data['type'] === 'CIF'"
