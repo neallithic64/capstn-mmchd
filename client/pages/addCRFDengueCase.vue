@@ -936,7 +936,7 @@
                                 v-model="formData.caseData.clinicalClassification"
                                 :value="value"
                                 class="input-checkbox"
-                                name="finalClassification"
+                                name="clinicalClassification"
                                 type="radio"
                                 :disabled="inputEdit()"
                                 :class="optionsRequired()"
@@ -1271,16 +1271,16 @@
                     <!-- CASE CLASSIFICATION -->
                     <div>
                       <div class="collpaseWrapper">
-                        <ul v-for="(value, name, i) in caseClassification" :key="i" style="displayLinline-flex">
+                        <ul v-for="(value, name, i) in caseLevel" :key="i" style="displayLinline-flex">
                           <li>
                             <input :id="name" type="checkbox" class="collapseInput"/>
                             <label :for="name" class="collapseLabel">
                               <input
                                 :id="name"
-                                v-model="formData.caseData.caseClassification"
+                                v-model="formData.caseData.caseLevel"
                                 :value="name"
                                 class="input-checkbox"
-                                name="finalClassification"
+                                name="caseLevel"
                                 type="radio"
                                 :disabled="inputEdit()"
                                 :class="optionsRequired()"
@@ -1497,7 +1497,7 @@ export default {
                     'Severe Bleeding: as evaluated by clinician',
                     'Severe Organ Involvement: such as AST or ALT ≥ 1000, impaired consciosness and failure of heart and other organs.']}
       ],
-      caseClassification: {
+      caseLevel: {
         'Suspect':'A previously well person with acute febrile illness of 2-7 days duration with clinical signs and symptoms of dengue',
         'Probable':'A suspected case with positive dengue IgM antibody test',
         'Confirmed':'Viral culture isolation, or Polymerase Chain Reaction (PCR), or Dengue NS1 antigen test',
