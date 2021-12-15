@@ -522,7 +522,7 @@ const indexFunctions = {
 				patient: patientData[0],
 				crfData: crfData[0],
 				caseData: caseDataObj,
-				caseAudit: caseAudit,
+				// caseAudit: caseAudit,
 				riskFactors: riskFactorsData[0],
 				DRUData: DRUData[0]
 			}
@@ -734,8 +734,28 @@ const indexFunctions = {
 		let { event } = req.body;
 
 		try {
+			let currAddrID = await generateID("mmchddb.ADDRESSES", {
+				houseStreet: event.locHouseStreet,
+				brgy: event.locBrgy,
+				city: event.locCity
+			});
+
+			event.addressID = currAddrID.id;
+			
+			if (!currAddrID.exists) {
+				let currAddr = new Address(currAddrID.id, event.locHouseStreet, event.locBrgy, event.locCity);
+				let result = await db.insertOne("mmchddb.ADDRESSES", currAddr);
+			}
+
 			event.eventID = (await generateID("mmchddb.EVENTS")).id;
-			// let event = new Event(event.eventID, 'US-0000000000000', 'AD-0000000000000', 'Insert Remarks here', 'Ongoing', '2021-11-01 00:00:00');
+			event.dateCaptured = new Date(event.dateCaptured + ' ' + event.timeCaptured);
+			event.numCases = Number.parseInt(event.numCases);
+			event.numDeaths = Number.parseInt(event.numDeaths);
+
+			delete event.locHouseStreet;
+			delete event.locBrgy;
+			delete event.locCity;
+			delete event.timeCaptured;
 
 			let result = await db.insertOne("mmchddb.EVENTS", event);
 			console.log(result);

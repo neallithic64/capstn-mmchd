@@ -395,6 +395,9 @@ export default {
       locBrgyList: [],
       pageDone: [true,true],
       healthEvent: {
+        eventID:'',
+        userID:'',
+        eventStatus:'forValidation',
         dateCaptured: '',
         timeCaptured: '',
         source: '',
@@ -497,7 +500,8 @@ export default {
     },
     async submit() {
       try {
-        const result = await axios.post('http://localhost:8080/api/newUser', {user: this.user});
+        this.healthEvent.userID = this.$auth.user.userID;
+        const result = await axios.post('http://localhost:8080/api/newEvent', {event: this.healthEvent});
         // eslint-disable-next-line no-console
         console.log(result);
         this.$router.push('/');
@@ -527,31 +531,6 @@ export default {
             document.getElementById('locBrgy').add(option);
             if (this.healthEvent.locBrgy === this.locBrgyList[i])
               document.getElementById('locBrgy').selectedIndex = i;
-          }
-        }
-
-        if ((page === 0) && this.healthEvent.timeCaptured != null) {
-          let today = new Date();
-          let dd = today.getDate();
-          let mm = today.getMonth()+1;
-          const yyyy = today.getFullYear();
-          let hours = today.getHours();
-          let mins = today.getMinutes();
-          if(dd<10){
-            dd='0'+dd
-          } if(mm<10) {
-            mm='0'+mm
-          } if(hours<10) {
-            hours='0'+hours
-          } if(mins<10) {
-            mins='0'+mins
-          } 
-
-          today = yyyy+'-'+mm+'-'+dd;
-          const time = hours+':'+mins;
-          document.getElementById('dateCaptured').setAttribute('max', today);
-          if (this.healthEvent.dateCaptured === today) {
-            document.getElementById('timeCaptured').value = time;
           }
         }
       })
