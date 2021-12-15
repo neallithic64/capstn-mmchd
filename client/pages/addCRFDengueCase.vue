@@ -1041,10 +1041,12 @@
                   />
                 </div>
                 <div v-if="formData.caseData.vaccine==='Yes'" class="field" style="width:39%">
-                  <label for="vaccineLastdate" class="required"> Date Last Vaccinated </label>
+                  <label for="vaccineLastDate" class="required">
+                    Date Last Vaccinated
+                  </label>
                   <input
-                    id="vaccineLastdate"
-                    v-model="formData.patient.vaccineLastdate"
+                    id="vaccineLastDate"
+                    v-model="formData.caseData.vaccineLastDate"
                     :max="today"
                     class="input-form-field"
                     type="date"
@@ -1172,7 +1174,7 @@
 
               <div class="field-row-straight">
                 <div class="field">
-                  <label for="finalDiagnosis" class="">
+                  <label for="finalDiagnosis" class="required">
                     Other Remarks
                   </label>
                   <input
@@ -1182,6 +1184,8 @@
                     style="width: 50%"
                     type="text"
                     :disabled="inputEdit()"
+                    :class="isRequired()"
+                    required
                   />
                 </div>
               </div>
@@ -1213,6 +1217,20 @@
                       required
                     />
                     <label for="noLabTest"> No </label>
+                  </div>
+                  <div class="center-center" style="margin: 0 20px">
+                    <input
+                      id="processingLabTest"
+                      v-model="hasLabTest"
+                      value="Processing"
+                      class="input-radio"
+                      name="labTest"
+                      type="radio"
+                      :disabled="inputEdit()"
+                      :class="optionsRequired()"
+                      required
+                    />
+                    <label for="processingLabTest"> Processing </label>
                   </div>
                   <div class="center-center" style="margin: 0 20px">
                     <input
@@ -1758,10 +1776,16 @@ export default {
           this.formData.patient.birthDate!=='' &&
           this.formData.patient.ageNo!=='' &&
           this.formData.patient.sex!=='' &&
+          this.formData.patient.pregWeeks!=='' &&
           this.formData.patient.civilStatus!=='' &&
           this.formData.patient.currHouseStreet!=='' &&
           this.formData.patient.currCity!=='' &&
           this.formData.patient.currBrgy!=='' &&
+          this.formData.patient.occupation!=='' &&
+          this.formData.patient.occuLoc!=='' &&
+          this.formData.patient.occuStreet!=='' &&
+          this.formData.patient.occuCity!=='' &&
+          this.formData.patient.occuBrgy!=='' &&
           this.formData.patient.guardianName!=='' &&
           this.formData.patient.guardianContact!=='' &&
           this.formData.patient.lastName!== null &&
@@ -1770,15 +1794,23 @@ export default {
           this.formData.patient.birthDate!== null &&
           this.formData.patient.ageNo!== null &&
           this.formData.patient.sex!== null &&
+          this.formData.patient.pregWeeks!== null &&
           this.formData.patient.civilStatus!== null &&
           this.formData.patient.currHouseStreet!== null &&
           this.formData.patient.currCity!== null &&
           this.formData.patient.currBrgy!== null &&
+          this.formData.patient.occupation!== null &&
+          this.formData.patient.occuLoc!== null &&
+          this.formData.patient.occuStreet!== null &&
+          this.formData.patient.occuCity!== null &&
+          this.formData.patient.occuBrgy!== null &&
           this.formData.patient.guardianName!== null &&
           this.formData.patient.guardianContact!== null
           ) this.pageDone[page] = true;
           else this.pageDone[page] = false;
           if (this.formData.patient.ageNo<0) {this.formData.patient.ageNo = ''; this.pageDone[page] = false;}
+          if (this.formData.patient.pregWeeks!=='Not Pregnant' && this.formData.patient.pregWeeks<0)
+            {this.formData.patient.pregWeeks = ''; this.pageDone[page] = false;}
           if (this.formData.patient.guardianContact<0) {this.formData.patient.guardianContact = ''; this.pageDone[page] = false;}
           break;
         case 2:
@@ -1793,13 +1825,12 @@ export default {
               this.formData.caseData.vaccine!=='') {
             if (this.formData.caseData.vaccine==='No' ||
                 (this.formData.caseData.vaccine==='Yes' &&
-                this.formData.cases.vaccineFirstDate!=='' &&
-                this.formData.cases.vaccineFirstDate!==null &&
-                this.formData.cases.vaccineLastdate!=='' &&
-                this.formData.patient.vaccineLastdate!==null))
+                this.formData.caseData.vaccineFirstDate!=='' &&
+                this.formData.caseData.vaccineFirstDate!==null &&
+                this.formData.caseData.vaccineLastDate!=='' &&
+                this.formData.caseData.vaccineLastDate!==null))
               this.pageDone[page] = true;
             else this.pageDone[page] = false;
-            console.log(this.formData.cases.vaccineFirstDate!=='')
           }
           else this.pageDone[page] = false;
           break;
@@ -1810,7 +1841,8 @@ export default {
           else this.pageDone[page] = false;
           break;
         case 5:
-          if (this.formData.caseData.outcome!=='') {
+          if (this.formData.caseData.outcome!=='' && this.formData.cases.finalDiagnosis!=='' &&
+              this.formData.cases.finalDiagnosis!==null && this.formData.cases.finalDiagnosis!==undefined) {
             if (this.formData.caseData.outcome==='Alive' ||
                 (this.formData.caseData.outcome==='Dead' &&
                 this.formData.cases.dateDied!=='' &&
@@ -1823,9 +1855,10 @@ export default {
           break;
         case 6:
           if (this.hasLabTest!=='') {
-            if (this.hasLabTest==='No' && this.formData.cases.investigatorLab!=='')
+            if (this.hasLabTest==='Processing') {this.pageDone[page] = true; this.errorLab = false;}
+            else if (this.hasLabTest==='No' && this.formData.cases.investigatorLab!=='' && this.formData.cases.investigatorLab!==undefined)
               {this.pageDone[page] = true; this.errorLab = false;}
-            else if(this.formData.caseData.finalClassification!=='Yes' &&
+            else if(this.formData.caseData.finalClassification==='Yes' &&
               (this.formData.caseData.ns1Date!== null ||
                 this.formData.caseData.ns1Result!== null ||
                 this.formData.caseData.iggDate!== null ||
