@@ -126,10 +126,12 @@
                     <input
                       id="birthdate"
                       v-model="formData.patient.birthDate"
+                      :max="today"
                       :class="isRequired()"
                       type="date"
                       :disabled="inputEdit()"
                       required
+                      @change="getAge()"
                     />
                   </div>
                   <div class="age-field field">
@@ -142,7 +144,6 @@
                       min="0"
                       :disabled="inputEdit()"
                       required
-                      @change="getAge()"
                     />
                   </div>
                 </div>
@@ -223,6 +224,98 @@
                 </div>
               </div>
 
+              <div class="field-row-straight">
+                <div class="status-field field">
+                  <label for="civilStatus" class="required">
+                    Civil Status
+                  </label>
+                  <select
+                    id="civilStatus"
+                    v-model="formData.patient.civilStatus"
+                    name="civilStatus"
+                    :disabled="inputEdit()"
+                    :class="isRequired()"
+                    required
+                  >
+                    <option value="Single">Single</option>
+                    <option value="Married">Married</option>
+                    <option value="Separated">Separated</option>
+                    <option value="Widowed">Widowed</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="indigenousGroup"> Indigenous Group </label>
+                  <input
+                    id="indigenousGroup"
+                    v-model="formData.patient.indGroup"
+                    class="input-form-field"
+                    type="text"
+                    :disabled="inputEdit()"
+                  />
+                </div>
+              </div>
+
+              <div class="field-row-straight">
+                <div class="field">
+                  <label for="occupation" class="required"> Occupation </label>
+                  <input
+                    id="occupation"
+                    v-model="formData.patient.occupation"
+                    :class="isRequired()"
+                    type="text"
+                    :disabled="inputEdit()"
+                    required
+                  />
+                </div>
+                <div class="field">
+                  <label for="occuLoc" class="required"> Occupation Location (Work/School) </label>
+                  <input
+                    id="occuLoc"
+                    v-model="formData.patient.occuLoc"
+                    :class="isRequired()"
+                    type="text"
+                    :disabled="inputEdit()"
+                    required
+                  />
+                </div>
+              </div>
+
+              <hr/>
+
+              <div class="field-row">
+                <div class="field">
+                  <label for="occuStreet" class="required"> Occupation Address: Street / House No. </label>
+                  <input
+                    id="occuStreet"
+                    v-model="formData.patient.occuStreet"
+                    :class="isRequired()"
+                    type="text"
+                    :disabled="inputEdit()"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div class="field-row-straight">
+                <div class="name-field">
+                  <label for="occuCity" class="required"> City </label>
+                  <select id="occuCity" v-model="formData.patient.occuCity" name="occuCity" :disabled="inputEdit()" :class="isRequired()" required>
+                    <option v-for="(city, i) in cityList" :key=i>{{city}}</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="occuBrgy" class="required"> Barangay </label>
+                  <input
+                    id="occuBrgy"
+                    v-model="formData.patient.occuBrgy"
+                    :class="isRequired()"
+                    type="text"
+                    :disabled="inputEdit()"
+                    required
+                  />
+                </div>
+              </div>
+
               <div class="field-row">
                 <div class="field">
                   <label for="currentAddress" class="required"> Current Address: Street / House No. </label>
@@ -254,6 +347,21 @@
                     :disabled="inputEdit()"
                     required
                   />
+                </div>
+              </div>
+
+              <div class="field-row-straight">
+                <div class="field-row-straight">
+                  <input
+                    id="sameAddress"
+                    v-model="sameAddress"
+                    :class="isRequired()"
+                    type="checkbox"
+                    :disabled="inputEdit()"
+                    style="width: auto; margin:0 5px;"
+                    @change="getAddress()"
+                  />
+                  <label for="sameAddress" style="font-size:12px"> Same permanent address as current address </label>
                 </div>
               </div>
 
@@ -294,6 +402,8 @@
                 </div>
               </div>
 
+              <hr/>
+
               <div class="field-row-straight">
                 <div class="field">
                   <label for="contactperson" class="required"> Parent / Caregiver </label>
@@ -315,6 +425,29 @@
                     type="number"
                     :disabled="inputEdit()"
                     required
+                  />
+                </div>
+              </div>
+
+              <div class="field-row-straight">
+                <div class="field">
+                  <label for="HCPN"> HCPN </label>
+                  <input
+                    id="HCPN"
+                    v-model="formData.patient.HCPN"
+                    :class="isRequired()"
+                    type="text"
+                    :disabled="inputEdit()"
+                  />
+                </div>
+                <div class="field">
+                  <label for="ILHZ"> ILHZ </label>
+                  <input
+                    id="ILHZ"
+                    v-model="formData.patient.ILHZ"
+                    :class="isRequired()"
+                    type="text"
+                    :disabled="inputEdit()"
                   />
                 </div>
               </div>
@@ -366,6 +499,7 @@
                     <input
                       id="dateAdmitted"
                       v-model="formData.cases.dateAdmitted"
+                      :max="today"
                       :class="isRequired()"
                       type="date"
                       :disabled="inputEdit()"
@@ -393,6 +527,7 @@
                   <input
                     id="reportDate"
                     v-model="formData.cases.reportDate"
+                    :max="today"
                     :class="isRequired()"
                     type="date"
                     :disabled="inputEdit()"
@@ -845,6 +980,7 @@
                             <input
                               id="fever"
                               v-model="formData.caseData.sympFever"
+                              :max="today"
                               class="input-form-field"
                               type="date"
                               style="width: 175px; height: 20px; margin: 0 2px"
@@ -870,6 +1006,7 @@
                             <input
                               id="rash"
                               v-model="formData.caseData.sympRash"
+                              :max="today"
                               class="input-form-field"
                               type="date"
                               style="width: 175px; height: 20px; margin: 0 2px"
@@ -1145,6 +1282,7 @@
                   <input
                     id="MCVlastDoseDate"
                     v-model="formData.caseData.MCVlastDoseDate"
+                    :max="today"
                     :class="isRequired()"
                     type="date"
                     style="width: 175px; height: 25px"
@@ -1418,6 +1556,7 @@
                       <input
                         id="travelHistoryDate"
                         v-model="formData.caseData.travelHistoryDate"
+                        :max="today"
                         :class="isRequired()"
                         type="date"
                         :disabled="inputEdit()"
@@ -1599,6 +1738,7 @@
                       <input
                         id="expContactDate"
                         v-model="formData.caseData.expContactDate"
+                        :max="today"
                         :class="isRequired()"
                         type="date"
                         :disabled="inputEdit()"
@@ -1906,6 +2046,7 @@
                       <input
                         id="dateDied"
                         v-model="formData.cases.dateDied"
+                        :max="today"
                         :class="isRequired()"
                         style="width: 175px"
                         type="date"
@@ -2029,6 +2170,7 @@
                     <input
                       id="labDateCollected"
                       v-model="formData.cases.labDateCollected"
+                      :max="today"
                       class="input-form-field"
                       type="date"
                       :disabled="inputEdit()"
@@ -2043,6 +2185,7 @@
                     <input
                       id="labDateSent"
                       v-model="formData.cases.labDateSent"
+                      :max="today"
                       class="input-form-field"
                       type="date"
                       :disabled="inputEdit()"
@@ -2057,6 +2200,7 @@
                     <input
                       id="labDateReceived"
                       v-model="formData.cases.labDateReceived"
+                      :max="today"
                       class="input-form-field"
                       type="date"
                       :disabled="inputEdit()"
@@ -2136,6 +2280,7 @@
                     <input
                       id="investigationDate"
                       v-model="formData.cases.investigationDate"
+                      :max="today"
                       class="input-form-field"
                       type="date"
                       :disabled="inputEdit()"
@@ -2211,6 +2356,9 @@ export default {
   },
   data() {
     return {
+      patientExist: '',
+      sameAddress:'',
+      today:'',
       hasLabTest:'',
       isOpen: true,
       openCollapse: '',
@@ -2258,7 +2406,9 @@ export default {
           civilStatus: '',
           occupation: '',
           occuLoc: '',
-          occuAddrID: '',
+          occuStreet: '',
+          occuCity: '',
+          occuBrgy: '',
           guardianName: '',
           guardianContact: '',
           indGroup: '',
@@ -2416,7 +2566,21 @@ export default {
     rows = (await axios.get('http://localhost:8080/api/getPatients')).data;
     this.patients = rows;
   },
-  computed: {},
+  mounted() {
+    const today = new Date();
+    let dd = today.getDate();
+    let mm = today.getMonth()+1;
+    const yyyy = today.getFullYear();
+    if(dd<10){
+      dd='0'+dd
+    } 
+    if(mm<10){
+      mm='0'+mm
+    } 
+    this.today = yyyy+'-'+mm+'-'+dd;
+    // document.getElementById('birthdate').setAttribute('max', today);
+    console.log(today);
+  },
   methods: {
     formpart(disease, pageNum) {
       this.formPart = disease + pageNum;
@@ -2432,6 +2596,18 @@ export default {
     getAge() {
       const today = new Date();
       this.formData.patient.ageNo = today.getFullYear() - parseInt(this.formData.patient.birthDate.substr(0,4));
+    },
+    getAddress() {
+      if (this.sameAddress) {
+        this.formData.patient.permHouseStreet = this.formData.patient.currHouseStreet;
+        this.formData.patient.permCity = this.formData.patient.currCity;
+        this.formData.patient.permBrgy = this.formData.patient.currBrgy;
+      }
+      else {
+        this.formData.patient.permHouseStreet = '';
+        this.formData.patient.permCity = '';
+        this.formData.patient.permBrgy = '';
+      }
     },
     async submit() {
       this.formData.cases.diseaseID = this.diseaseID;
@@ -2489,9 +2665,15 @@ export default {
           this.formData.patient.ageNo!=='' &&
           this.formData.patient.sex!=='' &&
           this.formData.patient.pregWeeks!=='' &&
+          this.formData.patient.civilStatus!=='' &&
           this.formData.patient.currHouseStreet!=='' &&
           this.formData.patient.currCity!=='' &&
           this.formData.patient.currBrgy!=='' &&
+          this.formData.patient.occupation!=='' &&
+          this.formData.patient.occuLoc!=='' &&
+          this.formData.patient.occuStreet!=='' &&
+          this.formData.patient.occuCity!=='' &&
+          this.formData.patient.occuBrgy!=='' &&
           this.formData.patient.guardianName!=='' &&
           this.formData.patient.guardianContact!=='' &&
           this.formData.patient.lastName!== null &&
@@ -2501,9 +2683,15 @@ export default {
           this.formData.patient.ageNo!== null &&
           this.formData.patient.sex!== null &&
           this.formData.patient.pregWeeks!== null &&
+          this.formData.patient.civilStatus!== null &&
           this.formData.patient.currHouseStreet!== null &&
           this.formData.patient.currCity!== null &&
           this.formData.patient.currBrgy!== null &&
+          this.formData.patient.occupation!== null &&
+          this.formData.patient.occuLoc!== null &&
+          this.formData.patient.occuStreet!== null &&
+          this.formData.patient.occuCity!== null &&
+          this.formData.patient.occuBrgy!== null &&
           this.formData.patient.guardianName!== null &&
           this.formData.patient.guardianContact!== null
           ) this.pageDone[page] = true;
