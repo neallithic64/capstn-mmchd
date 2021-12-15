@@ -2174,7 +2174,6 @@
               </div>
             </div>
           </form>
-          <hr v-if="pageNum == Object.keys(disease.formNames).length" />
         </div>
 
         <!-- Bottom 2 buttons -->
@@ -2453,13 +2452,15 @@ export default {
           if (!this.pageColor[10]) alert('Please fill up the required fields in all pages');
           else this.pageNum = page;
         }
+        else if (this.pageNum===10) {
+          this.pageNum = page;
+        }
         else if (page < Object.keys(this.disease.formNames).length && this.pageNum < Object.keys(this.disease.formNames).length) {
           const prevFormNum = 'form' + this.pageNum;
           document.getElementById(prevFormNum).className = 'formnum formnumdone';
           const currFormNum = 'form' + page;
           document.getElementById(currFormNum).className = 'formnum formnumcurr';
 
-          if (this.pageDone[this.pageNum]) this.pageColor[this.pageNum]=true;
           this.pageDone[this.pageNum] = true;
           this.pageDone[page] = true;
           this.pageNum = page;
@@ -2616,6 +2617,7 @@ export default {
               this.pageDone[page] = true;
             else this.pageDone[page] = false;
             if (this.formData.cases.investigatorContacto<0) {this.formData.cases.investigatorContact = ''; this.pageDone[page] = false;}
+            console.log(this.pageDone[page])
           }
           else this.pageDone[page] = false;
           break;
@@ -2625,7 +2627,9 @@ export default {
                this.pageColor[10] = true;
                this.pageDone[10] = true;
              }
+          break;
       }
+      if (this.pageDone[page]) this.pageColor[page] = true;
     },
     isRequired() {
       if (this.pageDone[this.pageNum]) return "input-form-field";

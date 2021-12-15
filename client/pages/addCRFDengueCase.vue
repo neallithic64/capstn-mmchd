@@ -1277,7 +1277,7 @@
                             <label :for="name" class="collapseLabel">
                               <input
                                 :id="name"
-                                v-model="formData.caseData.caseLevel"
+                                v-model="formData.caseData.caseClassification"
                                 :value="name"
                                 class="input-checkbox"
                                 name="finalClassification"
@@ -1548,13 +1548,15 @@ export default {
           if (!this.pageColor[8]) alert('Please fill up the required fields in all pages');
           else this.pageNum = page;
         }
+        else if (this.pageNum===8) {
+          this.pageNum = page;
+        }
         else if (page < Object.keys(this.disease.formNames).length && this.pageNum < Object.keys(this.disease.formNames).length) {
           const prevFormNum = 'form' + this.pageNum;
           document.getElementById(prevFormNum).className = 'formnum formnumdone';
           const currFormNum = 'form' + page;
           document.getElementById(currFormNum).className = 'formnum formnumcurr';
 
-          if (this.pageDone[this.pageNum]) this.pageColor[this.pageNum]=true;
           this.pageDone[this.pageNum] = true;
           this.pageDone[page] = true;
           this.pageNum = page;
@@ -1660,7 +1662,8 @@ export default {
         case 7:
           if (this.formData.caseData.caseClassification!=='' &&
               this.formData.caseData.caseClassification!== null &&
-              this.formData.caseData.caseClassification !== undefined)
+              this.formData.caseData.caseClassification!== undefined &&
+              this.formData.caseData.caseClassification.length!== 0)
             this.pageDone[page] = true;
           else this.pageDone[page] = false;
           break;
@@ -1670,7 +1673,9 @@ export default {
                this.pageColor[8] = true;
                this.pageDone[8] = true;
              }
+          break;
       }
+      if (this.pageDone[page]) this.pageColor[page] = true;
     },
     isRequired() {
       if (this.pageDone[this.pageNum]) return "input-form-field";
