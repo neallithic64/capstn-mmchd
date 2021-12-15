@@ -409,7 +409,7 @@
 
           <div id="case-investigation-form" class="center">
             <h2 id="form-header">Risk Factors</h2>
-
+            
             <div class="risk-flex">
               <div
                 style="
@@ -969,24 +969,6 @@
               <div class="field">
                 <label for="complications">
                   Are there any complications? Please specify.
-                  <!-- <img
-                      id="infofever"
-                      class="info-icon-img"
-                      src="~/assets/img/infoicon.png"
-                    />
-                    <div class="info-desc infodesc-outside">
-                      {{ info.complications }}
-                    </div> -->
-                  <div class="tooltip shorttooltip">
-                    <span class="tooltipText shorttooltipText">{{
-                      info.complications
-                    }}</span>
-                    <img
-                      id="infofever"
-                      class="info-icon-img"
-                      src="~/assets/img/infoicon.png"
-                    />
-                  </div>
                 </label>
                 <input
                   id="complications"
@@ -1002,16 +984,6 @@
               <div class="field">
                 <label for="otherSymptoms">
                   Other symptoms
-                  <div class="tooltip shorttooltip">
-                    <span class="tooltipText shorttooltipText">{{
-                      info.otherSymptoms
-                    }}</span>
-                    <img
-                      id="infofever"
-                      class="info-icon-img"
-                      src="~/assets/img/infoicon.png"
-                    />
-                  </div>
                 </label>
                 <input
                   id="otherSymptoms"
@@ -1027,16 +999,6 @@
               <div class="field">
                 <label for="diagnosis">
                   Working/Final Diagnosis
-                  <div class="tooltip shorttooltip">
-                    <span class="tooltipText shorttooltipText">{{
-                      info.diagnosis
-                    }}</span>
-                    <img
-                      id="infofever"
-                      class="info-icon-img"
-                      src="~/assets/img/infoicon.png"
-                    />
-                  </div>
                 </label>
                 <input
                   id="diagnosis"
@@ -3156,86 +3118,6 @@ select {
   .vaccine-label {
     display: block;
   }
-}
-
-.info-icon-img {
-  width: 10px;
-  height: 10px;
-  margin: 0 5px;
-  z-index: 1;
-}
-
-.tooltip {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-right: 40px;
-  cursor: pointer;
-}
-
-.tooltipText {
-  background-color: #fff;
-  position: absolute;
-  margin-left: 40px;
-  bottom: 130%;
-  padding: 10px 15px;
-  border-radius: 5px;
-  font-size: 14px;
-  opacity: 0;
-  transition: all 0.5s;
-  z-index: -2;
-}
-
-.shorttooltip:hover .shorttooltipText {
-  opacity: 1;
-  transform: translateY(-10px);
-  margin: 0;
-}
-
-#infofever:hover ~ .tooltipText {
-  opacity: 1;
-  transform: translateY(-10px);
-  z-index: 3;
-  margin-left: 300px;
-}
-
-.tooltipText::after {
-  content: '';
-  border-width: 5px;
-  border-style: solid;
-  border-color: #fff transparent transparent transparent;
-  position: absolute;
-  top: 100%;
-  left: 40%;
-  margin-left: -14%;
-}
-
-img:hover + .info-desc {
-  display: block;
-}
-
-.info-desc {
-  display: none;
-  background-color: #fff;
-  position: absolute;
-  bottom: 130%;
-  padding: 10px 15px;
-  border-radius: 5px;
-  font-size: 14px;
-  opacity: 0;
-  transition: all 0.5s;
-}
-
-.infodesc-outside {
-  position: relative;
-  background: #adadad;
-  color: white;
-  border-radius: 10px;
-  font-size: 11px;
-  padding: 2px 7px;
-  top: -20px;
-  left: -20px;
 }
 
 label {

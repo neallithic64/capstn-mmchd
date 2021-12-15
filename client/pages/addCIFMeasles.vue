@@ -429,7 +429,15 @@
             <hr />
 
             <div id="case-investigation-form" class="center">
-              <h2 id="form-header">Risk Factors</h2>
+              <div style="display: flex; flex-direction: row;">
+                <h2 id="form-header">Risk Factors</h2>
+                <button
+                  class="tooltip"
+                  data-tooltip="Identify all possible risk factors that may contribute to the analysis of disease spread"
+                  data-tooltip-location="right">
+                  <img class="tooltip-icon-img" src="~/assets/img/infoicon.png" />    
+                </button>
+              </div>
 
               <div class="risk-flex">
                 <div style="display: inline-flex; flex-direction: column; margin: 0 30px;">
@@ -919,7 +927,15 @@
                           type="checkbox"
                           :disabled="inputEdit()"
                         />
-                        <label for="koplik"> Koplik Sign </label>
+                        <div style="display: flex; flex-direction: row;">
+                          <label for="koplik"> Koplik Sign </label>
+                          <button
+                              class="tooltip"
+                              data-tooltip="Characterized as clustered, white lesions on the buccal mucosa (opposite the lower 1st & 2nd molars)"
+                              data-tooltip-location="right">
+                              <img class="tooltip-icon-img" src="~/assets/img/infoicon.png" />    
+                          </button>
+                        </div>
                       </div>
 
                       <div class="checkbox-options">
@@ -967,27 +983,15 @@
 
               <div class="field-row">
                 <div class="field">
-                  <label for="complications">
-                    Are there any complications? Please specify.
-                    <!-- <img
-                      id="infofever"
-                      class="info-icon-img"
-                      src="~/assets/img/infoicon.png"
-                    />
-                    <div class="info-desc infodesc-outside">
-                      {{ info.complications }}
-                    </div> -->
-                    <div class="tooltip shorttooltip">
-                      <span class="tooltipText shorttooltipText">{{
-                        info.complications
-                      }}</span>
-                      <img
-                        id="infofever"
-                        class="info-icon-img"
-                        src="~/assets/img/infoicon.png"
-                      />
-                    </div>
-                  </label>
+                  <div style="display: flex; flex-direction: row;">
+                    <label for="complications"> Are there any complications? Please specify. </label>
+                    <button
+                        class="tooltip"
+                        data-tooltip="e.g. diarrhea, vomiting, ear infection, eye infection, laryngitis, lung infections, seizures"
+                        data-tooltip-location="right">
+                        <img class="tooltip-icon-img" src="~/assets/img/infoicon.png" />    
+                    </button>
+                  </div>
                   <input
                     id="complications"
                     v-model="formData.caseData.complications"
@@ -1000,19 +1004,15 @@
 
               <div class="field-row">
                 <div class="field">
-                  <label for="otherSymptoms">
-                    Other symptoms
-                    <div class="tooltip shorttooltip">
-                      <span class="tooltipText shorttooltipText">{{
-                        info.otherSymptoms
-                      }}</span>
-                      <img
-                        id="infofever"
-                        class="info-icon-img"
-                        src="~/assets/img/infoicon.png"
-                      />
-                    </div>
-                  </label>
+                  <div style="display: flex; flex-direction: row;">
+                    <label for="otherSymptoms"> Other symptoms </label>
+                    <button
+                        class="tooltip"
+                        data-tooltip="e.g. small greyish-white spots in the mouth, aches and pains, loss of appetite, tiredness, irritability"
+                        data-tooltip-location="right">
+                        <img class="tooltip-icon-img" src="~/assets/img/infoicon.png" />    
+                    </button>
+                  </div>
                   <input
                     id="otherSymptoms"
                     v-model="formData.caseData.otherSymptoms"
@@ -1025,19 +1025,15 @@
 
               <div class="field-row">
                 <div class="field">
-                  <label for="diagnosis">
-                    Working/Final Diagnosis
-                    <div class="tooltip shorttooltip">
-                      <span class="tooltipText shorttooltipText">{{
-                        info.diagnosis
-                      }}</span>
-                      <img
-                        id="infofever"
-                        class="info-icon-img"
-                        src="~/assets/img/infoicon.png"
-                      />
-                    </div>
-                  </label>
+                  <div style="display: flex; flex-direction: row;">
+                    <label for="diagnosis"> Working/Final Diagnosis </label>
+                    <button
+                        class="tooltip"
+                        data-tooltip="Please put initial diagnosis by examiner if there is any"
+                        data-tooltip-location="right">
+                        <img class="tooltip-icon-img" src="~/assets/img/infoicon.png" />    
+                    </button>
+                  </div>
                   <input
                     id="diagnosis"
                     v-model="formData.caseData.diagnosis"
@@ -1101,7 +1097,7 @@
                   </label>
                   <div style="display: inline-flex; flex-direction: row; margin-left: 5px;">
                     <div style="margin-right: 20px">
-                      <label for="MV"> MV </label>
+                      <label data-tooltip="Measles Virus Vaccine" data-tooltip-location="bottom" for="MV"> MV </label>
                       <input
                         id="MV"
                         v-model="formData.patient.MCVmv"
@@ -1113,7 +1109,7 @@
                     </div>
 
                     <div style="margin: 0 20px">
-                      <label for="MR"> MR </label>
+                      <label data-tooltip="Measles-Rubella Vaccine" data-tooltip-location="bottom" for="MR"> MR </label>
                       <input
                         id="MR"
                         v-model="formData.patient.MCVmr"
@@ -1125,7 +1121,7 @@
                     </div>
 
                     <div style="margin: 0 20px">
-                      <label for="MMR"> MMR </label>
+                      <label data-tooltip="Measles-Mumps-Rubella Vaccine" data-tooltip-location="bottom" for="MMR"> MMR </label>
                       <input
                         id="MMR"
                         v-model="formData.patient.MCVmmr"
@@ -2359,7 +2355,7 @@ export default {
       ],
       sourceList: ['Endemic', 'Imported', 'Import-related', 'Unknown'],
       info: {
-        complications: 'i',
+        complications: 'e.g. diarrhea, vomiting, ear infection, eye infection, laryngitis, lung infections, seizures',
         otherSymptoms: 'j',
         diagnosis: 'k',
         // page 3
@@ -3127,84 +3123,199 @@ select {
   }
 }
 
-.info-icon-img {
+.tooltip-icon-img {
   width: 10px;
   height: 10px;
   margin: 0 5px;
   z-index: 1;
 }
 
-.tooltip {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-right: 40px;
-  cursor: pointer;
-}
+[data-tooltip] {
+    position: relative;
+    z-index: 10;
+  }
 
-.tooltipText {
-  background-color: #fff;
-  position: absolute;
-  margin-left: 40px;
-  bottom: 130%;
-  padding: 10px 15px;
-  border-radius: 5px;
-  font-size: 14px;
-  opacity: 0;
-  transition: all 0.5s;
-  z-index: -2;
-}
+  /* Positioning and visibility settings of the tooltip */
+  [data-tooltip]:before,
+  [data-tooltip]:after {
+    position: absolute;
+    visibility: hidden;
+    opacity: 0;
+    left: 50%;
+    bottom: calc(100% + 5px); /* 5px is the size of the arrow */
+    pointer-events: none;
+    transition: 0.2s;
+    will-change: transform;
+    font-family: 'Work Sans', sans-serif;
+  }
 
-.shorttooltip:hover .shorttooltipText {
-  opacity: 1;
-  transform: translateY(-10px);
-  margin: 0;
-}
+  /* The actual tooltip with a dynamic width */
+  [data-tooltip]:before {
+    content: attr(data-tooltip);
+    padding: 9px 10px;
+    min-width: 50px;
+    max-width: 300px;
+    width: max-content;
+    width: -moz-max-content;
+    border-radius: 6px;
+    font-size: 10px;
+    background-color: rgba(59, 72, 80, 0.9);
+    background-image: linear-gradient(30deg,
+      rgba(59, 72, 80, 0.44),
+      rgba(59, 68, 75, 0.44),
+      rgba(60, 82, 88, 0.44));
+    box-shadow: 0px 0px 24px rgba(0, 0, 0, 0.2);
+    color: #fff;
+    text-align: center;
+    white-space: pre-wrap;
+    transform: translate(-50%, -5px) scale(0.5);
+  }
 
-#infofever:hover ~ .tooltipText {
-  opacity: 1;
-  transform: translateY(-10px);
-  z-index: 3;
-}
+  /* Tooltip arrow */
+  [data-tooltip]:after {
+    content: '';
+    border-style: solid;
+    border-width: 5px 5px 0px 5px; /* CSS triangle */
+    border-color: rgba(55, 64, 70, 0.9) transparent transparent transparent;
+    transition-duration: 0s; /* If the mouse leaves the element, 
+                                the transition effects for the 
+                                tooltip arrow are "turned off" */
+    transform-origin: top;   /* Orientation setting for the
+                                slide-down effect */
+    transform: translateX(-50%) scaleY(0);
+  }
 
-.tooltipText::after {
-  content: '';
-  border-width: 5px;
-  border-style: solid;
-  border-color: #fff transparent transparent transparent;
-  position: absolute;
-  top: 100%;
-  left: 40%;
-  margin-left: 5%;
-}
+  /* Tooltip becomes visible at hover */
+  [data-tooltip]:hover:before,
+  [data-tooltip]:hover:after {
+    visibility: visible;
+    opacity: 1;
+  }
+  /* Scales from 0.5 to 1 -> grow effect */
+  [data-tooltip]:hover:before {
+    transition-delay: 0.3s;
+    transform: translate(-50%, -5px) scale(1);
+  }
+  /* 
+    Arrow slide down effect only on mouseenter (NOT on mouseleave)
+  */
+  [data-tooltip]:hover:after {
+    transition-delay: 0.5s; /* Starting after the grow effect */
+    transition-duration: 0.2s;
+    transform: translateX(-50%) scaleY(1);
+  }
+  /*
+    That's it for the basic tooltip.
 
-img:hover + .info-desc {
-  display: block;
-}
+    If you want some adjustability
+    here are some orientation settings you can use:
+  */
 
-.info-desc {
-  display: none;
-  background-color: #fff;
-  position: absolute;
-  bottom: 130%;
-  padding: 10px 15px;
-  border-radius: 5px;
-  font-size: 14px;
-  opacity: 0;
-  transition: all 0.5s;
-}
+  /* LEFT */
+  /* Tooltip + arrow */
+  [data-tooltip-location="left"]:before,
+  [data-tooltip-location="left"]:after {
+    left: auto;
+    right: calc(100% + 5px);
+    bottom: 50%;
+  }
 
-.infodesc-outside {
-  position: relative;
-  background: #adadad;
-  color: white;
-  border-radius: 10px;
-  font-size: 11px;
-  padding: 2px 7px;
-  top: -20px;
-  left: -20px;
-}
+  /* Tooltip */
+  [data-tooltip-location="left"]:before {
+    transform: translate(-5px, 50%) scale(0.5);
+  }
+  [data-tooltip-location="left"]:hover:before {
+    transform: translate(-5px, 50%) scale(1);
+  }
+
+  /* Arrow */
+  [data-tooltip-location="left"]:after {
+    border-width: 5px 0px 5px 5px;
+    border-color: transparent transparent transparent rgba(55, 64, 70, 0.9);
+    transform-origin: left;
+    transform: translateY(50%) scaleX(0);
+  }
+  [data-tooltip-location="left"]:hover:after {
+    transform: translateY(50%) scaleX(1);
+  }
+
+
+
+  /* RIGHT */
+  [data-tooltip-location="right"]:before,
+  [data-tooltip-location="right"]:after {
+    left: calc(100% + 5px);
+    bottom: 50%;
+  }
+
+  [data-tooltip-location="right"]:before {
+    transform: translate(5px, 50%) scale(0.5);
+  }
+  [data-tooltip-location="right"]:hover:before {
+    transform: translate(5px, 50%) scale(1);
+  }
+
+  [data-tooltip-location="right"]:after {
+    border-width: 5px 5px 5px 0px;
+    border-color: transparent rgba(55, 64, 70, 0.9) transparent transparent;
+    transform-origin: right;
+    transform: translateY(50%) scaleX(0);
+  }
+  [data-tooltip-location="right"]:hover:after {
+    transform: translateY(50%) scaleX(1);
+  }
+
+  /* BOTTOM */
+  [data-tooltip-location="bottom"]:before,
+  [data-tooltip-location="bottom"]:after {
+    top: calc(100% + 5px);
+    bottom: auto;
+  }
+
+  [data-tooltip-location="bottom"]:before {
+    transform: translate(-50%, 5px) scale(0.5);
+  }
+  [data-tooltip-location="bottom"]:hover:before {
+    transform: translate(-50%, 5px) scale(1);
+  }
+
+  [data-tooltip-location="bottom"]:after {
+    border-width: 0px 5px 5px 5px;
+    border-color: transparent transparent rgba(55, 64, 70, 0.9) transparent;
+    transform-origin: bottom;
+  }
+
+  .tooltip {
+    cursor: pointer;
+    text-align: center;
+    border: none;
+    border-radius: 4px;
+    outline: inherit;
+    text-decoration: none;
+    font-family: Roboto, sans-serif;
+    font-size: 0.7em;
+    /* background-color: rgba(174, 184, 192, 0.55); */
+    background-color: transparent;
+    color: white;
+
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    transition: background 350ms ease-in-out, 
+                transform 150ms ease;
+  }
+  .tooltip:hover {
+    /* background-color: #484f56; */
+    background-color: transparent;
+  }
+  .tooltip:active {
+    transform: scale(0.98);
+  }
+  .tooltip:focus {
+    box-shadow: 0 0 2px 2px #298bcf;
+  }
+  .tooltip::-moz-focus-inner {
+    border: 0;
+  }
 
 label {
   display: inline-flex;
