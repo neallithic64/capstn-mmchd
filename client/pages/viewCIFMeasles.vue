@@ -7,7 +7,7 @@
         <div class="CIFnumbers">
           <h1 style="margin: -10px 0">Case No. {{ formData.cases.caseID }}</h1>
           <h2 style="margin-top: -1px">
-            Patient No. <a href="/patient" class="patientlink"> {{ formData.patient.patientID }} </a>
+            Patient No. <a :href="'/patient?patientID=' + formData.patient.patientID" class="patientlink"> {{ formData.patient.patientID }} </a>
           </h2>
         </div>
         <div class="CIFstatus" style="align-text: right">
@@ -37,10 +37,10 @@
       </div>
       <div class="viewCIF-details" style="align-text: left">
         <div class="CIFnumbers">
-          <p>DRU City: <b>Manila</b></p>
-          <p>DRU Name: <b>St.Lukes</b></p>
-          <p>DRU Type: <b>type</b></p>
-          <p>DRU Address: <b>house</b></p>
+          <p>DRU City: <b>{{ DRUData.druCity }}</b></p>
+          <p>DRU Name: <b> {{ DRUData.druName }} </b></p>
+          <p>DRU Type: <b> {{ DRUData.druType }} </b></p>
+          <p>DRU Address: <b> {{ DRUData.druAddress }} </b></p>
         </div>
         <div class="CIFstatus" style="align-text: right">
           
@@ -2271,6 +2271,12 @@ export default {
       caseDefs: [],
       pageNum: 1,
       formPart: 'Measles0',
+      DRUData:{
+        druName:'',
+        druType:'',
+        druCity:'',
+        druAddress:''
+      }, 
       formData: {
         cases: {
           caseID: 123,
@@ -2471,15 +2477,15 @@ export default {
     }
   },
   async fetch() {
-    const data = (await axios.get('http://localhost:8080/api/getCIF?caseID=CA-0000000000001')).data;
+    const data = (await axios.get('http://localhost:8080/api/getCIF?caseID=' + this.$route.query.caseID)).data;
     this.formData.cases = data.cases;
     this.formData.caseData = data.caseData;
     this.formData.patient = data.patient;
     this.formData.riskFactors = data.riskFactors; // working already
-
+    this.DRUData = data.DRUData;
     // fixing dates
 
-    console.log(data);
+    // console.log(data);
   }, 
   methods: {
     formListClass(index) {

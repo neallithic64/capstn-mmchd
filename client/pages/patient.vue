@@ -2,18 +2,25 @@
   <div id="viewPatient">
     <!--Top Bar of the screen-->
     <TopNav />
-    <div ref="content" class="viewCIF-container">
-      <div class="viewCIF-details" style="align-text: left">
-        <div class="CIFnumbers">
+    <div ref="content" class="viewPatient-container">
+      <div class="viewPatient-details" style="align-text: left">
+        <div class="patientNumbers">
           <h1 style="margin: -10px 0">Patient No. {{ formData.patient.patientID }}</h1>
         </div>
-        <div class="CIFstatus" style="align-text: right">
-          <!-- <div v-show="!editStatus && !isPrint" class="CIFActionButtons"> -->
-          <div v-show="isPrint" class="CIFActionButtons">
+        <div class="patientStatus" style="align-text: right">
+          <div v-if="editCase">
+            <button class="cancel-button" type="button" @click="update('cancel')">
+              Cancel
+            </button>
+            <button class="done-button" type="button" @click="update('done')">
+              Done
+            </button>
+          </div>
+          <div v-else-if="!isPrint && !editCase" class="patientActionButtons">
             <img
               src="~/assets/img/pen.png"
               class="printButton"
-              @click="downloadPDF"
+              @click="editCase=true"
             />
             <img
               src="~/assets/img/pdf.png"
@@ -23,14 +30,14 @@
           </div>
         </div>
       </div>
-      <div class="viewCIF-details" style="align-text: left">
-        <div class="CIFnumbers">
-          <p>DRU City: <b>Manila</b></p>
-          <p>DRU Name: <b>HAKDOG</b></p>
+      <div class="viewPatient-details" style="align-text: left">
+        <div class="patientNumbers">
+          <p>DRU City: <b>{{ DRUData.druCity }}</b></p>
+          <p>DRU Name: <b>{{ DRUData.druName }}</b></p>
         </div>
       </div>
-      <div class="viewCIF-component">
-        <form v-if="pageNum == 1 || isPrint" id="measles1" type="submit">
+      <div class="viewPatient-component">
+        <form id="patient1" type="submit">
           <div id="case-investigation-form" class="center">
             <h2 id="form-header">
               Personal Information
@@ -44,7 +51,7 @@
                   v-model="formData.patient.lastName"
                   class="input-form-field"
                   type="text"
-                  :disabled="inputEdit()"
+                  disabled
                 />
               </div>
               <div class="name-field">
@@ -54,7 +61,7 @@
                   v-model="formData.patient.firstName"
                   class="input-form-field"
                   type="text"
-                  :disabled="inputEdit()"
+                  disabled
                 />
               </div>
               <div class="name-field">
@@ -64,7 +71,7 @@
                   v-model="formData.patient.midName"
                   class="input-form-field"
                   type="text"
-                  :disabled="inputEdit()"
+                  disabled
                 />
               </div>
             </div>
@@ -83,17 +90,17 @@
                     v-model="formData.patient.birthDate"
                     class="input-form-field"
                     type="date"
-                    :disabled="inputEdit()"
+                    disabled
                   />
                 </div>
                 <div class="age-field field">
                   <label for="age" class="required"> Age </label>
                   <input
                     id="age"
-                    v-model="formData.patient.ageNo"
+                    v-model="ageNo"
                     class="input-form-field"
                     type="number"
-                    :disabled="inputEdit()"
+                    disabled
                   />
                 </div>
               </div>
@@ -109,7 +116,7 @@
                       class="input-radio"
                       name="sex"
                       type="radio"
-                      :disabled="inputEdit()"
+                      disabled
                     />
                     <label for="Female"> Female </label>
                   </div>
@@ -121,7 +128,7 @@
                       class="input-radio"
                       name="sex"
                       type="radio"
-                      :disabled="inputEdit()"
+                      disabled
                     />
                     <label for="Male"> Male </label>
                   </div>
@@ -184,13 +191,13 @@
             <div class="field-row-straight">
               <div class="field">
                 <label for="currCity" class="required"> City </label>
-                <select
+                <input
                   id="currCity"
                   v-model="formData.patient.currCity"
+                  class="input-form-field"
                   name="currCity"
                   :disabled="inputEdit()"
                 >
-                </select>
               </div>
               <div class="field">
                 <label for="currBarangay" class="required"> Barangay </label>
@@ -222,19 +229,19 @@
             <div class="field-row-straight">
               <div class="field">
                 <label for="permCity"> City </label>
-                <select
+                <input
                   id="permCity"
                   v-model="formData.patient.permCity"
+                  class="input-form-field"
                   name="permCity"
                   :disabled="inputEdit()"
                 >
-                </select>
               </div>
               <div class="field">
                 <label for="permBarangay"> Barangay </label>
                 <input
                   id="permBarangay"
-                  v-model="formData.patient.permBarangay"
+                  v-model="formData.patient.permBrgy"
                   class="input-form-field"
                   type="text"
                   :disabled="inputEdit()"
@@ -270,235 +277,240 @@
             </div>
           </div>
         </form>
-        <hr v-if="isPrint" />
+        <hr />
 
-        <form v-if="pageNum == 2 || isPrint" id="measles1" type="submit">
+        <form id="patient2" type="submit">
           <div id="case-investigation-form" class="center">
             <h2 id="form-header">Risk Factors</h2>
 
             <div class="risk-flex">
-              <div style="display: inline-flex;flex-direction: row;margin: 0 30px;">
+              <div style="display: inline-flex;flex-direction: row;">
 
                 <div style="display: block">
-                  <div class="field-row" style="display: inline-flex; margin-bottom: -1 px; flex-direction: column;">
+                  <div class="risk-factors" style="display: inline-flex; margin-bottom: -1 px; flex-direction: column;">
                     <div class="field">
                       <h3 class="required">Lifestyle:</h3>
+                      <div style="flex-direction: column; align-items: center">
+                        <div style="padding-left: 7px">
+                          <input
+                            id="LSmoking"
+                            v-model="formData.riskFactors.LSmoking"
+                            value="LSmoking"
+                            name="riskFactorsL"
+                            type="checkbox"
+                            :disabled="inputEdit()"
+                          />
+                          <label for="LSmoking">Smoking</label>
+                        </div>
 
-                      <div style="padding-left: 7px">
-                        <input
-                          id="LSmoking"
-                          v-model="formData.riskFactors.LSmoking"
-                          value="LSmoking"
-                          name="riskFactorsL"
-                          type="checkbox"
-                          :disabled="inputEdit()"
-                        />
-                        <label for="LSmoking">Smoking</label>
-                      </div>
+                        <div style="padding-left: 7px">
+                          <input
+                            id="LAlcoholism"
+                            v-model="formData.riskFactors.LAlcoholism"
+                            value="LAlcoholism"
+                            name="riskFactorsL"
+                            type="checkbox"
+                            :disabled="inputEdit()"
+                          />
+                          <label for="source">Alcoholism</label>
+                        </div>
 
-                      <div style="padding-left: 7px">
-                        <input
-                          id="LAlcoholism"
-                          v-model="formData.riskFactors.LAlcoholism"
-                          value="LAlcoholism"
-                          name="riskFactorsL"
-                          type="checkbox"
-                          :disabled="inputEdit()"
-                        />
-                        <label for="source">Alcoholism</label>
-                      </div>
+                        <div style="padding-left: 7px">
+                          <input
+                            id="LDrugUse"
+                            v-model="formData.riskFactors.LDrugUse"
+                            value="LDrugUse"
+                            name="riskFactorsL"
+                            type="checkbox"
+                            :disabled="inputEdit()"
+                          />
+                          <label for="LDrugUse">Drug Use</label>
+                        </div>
 
-                      <div style="padding-left: 7px">
-                        <input
-                          id="LDrugUse"
-                          v-model="formData.riskFactors.LDrugUse"
-                          value="LDrugUse"
-                          name="riskFactorsL"
-                          type="checkbox"
-                          :disabled="inputEdit()"
-                        />
-                        <label for="LDrugUse">Drug Use</label>
-                      </div>
+                        <div style="padding-left: 7px">
+                          <input
+                            id="LPhysicalInactivity"
+                            v-model="formData.riskFactors.LPhysicalInactivity"
+                            value="LPhysicalInactivity"
+                            name="riskFactorsL"
+                            type="checkbox"
+                            :disabled="inputEdit()"
+                          />
+                          <label for="LPhysicalInactivity"
+                            >Physical Inactivity</label
+                          >
+                        </div>
 
-                      <div style="padding-left: 7px">
-                        <input
-                          id="LPhysicalInactivity"
-                          v-model="formData.riskFactors.LPhysicalInactivity"
-                          value="LPhysicalInactivity"
-                          name="riskFactorsL"
-                          type="checkbox"
-                          :disabled="inputEdit()"
-                        />
-                        <label for="LPhysicalInactivity"
-                          >Physical Inactivity</label
-                        >
-                      </div>
-
-                      <div style="display: flex; align-items: center">
-                        <input
-                          id="LifestyleOthers"
-                          value="Others"
-                          class="input-radio"
-                          name="riskFactorsL"
-                          type="checkbox"
-                          :disabled="inputEdit()"
-                        />
-                        <label for="LifestyleOthers">
-                          <div style="display: inline-flex">
-                            Others:
-                            <input
-                              id="LifestyleOthers"
-                              v-model="formData.riskFactors.LOthers"
-                              class="riskfactorsInput"
-                              type="text"
-                              :disabled="inputEdit()"
-                            />
-                          </div>
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="field-row" style="display: block; margin-bottom: -1 px">
-                  <div class="field" style="display: block">
-                    <h3 class="required">Current Health Conditions:</h3>
-                    <div style="flex-direction: column; align-items: center">
-                      <div style="display: flex; align-items: center">
-                        <input
-                          id="CAsthma"
-                          v-model="formData.riskFactors.CAsthma"
-                          value="CAsthma"
-                          class="input-radio"
-                          name="riskFactorsC"
-                          type="checkbox"
-                          :disabled="inputEdit()"
-                        />
-                        <label for="Others"> Asthma </label>
-                      </div>
-
-                      <div style="display: flex; align-items: center">
-                        <input
-                          id="CHereditary"
-                          v-model="formData.riskFactors.CHereditary"
-                          value="CHereditary"
-                          class="input-radio"
-                          name="riskFactorsC"
-                          type="checkbox"
-                          :disabled="inputEdit()"
-                        />
-                        <label for="Others"> Hereditary </label>
-                      </div>
-
-                      <div style="display: flex; align-items: center">
-                        <input
-                          id="ConditionOthers"
-                          value="Others"
-                          class="input-radio"
-                          name="riskFactorsL"
-                          type="checkbox"
-                          :disabled="inputEdit()"
-                        />
-                        <label for="ConditionOthers">
-                          <div style="display: inline-flex">
-                            Others:
-                            <input
-                              id="ConditionOthers"
-                              v-model="formData.riskFactors.COthers"
-                              class="riskfactorsInput"
-                              type="text"
-                              :disabled="inputEdit()"
-                            />
-                          </div>
-                        </label>
+                        <div style="display: flex; align-items: center">
+                          <input
+                            id="LifestyleOthers"
+                            value="Others"
+                            class="input-radio"
+                            name="riskFactorsL"
+                            type="checkbox"
+                            :disabled="inputEdit()"
+                          />
+                          <label for="LifestyleOthers">
+                            <div style="display: inline-flex">
+                              Others:
+                              <input
+                                id="LifestyleOthers"
+                                v-model="formData.riskFactors.LOthers"
+                                class="riskfactorsInput"
+                                type="text"
+                                :disabled="inputEdit()"
+                              />
+                            </div>
+                          </label>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div class="field-row" style="display: block; margin-bottom: -1 px">
-                  <div class="field" style="display: block">
-                    <h3 class="required">Historical Health Data:</h3>
-                    <div style="flex-direction: column; align-items: center">
-                      <div style="display: flex; align-items: center">
-                        <input
-                          id="HDiabetes"
-                          v-model="formData.riskFactors.HDiabetes"
-                          value="HDiabetes"
-                          class="input-radio"
-                          name="riskFactorsH"
-                          type="checkbox"
-                          :disabled="inputEdit()"
-                        />
-                        <label for="HDiabetes"> Diabetes </label>
-                      </div>
+                <div style="display: block">
+                  <div class="risk-factors" style="display: inline-flex; margin-bottom: -1 px; flex-direction: column;">
+                    <div class="field">
+                      <h3 class="required">Current Health Conditions:</h3>
+                      <div style="flex-direction: column; align-items: center">
+                        <div style="display: flex; align-items: center">
+                          <input
+                            id="CAsthma"
+                            v-model="formData.riskFactors.CAsthma"
+                            value="CAsthma"
+                            class="input-radio"
+                            name="riskFactorsC"
+                            type="checkbox"
+                            :disabled="inputEdit()"
+                          />
+                          <label for="Others"> Asthma </label>
+                        </div>
 
-                      <div style="display: flex; align-items: center">
-                        <input
-                          id="HHeartDisease"
-                          v-model="formData.riskFactors.HHeartDisease"
-                          value="HHeartDisease"
-                          class="input-radio"
-                          name="riskFactorsH"
-                          type="checkbox"
-                          :disabled="inputEdit()"
-                        />
-                        <label for="HHeartDisease"> Heart Disease </label>
-                      </div>
+                        <div style="display: flex; align-items: center">
+                          <input
+                            id="CHereditary"
+                            v-model="formData.riskFactors.CHereditary"
+                            value="CHereditary"
+                            class="input-radio"
+                            name="riskFactorsC"
+                            type="checkbox"
+                            :disabled="inputEdit()"
+                          />
+                          <label for="Others"> Hereditary </label>
+                        </div>
 
-                      <div style="display: flex; align-items: center">
-                        <input
-                          id="HHypertension"
-                          v-model="formData.riskFactors.HHypertension"
-                          value="HHypertension"
-                          class="input-radio"
-                          name="riskFactorsH"
-                          type="checkbox"
-                          :disabled="inputEdit()"
-                        />
-                        <label for="HHypertension"> Hypertension </label>
-                      </div>
-
-                      <div style="display: flex; align-items: center">
-                        <input
-                          id="HObesity"
-                          v-model="formData.riskFactors.HObesity"
-                          value="HObesity"
-                          class="input-radio"
-                          name="riskFactorsH"
-                          type="checkbox"
-                          :disabled="inputEdit()"
-                        />
-                        <label for="HObesity"> Obesity </label>
-                      </div>
-
-                      <div style="display: flex; align-items: center">
-                        <input
-                          id="HistoricalOthers"
-                          value="Others"
-                          class="input-radio"
-                          name="riskFactorsL"
-                          type="checkbox"
-                          :disabled="inputEdit()"
-                        />
-                        <label for="HistoricalOthers">
-                          <div style="display: inline-flex">
-                            Others:
-                            <input
-                              id="HistoricalOthers"
-                              v-model="formData.riskFactors.HOthers"
-                              class="riskfactorsInput"
-                              type="text"
-                              :disabled="inputEdit()"
-                            />
-                          </div>
-                        </label>
+                        <div style="display: flex; align-items: center">
+                          <input
+                            id="ConditionOthers"
+                            value="Others"
+                            class="input-radio"
+                            name="riskFactorsL"
+                            type="checkbox"
+                            :disabled="inputEdit()"
+                          />
+                          <label for="ConditionOthers">
+                            <div style="display: inline-flex">
+                              Others:
+                              <input
+                                id="ConditionOthers"
+                                v-model="formData.riskFactors.COthers"
+                                class="riskfactorsInput"
+                                type="text"
+                                :disabled="inputEdit()"
+                              />
+                            </div>
+                          </label>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div class="field-row" style="display: block; margin-bottom: -1 px">
+                 <div style="display: block">
+                  <div class="risk-factors" style="display: inline-flex; margin-bottom: -1 px; flex-direction: column;">
+                    <div class="field">
+                      <h3 class="required">Historical Health Data:</h3>
+                      <div style="flex-direction: column; align-items: center">
+                        <div style="display: flex; align-items: center">
+                          <input
+                            id="HDiabetes"
+                            v-model="formData.riskFactors.HDiabetes"
+                            value="HDiabetes"
+                            class="input-radio"
+                            name="riskFactorsH"
+                            type="checkbox"
+                            :disabled="inputEdit()"
+                          />
+                          <label for="HDiabetes"> Diabetes </label>
+                        </div>
+
+                        <div style="display: flex; align-items: center">
+                          <input
+                            id="HHeartDisease"
+                            v-model="formData.riskFactors.HHeartDisease"
+                            value="HHeartDisease"
+                            class="input-radio"
+                            name="riskFactorsH"
+                            type="checkbox"
+                            :disabled="inputEdit()"
+                          />
+                          <label for="HHeartDisease"> Heart Disease </label>
+                        </div>
+
+                        <div style="display: flex; align-items: center">
+                          <input
+                            id="HHypertension"
+                            v-model="formData.riskFactors.HHypertension"
+                            value="HHypertension"
+                            class="input-radio"
+                            name="riskFactorsH"
+                            type="checkbox"
+                            :disabled="inputEdit()"
+                          />
+                          <label for="HHypertension"> Hypertension </label>
+                        </div>
+
+                        <div style="display: flex; align-items: center">
+                          <input
+                            id="HObesity"
+                            v-model="formData.riskFactors.HObesity"
+                            value="HObesity"
+                            class="input-radio"
+                            name="riskFactorsH"
+                            type="checkbox"
+                            :disabled="inputEdit()"
+                          />
+                          <label for="HObesity"> Obesity </label>
+                        </div>
+
+                        <div style="display: flex; align-items: center">
+                          <input
+                            id="HistoricalOthers"
+                            value="Others"
+                            class="input-radio"
+                            name="riskFactorsL"
+                            type="checkbox"
+                            :disabled="inputEdit()"
+                          />
+                          <label for="HistoricalOthers">
+                            <div style="display: inline-flex">
+                              Others:
+                              <input
+                                id="HistoricalOthers"
+                                v-model="formData.riskFactors.HOthers"
+                                class="riskfactorsInput"
+                                type="text"
+                                :disabled="inputEdit()"
+                              />
+                            </div>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="risk-factors" style="display: block; margin-bottom: -1 px">
                   <div class="field" style="display: block">
                     <h3 class="required">Other Risks:</h3>
                     <div style="display:inline-flex; flex-direction:row">
@@ -608,7 +620,7 @@
                             type="checkbox"
                             :disabled="inputEdit()"
                           />
-                          <label for="OWasteMgmt"> OVacCoverage </label>
+                          <label for="OWasteMgmt"> Lack of waste management </label>
                         </div>
 
                         <div style="display: flex; align-items: center">
@@ -658,43 +670,19 @@
             </div>
           </div>
         </form>
-        <hr v-if="isPrint" />
+        <hr />
 
-        <form v-if="pageNum == 3 || isPrint" id="measles3" type="submit">
+        <form id="patient3" type="submit">
           <div id="case-investigation-form" class="center">
             <h2 id="form-header">
               Cases
             </h2>
-            <div class="CIF-statusHistory">
-              <table style="width: 100%;">
-                <thead>
-                  <th style="width: 10%;">Case ID</th>
-                  <th style="width: 15%;">Disease</th>
-                  <th style="width: 20%;">Date Submitted</th>
-                  <th style="width: 20%;">Date Last Updated</th>
-                  <th style="width: 15%;">DRU</th>
-                  <th style="width: 20%;">Case Status</th>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a href="/viewCIFMeasles">123</a></td>
-                    <td>Measles</td>
-                    <td>Nov 11, 2021</td>
-                    <td>Nov 11, 2021</td>
-                    <td>ABC</td>
-                    <td>Suspected</td>
-                  </tr>
-                  <tr>
-                    <td><a href="/viewCIFMeasles">123</a></td>
-                    <td>Measles</td>
-                    <td>Nov 11, 2021</td>
-                    <td>Nov 11, 2021</td>
-                    <td>ABC</td>
-                    <td>Suspected</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+            <dataTable
+            :options="tableOptions"
+            :datavalues="allData"
+            :casetype="'patient'"
+            />
+          
           </div>
         </form>
 
@@ -708,22 +696,127 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/0.9.0rc1/jspdf.min.js"></script>
 
 <script>
+const axios = require('axios');
+
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
+import dataTable from './dataTable.vue'
 export default {
+  components: {
+    dataTable,
+  },
   middleware: 'is-auth',
   header: {
-    title: 'View CIF',
+    title: 'View Patient',
   },
   compute: {},
   data() {
     return {
+      ageNo:'',
+      tableOptions: {
+        tableName: 'cases',
+        columns: [
+          {
+            title: 'Type',
+            key: 'type',
+            source: 'cases',
+            uniqueField: 'id',
+          },
+          {
+            title: 'Case ID',
+            key: 'caseID',
+            type: 'clickable',
+            source: 'cases',
+            uniqueField: 'id',
+            sortable: true,
+          },
+          {
+            title: 'Disease',
+            key: 'disease',
+            type: 'text',
+            source: 'cases',
+            uniqueField: 'id',
+            sortable: true,
+            filter: true,
+          },
+          {
+            title: 'DRU ID',
+            key: 'reportedBy',
+            type: 'text',
+            source: 'cases',
+            uniqueField: 'id',
+          },
+          {
+            title: 'City',
+            key: 'city',
+            type: 'text',
+            source: 'cases',
+            uniqueField: 'id',
+            sortable: true,
+            filter: true,
+          },
+          {
+            title: 'Submitted on',
+            key: 'reportDate',
+            type: 'text',
+            dateFormat: true,
+            currentFormat: 'YYYY-MM-DD',
+            expectFormat: 'DD MMM YYYY',
+            // sortable: true,
+          },
+          {
+            title: 'Last updated',
+            key: 'updatedDate',
+            type: 'text',
+            dateFormat: true,
+            currentFormat: 'YYYY-MM-DD',
+            expectFormat: 'DD MMM YYYY',
+            sortable: true,
+          },
+          {
+            title: 'Case Status',
+            key: 'caseLevel',
+            type: 'text',
+            source: 'cases',
+            uniqueField: 'id',
+            sortable: true,
+            filter: true,
+          },
+        ],
+        // source: 'http://demo.datatable/api/users',
+        search: true,
+      },
+      allData: [
+        {
+          type:'CIF',
+          caseID:'123',
+          disease:'Measles',
+          reportedBy:'aa',
+          city:'Manila City',
+          reportDate:'today',
+          updatedDate:'today',
+          caseLevel:'Suspected',
+        },
+        {
+          type:'CRF',
+          caseID:'321',
+          disease:'Dengue',
+          reportedBy:'bb',
+          city:'Makati City',
+          reportDate:'today',
+          updatedDate:'today',
+          caseLevel:'Probable',
+        },
+      ],
       isDisabled: false,
       editCase: false,
-      isPrint: true,
-      diseaseID: 'DI-0000000000000',
-      pageNum: 1,
-      formPart: 'Measles0',
+      isPrint: false,
+      DRUData:{
+        druName:'',
+        druType:'',
+        druCity:'',
+        druAddress:''
+      }, 
       formData: {
         cases: {
           caseID: 123,
@@ -753,7 +846,7 @@ export default {
           permBrgy: '',
           permCity: '',
           sex: '',
-          birthDate: '',
+          birthDate: '2011-10-31',
           ageNo: '',
           ageType: '',
           admitStatus: '',
@@ -795,33 +888,36 @@ export default {
           OOthers: '',
         },
       },
-      rowData: {
-        caseID: 1234,
-        disease: 'Measles',
-        city: 'Manila',
-        patientNo: '123',
-        submittedDate: '2020-10-10',
-        updatedDate: '2020-10-10',
-        status: 'IDK',
-      },
     }
   },
+  mounted() {
+    var today = new Date();
+    this.ageNo = today.getFullYear() - parseInt(this.formData.patient.birthDate.substr(0,4));
+  },
+  async fetch() {
+    const data = (await axios.get('http://localhost:8080/api/getPatientData?patientID=' + this.$route.query.patientID)).data;
+    // this.formData.cases = data.cases;
+    // this.formData.caseData = data.caseData;
+    this.formData.patient = data.patient;
+    this.formData.riskFactors = data.riskFactors; // working already
+    this.DRUData = data.DRUData;
+    console.log(data);
+  }, 
   methods: {
-    formListClass(index) {
-      if (index === this.pageNum) return 'formSummaryItems selected'
-      else return 'formSummaryItems'
-    },
-    move(i) {
-      this.pageNum = i
-    },
     inputEdit() {
 	  // not sure about the "this.cases"
-      if (this.pageNum === 9 && this.$auth.user.userID === this.formData.cases.investigatorLab) return false;
+      if (this.editCase) return false;
       else return true;
     },
-    statusInputEdit(value) {
-      if (this.editStatus & value!==this.formData.cases.caseLevel ) return false
-      else return true
+    update(action) {
+      this.editCase=false
+      // TO DO FUNCTION HERE
+      if (action==='cancel') {
+        // reload the data ?
+      }
+      if (action==='done') {
+        // save the data in db
+      }
     },
     downloadPDF() {
       this.isPrint = !this.isPrint
@@ -873,7 +969,7 @@ h3 {
   /* min-width: max-content; */
   display: block;
   min-width: fit-content;
-  margin-right: 40px;
+  margin-right: 30px;
 }
 
 .patientlink {
@@ -885,20 +981,20 @@ h3 {
   text-decoration: underline;
 }
 
-.viewCIF-container {
+.viewPatient-container {
   padding: 80px 20px 5px 20px;
   width: 100%;
 }
 
 @media only screen and (max-width: 800px) {
-  .viewCIF-ontainer {
+  .viewPatient-ontainer {
     width: 100%;
     align-items: center;
     margin: 0px;
   }
 }
 
-.viewCIF-section-container {
+.viewPatient-section-container {
   /* left: 275px; */
   /* position: relative; */
   /* width: calc(100vw - 320px); */
@@ -909,20 +1005,12 @@ h3 {
 }
 
 @media only screen and (max-width: 800px) {
-  .viewCIF-section-container {
+  .viewPatient-section-container {
     width: 95%;
   }
 }
 
-.CIF-SummaryContainer {
-  display: flex;
-  flex-direction: row;
-  overflow-x: auto;
-  overflow-y: hidden;
-  z-index: 1;
-}
-
-.viewCIF-component {
+.viewPatient-component {
   /* position: relative;
   display: inline-flex;
   flex-direction: row; */
@@ -933,25 +1021,25 @@ h3 {
   background-color: #f2f2f2;
   border-radius: 0 10px 10px 10px;
   padding: 15px;
-  padding-bottom: 20px;
-  margin-bottom: 20px;
+  padding-bottom: 40px;
+  margin-bottom: 40px;
 }
 @media only screen and (max-width: 1400px) {
-  .viewCIF-component {
+  .viewPatient-component {
     position: relative;
     top: 0px;
     min-height: fit-content;
     border-radius: 0 0 10px 10px;
   }
 }
-.viewCIF-details {
+.viewPatient-details {
   display: flex;
   flex-direction: row;
   margin-bottom: 10px;
   justify-content: space-between;
 }
-.CIFnumbers,
-.CIFstatus {
+.patientNumbers,
+.patientStatus {
   display: inline-flex;
   flex-direction: column;
 }
@@ -974,14 +1062,7 @@ b {
   font-weight: 600;
 }
 
-.CIFreports {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  margin-bottom: 7.5px;
-}
-
-.CIFActionButtons {
+.patientActionButtons {
   display: inline-flex;
   flex-direction: row;
   justify-content: flex-end;
@@ -989,41 +1070,18 @@ b {
   cursor: pointer;
 }
 
-.CIFActionButton {
-  width: 50px;
-  height: 50px;
-  padding: 10px;
-  border-radius: 30px;
-  cursor: pointer;
-}
-
-.CIFActionButton:hover {
-  background: #a3a3a3;
-}
-
 .printButton {
   width: 30px;
   height: 30px;
   margin-top: 10px;
   margin-bottom: -10px;
-}
-
-.CIFEdit {
-  width: 30px;
-  height: 30px;
-  padding: 5px;
+  margin-left: 10px;
 }
 
 /* #saveIcon:hover {
   background: url("~/assets/img/saved.png");
 
 } */
-
-.CIF-statusHistory {
-  margin-top:-10px;
-  margin-bottom:10px;
-  padding:20px;
-}
 
 table {
   border-collapse: collapse;
@@ -1091,6 +1149,13 @@ th, td {
     flex-direction: column;
     margin: 0 0 10px;
   }
+}
+
+.risk-factors {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  margin: 0 35px 6px 15px;
 }
 
 .name-field {
@@ -1242,6 +1307,35 @@ select {
   flex-direction: row;
   align-items: center;
   /* font-size: 16px; */
+}
+
+.done-button {
+  width: 150px;
+  height: 38px;
+  max-width: 100%;
+  font-size: 16px;
+  margin: 0px;
+  font-family: 'Work Sans', sans-serif;
+  font-weight: 600;
+  background-color: #346083;
+  color: white;
+  border: #346083 solid 0.75px;
+}
+
+.cancel-button {
+  width: 150px;
+  height: 38px;
+  max-width: 100%;
+  font-size: 16px;
+  margin:0px;
+  font-family: 'Work Sans', sans-serif;
+  font-weight: 600;
+  background-color: white;
+  color: #346083;
+}
+
+.cancel-button:hover {
+  border: #346083 solid 1px;
 }
 
 .required:after {

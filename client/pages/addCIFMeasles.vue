@@ -775,7 +775,7 @@
                           type="checkbox"
                           :disabled="inputEdit()"
                         />
-                        <label for="OWasteMgmt"> OVacCoverage </label>
+                        <label for="OWasteMgmt"> Lack of waste management </label>
                       </div>
 
                       <div style="display: flex; align-items: center">
@@ -2170,7 +2170,6 @@
               </div>
             </div>
           </form>
-          <hr v-if="pageNum == Object.keys(disease.formNames).length" />
         </div>
 
         <!-- Bottom 2 buttons -->
@@ -2335,7 +2334,7 @@ export default {
           labPCRResult: '',
           // Page 6++
           finalClassification: '',
-          sourceInfection: [],
+          sourceInfection: '',
           outcome: '',
           dateDied: '',
           finalDiagnosis: '',
@@ -2428,6 +2427,7 @@ export default {
     async submit() {
       this.formData.cases.diseaseID = this.diseaseID;
       this.formData.cases.reportedBy = this.$auth.user.userID;
+	  this.formData.cases.caseLevel = this.formData.caseData.finalClassification;
       const result = await axios.post('http://localhost:8080/api/newCase', {formData: this.formData});
       if (result.status === 200) {
         alert('case submitted!');
@@ -2449,13 +2449,15 @@ export default {
           if (!this.pageColor[10]) alert('Please fill up the required fields in all pages');
           else this.pageNum = page;
         }
+        else if (this.pageNum===10) {
+          this.pageNum = page;
+        }
         else if (page < Object.keys(this.disease.formNames).length && this.pageNum < Object.keys(this.disease.formNames).length) {
           const prevFormNum = 'form' + this.pageNum;
           document.getElementById(prevFormNum).className = 'formnum formnumdone';
           const currFormNum = 'form' + page;
           document.getElementById(currFormNum).className = 'formnum formnumcurr';
 
-          if (this.pageDone[this.pageNum]) this.pageColor[this.pageNum]=true;
           this.pageDone[this.pageNum] = true;
           this.pageDone[page] = true;
           this.pageNum = page;
@@ -2576,8 +2578,7 @@ export default {
           break;
         case 7:
           if (this.formData.caseData.sourceInfection!=='' &&
-              this.formData.caseData.sourceInfection!== null &&
-              this.formData.caseData.sourceInfection.length!== 0)
+              this.formData.caseData.sourceInfection!== null)
             this.pageDone[page] = true;
           else this.pageDone[page] = false;
           break;
@@ -2612,6 +2613,7 @@ export default {
               this.pageDone[page] = true;
             else this.pageDone[page] = false;
             if (this.formData.cases.investigatorContacto<0) {this.formData.cases.investigatorContact = ''; this.pageDone[page] = false;}
+            console.log(this.pageDone[page])
           }
           else this.pageDone[page] = false;
           break;
@@ -2621,7 +2623,9 @@ export default {
                this.pageColor[10] = true;
                this.pageDone[10] = true;
              }
+          break;
       }
+      if (this.pageDone[page]) this.pageColor[page] = true;
     },
     isRequired() {
       if (this.pageDone[this.pageNum]) return "input-form-field";

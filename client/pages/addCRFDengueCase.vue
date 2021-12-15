@@ -365,7 +365,7 @@
                   </label>
                   <input
                     id="patientConsultDate"
-                    v-model="formData.cases.patientConsultDate"
+                    v-model="formData.caseData.patientConsultDate"
                     class="input-form-field"
                     type="date"
                     :disabled="inputEdit()"
@@ -375,7 +375,7 @@
                   <label for="patientConsultPlace"> Place of Consultation </label>
                   <input
                     id="patientConsultPlace"
-                    v-model="formData.patient.patientConsultPlace"
+                    v-model="formData.caseData.patientConsultPlace"
                     class="input-form-field"
                     type="text"
                     :disabled="inputEdit()"
@@ -793,7 +793,7 @@
                           type="checkbox"
                           :disabled="inputEdit()"
                         />
-                        <label for="OWasteMgmt"> OVacCoverage </label>
+                        <label for="OWasteMgmt"> Lack of waste management </label>
                       </div>
 
                       <div style="display: flex; align-items: center">
@@ -886,7 +886,7 @@
                   </label>
                   <input
                     id="vaccineFirstDate"
-                    v-model="formData.cases.vaccineFirstDate"
+                    v-model="formData.caseData.vaccineFirstDate"
                     class="input-form-field"
                     type="date"
                     :disabled="inputEdit()"
@@ -895,9 +895,9 @@
                   />
                 </div>
                 <div v-if="formData.caseData.vaccine==='Yes'" class="field" style="width:39%">
-                  <label for="patientConsultPlace" class="required"> Date Last Vaccinated </label>
+                  <label for="vaccineLastdate" class="required"> Date Last Vaccinated </label>
                   <input
-                    id="patientConsultPlace"
+                    id="vaccineLastdate"
                     v-model="formData.patient.vaccineLastdate"
                     class="input-form-field"
                     type="date"
@@ -934,9 +934,9 @@
                               <input
                                 :id="value.name"
                                 v-model="formData.caseData.clinicalClassification"
-                                :value="value"
+                                :value="value.name"
                                 class="input-checkbox"
-                                name="finalClassification"
+                                name="clinicalClassification"
                                 type="radio"
                                 :disabled="inputEdit()"
                                 :class="optionsRequired()"
@@ -1271,16 +1271,16 @@
                     <!-- CASE CLASSIFICATION -->
                     <div>
                       <div class="collpaseWrapper">
-                        <ul v-for="(value, name, i) in caseClassification" :key="i" style="displayLinline-flex">
+                        <ul v-for="(value, name, i) in caseLevel" :key="i" style="displayLinline-flex">
                           <li>
                             <input :id="name" type="checkbox" class="collapseInput"/>
                             <label :for="name" class="collapseLabel">
                               <input
                                 :id="name"
-                                v-model="formData.caseData.caseLevel"
+                                v-model="formData.cases.caseLevel"
                                 :value="name"
                                 class="input-checkbox"
-                                name="finalClassification"
+                                name="caseLevel"
                                 type="radio"
                                 :disabled="inputEdit()"
                                 :class="optionsRequired()"
@@ -1342,7 +1342,7 @@ export default {
       isOpen: true,
       openCollapse: '',
       isDisabled: false,
-      diseaseID: 'DI-0000000000000',
+      diseaseID: 'DI-0000000000003',
       patients: [],
       patientResult: [],
       labList:['a','b','c','d'],
@@ -1421,7 +1421,7 @@ export default {
         },
         caseData: {
           patientConsulted: '',
-          patientConultDate:'',
+          patientConsultDate:'',
           patientConsultPlace:'',
           // Lab
           ns1Date:'',
@@ -1435,10 +1435,13 @@ export default {
           // Page 6++
           finalClassification: '',
           clinicalClassification:'',
-          sourceInfection: [],
+          sourceInfection: '',
           outcome: '',
           dateDied: '',
           finalDiagnosis: '',
+		  vaccine: '',
+		  vaccineFirstDate: '',
+		  vaccineLastDate: '',
         },
       },
       info: {
@@ -1497,7 +1500,7 @@ export default {
                     'Severe Bleeding: as evaluated by clinician',
                     'Severe Organ Involvement: such as AST or ALT ≥ 1000, impaired consciosness and failure of heart and other organs.']}
       ],
-      caseClassification: {
+      caseLevel: {
         'Suspect':'A previously well person with acute febrile illness of 2-7 days duration with clinical signs and symptoms of dengue',
         'Probable':'A suspected case with positive dengue IgM antibody test',
         'Confirmed':'Viral culture isolation, or Polymerase Chain Reaction (PCR), or Dengue NS1 antigen test',
@@ -1548,13 +1551,15 @@ export default {
           if (!this.pageColor[8]) alert('Please fill up the required fields in all pages');
           else this.pageNum = page;
         }
+        else if (this.pageNum===8) {
+          this.pageNum = page;
+        }
         else if (page < Object.keys(this.disease.formNames).length && this.pageNum < Object.keys(this.disease.formNames).length) {
           const prevFormNum = 'form' + this.pageNum;
           document.getElementById(prevFormNum).className = 'formnum formnumdone';
           const currFormNum = 'form' + page;
           document.getElementById(currFormNum).className = 'formnum formnumcurr';
 
-          if (this.pageDone[this.pageNum]) this.pageColor[this.pageNum]=true;
           this.pageDone[this.pageNum] = true;
           this.pageDone[page] = true;
           this.pageNum = page;
@@ -1658,9 +1663,9 @@ export default {
           else {this.pageDone[page] = false; this.errorLab = true;}
           break;
         case 7:
-          if (this.formData.caseData.caseClassification!=='' &&
-              this.formData.caseData.caseClassification!== null &&
-              this.formData.caseData.caseClassification !== undefined)
+          if (this.formData.cases.caseLevel !=='' &&
+              this.formData.cases.caseLevel !== null &&
+              this.formData.cases.caseLevel !== undefined)
             this.pageDone[page] = true;
           else this.pageDone[page] = false;
           break;
@@ -1670,7 +1675,9 @@ export default {
                this.pageColor[8] = true;
                this.pageDone[8] = true;
              }
+          break;
       }
+      if (this.pageDone[page]) this.pageColor[page] = true;
     },
     isRequired() {
       if (this.pageDone[this.pageNum]) return "input-form-field";

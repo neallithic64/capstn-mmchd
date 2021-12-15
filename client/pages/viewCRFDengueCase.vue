@@ -6,8 +6,8 @@
       <div class="viewCRF-details" style="align-text: left">
         <div class="CRFnumbers">
           <h1 style="margin: -10px 0">Case No. {{ formData.cases.caseID }}</h1>
-          <h2 style="margin-top: -1px">
-            Patient No. {{ formData.patient.patientID }}
+           <h2 style="margin-top: -1px">
+            Patient No. <a :href="'/patient?patientID=' + formData.patient.patientID" class="patientlink"> {{ formData.patient.patientID }} </a>
           </h2>
         </div>
         <div class="CRFstatus" style="align-text: right">
@@ -37,13 +37,13 @@
       </div>
       <div class="viewCRF-details" style="align-text: left">
         <div class="CIFnumbers">
-          <p>DRU City: <b>Manila</b></p>
-          <p>DRU Name: <b>HAKDOG</b></p>
-          <p>DRU Type: <b>type</b></p>
-          <p>DRU Address: <b>house</b></p>
+          <p>DRU City: <b> {{DRUData.druCity}} </b></p>
+          <p>DRU Name: <b> {{DRUData.druName}} </b></p>
+          <p>DRU Type: <b> {{DRUData.druType}} </b></p>
+          <p>DRU Address: <b> {{DRUData.druAddress}} </b></p>
         </div>
         <div class="CRFstatus" style="align-text: right">
-          <p>Week No: <b> {{ weekNo }} </b> </p>
+          <p>Week No: <b> {{ CRFData.year }}-{{ CRFData.week }} </b> </p>
           <p>Reported Date: <b>{{ formData.cases.reportDate }}</b></p>
           <p>Last Updated: <b>{{ formData.cases.updatedDate }}</b></p>
         </div>
@@ -201,7 +201,7 @@
             <div class="field-row-straight">
               <div class="name-field">
                 <label for="currCity" class="required"> City </label>
-                <input id="currCity" v-model="formData.patient.currCity" name="currCity" :disabled="inputEdit()"/>
+                <input id="currCity" v-model="formData.patient.currCity" class="input-form-field" name="currCity" :disabled="inputEdit()"/>
               </div>
               <div class="field">
                 <label for="currBarangay" class="required"> Barangay </label>
@@ -234,6 +234,7 @@
                 <input
                   id="permCity"
                   v-model="formData.patient.permCity"
+                  class="input-form-field"
                   name="permCity"
                   :disabled="inputEdit()"
                 />
@@ -316,7 +317,7 @@
                 </label>
                 <input
                   id="patientConsultDate"
-                  v-model="formData.cases.patientConsultDate"
+                  v-model="formData.caseData.patientConsultDate"
                   class="input-form-field"
                   type="date"
                   :disabled="inputEdit()"
@@ -827,7 +828,7 @@
                 </label>
                 <input
                   id="vaccineFirstDate"
-                  v-model="formData.cases.vaccineFirstDate"
+                  v-model="formData.caseData.vaccineFirstDate"
                   class="input-form-field"
                   type="date"
                   :disabled="inputEdit()"
@@ -837,7 +838,7 @@
                 <label for="patientConsultPlace"> Date Last Vaccinated </label>
                 <input
                   id="patientConsultPlace"
-                  v-model="formData.patient.vaccineLastdate"
+                  v-model="formData.caseData.vaccineLastdate"
                   class="input-form-field"
                   type="date"
                   :disabled="inputEdit()"
@@ -1183,16 +1184,16 @@
                 <div>
                   <div style="display: inline-flex; flex-direction: column">
                     <div
-                      v-for="(value, name, i) in caseClassification"
+                      v-for="(value, name, i) in caseLevel"
                       :key="i"
                       class="checkbox-options"
                     >
                       <input
                         :id="i"
-                        v-model="formData.caseData.caseClassification"
+                        v-model="formData.caseData.caseLevel"
                         :value="name"
                         class="input-checkbox"
-                        name="caseClassification"
+                        name="caseLevel"
                         type="radio"
                         :disabled="inputEdit()"
                       />
@@ -1261,7 +1262,7 @@
               <!-- CASE DEFINITION -->
               <div>
                 <div class="collpaseWrapper">
-                  <ul v-for="(value, name, i) in caseClassification" :key="i" style="displayLinline-flex">
+                  <ul v-for="(value, name, i) in caseLevel" :key="i" style="displayLinline-flex">
                     <li>
                       <input :id="name" type="checkbox" class="collapseInput"/>
                       <label :for="name" class="collapseLabel">
@@ -1303,6 +1304,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/0.9.0rc1/jspdf.min.js"></script>
 
 <script>
+const axios = require('axios');
+
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
 export default {
@@ -1325,6 +1328,20 @@ export default {
       caseDefs: [],
       pageNum: 1,
       formPart: 'Dengue0',
+      CRFData:{
+        CRFID: '',
+        diseaseID: '',
+        userID:'',
+        week:'',
+        year:'',
+        isPushed:false
+      },
+      DRUData:{
+        druName:'',
+        druType:'',
+        druCity:'',
+        druAddress:''
+      },
       formData: {
         cases: {
           caseID: '',
@@ -1410,9 +1427,8 @@ export default {
           pcrResult:'',
           // Page 6++
           finalClassification: '',
-          clinicalClassification:'',
-          caseClassification:'',
-          sourceInfection: [],
+          clinicalClassification: '',
+          sourceInfection: '',
           outcome: '',
           dateDied: '',
           finalDiagnosis: '',
@@ -1464,13 +1480,27 @@ export default {
                     'Severe Bleeding: as evaluated by clinician',
                     'Severe Organ Involvement: such as AST or ALT ≥ 1000, impaired consciosness and failure of heart and other organs.']}
       ],
-      caseClassification: {
+      caseLevel: {
         'Suspect':'A previously well person with acute febrile illness of 2-7 days duration with clinical signs and symptoms of dengue',
         'Probable':'A suspected case with positive dengue IgM antibody test',
         'Confirmed':'Viral culture isolation, or Polymerase Chain Reaction (PCR), or Dengue NS1 antigen test',
       },
     }
   },
+  async fetch() {
+    const data = (await axios.get('http://localhost:8080/api/getCRF?caseID=' + this.$route.query.caseID)).data;
+    // const data = (await axios.get('http://localhost:8080/api/getCRF?caseID=' + 'CA-0000000000007')).data;
+    this.formData.cases = data.cases;
+    this.formData.caseData = data.caseData;
+    this.formData.patient = data.patient;
+    this.formData.riskFactors = data.riskFactors; // working already
+    this.DRUData = data.DRUData;
+    this.CRFData = data.crfData;
+    
+    // fixing dates
+
+    console.log(data);
+  }, 
   methods: {
     formListClass(index) {
       if (index === this.pageNum) return 'formSummaryItems selected'
@@ -1480,7 +1510,7 @@ export default {
       this.pageNum = i
     },
     inputEdit() {
-      if (this.pageNum===6) return false;
+      if (this.pageNum === 6 && this.$auth.user.userID === this.formData.cases.investigatorLab) return false;
       else return true;
     },
     statusInputEdit(value) {

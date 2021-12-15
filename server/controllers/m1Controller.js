@@ -214,8 +214,10 @@ async function generateIDs(table, numRows) {
 
 function dateToString(date) {
 	let dateString = new Date(date);
-	return dateString.getFullYear()+'-'+dateString.getMonth().toString().padStart(2,'0')+'-'+dateString.getDate().toString().padStart(2,'0');
+	let month = dateString.getMonth() + 1;
+	return dateString.getFullYear()+'-'+ month.toString().padStart(2,'0') +'-'+dateString.getDate().toString().padStart(2,'0');
 }
+
 async function createCase(cases) {
 	try {
 		cases.caseID = (await generateID("mmchddb.CASES")).id;
@@ -405,14 +407,19 @@ const indexFunctions = {
 			let riskFactorsData = await db.findRows("mmchddb.RISK_FACTORS", {caseID: req.query.caseID});
 			let caseData = await db.findRows("mmchddb.CASE_DATA", {caseID: req.query.caseID});
 			let caseAudit = await db.findRows("mmchddb.CASE_AUDIT", {caseID: req.query.Case});
+			let DRUData = await db.exec("SELECT u.druName, userType AS 'druType', a.city AS 'druCity', CONCAT_WS(', ',a.houseStreet, a.brgy, a.city) AS 'druAddress' " +
+					"FROM mmchddb.USERS u INNER JOIN mmchddb.ADDRESSES a ON u.addressID = a.addressID " + 
+					"WHERE u.userID='" + rows[0].reportedBy + "';");
 
 			// console.log(patientData);
-			
 			let caseDataObj = {};
 			
 			caseData.forEach(function(element) {
 				caseDataObj[element.fieldName] = element.value;
 			});
+
+			if(DRUData[0].druName == 'TestDRU' || DRUData[0].druName == '')
+				DRUData[0].druType = 'N/A';
 
 			let data = {
 				cases: rows[0],
@@ -420,7 +427,8 @@ const indexFunctions = {
 				// caseData: caseData,
 				caseData: caseDataObj,
 				caseAudit: caseAudit,
-				riskFactors: riskFactorsData[0]
+				riskFactors: riskFactorsData[0],
+				DRUData: DRUData[0]
 			}
 
 			// fixing dates
@@ -439,10 +447,100 @@ const indexFunctions = {
 			res.status(500).send("Server error");
 		}
 	},
+
+	getPatientData: async function(req, res) {
+		try {
+			//collect relevant data
+			let rows = await db.findRows("mmchddb.CASES", {patientID: req.query.patientID});
+			let patientData = await db.exec("SELECT p.*, "
+					+ "a1.houseStreet AS currHouseStreet, a1.brgy AS currBrgy, a1.city AS "
+					+ "currCity, a2.houseStreet AS permHouseStreet, a2.brgy AS permBrgy, "
+					+ "a2.city AS permCity FROM mmchddb.PATIENTS p INNER JOIN "
+					+ "mmchddb.ADDRESSES a1 ON p.caddressID = a1.addressID "
+					+ "INNER JOIN mmchddb.ADDRESSES a2 ON p.paddressID = a2.addressID "+
+					"WHERE p.patientID = '" + rows[0].patientID + "';");
+			let riskFactorsData = await db.findRows("mmchddb.RISK_FACTORS", {caseID: rows[rows.length - 1].caseID});
+			let DRUData = await db.exec("SELECT u.druName, userType AS 'druType', a.city AS 'druCity', CONCAT_WS(', ',a.houseStreet, a.brgy, a.city) AS 'druAddress' " +
+					"FROM mmchddb.USERS u INNER JOIN mmchddb.ADDRESSES a ON u.addressID = a.addressID " + 
+					"WHERE u.userID='" + rows[0].reportedBy + "';");
+
+			let data = {
+				rowData: rows,
+				patient: patientData[0],
+				riskFactors: riskFactorsData[0],
+				DRUData : DRUData[0]
+			}
+
+			// fixing dates
+			data.rowData.reportDate = dateToString(data.rowData.reportDate);
+			if(data.rowData.investigationDate)
+				data.rowData.investigationDate = dateToString(data.rowData.investigationDate);
+			if(data.rowData.dateOnset)
+				data.rowData.dateOnset = dateToString(data.rowData.dateOnset);
+			if(data.rowData.dateAdmitted)
+				data.rowData.dateAdmitted = dateToString(data.rowData.dateAdmitted);
+			data.patient.birthDate = dateToString(data.patient.birthDate);
+
+			res.status(200).send(data);
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
 	
 	getCRF: async function(req, res) {
 		try {
+			//collect relevant data
+			let rows = await db.findRows("mmchddb.CASES", {caseID: req.query.caseID});
+
+			let patientData = await db.exec("SELECT p.*, "
+					+ "a1.houseStreet AS currHouseStreet, a1.brgy AS currBrgy, a1.city AS "
+					+ "currCity, a2.houseStreet AS permHouseStreet, a2.brgy AS permBrgy, "
+					+ "a2.city AS permCity FROM mmchddb.PATIENTS p INNER JOIN "
+					+ "mmchddb.ADDRESSES a1 ON p.caddressID = a1.addressID "
+					+ "INNER JOIN mmchddb.ADDRESSES a2 ON p.paddressID = a2.addressID "+
+					"WHERE p.patientID = '" + rows[0].patientID + "';");
+			let riskFactorsData = await db.findRows("mmchddb.RISK_FACTORS", {caseID: req.query.caseID});
+			let caseData = await db.findRows("mmchddb.CASE_DATA", {caseID: req.query.caseID});
+			let caseAudit = await db.findRows("mmchddb.CASE_AUDIT", {caseID: req.query.Case});
+			let crfData = await db.findRows("mmchddb.CRFS", {CRFID: rows[0].CRFID});
+			let DRUData = await db.exec("SELECT u.druName, userType AS 'druType', a.city AS 'druCity', CONCAT_WS(', ',a.houseStreet, a.brgy, a.city) AS 'druAddress' " +
+					"FROM mmchddb.USERS u INNER JOIN mmchddb.ADDRESSES a ON u.addressID = a.addressID " + 
+					"WHERE u.userID='" + rows[0].reportedBy + "';");
+
+			let caseDataObj = {};
 			
+			caseData.forEach(function(element) {
+				caseDataObj[element.fieldName] = element.value;
+			});
+
+			if(DRUData[0].druName == 'TestDRU' || DRUData[0].druName == '')
+				DRUData[0].druType = 'N/A';
+
+			let data = {
+				cases: rows[0],
+				patient: patientData[0],
+				crfData: crfData[0],
+				caseData: caseDataObj,
+				caseAudit: caseAudit,
+				riskFactors: riskFactorsData[0],
+				DRUData: DRUData[0]
+			}
+
+			// fixing data
+			data.cases.reportDate = dateToString(data.cases.reportDate);
+			if(data.cases.investigationDate)
+				data.cases.investigationDate = dateToString(data.cases.investigationDate);
+			if(data.cases.dateOnset)
+				data.cases.dateOnset = dateToString(data.cases.dateOnset);
+			if(data.cases.dateAdmitted)
+				data.cases.dateAdmitted = dateToString(data.cases.dateAdmitted);
+			data.patient.birthDate = dateToString(data.patient.birthDate);
+
+			data.crfData.week = data.crfData.week.toString().padStart(2,'0');
+			data.crfData.year = data.crfData.year.toString();
+			// console.log(rows);
+			res.status(200).send(data);
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
@@ -695,8 +793,8 @@ const indexFunctions = {
 						result = await createCase(formData.cases);
 						
 						if (result) {
-							formData.caseData.noMCVreason = formData.caseData.noMCVreason.join(",");
-							formData.caseData.sourceInfection = formData.caseData.sourceInfection.join(",");
+							if (formData.caseData.noMCVreason) formData.caseData.noMCVreason = formData.caseData.noMCVreason.join(",");
+							// if (formData.caseData.sourceInfection) formData.caseData.sourceInfection = formData.caseData.sourceInfection.join(",");
 							let newCaseData = Object.entries(formData.caseData);
 							
 							newCaseData.forEach(function (element) {
@@ -710,7 +808,15 @@ const indexFunctions = {
 								result = await db.insertOne("mmchddb.RISK_FACTORS", formData.riskFactors);
 								
 								if (result) {
-									res.status(200).send("Add case success");
+									let user = await db.findRows("mmchddb.USERS",{userID : formData.cases.reportedBy});
+									let disease = await db.findRows("mmchddb.DISEASES", {diseaseID : formData.cases.diseaseID});
+									result = await sendBulkNotifs(['pidsrStaff', 'fhsisStaff'],'caseNotif', 
+										'NEW CASE: '+ user[0].druName + ' submitted a ' + disease[0].diseaseName + ' case', formData.cases.caseID);
+									
+									if (result)
+										res.status(200).send("Add case success"); 
+									else res.status(500).send("Send Notifs Failed");
+
 								} else {
 									console.log("Add risk factor failed");
 									res.status(500).send("Add risk factor failed");
@@ -799,7 +905,7 @@ const indexFunctions = {
 					let disease = await db.findRows("mmchddb.DISEASES",{diseaseID:caseAudit.diseaseID});
 					let notification = new Notification(null, caseData.reportedBy,'updateNotif', 
 						'CASE UPDATE: The case level of ' + disease[0].diseaseName + ' Case ' + caseId + 'has been updated to ' + newStatus + '.', 
-						caseId, caseAudit.dateModified, "http://localhost:3000/viewCIF", false);
+						caseId, caseAudit.dateModified, "http://localhost:3000/allCases", false);
 					notification.caseID = (await generateID("mmchddb.NOTIFICATIONS")).id;
 					let newNotif = db.insertOne("mmchddb.NOTIFICATIONS", notification);
 					if (newNotif) {
