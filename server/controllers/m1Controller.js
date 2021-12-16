@@ -512,7 +512,6 @@ const indexFunctions = {
 					"LEFT JOIN mmchddb.AUDIT_LOG al ON c.caseID = al.editedID " + 
 					"WHERE c.patientID = '" + req.query.patientID + "' " +
 					"GROUP BY c.caseID ORDER BY IFNULL(MAX(al.dateModified), c.reportDate) desc;");
-					console.log(rows);
 			let patientData = await db.exec("SELECT p.*, "
 					+ "a1.houseStreet AS currHouseStreet, a1.brgy AS currBrgy, a1.city AS "
 					+ "currCity, a2.houseStreet AS permHouseStreet, a2.brgy AS permBrgy, "
