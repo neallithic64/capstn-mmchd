@@ -242,56 +242,6 @@ export default {
           filter: true,
         },
       ],
-      crfColumns: [
-        {
-          title: 'CRF No.',
-          key: 'crfNo',
-          type: 'clickable',
-          source: 'cases',
-          uniqueField: 'id',
-          sortable: true,
-        },
-        {
-          title: 'Disease',
-          key: 'diseaseName',
-          type: 'text',
-          source: 'cases',
-          uniqueField: 'id',
-          sortable: true,
-          filter: true,
-        },
-        {
-          title: 'DRU ID',
-          key: 'druID',
-          type: 'text',
-          source: 'cases',
-          uniqueField: 'id',
-        },
-        {
-          title: 'Submitted on',
-          key: 'submittedDate',
-          type: 'text',
-          dateFormat: true,
-          currentFormat: 'YYYY-MM-DD',
-          expectFormat: 'DD MMM YYYY',
-          // sortable: true,
-        },
-        {
-          title: 'Last updated',
-          key: 'updatedDate',
-          type: 'text',
-          dateFormat: true,
-          currentFormat: 'YYYY-MM-DD',
-          expectFormat: 'DD MMM YYYY',
-          sortable: true,
-        },
-        {
-          title: 'Week No.',
-          key: 'weekNo',
-          type: 'text',
-          sortable: true,
-        },
-      ],
       crfDRUColumns: [
         {
           title: 'Week No.',
@@ -301,7 +251,7 @@ export default {
         },
         {
           title: 'CRF No.',
-          key: 'crfNo',
+          key: 'CRFID',
           type: 'clickable',
           source: 'cases',
           uniqueField: 'id',
@@ -324,7 +274,7 @@ export default {
         },
         {
           title: 'Submitted on',
-          key: 'submittedDate',
+          key: 'submittedOn',
           type: 'text',
           dateFormat: true,
           currentFormat: 'YYYY-MM-DD',
@@ -388,13 +338,13 @@ export default {
         },
         {
           title: 'Submit Status',
-          key: 'isPushed',
+          key: 'submitStatus',
           type: 'text',
           filter: true,
         },
         {
           title: 'Submitted on',
-          key: 'submittedDate',
+          key: 'submittedOn',
           type: 'text',
           dateFormat: true,
           currentFormat: 'YYYY-MM-DD',
@@ -413,17 +363,7 @@ export default {
       ],
       allData: [],
       cifData: [],
-      crfDRUData: [
-        {
-          weekNo: '2021-21',
-          crfNo: 35,
-          diseaseName: 'Dengue',
-          submitStatus: 'Ongoing',
-          submittedDate: '2020-11-10',
-          reportStatus: 'None',
-          action: 'add submit'
-        },
-      ],
+      crfDRUData: [],
       crfCHDData: [],
       diseases: {
         cif: {
@@ -458,7 +398,7 @@ export default {
 	  crfRows[i].weekNo = crfRows[i].year + "-" + crfRows[i].week;
 	}
 	this.crfCHDData = crfRows;
-	// this.crfDRUData = crfRows.filter(e => e.type === "CRF" && e.reportedBy === "");
+	this.crfDRUData = crfRows;
 	this.tableOptions.columns = this.allColumns;
   },
   methods: {
