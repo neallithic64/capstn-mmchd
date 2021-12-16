@@ -45,7 +45,7 @@
         <div class="CRFstatus" style="align-text: right">
           <p>Week No: <b> {{ CRFData.year }}-{{ CRFData.week }} </b> </p>
           <p>Reported Date: <b>{{ formData.cases.reportDate }}</b></p>
-          <p>Last Updated: <b>{{ formData.cases.updatedDate }}</b></p>
+          <p>Last Updated: <b>{{ dateLastUpdated }}</b></p>
         </div>
       </div>
       <div v-show="!isPrint" class="CRF-SummaryContainer">
@@ -1313,6 +1313,7 @@ export default {
       caseDefs: [],
       pageNum: 1,
       formPart: 'Dengue0',
+      dateLastUpdated:'',
       tableOptions: {
         tableName: 'cases',
         columns: [
@@ -1532,6 +1533,8 @@ export default {
     this.formData.riskFactors = data.riskFactors; // working already
     this.DRUData = data.DRUData;
     this.CRFData = data.crfData;
+    this.dateLastUpdated = data.dateLastUpdated;
+    this.caseHistory = data.caseHistory;
     
     // fixing dates
 

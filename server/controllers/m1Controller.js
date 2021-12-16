@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
 const db = require("../models/db");
+const { report } = require("../routers/indexRouter");
 
 const DRUUserTypes = ['BHS','RHU','CHO', 'govtHosp', 'privHosp', 'clinic', 'privLab', 'airseaPort'];
 /** OBJECT CONSTRUCTORS
@@ -417,7 +418,7 @@ const indexFunctions = {
 		try {
 			//collect relevant data
 			let rows = await db.findRows("mmchddb.CASES", {caseID: req.query.caseID});
-
+			let reporterData = await db.findRows("mmchddb.USERS", {userID: rows[0].reportedBy});
 			let patientData = await db.exec("SELECT p.*, "
 					+ "a1.houseStreet AS currHouseStreet, a1.brgy AS currBrgy, a1.city AS "
 					+ "currCity, a2.houseStreet AS permHouseStreet, a2.brgy AS permBrgy, "
@@ -427,7 +428,11 @@ const indexFunctions = {
 					"WHERE p.patientID = '" + rows[0].patientID + "';");
 			let riskFactorsData = await db.findRows("mmchddb.RISK_FACTORS", {caseID: req.query.caseID});
 			let caseData = await db.findRows("mmchddb.CASE_DATA", {caseID: req.query.caseID});
-			let caseAudit = await db.findRows("mmchddb.AUDIT_LOG", {editedID: req.query.Case});
+			let caseAudit = await db.exec("SELECT a.dateModified AS 'reportDate', a.prevValue AS 'from', "+ 
+			 		"CONCAT(u.firstName,' ', u.midName, ' ', u.lastName, ', ' , u.druName) AS 'reportedBy' " +
+					"FROM mmchddb.AUDIT_LOG a JOIN mmchddb.USERS u ON a.modifiedBy = u.userID " +
+					"WHERE a.editedID = '" + req.query.caseID + "' " +
+					"ORDER BY a.dateModified;");
 			let DRUData = await db.exec("SELECT u.druName, userType AS 'druType', a.city AS 'druCity', CONCAT_WS(', ',a.houseStreet, a.brgy, a.city) AS 'druAddress' " +
 					"FROM mmchddb.USERS u INNER JOIN mmchddb.ADDRESSES a ON u.addressID = a.addressID " + 
 					"WHERE u.userID='" + rows[0].reportedBy + "';");
@@ -442,14 +447,50 @@ const indexFunctions = {
 			if(DRUData[0].druName == 'TestDRU' || DRUData[0].druName == '')
 				DRUData[0].druType = 'N/A';
 
+			let dateLastUpdated = new Date(rows[0].reportDate);
+			let i = 0;
+
+			if(caseAudit.length > 0){
+				for(i = 0; i < caseAudit.length; i++){
+					dateLastUpdated = new Date(caseAudit[i].reportDate);
+					if(i + 1 == caseAudit.length)
+						caseAudit[i].to = rows[0].caseLevel;
+					else
+						caseAudit[i].to = caseAudit[i+1].from;
+					caseAudit[i].reportDate = dateToString(caseAudit[i].reportDate);
+				}
+
+				caseAudit = caseAudit.reverse();
+			
+				caseAudit[i] = {
+					reportDate: dateToString(rows[0].reportDate),
+					reportedBy: reporterData[0].firstName + ' ' + reporterData[0].midName + ' '+ reporterData[0].lastName + 
+								', ' + reporterData[0].druName,
+					from: '',
+					to: caseAudit[i-1].from
+				};
+
+				caseAudit = caseAudit.reverse();
+
+			} else{
+				caseAudit[i] = {
+					reportDate: dateToString(rows[0].reportDate),
+					reportedBy: reporterData[0].firstName + ' ' + reporterData[0].midName + ' '+ reporterData[0].lastName + 
+								', ' + reporterData[0].druName,
+					from: '',
+					to: rows[0].caseLevel
+				};
+			}
+
 			let data = {
 				cases: rows[0],
 				patient: patientData[0],
 				// caseData: caseData,
 				caseData: caseDataObj,
-				caseAudit: caseAudit,
 				riskFactors: riskFactorsData[0],
-				DRUData: DRUData[0]
+				DRUData: DRUData[0],
+				dateLastUpdated: dateLastUpdated,
+				caseHistory: caseAudit,
 			}
 
 			// fixing dates
@@ -461,6 +502,8 @@ const indexFunctions = {
 			if(data.cases.dateAdmitted)
 				data.cases.dateAdmitted = dateToString(data.cases.dateAdmitted);
 			data.patient.birthDate = dateToString(data.patient.birthDate);
+			data.dateLastUpdated = dateToString(data.dateLastUpdated);
+
 			// console.log(rows);
 			res.status(200).send(data);
 		} catch (e) {
@@ -513,7 +556,7 @@ const indexFunctions = {
 		try {
 			//collect relevant data
 			let rows = await db.findRows("mmchddb.CASES", {caseID: req.query.caseID});
-
+			let reporterData = await db.findRows("mmchddb.USERS", {userID: rows[0].reportedBy});
 			let patientData = await db.exec("SELECT p.*, "
 					+ "a1.houseStreet AS currHouseStreet, a1.brgy AS currBrgy, a1.city AS "
 					+ "currCity, a2.houseStreet AS permHouseStreet, a2.brgy AS permBrgy, "
@@ -523,8 +566,12 @@ const indexFunctions = {
 					"WHERE p.patientID = '" + rows[0].patientID + "';");
 			let riskFactorsData = await db.findRows("mmchddb.RISK_FACTORS", {caseID: req.query.caseID});
 			let caseData = await db.findRows("mmchddb.CASE_DATA", {caseID: req.query.caseID});
-			let caseAudit = await db.findRows("mmchddb.AUDIT_LOG", {editedID: req.query.Case});
 			let crfData = await db.findRows("mmchddb.CRFS", {CRFID: rows[0].CRFID});
+			let caseAudit = await db.exec("SELECT a.dateModified AS 'reportDate', a.prevValue AS 'from', "+ 
+			 		"CONCAT(u.firstName,' ', u.midName, ' ', u.lastName, ', ' , u.druName) AS 'reportedBy' " +
+					"FROM mmchddb.AUDIT_LOG a JOIN mmchddb.USERS u ON a.modifiedBy = u.userID " +
+					"WHERE a.editedID = '" + req.query.caseID + "' " +
+					"ORDER BY a.dateModified;");
 			let DRUData = await db.exec("SELECT u.druName, userType AS 'druType', a.city AS 'druCity', CONCAT_WS(', ',a.houseStreet, a.brgy, a.city) AS 'druAddress' " +
 					"FROM mmchddb.USERS u INNER JOIN mmchddb.ADDRESSES a ON u.addressID = a.addressID " + 
 					"WHERE u.userID='" + rows[0].reportedBy + "';");
@@ -538,14 +585,50 @@ const indexFunctions = {
 			if(DRUData[0].druName == 'TestDRU' || DRUData[0].druName == '')
 				DRUData[0].druType = 'N/A';
 
+			let dateLastUpdated = new Date(rows[0].reportDate);
+			let i = 0;
+
+			if(caseAudit.length > 0){
+				for(i = 0; i < caseAudit.length; i++){
+					dateLastUpdated = new Date(caseAudit[i].reportDate);
+					if(i + 1 == caseAudit.length)
+						caseAudit[i].to = rows[0].caseLevel;
+					else
+						caseAudit[i].to = caseAudit[i+1].from;
+					caseAudit[i].reportDate = dateToString(caseAudit[i].reportDate);
+				}
+
+				caseAudit = caseAudit.reverse();
+			
+				caseAudit[i] = {
+					reportDate: dateToString(rows[0].reportDate),
+					reportedBy: reporterData[0].firstName + ' ' + reporterData[0].midName + ' '+ reporterData[0].lastName + 
+								', ' + reporterData[0].druName,
+					from: '',
+					to: caseAudit[i-1].from
+				};
+
+				caseAudit = caseAudit.reverse();
+
+			} else{
+				caseAudit[i] = {
+					reportDate: dateToString(rows[0].reportDate),
+					reportedBy: reporterData[0].firstName + ' ' + reporterData[0].midName + ' '+ reporterData[0].lastName + 
+								', ' + reporterData[0].druName,
+					from: '',
+					to: rows[0].caseLevel
+				};
+			}
+
 			let data = {
 				cases: rows[0],
 				patient: patientData[0],
 				crfData: crfData[0],
 				caseData: caseDataObj,
-				// caseAudit: caseAudit,
 				riskFactors: riskFactorsData[0],
-				DRUData: DRUData[0]
+				DRUData: DRUData[0],
+				dateLastUpdated: dateLastUpdated,
+				caseHistory: caseAudit,
 			}
 
 			// fixing data
@@ -560,6 +643,7 @@ const indexFunctions = {
 
 			data.crfData.week = data.crfData.week.toString().padStart(2,'0');
 			data.crfData.year = data.crfData.year.toString();
+			data.dateLastUpdated = dateToString(data.dateLastUpdated);
 			// console.log(rows);
 			res.status(200).send(data);
 		} catch (e) {

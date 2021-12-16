@@ -45,7 +45,7 @@
         <div class="CIFstatus" style="align-text: right">
           
           <p>Reported Date: <b>{{ formData.cases.reportDate }}</b></p>
-          <p>Last Updated: <b>{{ formData.cases.updatedDate }}</b></p>
+          <p>Last Updated: <b>{{ dateLastUpdated }}</b></p>
         </div>
       </div>
       <div v-show="!isPrint" class="CIF-SummaryContainer">
@@ -2234,6 +2234,7 @@ export default {
       caseDefs: [],
       pageNum: 1,
       formPart: 'Measles0',
+      dateLastUpdated: '',
       tableOptions: {
         tableName: 'cases',
         columns: [
@@ -2497,6 +2498,8 @@ export default {
     this.formData.patient = data.patient;
     this.formData.riskFactors = data.riskFactors; // working already
     this.DRUData = data.DRUData;
+    this.caseHistory = data.caseHistory;
+    this.dateLastUpdated = data.dateLastUpdated;
     // fixing dates
 
     // console.log(data);
