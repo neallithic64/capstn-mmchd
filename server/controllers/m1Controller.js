@@ -1138,11 +1138,15 @@ const indexFunctions = {
 			let date = new Date();
 			let JanOne = new Date(date.getFullYear(), 0, 1);
 			let numDay = Math.floor((date - JanOne) / (24 * 60 * 60 * 1000));
-			let week = Math.ceil((date.getDay() + 1 + numDay) / 7);
-			let result = await sendBulkNotifs(DRUUserTypes,'pushDataNotif', 
+			let week = Math.ceil((1 + numDay) / 7);
+			let pushData = await db.updateRows("mmchddb.CRFS", {isPushed:false}, {isPushed:true});
+			if(pushData) {
+				let result = await sendBulkNotifs(DRUUserTypes,'pushDataNotif', 
 										'SUBMISSION UPDATE: Your Case Report Forms for Week ' + week + ' has been automatically pushed to MMCHD-RESU', null);
-			if (result) console.log("Adding notification success");
-			else console.log("Adding Notification to DRU Failed");
+				if (result) console.log("Push Data Success");
+				else console.log("Adding Notification to DRU Failed");
+			} else console.log("Update CRF Push failed");
+			
 		} catch (e) {
 			console.log(e);
 			console.log("Server Error");
