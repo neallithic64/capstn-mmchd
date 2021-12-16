@@ -380,11 +380,22 @@ const indexFunctions = {
 									INNER JOIN mmchddb.PATIENTS p ON c.patientID = p.patientID
 									INNER JOIN mmchddb.ADDRESSES a ON p.caddressID = a.addressID
 									LEFT JOIN mmchddb.AUDIT_LOG al ON c.caseID = al.editedID
-									LEFT JOIN mmchddb.CRFS cr ON c.CRFID = cr.CRFID
-									GROUP BY c.caseID;`);
-			// CRFs have been JOINed, have to label the cases now as CIF or CRF.
+									GROUP BY c.caseID
+									ORDER BY updatedDate DESC;`);
+			// label the cases now as CIF or CRF
 			for (let i = 0; i < match.length; i++) match[i].type = match[i].CRFID ? "CRF" : "CIF";
-			// console.log(match);
+			res.status(200).send(match);
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
+	
+	getAllCRFs: async function(req, res) {
+		try {
+			// TODO: this is incomplete! will need to add more details -neal
+			let match = await db.exec(`SELECT cr.*, c.diseaseID
+									FROM mmchddb.CRFS cr LEFT JOIN mmchddb.CASES c ON cr.CRFID = c.CRFID;`);
 			res.status(200).send(match);
 		} catch (e) {
 			console.log(e);

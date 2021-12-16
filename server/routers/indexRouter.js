@@ -18,6 +18,7 @@ router.get("/getUser", m1Cont.getUser);
 router.get("/getLabUsers", m1Cont.getLabUsers);
 
 router.get("/getCases", m1Cont.getCases);
+router.get("/getAllCRFs", m1Cont.getAllCRFs);
 router.get("/getNotifs", m1Cont.getAllNotifs);
 router.get("/getNotification", m1Cont.getNotification);
 router.get("/getCIF", m1Cont.getCIF);
