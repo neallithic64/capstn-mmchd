@@ -22,7 +22,13 @@ const pool = mysql.createPool({
 function makeWhereClause(obj) {
 	let entriesArr = [];
 	for (let [key, value] of Object.entries(obj)) {
-		entriesArr.push(key + " = " + "'" + value + "'");
+		if(typeof(value)=='boolean'){
+			if(value)
+				entriesArr.push(key + " = 1");
+			else
+				entriesArr.push(key + " = 0");
+		}
+		else entriesArr.push(key + " = " + "'" + value + "'");
 	}
 	return entriesArr.join(" AND ") + ";";
 }

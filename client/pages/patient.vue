@@ -866,7 +866,7 @@ export default {
             filter: true,
           },
           {
-            title: 'DRU ID',
+            title: 'DRU Name',
             key: 'reportedBy',
             type: 'text',
             source: 'cases',
@@ -1047,7 +1047,8 @@ export default {
     this.formData.patient = data.patient;
     this.formData.riskFactors = data.riskFactors; // working already
     this.DRUData = data.DRUData;
-    console.log(data);
+    this.allData = data.rowData;
+    // console.log(data);
   }, 
   methods: {
     inputEdit() {
