@@ -459,7 +459,6 @@ const indexFunctions = {
 					to: caseAudit[i-1].from
 				};
 
-				caseAudit = caseAudit.reverse();
 
 			} else{
 				caseAudit[i] = {
@@ -504,18 +503,27 @@ const indexFunctions = {
 	getPatientData: async function(req, res) {
 		try {
 			//collect relevant data
-			let rows = await db.findRows("mmchddb.CASES", {patientID: req.query.patientID});
+			let rows = await db.exec("SELECT 	c.caseID, c.reportDate, c.caseLevel, d.diseaseName AS 'disease', a.city AS 'city', " +
+					"u.druName AS 'reportedBy', IFNULL(MAX(al.dateModified), c.reportDate) AS 'updatedDate', " +
+					"c.reportedBy AS 'reportedByID', IF(ISNULL(c.CRFID), 'CIF', 'CRF') AS 'type' " +
+					"FROM mmchddb.CASES c 	INNER JOIN mmchddb.DISEASES d ON c.diseaseID = d.diseaseID " + 
+					"INNER JOIN mmchddb.USERS u ON c.reportedBy = u.userID " + 
+					"INNER JOIN mmchddb.ADDRESSES a ON u.addressID = a.addressID " +
+					"LEFT JOIN mmchddb.AUDIT_LOG al ON c.caseID = al.editedID " + 
+					"WHERE c.patientID = '" + req.query.patientID + "' " +
+					"GROUP BY c.caseID ORDER BY IFNULL(MAX(al.dateModified), c.reportDate) desc;");
+					console.log(rows);
 			let patientData = await db.exec("SELECT p.*, "
 					+ "a1.houseStreet AS currHouseStreet, a1.brgy AS currBrgy, a1.city AS "
 					+ "currCity, a2.houseStreet AS permHouseStreet, a2.brgy AS permBrgy, "
 					+ "a2.city AS permCity FROM mmchddb.PATIENTS p INNER JOIN "
 					+ "mmchddb.ADDRESSES a1 ON p.caddressID = a1.addressID "
 					+ "INNER JOIN mmchddb.ADDRESSES a2 ON p.paddressID = a2.addressID "+
-					"WHERE p.patientID = '" + rows[0].patientID + "';");
+					"WHERE p.patientID = '" + req.query.patientID + "';");
 			let riskFactorsData = await db.findRows("mmchddb.RISK_FACTORS", {caseID: rows[rows.length - 1].caseID});
 			let DRUData = await db.exec("SELECT u.druName, userType AS 'druType', a.city AS 'druCity', CONCAT_WS(', ',a.houseStreet, a.brgy, a.city) AS 'druAddress' " +
 					"FROM mmchddb.USERS u INNER JOIN mmchddb.ADDRESSES a ON u.addressID = a.addressID " + 
-					"WHERE u.userID='" + rows[0].reportedBy + "';");
+					"WHERE u.userID='" + rows[0].reportedByID + "';");
 
 			let data = {
 				rowData: rows,
@@ -525,13 +533,10 @@ const indexFunctions = {
 			}
 
 			// fixing dates
-			data.rowData.reportDate = dateToString(data.rowData.reportDate);
-			if(data.rowData.investigationDate)
-				data.rowData.investigationDate = dateToString(data.rowData.investigationDate);
-			if(data.rowData.dateOnset)
-				data.rowData.dateOnset = dateToString(data.rowData.dateOnset);
-			if(data.rowData.dateAdmitted)
-				data.rowData.dateAdmitted = dateToString(data.rowData.dateAdmitted);
+			data.rowData.forEach(function(element){
+				element.reportDate = dateToString(element.reportDate);
+				element.updatedDate = dateToString(element.updatedDate);
+			});
 			data.patient.birthDate = dateToString(data.patient.birthDate);
 
 			res.status(200).send(data);
@@ -596,8 +601,6 @@ const indexFunctions = {
 					from: '',
 					to: caseAudit[i-1].from
 				};
-
-				caseAudit = caseAudit.reverse();
 
 			} else{
 				caseAudit[i] = {
