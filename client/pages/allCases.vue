@@ -12,15 +12,12 @@
           <ul :class="formListClass('cif')" @click="clickTab('cif')">
             CIF
           </ul>
-          <ul v-if="$auth.user.userType === 'pidsrStaff' || $auth.user.userType === 'techStaff' ||
-            $auth.user.userType === 'BHS' || $auth.user.userType === 'RHU' || $auth.user.userType === 'CHO' ||
-            $auth.user.userType === 'govtHosp' || $auth.user.userType === 'privHosp' || $auth.user.userType === 'clinic' ||
-            $auth.user.userType === 'govtLab' || $auth.user.userType === 'privLab' || $auth.user.userType === 'airseaPort'"
+          <ul v-if="!['Chief', 'Staff', 'resuHead', 'chdDirector'].some(e => $auth.user.userType.includes(e))"
             :class="formListClass('crfDRU')" @click="clickTab('crfDRU')">
             CRF
           </ul>
-          <ul v-if="$auth.user.userType === 'pidsrStaff' || $auth.user.userType === 'fhsisStaff' || $auth.user.userType === 'techStaff'"
-           :class="formListClass('crfCHD')" @click="clickTab('crfCHD')"> 
+          <ul v-if="['Chief', 'Staff', 'resuHead', 'chdDirector'].some(e => $auth.user.userType.includes(e))"
+            :class="formListClass('crfCHD')" @click="clickTab('crfCHD')">
            CRF
           </ul>
         </div>
@@ -383,6 +380,7 @@ export default {
     }
   },
   async mounted() {
+	const CHDtypes = ['Chief', 'Staff', 'resuHead', 'chdDirector'];
     const cifRows = (await axios.get('http://localhost:8080/api/getCases')).data;
 	const crfRows = (await axios.get('http://localhost:8080/api/getAllCRFs')).data;
 	for (let i = 0; i < cifRows.length; i++) {
@@ -403,6 +401,7 @@ export default {
 	this.crfCHDData = crfRows;
 	this.crfDRUData = crfRows;
 	this.tableOptions.columns = this.allColumns;
+	// if (CHDtypes.some(e => this.$auth.user.userType.includes(e)));
   },
   methods: {
     clickTab(caseTab) {
