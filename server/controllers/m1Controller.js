@@ -361,6 +361,16 @@ const indexFunctions = {
 		}
 	},
 	
+	getLabUsers: async function(req, res) {
+		try {
+			let rows = await db.exec("SELECT * FROM mmchddb.USERS WHERE userType LIKE '%Lab%';");
+			res.status(200).send(rows);
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
+	
 	getCases: async function(req, res) {
 		try {
 			let match = await db.exec(`SELECT c.*, d.diseaseName,
