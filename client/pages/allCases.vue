@@ -398,8 +398,8 @@ export default {
 	for (let i = 0; i < crfRows.length; i++) {
 	  crfRows[i].weekNo = crfRows[i].year + "-" + crfRows[i].week;
 	}
-	this.crfCHDData = crfRows;
-	this.crfDRUData = crfRows;
+	this.crfCHDData = crfRows.filter(e => e.userID === this.$auth.user.userID || e.isPushed > 0);
+	this.crfDRUData = crfRows.filter(e => e.userID === this.$auth.user.userID);
 	this.tableOptions.columns = this.allColumns;
 	// if (CHDtypes.some(e => this.$auth.user.userType.includes(e)));
   },
