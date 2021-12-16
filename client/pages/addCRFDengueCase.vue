@@ -1258,7 +1258,7 @@
                       :disabled="inputEdit()"
                       :class="isRequired()"
                       required>
-                    <option v-for="(lab, i) in labList" :key=i>{{lab}}</option>
+                    <option v-for="(lab, i) in labList" :key=i :value=lab.userID> {{ lab.druName }} </option>
                   </select>
                 </div>
               </div>
@@ -1518,7 +1518,7 @@ export default {
       diseaseID: 'DI-0000000000003',
       patients: [],
       patientResult: [],
-      labList:['a','b','c','d'],
+      labList:[],
       pageNum: 0,
       formPart: 'Dengue0',
       pageDone: [true,true,true,true,true,true,true,true,false],
@@ -1690,6 +1690,8 @@ export default {
     }
     rows = (await axios.get('http://localhost:8080/api/getPatients')).data;
     this.patients = rows;
+	rows = (await axios.get('http://localhost:8080/api/getLabUsers')).data;
+	this.labList = rows;
   },
   computed: {},
   mounted() {

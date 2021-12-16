@@ -2136,7 +2136,7 @@
                       :disabled="inputEdit()"
                       :class="optionsRequired()"
                       required>
-                    <option v-for="(lab, i) in labList" :key=i>{{lab}}</option>
+                    <option v-for="(lab, i) in labList" :key=i :value=lab.userID> {{ lab.druName }} </option>
                   </select>
                 </div>
               </div>
@@ -2529,11 +2529,7 @@ export default {
         },
       },
       classification: {},
-      labList: [
-        'a',
-        'b',
-        'c'
-      ],
+      labList: [],
       cityList: [
         'Caloocan City',
         'Las Piñas City',
@@ -2561,6 +2557,8 @@ export default {
     }
     rows = (await axios.get('http://localhost:8080/api/getPatients')).data;
     this.patients = rows;
+	rows = (await axios.get('http://localhost:8080/api/getLabUsers')).data;
+	this.labList = rows;
   },
   mounted() {
     const today = new Date();
