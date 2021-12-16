@@ -2557,8 +2557,8 @@ export default {
     }
     rows = (await axios.get('http://localhost:8080/api/getPatients')).data;
     this.patients = rows;
-	rows = (await axios.get('http://localhost:8080/api/getLabUsers')).data;
-	this.labList = rows;
+    rows = (await axios.get('http://localhost:8080/api/getLabUsers')).data;
+    this.labList = rows;
   },
   mounted() {
     const today = new Date();
@@ -2606,7 +2606,7 @@ export default {
     async submit() {
       this.formData.cases.diseaseID = this.diseaseID;
       this.formData.cases.reportedBy = this.$auth.user.userID;
-	  this.formData.cases.caseLevel = this.formData.caseData.finalClassification;
+      this.formData.cases.caseLevel = this.formData.caseData.finalClassification;
       const result = await axios.post('http://localhost:8080/api/newCase', {formData: this.formData});
       if (result.status === 200) {
         alert('case submitted!');

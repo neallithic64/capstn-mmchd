@@ -104,7 +104,7 @@ export default {
           source: 'cases',
           uniqueField: 'id',
         },
-	    {
+        {
           title: 'Case ID',
           key: 'caseID',
           type: 'clickable',
@@ -287,14 +287,14 @@ export default {
           expectFormat: 'DD MMM YYYY',
           filter: true,
         },
-		
-		/*
+        
+        /*
         {
           title: 'Action',
           key: 'action',
           type: 'text',
         },
-		*/
+        */
       ],
       crfCHDColumns: [
         {
@@ -380,28 +380,28 @@ export default {
     }
   },
   async mounted() {
-	const CHDtypes = ['Chief', 'Staff', 'resuHead', 'chdDirector'];
+    const CHDtypes = ['Chief', 'Staff', 'resuHead', 'chdDirector'];
     const cifRows = (await axios.get('http://localhost:8080/api/getCases')).data;
-	const crfRows = (await axios.get('http://localhost:8080/api/getAllCRFs')).data;
-	for (let i = 0; i < cifRows.length; i++) {
-	  cifRows[i].reportDate = cifRows[i].reportDate ? cifRows[i].reportDate.substr(0, 10) : "undefined";
-	  // default to reportDate if updatedDate is null
-	  cifRows[i].updatedDate = cifRows[i].updatedDate ? cifRows[i].updatedDate.substr(0, 10) : cifRows[i].reportDate;
-	}
+    const crfRows = (await axios.get('http://localhost:8080/api/getAllCRFs')).data;
+    for (let i = 0; i < cifRows.length; i++) {
+      cifRows[i].reportDate = cifRows[i].reportDate ? cifRows[i].reportDate.substr(0, 10) : "undefined";
+      // default to reportDate if updatedDate is null
+      cifRows[i].updatedDate = cifRows[i].updatedDate ? cifRows[i].updatedDate.substr(0, 10) : cifRows[i].reportDate;
+    }
     this.allData = cifRows;
-	this.cifData = cifRows.filter(e => e.type === "CIF");
-	
-	/* note on CRFs:
+    this.cifData = cifRows.filter(e => e.type === "CIF");
+    
+    /* note on CRFs:
         not-CHD: their CRFs
         CHD: their CRFS + pushed CRFs (from not-CHD)
-	*/
-	for (let i = 0; i < crfRows.length; i++) {
-	  crfRows[i].weekNo = crfRows[i].year + "-" + crfRows[i].week;
-	}
-	this.crfCHDData = crfRows.filter(e => e.userID === this.$auth.user.userID || e.isPushed > 0);
-	this.crfDRUData = crfRows.filter(e => e.userID === this.$auth.user.userID);
-	this.tableOptions.columns = this.allColumns;
-	// if (CHDtypes.some(e => this.$auth.user.userType.includes(e)));
+    */
+    for (let i = 0; i < crfRows.length; i++) {
+      crfRows[i].weekNo = crfRows[i].year + "-" + crfRows[i].week;
+    }
+    this.crfCHDData = crfRows.filter(e => e.userID === this.$auth.user.userID || e.isPushed > 0);
+    this.crfDRUData = crfRows.filter(e => e.userID === this.$auth.user.userID);
+    this.tableOptions.columns = this.allColumns;
+    // if (CHDtypes.some(e => this.$auth.user.userType.includes(e)));
   },
   methods: {
     clickTab(caseTab) {

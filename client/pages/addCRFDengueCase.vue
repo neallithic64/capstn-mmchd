@@ -1615,9 +1615,9 @@ export default {
           outcome: '',
           dateDied: '',
           finalDiagnosis: '',
-		  vaccine: '',
-		  vaccineFirstDate: '',
-		  vaccineLastDate: '',
+          vaccine: '',
+          vaccineFirstDate: '',
+          vaccineLastDate: '',
         },
       },
       info: {
@@ -1690,8 +1690,8 @@ export default {
     }
     rows = (await axios.get('http://localhost:8080/api/getPatients')).data;
     this.patients = rows;
-	rows = (await axios.get('http://localhost:8080/api/getLabUsers')).data;
-	this.labList = rows;
+    rows = (await axios.get('http://localhost:8080/api/getLabUsers')).data;
+    this.labList = rows;
   },
   computed: {},
   mounted() {
@@ -1727,10 +1727,10 @@ export default {
     },
     async submit() {
       // TODO: this submit is the "save" type, the cases should only be visible to the DRU, not yet submitted to MMCHD
-	  const now = new Date();
+      const now = new Date();
       this.formData.cases.diseaseID = this.diseaseID;
       this.formData.cases.reportedBy = this.$auth.user.userID;
-	  this.formData.cases.reportDate = now.getFullYear() + '-' + (now.getMonth()+1) + '-' + now.getDate();
+      this.formData.cases.reportDate = now.getFullYear() + '-' + (now.getMonth()+1) + '-' + now.getDate();
       const result = await axios.post('http://localhost:8080/api/newCase', {formData: this.formData, CRFID: this.$route.query.CRFID});
       if (result.status === 200) {
         alert('CRF case submitted!');
@@ -1916,7 +1916,7 @@ export default {
       this.formData.patient.birthDate = patient.birthDate.substr(0, 10);
       this.formData.patient.ageNo = patient.ageNo;
       this.formData.patient.sex = patient.sex;
-	  this.formData.patient.civilStatus = patient.civilStatus;
+      this.formData.patient.civilStatus = patient.civilStatus;
       this.formData.patient.pregWeeks = patient.pregWeeks;
       this.formData.patient.currHouseStreet = patient.currHouseStreet;
       this.formData.patient.currBrgy = patient.currBrgy;
