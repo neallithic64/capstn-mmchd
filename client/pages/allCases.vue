@@ -107,7 +107,7 @@ export default {
           source: 'cases',
           uniqueField: 'id',
         },
-		    {
+	    {
           title: 'Case ID',
           key: 'caseID',
           type: 'clickable',
@@ -194,14 +194,14 @@ export default {
         },
         {
           title: 'DRU ID',
-          key: 'druID',
+          key: 'reportedBy',
           type: 'text',
           source: 'cases',
           uniqueField: 'id',
         },
         {
           title: 'Patient',
-          key: 'patientNo',
+          key: 'patientName',
           type: 'number',
           source: 'cases',
         },
@@ -216,7 +216,7 @@ export default {
         },
         {
           title: 'Submitted on',
-          key: 'submittedDate',
+          key: 'reportDate',
           type: 'text',
           dateFormat: true,
           currentFormat: 'YYYY-MM-DD',
@@ -234,7 +234,7 @@ export default {
         },
         {
           title: 'Case Status',
-          key: 'status',
+          key: 'caseLevel',
           type: 'text',
           source: 'cases',
           uniqueField: 'id',
@@ -355,7 +355,7 @@ export default {
         },
         {
           title: 'CRF No.',
-          key: 'crfNo',
+          key: 'CRFID',
           type: 'clickable',
           source: 'cases',
           uniqueField: 'id',
@@ -363,7 +363,7 @@ export default {
         },
         {
           title: 'Disease',
-          key: 'disease',
+          key: 'diseaseID',
           type: 'text',
           source: 'cases',
           uniqueField: 'id',
@@ -372,7 +372,7 @@ export default {
         },
         {
           title: 'DRU ID',
-          key: 'druID',
+          key: 'reportedBy',
           type: 'text',
           source: 'cases',
           uniqueField: 'id',
@@ -388,7 +388,7 @@ export default {
         },
         {
           title: 'Submit Status',
-          key: 'submitStatus',
+          key: 'isPushed',
           type: 'text',
           filter: true,
         },
@@ -412,48 +412,7 @@ export default {
         },
       ],
       allData: [],
-      cifData: [
-        {
-          caseID: 19,
-          disease: 'Measles',
-          druID: 123,
-          city: 'Manila',
-          patientNo: 123,
-          submittedDate: '2020-12-10',
-          updatedDate: '2020-1-10',
-          status: 'Suspected aaa',
-        },
-        {
-          caseID: 19,
-          disease: 'Measles',
-          druID: 123,
-          city: 'Manila',
-          patientNo: 123,
-          submittedDate: '2020-12-10',
-          updatedDate: '2020-1-10',
-          status: 'aProbable aaa',
-        },
-        {
-          caseID: 19,
-          disease: 'Measles',
-          druID: 123,
-          city: 'Manila',
-          patientNo: 123,
-          submittedDate: '2020-12-10',
-          updatedDate: '2020-1-10',
-          status: 'secret',
-        },
-        {
-          caseID: 19,
-          disease: 'Measles',
-          druID: 123,
-          city: 'Manila',
-          patientNo: 123,
-          submittedDate: '2020-12-10',
-          updatedDate: '2020-1-10',
-          status: 'Confirmedd',
-        },
-      ],
+      cifData: [],
       crfDRUData: [
         {
           weekNo: '2021-21',
@@ -464,97 +423,8 @@ export default {
           reportStatus: 'None',
           action: 'add submit'
         },
-        {
-          weekNo: '2021-22',
-          crfNo: 15,
-          disease: 'Dengue',
-          submitStatus: 'Pushed',
-          submittedDate: '2020-11-10',
-          reportStatus: 'Case Submitted',
-          action: 'add'
-        },
-        {
-          weekNo: '2021-31',
-          crfNo: 25,
-          disease: 'Dengue',
-          submitStatus: 'Submitted',
-          submittedDate: '2020-11-10',
-          reportStatus: 'Zero Report',
-          action: 'submit'
-        },
       ],
-      crfCHDData: [
-        {
-          weekNo: '2021-21',
-          crfNo: 35,
-          disease: 'Diphtheria',
-          druID: 'ABC',
-          city: 'Manila City',
-          submitStatus: 'Submitted',
-          submittedDate: '2020-11-10',
-          reportStatus: 'Case Submitted',
-        },
-        {
-          weekNo: '2021-21',
-          crfNo: 35,
-          disease: 'Diphtheria',
-          druID: 'ABC',
-          city: 'Manila City',
-          submitStatus: 'Submitted',
-          submittedDate: '2020-11-10',
-          reportStatus: 'Case Submitted',
-        },
-        {
-          weekNo: '2021-23',
-          crfNo: 55,
-          disease: 'Dengue',
-          druID: 'ABC',
-          city: 'Manila City',
-          submitStatus: 'Pushed',
-          submittedDate: '2020-11-20',
-          reportStatus: 'Zero Report',
-        },
-        {
-          weekNo: '2021-23',
-          crfNo: 55,
-          disease: 'Neonatal Tetanus',
-          druID: 'ABC',
-          city: 'Malabon City',
-          submitStatus: 'Pushed',
-          submittedDate: '2020-11-20',
-          reportStatus: 'Case Submitted',
-        },
-        {
-          weekNo: '2021-23',
-          crfNo: 55,
-          disease: 'Pertussis',
-          druID: 'ABC',
-          city: 'Makati City',
-          submitStatus: 'Pushed',
-          submittedDate: '2020-11-20',
-          reportStatus: 'Case Submitted',
-        },
-        {
-          weekNo: '2021-23',
-          crfNo: 55,
-          disease: 'Pertussis',
-          druID: 'ABC',
-          city: 'Makati City',
-          submitStatus: 'Pushed',
-          submittedDate: '2020-11-20',
-          reportStatus: 'Case Submitted',
-        },
-      ],
-      crfData: [
-        {
-          crfNo: 35,
-          disease: 'Dengue',
-          druID: 'ABC',
-          submittedDate: '2020-11-10',
-          updatedDate: '2020-11-10',
-          weekNo: '2021-21',
-        },
-      ],
+      crfCHDData: [],
       diseases: {
         cif: {
           Measles: '/addCIFMeasles',
@@ -570,15 +440,22 @@ export default {
     }
   },
   async mounted() {
-    const rows = (await axios.get('http://localhost:8080/api/getCases')).data;
-	console.log("all cases count: " + rows.length);
-	for (let i = 0; i < rows.length; i++) {
-	  rows[i].reportDate = rows[i].reportDate ? rows[i].reportDate.substr(0, 10) : "undefined";
+    const cifRows = (await axios.get('http://localhost:8080/api/getCases')).data;
+	const crfRows = (await axios.get('http://localhost:8080/api/getAllCRFs')).data;
+	for (let i = 0; i < cifRows.length; i++) {
+	  cifRows[i].reportDate = cifRows[i].reportDate ? cifRows[i].reportDate.substr(0, 10) : "undefined";
 	  // default to reportDate if updatedDate is null
-	  rows[i].updatedDate = rows[i].updatedDate ? rows[i].updatedDate.substr(0, 10) : rows[i].reportDate;
-	  rows[i].disease = rows[i].diseaseName;
+	  cifRows[i].updatedDate = cifRows[i].updatedDate ? cifRows[i].updatedDate.substr(0, 10) : cifRows[i].reportDate;
+	  cifRows[i].disease = cifRows[i].diseaseName;
 	}
-    this.allData = rows;
+    this.allData = cifRows;
+	this.cifData = cifRows.filter(e => e.type === "CIF");
+	
+	for (let i = 0; i < crfRows.length; i++) {
+	  crfRows[i].weekNo = crfRows[i].year + "-" + crfRows[i].week;
+	}
+	this.crfCHDData = crfRows;
+	// this.crfDRUData = crfRows.filter(e => e.type === "CRF" && e.reportedBy === "");
 	this.tableOptions.columns = this.allColumns;
   },
   methods: {
