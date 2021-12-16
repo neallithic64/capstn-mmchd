@@ -290,11 +290,14 @@ export default {
           expectFormat: 'DD MMM YYYY',
           filter: true,
         },
+		
+		/*
         {
           title: 'Action',
           key: 'action',
           type: 'text',
         },
+		*/
       ],
       crfCHDColumns: [
         {
