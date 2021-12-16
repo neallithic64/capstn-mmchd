@@ -33,7 +33,7 @@ function makeWhereClause(obj) {
 		column2: "value2"
 	}
  * Expected output:
- * String "column1 LIKE '%value1%' AND column2 = '%value2%';"
+ * String "column1 LIKE '%value1%' AND column2 LIKE '%value2%';"
  * NOTE: this only performs string matching for the moment
  */
 function makeWhereLikeClause(obj) {
