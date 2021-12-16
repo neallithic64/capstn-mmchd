@@ -339,7 +339,7 @@ export default {
         take: 10,
         skip: 0,
         search: '',
-        sortedKey: 'caseID',
+        sortedKey: '',
         sortedType: 'asc',
       },
       currentPage: 1,
