@@ -270,22 +270,8 @@ const indexFunctions = {
 	},
 	
 	mkData: async function(req, res) {
-		Date.prototype.getWeek = function() {
-			let d = new Date(Date.UTC(this.getFullYear(), this.getMonth(), this.getDate()));
-			let dayNum = d.getUTCDay() || 7;
-			d.setUTCDate(d.getUTCDate() + 4 - dayNum);
-			let yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-			return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
-		}
-		let thisDate = new Date(), firstCRF = {
-			CRFID: (await generateID("mmchddb.CRFS")).id,
-			diseaseID: "DI-0000000000003",
-			userID: "US-0000000000000",
-			week: thisDate.getWeek(),
-			year: thisDate.getFullYear()
-		};
-		let r = await db.insertOne("mmchddb.CRFS", firstCRF);
-		if (r) res.status(200).send("exec done");
+		let r = await db.exec("SELECT * FROM mmchddb.USER_SETTINGS;");
+		if (r) res.status(200).send(r);
 		else res.status(500).send("problems");
 	},
 	
@@ -395,8 +381,13 @@ const indexFunctions = {
 	getAllCRFs: async function(req, res) {
 		try {
 			// TODO: this is incomplete! will need to add more details -neal
-			let match = await db.exec(`SELECT cr.*, c.diseaseID
-									FROM mmchddb.CRFS cr LEFT JOIN mmchddb.CASES c ON cr.CRFID = c.CRFID;`);
+			let match = await db.exec(`SELECT cr.*, d.diseaseName, a.city, u.druName, COUNT(cr.CRFID) AS caseCount
+									FROM mmchddb.CRFS cr
+									INNER JOIN mmchddb.DISEASES d ON cr.diseaseID = d.diseaseID
+									INNER JOIN mmchddb.USERS u ON cr.userID = u.userID
+									INNER JOIN mmchddb.ADDRESSES a ON u.addressID = a.addressID
+									LEFT JOIN mmchddb.CASES c ON cr.CRFID = c.CRFID
+									GROUP BY cr.CRFID;`);
 			res.status(200).send(match);
 		} catch (e) {
 			console.log(e);

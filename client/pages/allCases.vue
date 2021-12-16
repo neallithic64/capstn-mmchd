@@ -117,7 +117,7 @@ export default {
         },
         {
           title: 'Disease',
-          key: 'disease',
+          key: 'diseaseName',
           type: 'text',
           source: 'cases',
           uniqueField: 'id',
@@ -185,7 +185,7 @@ export default {
         },
         {
           title: 'Disease',
-          key: 'disease',
+          key: 'diseaseName',
           type: 'text',
           source: 'cases',
           uniqueField: 'id',
@@ -253,7 +253,7 @@ export default {
         },
         {
           title: 'Disease',
-          key: 'disease',
+          key: 'diseaseName',
           type: 'text',
           source: 'cases',
           uniqueField: 'id',
@@ -309,7 +309,7 @@ export default {
         },
         {
           title: 'Disease',
-          key: 'disease',
+          key: 'diseaseName',
           type: 'text',
           source: 'cases',
           uniqueField: 'id',
@@ -363,7 +363,7 @@ export default {
         },
         {
           title: 'Disease',
-          key: 'diseaseID',
+          key: 'diseaseName',
           type: 'text',
           source: 'cases',
           uniqueField: 'id',
@@ -372,7 +372,7 @@ export default {
         },
         {
           title: 'DRU ID',
-          key: 'reportedBy',
+          key: 'userID',
           type: 'text',
           source: 'cases',
           uniqueField: 'id',
@@ -417,7 +417,7 @@ export default {
         {
           weekNo: '2021-21',
           crfNo: 35,
-          disease: 'Dengue',
+          diseaseName: 'Dengue',
           submitStatus: 'Ongoing',
           submittedDate: '2020-11-10',
           reportStatus: 'None',
@@ -446,11 +446,14 @@ export default {
 	  cifRows[i].reportDate = cifRows[i].reportDate ? cifRows[i].reportDate.substr(0, 10) : "undefined";
 	  // default to reportDate if updatedDate is null
 	  cifRows[i].updatedDate = cifRows[i].updatedDate ? cifRows[i].updatedDate.substr(0, 10) : cifRows[i].reportDate;
-	  cifRows[i].disease = cifRows[i].diseaseName;
 	}
     this.allData = cifRows;
 	this.cifData = cifRows.filter(e => e.type === "CIF");
 	
+	/* note on CRFs:
+        not-CHD: their CRFs
+        CHD: their CRFS + pushed CRFs (from not-CHD)
+	*/
 	for (let i = 0; i < crfRows.length; i++) {
 	  crfRows[i].weekNo = crfRows[i].year + "-" + crfRows[i].week;
 	}
