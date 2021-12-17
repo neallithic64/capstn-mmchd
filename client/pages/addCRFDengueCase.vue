@@ -1942,6 +1942,18 @@ export default {
         }
       }
     },
+    getAddress() {
+      if (this.sameAddress) {
+        this.formData.patient.permHouseStreet = this.formData.patient.currHouseStreet;
+        this.formData.patient.permCity = this.formData.patient.currCity;
+        this.formData.patient.permBrgy = this.formData.patient.currBrgy;
+      }
+      else {
+        this.formData.patient.permHouseStreet = '';
+        this.formData.patient.permCity = '';
+        this.formData.patient.permBrgy = '';
+      }
+    },
   },
 }
 </script>
