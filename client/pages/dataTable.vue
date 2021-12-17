@@ -198,7 +198,7 @@
                 </div>
               </span>
               <span v-else-if="column.type === 'clickable'">
-                <a v-if="data['disease'] === 'Measles/Rubella'"
+                <a v-if="data['diseaseID'] === 'DI-0000000000000'"
                   style="color: #346083; text-decoration-line: underline"
                   :href="'/view' + 'CIFMeasles?caseID=' + data[column.key] ">
                   {{ data[column.key] }}
@@ -215,7 +215,7 @@
                 </a>
                 <a v-else-if="((pageType === 'all' || pageType === 'patient') && data['type'] !== 'CIF') || pageType === 'crfCase'"
                   style="color: #346083; text-decoration-line: underline"
-                  :href="'/view' + 'CRF' + data['disease'] + 'Case?caseID=' + data[column.key]">
+                  :href="'/view' + 'CRFDengueCase?caseID=' + data[column.key]">
                   {{ data[column.key] }}
                 </a>
                 <a v-else-if="pageType === 'cif'"
@@ -225,7 +225,7 @@
                 </a>
                 <a v-else-if="pageType === 'crfDRU' || pageType === 'crfCHD'"
                   style="color: #346083; text-decoration-line: underline"
-                  :href="'/view' + 'CRF' + data['disease']">
+                  :href="'/view' + 'CRFDengue?caseID=' + data[column.key]">
                   {{ data[column.key] }}
                 </a>
                 <a v-else-if="pageType === 'addcrfID'"

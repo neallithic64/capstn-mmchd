@@ -5,7 +5,7 @@
     <div ref="content" class="viewcases-container">
       <div class="viewCRF-details" style="align-text: left">
         <div class="CRFnumbers">
-          <h1 style="margin: -10px 0">Case No. {{ crfNo }}</h1>
+          <h1 style="margin: -10px 0">Case No. {{ CRFID }}</h1>
           <h2 style="margin-top: -1px">Disease: {{ disease }}</h2>
         </div>
          
@@ -19,10 +19,10 @@
 
       <div class="viewCRF-details" style="align-text: left">
         <div class="CIFnumbers">
-          <p>DRU City: <b>Manila</b></p>
-          <p>DRU Name: <b>HAKDOG</b></p>
-          <p>DRU Type: <b>type</b></p>
-          <p>DRU Address: <b>house</b></p>
+          <p>DRU City: <b></b></p>
+          <p>DRU Name: <b></b></p>
+          <p>DRU Type: <b></b></p>
+          <p>DRU Address: <b></b></p>
         </div>
         <div class="CRFstatus" style="align-text: right">
           <p>Submitted on: <b> {{ submittedDate }} </b> </p>
@@ -50,6 +50,8 @@
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
 import dataTable from './dataTable.vue'
+const axios = require('axios')
+
 export default {
   components: {
     dataTable,
@@ -63,18 +65,18 @@ export default {
     return {
       isPrint: false,
       disease: 'Dengue',
-      crfNo: '35',
-      druID: 'ABC',
+      CRFID: '',
+      druID: '',
       submittedDate: 'Nov 11,2021',
       updatedDate: 'Nov 10, 2020',
-      weekNo: '2020-21',
+      weekNo: '',
 
       tableOptions: {
         tableName: 'crf',
         columns: [
           {
-            title: 'CRF ID',
-            key: 'crfID',
+            title: 'Case ID',
+            key: 'caseID',
             type: 'clickable',
             source: 'crf',
             uniqueField: 'id',
@@ -82,7 +84,7 @@ export default {
           },
           {
             title: 'Patient',
-            key: 'patientNo',
+            key: 'patientName',
             type: 'number',
             source: 'crf',
           },
@@ -97,7 +99,7 @@ export default {
           },
           {
             title: 'Age',
-            key: 'age',
+            key: 'ageNo',
             type: 'number',
             source: 'crf',
             uniqueField: 'id',
@@ -113,7 +115,7 @@ export default {
           },
           {
             title: 'Date added',
-            key: 'addDate',
+            key: 'reportDate',
             type: 'text',
             dateFormat: true,
             currentFormat: 'YYYY-MM-DD',
@@ -131,7 +133,7 @@ export default {
           },
           {
             title: 'Case Status',
-            key: 'status',
+            key: 'caseLevel',
             type: 'text',
             source: 'cases',
             uniqueField: 'id',
@@ -142,33 +144,25 @@ export default {
         // source: 'http://demo.datatable/api/users',
         search: true,
       },
-      crfData: [
-        {
-          crfID: 35,
-          disease: 'Dengue',
-          patientNo: '1123',
-          age: '12',
-          sex: 'F',
-          city: 'Manila',
-          addDate:'2020-02-10',
-          updatedDate: '2020-11-10',
-          status: 'Probable',
-        },
-        {
-          crfID: 55,
-          disease: 'Dengue',
-          patientNo: '234',
-          age: '50',
-          sex: 'M',
-          city: 'Makati',
-          addDate:'2020-02-10',
-          updatedDate: '2022-11-12',
-          status: 'Confirmed',
-        },
-      ],
+      crfData: [],
     }
   },
   mounted() {},
+  async fetch() {
+    const rows = (await axios.get('http://localhost:8080/api/getCRFPage', {
+	  params: {
+	    CRFID: this.$route.query.caseID
+	  }
+	})).data;
+	console.log(rows);
+	for (let i = 0; i < rows.crfData.length; i++) {
+	  rows.crfData[i].updatedDate = rows.crfData[i].updatedDate ? rows.crfData[i].updatedDate.substr(0, 10) : "N/A";
+	  rows.crfData[i].reportDate = rows.crfData[i].reportDate.substr(0, 10);
+	}
+    this.crfData = rows.crfData;
+	this.weekNo = rows.CRF.year + "-" + rows.CRF.week;
+	this.CRFID = this.$route.query.caseID;
+  },
   methods: {
     downloadPDF() {
       this.isPrint = !this.isPrint

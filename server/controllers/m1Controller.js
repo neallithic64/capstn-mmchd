@@ -653,46 +653,66 @@ const indexFunctions = {
 	
 	getCRFPage: async function(req, res) {
 		try {
-			let r = await db.findRows("mmchddb.CRFS", {
-				diseaseID: req.query.diseaseID,
-				userID: req.query.userID
-			});
-			if (r.length > 0) {
-				// collect the cases with that CRFID
+			if (req.query.CRFID) {
+				// if viewing the CRF as a report
+				let CRFobj = await db.findRows("mmchddb.CRFS", {CRFID: req.query.CRFID});
 				let data = await db.exec(`SELECT c.*, d.diseaseName,
-									CONCAT(p.lastName, ", ", p.firstName, " ", p.midName) AS patientName,
-									p.ageNo, p.sex, a.city, MAX(al.dateModified) AS updatedDate
-									FROM mmchddb.CASES c
-									INNER JOIN mmchddb.DISEASES d ON c.diseaseID = d.diseaseID
-									INNER JOIN mmchddb.PATIENTS p ON c.patientID = p.patientID
-									INNER JOIN mmchddb.ADDRESSES a ON p.caddressID = a.addressID
-									LEFT JOIN mmchddb.AUDIT_LOG al ON c.caseID = al.editedID
-									WHERE c.CRFID = '${r[r.length - 1].CRFID}'
-									GROUP BY c.caseID;`);
+										CONCAT(p.lastName, ", ", p.firstName, " ", p.midName) AS patientName,
+										p.ageNo, p.sex, a.city, MAX(al.dateModified) AS updatedDate
+										FROM mmchddb.CASES c
+										INNER JOIN mmchddb.DISEASES d ON c.diseaseID = d.diseaseID
+										INNER JOIN mmchddb.PATIENTS p ON c.patientID = p.patientID
+										INNER JOIN mmchddb.ADDRESSES a ON p.caddressID = a.addressID
+										LEFT JOIN mmchddb.AUDIT_LOG al ON c.caseID = al.editedID
+										WHERE c.CRFID = '${req.query.CRFID}'
+										GROUP BY c.caseID;`);
 				res.status(200).send({
-					CRF: r[r.length - 1],
+					CRF: CRFobj[0],
 					crfData: data
 				});
 			} else {
-				Date.prototype.getWeek = function() {
-					let d = new Date(Date.UTC(this.getFullYear(), this.getMonth(), this.getDate()));
-					let dayNum = d.getUTCDay() || 7;
-					d.setUTCDate(d.getUTCDate() + 4 - dayNum);
-					let yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-					return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
-				}
-				let thisDate = new Date(), firstCRF = {
-					CRFID: (await generateID("mmchddb.CRFS")).id,
+				// if viewing the CRF to add a case
+				let r = await db.findRows("mmchddb.CRFS", {
 					diseaseID: req.query.diseaseID,
-					userID: req.query.userID,
-					week: thisDate.getWeek(),
-					year: thisDate.getFullYear()
-				};
-				let firstR = await db.insertOne("mmchddb.CRFS", firstCRF);
-				res.status(200).send({
-					CRF: firstCRF,
-					crfData: []
+					userID: req.query.userID
 				});
+				if (r.length > 0) {
+					// collect the cases with that CRFID
+					let data = await db.exec(`SELECT c.*, d.diseaseName,
+										CONCAT(p.lastName, ", ", p.firstName, " ", p.midName) AS patientName,
+										p.ageNo, p.sex, a.city, MAX(al.dateModified) AS updatedDate
+										FROM mmchddb.CASES c
+										INNER JOIN mmchddb.DISEASES d ON c.diseaseID = d.diseaseID
+										INNER JOIN mmchddb.PATIENTS p ON c.patientID = p.patientID
+										INNER JOIN mmchddb.ADDRESSES a ON p.caddressID = a.addressID
+										LEFT JOIN mmchddb.AUDIT_LOG al ON c.caseID = al.editedID
+										WHERE c.CRFID = '${r[r.length - 1].CRFID}'
+										GROUP BY c.caseID;`);
+					res.status(200).send({
+						CRF: r[r.length - 1],
+						crfData: data
+					});
+				} else {
+					Date.prototype.getWeek = function() {
+						let d = new Date(Date.UTC(this.getFullYear(), this.getMonth(), this.getDate()));
+						let dayNum = d.getUTCDay() || 7;
+						d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+						let yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+						return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+					}
+					let thisDate = new Date(), firstCRF = {
+						CRFID: (await generateID("mmchddb.CRFS")).id,
+						diseaseID: req.query.diseaseID,
+						userID: req.query.userID,
+						week: thisDate.getWeek(),
+						year: thisDate.getFullYear()
+					};
+					let firstR = await db.insertOne("mmchddb.CRFS", firstCRF);
+					res.status(200).send({
+						CRF: firstCRF,
+						crfData: []
+					});
+				}
 			}
 		} catch (e) {
 			console.log(e);
