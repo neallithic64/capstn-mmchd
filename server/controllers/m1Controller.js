@@ -999,6 +999,7 @@ const indexFunctions = {
 					}
 				} else {
 					console.log("Add perm address failed");
+					console.log(result);
 					res.status(500).send("Add perm address failed");
 				}
 			} else {
