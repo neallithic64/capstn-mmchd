@@ -910,7 +910,7 @@ const indexFunctions = {
 			});
 			formData.patient.caddressID = currAddrID.id;
 			if (!currAddrID.exists) {
-				let currAddr = new Address(currAddrID.id, formData.patient.currHouseStreet, formData.patient.currBrgy, formData.patient.currCity);
+				let currAddr = new Address(formData.patient.caddressID, formData.patient.currHouseStreet, formData.patient.currBrgy, formData.patient.currCity);
 				result = await db.insertOne("mmchddb.ADDRESSES", currAddr);
 			}
 			
@@ -922,7 +922,7 @@ const indexFunctions = {
 				});
 				formData.patient.paddressID = permAddrID.id;
 				if (!permAddrID.exists) {
-					let permAddr = new Address(permAddrID.id, formData.patient.permHouseStreet, formData.patient.permBrgy, formData.patient.permCity);
+					let permAddr = new Address(formData.patient.paddressID, formData.patient.permHouseStreet, formData.patient.permBrgy, formData.patient.permCity);
 					result = await db.insertOne("mmchddb.ADDRESSES", permAddr);
 				}
 				
