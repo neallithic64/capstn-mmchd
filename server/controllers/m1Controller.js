@@ -908,8 +908,6 @@ const indexFunctions = {
 				brgy: formData.patient.currBrgy,
 				city: formData.patient.currCity
 			});
-			console.log("currAddrID inside postNewCase");
-			console.log(currAddrID);
 			formData.patient.caddressID = currAddrID.id;
 			if (!currAddrID.exists) {
 				let currAddr = new Address(currAddrID, formData.patient.currHouseStreet, formData.patient.currBrgy, formData.patient.currCity);
@@ -923,7 +921,7 @@ const indexFunctions = {
 					city: formData.patient.permCity
 				});
 				formData.patient.paddressID = permAddrID.id;
-				if (!currAddrID.exists) {
+				if (!permAddrID.exists) {
 					let permAddr = new Address(permAddrID, formData.patient.permHouseStreet, formData.patient.permBrgy, formData.patient.permCity);
 					result = await db.insertOne("mmchddb.ADDRESSES", permAddr);
 				}
@@ -999,7 +997,6 @@ const indexFunctions = {
 					}
 				} else {
 					console.log("Add perm address failed");
-					console.log(result);
 					res.status(500).send("Add perm address failed");
 				}
 			} else {
