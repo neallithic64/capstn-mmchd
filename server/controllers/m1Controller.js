@@ -270,22 +270,8 @@ const indexFunctions = {
 	},
 	
 	mkData: async function(req, res) {
-		Date.prototype.getWeek = function() {
-			let d = new Date(Date.UTC(this.getFullYear(), this.getMonth(), this.getDate()));
-			let dayNum = d.getUTCDay() || 7;
-			d.setUTCDate(d.getUTCDate() + 4 - dayNum);
-			let yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-			return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
-		}
-		let thisDate = new Date(), firstCRF = {
-			CRFID: (await generateID("mmchddb.CRFS")).id,
-			diseaseID: "DI-0000000000003",
-			userID: "US-0000000000000",
-			week: thisDate.getWeek(),
-			year: thisDate.getFullYear()
-		};
-		let r = await db.insertOne("mmchddb.CRFS", firstCRF);
-		if (r) res.status(200).send("exec done");
+		let r = await db.exec("SELECT * FROM mmchddb.USER_SETTINGS;");
+		if (r) res.status(200).send(r);
 		else res.status(500).send("problems");
 	},
 	
@@ -394,9 +380,20 @@ const indexFunctions = {
 	
 	getAllCRFs: async function(req, res) {
 		try {
-			// TODO: this is incomplete! will need to add more details -neal
-			let match = await db.exec(`SELECT cr.*, c.diseaseID
-									FROM mmchddb.CRFS cr LEFT JOIN mmchddb.CASES c ON cr.CRFID = c.CRFID;`);
+			let match = await db.exec(`SELECT cr.*, d.diseaseName, a.city, COUNT(cr.CRFID) AS caseCount,
+									n.dateCreated AS submittedOn
+									FROM mmchddb.CRFS cr
+									INNER JOIN mmchddb.DISEASES d ON cr.diseaseID = d.diseaseID
+									INNER JOIN mmchddb.USERS u ON cr.userID = u.userID
+									INNER JOIN mmchddb.ADDRESSES a ON u.addressID = a.addressID
+									LEFT JOIN mmchddb.CASES c ON cr.CRFID = c.CRFID
+									LEFT JOIN mmchddb.NOTIFICATIONS n ON c.caseID = n.caseID
+									GROUP BY cr.CRFID;`);
+			for (let i = 0; i < match.length; i++) {
+				match[i].submitStatus = match[i].isPushed > 0 ? "Pushed" : "Submitted";
+				match[i].submittedOn = match[i].submittedOn !== null ? match[i].submittedOn.toISOString().substr(0, 10) : "N/A";
+				match[i].reportStatus = match[i].isPushed > 0 ? match[i].caseCount > 0 ? "Cases Submitted" : "Zero Report" : "Ongoing";
+			}
 			res.status(200).send(match);
 		} catch (e) {
 			console.log(e);
@@ -656,46 +653,66 @@ const indexFunctions = {
 	
 	getCRFPage: async function(req, res) {
 		try {
-			let r = await db.findRows("mmchddb.CRFS", {
-				diseaseID: req.query.diseaseID,
-				userID: req.query.userID
-			});
-			if (r.length > 0) {
-				// collect the cases with that CRFID
+			if (req.query.CRFID) {
+				// if viewing the CRF as a report
+				let CRFobj = await db.findRows("mmchddb.CRFS", {CRFID: req.query.CRFID});
 				let data = await db.exec(`SELECT c.*, d.diseaseName,
-									CONCAT(p.lastName, ", ", p.firstName, " ", p.midName) AS patientName,
-									p.ageNo, p.sex, a.city, MAX(al.dateModified) AS updatedDate
-									FROM mmchddb.CASES c
-									INNER JOIN mmchddb.DISEASES d ON c.diseaseID = d.diseaseID
-									INNER JOIN mmchddb.PATIENTS p ON c.patientID = p.patientID
-									INNER JOIN mmchddb.ADDRESSES a ON p.caddressID = a.addressID
-									LEFT JOIN mmchddb.AUDIT_LOG al ON c.caseID = al.editedID
-									WHERE c.CRFID = '${r[r.length - 1].CRFID}'
-									GROUP BY c.caseID;`);
+										CONCAT(p.lastName, ", ", p.firstName, " ", p.midName) AS patientName,
+										p.ageNo, p.sex, a.city, MAX(al.dateModified) AS updatedDate
+										FROM mmchddb.CASES c
+										INNER JOIN mmchddb.DISEASES d ON c.diseaseID = d.diseaseID
+										INNER JOIN mmchddb.PATIENTS p ON c.patientID = p.patientID
+										INNER JOIN mmchddb.ADDRESSES a ON p.caddressID = a.addressID
+										LEFT JOIN mmchddb.AUDIT_LOG al ON c.caseID = al.editedID
+										WHERE c.CRFID = '${req.query.CRFID}'
+										GROUP BY c.caseID;`);
 				res.status(200).send({
-					CRF: r[r.length - 1],
+					CRF: CRFobj[0],
 					crfData: data
 				});
 			} else {
-				Date.prototype.getWeek = function() {
-					let d = new Date(Date.UTC(this.getFullYear(), this.getMonth(), this.getDate()));
-					let dayNum = d.getUTCDay() || 7;
-					d.setUTCDate(d.getUTCDate() + 4 - dayNum);
-					let yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-					return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
-				}
-				let thisDate = new Date(), firstCRF = {
-					CRFID: (await generateID("mmchddb.CRFS")).id,
+				// if viewing the CRF to add a case
+				let r = await db.findRows("mmchddb.CRFS", {
 					diseaseID: req.query.diseaseID,
-					userID: req.query.userID,
-					week: thisDate.getWeek(),
-					year: thisDate.getFullYear()
-				};
-				let firstR = await db.insertOne("mmchddb.CRFS", firstCRF);
-				res.status(200).send({
-					CRF: firstCRF,
-					crfData: []
+					userID: req.query.userID
 				});
+				if (r.length > 0) {
+					// collect the cases with that CRFID
+					let data = await db.exec(`SELECT c.*, d.diseaseName,
+										CONCAT(p.lastName, ", ", p.firstName, " ", p.midName) AS patientName,
+										p.ageNo, p.sex, a.city, MAX(al.dateModified) AS updatedDate
+										FROM mmchddb.CASES c
+										INNER JOIN mmchddb.DISEASES d ON c.diseaseID = d.diseaseID
+										INNER JOIN mmchddb.PATIENTS p ON c.patientID = p.patientID
+										INNER JOIN mmchddb.ADDRESSES a ON p.caddressID = a.addressID
+										LEFT JOIN mmchddb.AUDIT_LOG al ON c.caseID = al.editedID
+										WHERE c.CRFID = '${r[r.length - 1].CRFID}'
+										GROUP BY c.caseID;`);
+					res.status(200).send({
+						CRF: r[r.length - 1],
+						crfData: data
+					});
+				} else {
+					Date.prototype.getWeek = function() {
+						let d = new Date(Date.UTC(this.getFullYear(), this.getMonth(), this.getDate()));
+						let dayNum = d.getUTCDay() || 7;
+						d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+						let yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+						return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+					}
+					let thisDate = new Date(), firstCRF = {
+						CRFID: (await generateID("mmchddb.CRFS")).id,
+						diseaseID: req.query.diseaseID,
+						userID: req.query.userID,
+						week: thisDate.getWeek(),
+						year: thisDate.getFullYear()
+					};
+					let firstR = await db.insertOne("mmchddb.CRFS", firstCRF);
+					res.status(200).send({
+						CRF: firstCRF,
+						crfData: []
+					});
+				}
 			}
 		} catch (e) {
 			console.log(e);

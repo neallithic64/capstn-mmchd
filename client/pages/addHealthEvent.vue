@@ -530,7 +530,7 @@ export default {
             option.value = this.locBrgyList[i];
             document.getElementById('locBrgy').add(option);
             if (this.healthEvent.locBrgy === this.locBrgyList[i])
-              document.getElementById('locBrgy').selectedIndex = i;
+              document.getElementById('locBrgy').selectedIndex = i+1;
           }
         }
       })

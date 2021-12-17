@@ -1564,9 +1564,9 @@ export default {
         this.formData.caseData.finalClassification = this.newStatus;
         this.formData.cases.caseLevel = this.newStatus;
         const updateCase = await axios.post('http://localhost:8080/api/updateCaseStatus', {
-		  caseId: this.formData.cases.caseID,
-		  newStatus: this.newStatus
-		});
+          caseId: this.formData.cases.caseID,
+          newStatus: this.newStatus
+        });
         if (updateCase.status === 200) {
           alert('CRF case status updated!');
           location.reload();

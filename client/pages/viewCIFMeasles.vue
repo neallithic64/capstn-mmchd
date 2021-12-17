@@ -2513,7 +2513,7 @@ export default {
       this.pageNum = i
     },
     inputEdit() {
-	  // not sure about the "this.cases"
+      // not sure about the "this.cases"
       if (this.pageNum === 9 && this.$auth.user.userID === this.formData.cases.investigatorLab) return false;
       else return true;
     },
@@ -2528,10 +2528,10 @@ export default {
       if (change==='save') {
         this.formData.caseData.finalClassification = this.newStatus;
         this.formData.cases.caseLevel = this.newStatus;
-		const updateCase = await axios.post('http://localhost:8080/api/updateCaseStatus', {
-		  caseId: this.formData.cases.caseID,
-		  newStatus: this.newStatus
-		});
+        const updateCase = await axios.post('http://localhost:8080/api/updateCaseStatus', {
+          caseId: this.formData.cases.caseID,
+          newStatus: this.newStatus
+        });
         if (updateCase.status === 200) {
           alert('CIF status updated!');
           location.reload();
