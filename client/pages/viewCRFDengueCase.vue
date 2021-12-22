@@ -360,6 +360,8 @@
               </div>
             </div>
 
+            <hr/>
+
             <div class="field-row-straight">
               <div class="field">
                 <label for="contactperson" class="required"> Parent / Caregiver </label>
@@ -382,6 +384,29 @@
                 />
               </div>
             </div>
+
+            <div class="field-row-straight">
+              <div class="field">
+                <label for="HCPN"> HCPN </label>
+                <input
+                  id="HCPN"
+                  v-model="formData.patient.HCPN"
+                  class="input-form-field"
+                  type="text"
+                  :disabled="inputEdit()"
+                />
+              </div>
+              <div class="field">
+                <label for="ILHZ"> ILHZ </label>
+                <input
+                  id="ILHZ"
+                  v-model="formData.patient.ILHZ"
+                  class="input-form-field"
+                  type="text"
+                  :disabled="inputEdit()"
+                />
+              </div>
+            </div>
           </div>
         </form>
         <hr v-if="isPrint" />
@@ -398,7 +423,7 @@
                     <input
                       id="noConsult"
                       v-model="formData.caseData.patientConsulted"
-                      value="no"
+                      value="No"
                       class="input-radio"
                       name="patientConsulted"
                       type="radio"
@@ -410,7 +435,7 @@
                     <input
                       id="yesConsult"
                       v-model="formData.caseData.patientConsulted"
-                      value="yesConsult"
+                      value="Yes"
                       class="input-radio"
                       name="patientConsulted"
                       type="radio"
@@ -420,7 +445,7 @@
                   </div>
                 </div>
               </div>
-              <div class="patientConsultDate-field field">
+              <div v-if="formData.caseData.patientConsulted=='Yes'" class="patientConsultDate-field field">
                 <label for="patientConsultDate">
                   Date of First Consultation
                 </label>
@@ -432,7 +457,7 @@
                   :disabled="inputEdit()"
                 />
               </div>
-              <div class="indigenousGroup-field field" style="width: 40%">
+              <div v-if="formData.caseData.patientConsulted=='Yes'" class="indigenousGroup-field field" style="width: 40%">
                 <label for="patientConsultPlace"> Place of Consultation </label>
                 <input
                   id="patientConsultPlace"
@@ -452,7 +477,7 @@
                     <input
                       id="noAdmit"
                       v-model="formData.patient.admitStatus"
-                      value="noAdmit"
+                      value="No"
                       class="input-radio"
                       name="admitStatus"
                       type="radio"
@@ -464,7 +489,7 @@
                     <input
                       id="yesAdmit"
                       v-model="formData.patient.admitStatus"
-                      value="yesAdmit"
+                      value="Yes"
                       class="input-radio"
                       name="admitStatus"
                       type="radio"
@@ -474,7 +499,7 @@
                   </div>
                 </div>
               </div>
-              <div class="patientConsultDate-field field">
+              <div v-if="formData.patient.admitStatus=='Yes'" class="patientConsultDate-field field">
                 <label for="patientConsultDate">
                   Date Admitted / Seen / Consulted
                 </label>

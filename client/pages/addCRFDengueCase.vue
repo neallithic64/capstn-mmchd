@@ -305,7 +305,8 @@
                     :disabled="inputEdit()" 
                     :class="isRequired()" 
                     required
-                    @change="getLocBrgyList(formData.patient.occuCity,'occuBrgy')">
+                    @change="getLocBrgyList(formData.patient.occuCity,'occuBrgy')"
+                    >
                     <option v-for="(city, i) in cityList" :key=i>{{city}}</option>
                   </select>
                 </div>
