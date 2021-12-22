@@ -299,20 +299,27 @@
               <div class="field-row-straight">
                 <div class="name-field">
                   <label for="occuCity" class="required"> City </label>
-                  <select id="occuCity" v-model="formData.patient.occuCity" name="occuCity" :disabled="inputEdit()" :class="isRequired()" required>
+                  <select id="occuCity" 
+                    v-model="formData.patient.occuCity" 
+                    name="occuCity" 
+                    :disabled="inputEdit()" 
+                    :class="isRequired()" 
+                    required
+                    @change="getLocBrgyList(formData.patient.occuCity,'occuBrgy')">
                     <option v-for="(city, i) in cityList" :key=i>{{city}}</option>
                   </select>
                 </div>
                 <div class="field">
                   <label for="occuBrgy" class="required"> Barangay </label>
-                  <input
+                  <select
                     id="occuBrgy"
                     v-model="formData.patient.occuBrgy"
                     :class="isRequired()"
-                    type="text"
+                    name="occuBrgy"
                     :disabled="inputEdit()"
                     required
-                  />
+                  >
+                  </select>
                 </div>
               </div>
 
@@ -333,20 +340,28 @@
               <div class="field-row-straight">
                 <div class="name-field">
                   <label for="currCity" class="required"> City </label>
-                  <select id="currCity" v-model="formData.patient.currCity" name="currCity" :disabled="inputEdit()" :class="isRequired()" required>
+                  <select id="currCity" 
+                    v-model="formData.patient.currCity" 
+                    name="currCity" 
+                    :disabled="inputEdit()" 
+                    :class="isRequired()" 
+                    required
+                    @change="getLocBrgyList(formData.patient.currCity,'currBarangay')"
+                  >
                     <option v-for="(city, i) in cityList" :key=i>{{city}}</option>
                   </select>
                 </div>
                 <div class="field">
                   <label for="currBarangay" class="required"> Barangay </label>
-                  <input
+                  <select
                     id="currBarangay"
                     v-model="formData.patient.currBrgy"
                     :class="isRequired()"
-                    type="text"
+                    name="currBarangay"
                     :disabled="inputEdit()"
                     required
-                  />
+                  >
+                  </select>
                 </div>
               </div>
 
@@ -386,19 +401,22 @@
                     v-model="formData.patient.permCity"
                     name="permCity"
                     :disabled="inputEdit()"
+                    @change="getLocBrgyList(formData.patient.permCity,'permBarangay')"
                   >
                   <option v-for="(city, i) in cityList" :key=i>{{city}}</option>
                   </select>
                 </div>
                 <div class="field">
                   <label for="permBarangay"> Barangay </label>
-                  <input
+                  <select
                     id="permBarangay"
                     v-model="formData.patient.permBrgy"
-                    class="input-form-field"
-                    type="text"
+                    :class="isRequired()"
+                    name="permBarangay"
                     :disabled="inputEdit()"
-                  />
+                    required
+                  >
+                  </select>
                 </div>
               </div>
 
@@ -467,7 +485,7 @@
                       <input
                         id="noConsult"
                         v-model="formData.caseData.patientConsulted"
-                        value="no"
+                        value="No"
                         class="input-radio"
                         name="patientConsulted"
                         type="radio"
@@ -481,7 +499,7 @@
                       <input
                         id="yesConsult"
                         v-model="formData.caseData.patientConsulted"
-                        value="yesConsult"
+                        value="Yes"
                         class="input-radio"
                         name="patientConsulted"
                         type="radio"
@@ -493,10 +511,8 @@
                     </div>
                   </div>
                 </div>
-                <div class="patientConsultDate-field field">
-                  <label for="patientConsultDate">
-                    Date of First Consultation
-                  </label>
+                <div v-if="formData.caseData.patientConsulted=='Yes'" class="patientConsultDate-field field">
+                  <label for="patientConsultDate" class="required"> Date of First Consultation </label>
                   <input
                     id="patientConsultDate"
                     v-model="formData.caseData.patientConsultDate"
@@ -506,8 +522,8 @@
                     :disabled="inputEdit()"
                   />
                 </div>
-                <div class="indigenousGroup-field field" style="width: 40%">
-                  <label for="patientConsultPlace"> Place of Consultation </label>
+                <div v-if="formData.caseData.patientConsulted=='Yes'" class="indigenousGroup-field field" style="width: 40%">
+                  <label for="patientConsultPlace" class="required"> Place of Consultation </label>
                   <input
                     id="patientConsultPlace"
                     v-model="formData.caseData.patientConsultPlace"
@@ -526,7 +542,7 @@
                       <input
                         id="noAdmit"
                         v-model="formData.patient.admitStatus"
-                        value="noAdmit"
+                        value="No"
                         class="input-radio"
                         name="admitStatus"
                         type="radio"
@@ -540,7 +556,7 @@
                       <input
                         id="yesAdmit"
                         v-model="formData.patient.admitStatus"
-                        value="yesAdmit"
+                        value="Yes"
                         class="input-radio"
                         name="admitStatus"
                         type="radio"
@@ -552,8 +568,8 @@
                     </div>
                   </div>
                 </div>
-                <div class="patientConsultDate-field field">
-                  <label for="patientConsultDate">
+                <div v-if="formData.patient.admitStatus=='Yes'" class="patientConsultDate-field field">
+                  <label for="patientConsultDate" class="required">
                     Date Admitted / Seen / Consulted
                   </label>
                   <input
@@ -1509,6 +1525,7 @@ export default {
     return {
       patientExist: '',
       sameAddress:'',
+      locBrgyList: [],
       today:'',
       hasLabTest:'',
       noLabTest:false,
@@ -1807,7 +1824,9 @@ export default {
           this.formData.patient.occuCity!== null &&
           this.formData.patient.occuBrgy!== null &&
           this.formData.patient.guardianName!== null &&
-          this.formData.patient.guardianContact!== null
+          this.formData.patient.guardianContact!== null &&
+          this.formData.patient.occuLoc!== 'Choose Barangay' &&
+          this.formData.patient.occuBrgy!== 'Choose Barangay'
           ) this.pageDone[page] = true;
           else this.pageDone[page] = false;
           if (this.formData.patient.ageNo<0) {this.formData.patient.ageNo = ''; this.pageDone[page] = false;}
@@ -1856,19 +1875,17 @@ export default {
           else this.pageDone[page] = false;
           break;
         case 6:
+          console.log(this.formData.caseData.ns1Date!== '')
+          console.log(this.formData.caseData.ns1Result!== '')
           if (this.hasLabTest!=='') {
             if (this.hasLabTest==='Processing') {this.pageDone[page] = true; this.errorLab = false;}
             else if (this.hasLabTest==='No' && this.formData.cases.investigatorLab!=='' && this.formData.cases.investigatorLab!==undefined)
               {this.pageDone[page] = true; this.errorLab = false;}
-            else if(this.formData.caseData.finalClassification==='Yes' &&
-              (this.formData.caseData.ns1Date!== null ||
-                this.formData.caseData.ns1Result!== null ||
-                this.formData.caseData.iggDate!== null ||
-                this.formData.caseData.iggResult!== null ||
-                this.formData.caseData.igmDate!== null ||
-                this.formData.caseData.igmResult!== null ||
-                this.formData.caseData.pcrDate!== null ||
-                this.formData.caseData.pcrResult!== null))
+            else if(this.hasLabTest==='Yes' &&
+              ((this.formData.caseData.ns1Date!== '' && this.formData.caseData.ns1Result!== '') ||
+               (this.formData.caseData.iggDate!== '' && this.formData.caseData.iggResult!== '') ||
+               (this.formData.caseData.igmDate!== '' && this.formData.caseData.igmResult!== '') ||
+               (this.formData.caseData.pcrDate!== '' && this.formData.caseData.pcrResult!== '')))
               {this.pageDone[page] = true; this.errorLab = false;}
             else {this.pageDone[page] = false;this.errorLab = true;}
           }
@@ -1946,12 +1963,44 @@ export default {
       if (this.sameAddress) {
         this.formData.patient.permHouseStreet = this.formData.patient.currHouseStreet;
         this.formData.patient.permCity = this.formData.patient.currCity;
+        this.getLocBrgyList(this.formData.patient.permCity,'permBarangay');
         this.formData.patient.permBrgy = this.formData.patient.currBrgy;
+        console.log(this.formData.patient.permBrgy,this.formData.patient.currBrgy)
       }
       else {
         this.formData.patient.permHouseStreet = '';
         this.formData.patient.permCity = '';
         this.formData.patient.permBrgy = '';
+      }
+    },
+    getLocBrgyList(city, element) {
+      if (city) {
+        // eslint-disable-next-line no-console
+        console.log(city);
+        const dropdown1 = document.getElementById(element);
+        while (dropdown1.firstChild) dropdown1.removeChild(dropdown1.firstChild);
+
+        const defaultOption = document.createElement('option');
+        defaultOption.text = 'Choose Barangay';
+
+        dropdown1.add(defaultOption);
+        dropdown1.selectedIndex = 0;
+
+        axios.get('barangays.json').then(res => {
+            let option;
+            if (city!== 'Quezon City') city = city.replace(' City','');
+
+            this.locBrgyList = res.data[city].barangay_list;
+
+            for (let i = 0; i < this.locBrgyList.length; i++) {
+              option = document.createElement('option');
+              option.text = this.locBrgyList[i];
+              option.value = this.locBrgyList[i];
+              dropdown1.add(option);
+            }
+          })
+          // eslint-disable-next-line no-console
+          .catch(err => console.log(err))
       }
     },
   },

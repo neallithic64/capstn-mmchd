@@ -24,9 +24,6 @@
           <button class="addText"><a :href="'/addCRFDengueCase?CRFID=' + CRFID">+ add a case</a></button>
         </div>
         <div class="CRFendButton">
-          <button class="save-button" type="button" @click="save()">
-            Save
-          </button>
           <button class="submit-button" type="button" @click="submit()">
             Submit
           </button>
