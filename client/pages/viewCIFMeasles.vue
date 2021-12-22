@@ -200,6 +200,99 @@
               </div>
             </div>
 
+            <div class="field-row-straight">
+              <div class="status-field field">
+                <label for="civilStatus" class="required">
+                  Civil Status
+                </label>
+                <select
+                  id="civilStatus"
+                  v-model="formData.patient.civilStatus"
+                  name="civilStatus"
+                  :disabled="inputEdit()"
+                  class="input-form-field"
+                >
+                  <option value="Single">Single</option>
+                  <option value="Married">Married</option>
+                  <option value="Separated">Separated</option>
+                  <option value="Widowed">Widowed</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="indigenousGroup"> Indigenous Group </label>
+                <input
+                  id="indigenousGroup"
+                  v-model="formData.patient.indGroup"
+                  class="input-form-field"
+                  type="text"
+                  :disabled="inputEdit()"
+                />
+              </div>
+            </div>
+
+            <div class="field-row-straight">
+              <div class="field">
+                <label for="occupation" class="required"> Occupation </label>
+                <input
+                  id="occupation"
+                  v-model="formData.patient.occupation"
+                  class="input-form-field"
+                  type="text"
+                  :disabled="inputEdit()"
+                />
+              </div>
+              <div class="field">
+                <label for="occuLoc" class="required"> Occupation Location (Work/School) </label>
+                <input
+                  id="occuLoc"
+                  v-model="formData.patient.occuLoc"
+                  class="input-form-field"
+                  type="text"
+                  :disabled="inputEdit()"
+                />
+              </div>
+            </div>
+
+            <hr/>
+
+            <div class="field-row">
+              <div class="field">
+                <label for="occuStreet" class="required"> Occupation Address: Street / House No. </label>
+                <input
+                  id="occuStreet"
+                  v-model="formData.patient.occuStreet"
+                  class="input-form-field"
+                  type="text"
+                  :disabled="inputEdit()"
+                />
+              </div>
+            </div>
+
+            <div class="field-row-straight">
+              <div class="name-field">
+                <label for="occuCity" class="required"> City </label>
+                <select id="occuCity" 
+                  v-model="formData.patient.occuCity" 
+                  name="occuCity" 
+                  :disabled="inputEdit()" 
+                  class="input-form-field"
+                  >
+                  <option v-for="(city, i) in cityList" :key=i>{{city}}</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="occuBarangay" class="required"> Barangay </label>
+                <select
+                  id="occuBarangay"
+                  v-model="formData.patient.occuBrgy"
+                  class="input-form-field"
+                  name="occuBarangay"
+                  :disabled="inputEdit()"
+                >
+                </select>
+              </div>
+            </div>
+
             <div class="field-row">
               <div class="field">
                 <label for="currentAddress" class="required">
@@ -278,6 +371,8 @@
               </div>
             </div>
 
+            <hr/>
+
             <div class="field-row-straight">
               <div class="field">
                 <label for="contactperson" class="required">
@@ -304,6 +399,30 @@
                 />
               </div>
             </div>
+
+            <div class="field-row-straight">
+              <div class="field">
+                <label for="HCPN"> HCPN </label>
+                <input
+                  id="HCPN"
+                  v-model="formData.patient.HCPN"
+                  class="input-form-field"
+                  type="text"
+                  :disabled="inputEdit()"
+                />
+              </div>
+              <div class="field">
+                <label for="ILHZ"> ILHZ </label>
+                <input
+                  id="ILHZ"
+                  v-model="formData.patient.ILHZ"
+                  class="input-form-field"
+                  type="text"
+                  :disabled="inputEdit()"
+                />
+              </div>
+            </div>
+
           </div>
         </form>
         <hr v-if="isPrint" />
@@ -346,7 +465,7 @@
                     <label for="noAdmitted"> No </label>
                   </div>
                 </div>
-                <div class="dateAdmitted-field field">
+                <div v-if="formData.caseData.patientAdmitted=='Yes'" class="dateAdmitted-field field">
                   <label for="dateAdmitted" class="required">
                     Date Admitted / Seen
                   </label>
@@ -358,16 +477,6 @@
                     :disabled="inputEdit()"
                   />
                 </div>
-              </div>
-              <div class="indigenousGroup-field field" style="width: 40%">
-                <label for="indigenousGroup"> Indigenous Group </label>
-                <input
-                  id="indigenousGroup"
-                  v-model="formData.patient.indGroup"
-                  class="input-form-field"
-                  type="text"
-                  :disabled="inputEdit()"
-                />
               </div>
             </div>
 
@@ -2328,7 +2437,9 @@ export default {
           civilStatus: '',
           occupation: '',
           occuLoc: '',
-          occuAddrID: '',
+          occuStreet: '',
+          occuCity: '',
+          occuBrgy: '',
           guardianName: '',
           guardianContact: '',
           indGroup: '',

@@ -152,6 +152,7 @@
                         name="pregWeeks"
                         type="radio"
                         :disabled="inputEdit()"
+                        style="margin: 0 5px;"
                         required
                       />
                       <label for="pregnancyWeeks" style="display: inline-flex">
@@ -248,20 +249,28 @@
               <div class="field-row-straight">
                 <div class="name-field">
                   <label for="occuCity" class="required"> City </label>
-                  <select id="occuCity" v-model="formData.patient.occuCity" name="occuCity" :disabled="inputEdit()" :class="isRequired()" required>
+                  <select id="occuCity" 
+                    v-model="formData.patient.occuCity" 
+                    name="occuCity" 
+                    :disabled="inputEdit()" 
+                    :class="isRequired()" 
+                    required
+                    @change="getLocBrgyList(formData.patient.occuCity,'occuBrgy')"
+                    >
                     <option v-for="(city, i) in cityList" :key=i>{{city}}</option>
                   </select>
                 </div>
                 <div class="field">
                   <label for="occuBrgy" class="required"> Barangay </label>
-                  <input
+                  <select
                     id="occuBrgy"
                     v-model="formData.patient.occuBrgy"
                     :class="isRequired()"
-                    type="text"
+                    name="occuBrgy"
                     :disabled="inputEdit()"
                     required
-                  />
+                  >
+                  </select>
                 </div>
               </div>
 
@@ -282,32 +291,40 @@
               <div class="field-row-straight">
                 <div class="name-field">
                   <label for="currCity" class="required"> City </label>
-                  <select id="currCity" v-model="formData.patient.currCity" name="currCity" :disabled="inputEdit()" :class="isRequired()" required>
+                  <select id="currCity" 
+                    v-model="formData.patient.currCity" 
+                    name="currCity" 
+                    :disabled="inputEdit()" 
+                    :class="isRequired()" 
+                    required
+                    @change="getLocBrgyList(formData.patient.currCity,'currBrgy')">
+                    >
                     <option v-for="(city, i) in cityList" :key=i>{{city}}</option>
                   </select>
                 </div>
                 <div class="field">
-                  <label for="currBarangay" class="required"> Barangay </label>
-                  <input
-                    id="currBarangay"
+                  <label for="currBrgy" class="required"> Barangay </label>
+                  <select
+                    id="currBrgy"
                     v-model="formData.patient.currBrgy"
                     :class="isRequired()"
-                    type="text"
+                    name="currBrgy"
                     :disabled="inputEdit()"
                     required
-                  />
+                  >
+                  </select>
                 </div>
               </div>
 
-              <div class="field-row-straight">
+              <div v-if="editCase" class="field-row-straight">
                 <div class="field-row-straight">
                   <input
                     id="sameAddress"
                     v-model="sameAddress"
-                    :class="isRequired()"
+                    class="input-form-field"
                     type="checkbox"
                     :disabled="inputEdit()"
-                    style="width: auto; margin:0 5px;"
+                    style="width: auto; margin:-5px 5px;"
                     @change="getAddress()"
                   />
                   <label for="sameAddress" style="font-size:12px"> Same permanent address as current address </label>
@@ -335,19 +352,22 @@
                     v-model="formData.patient.permCity"
                     name="permCity"
                     :disabled="inputEdit()"
+                    @change="getLocBrgyList(formData.patient.permCity,'permBrgy')"
                   >
                   <option v-for="(city, i) in cityList" :key=i>{{city}}</option>
                   </select>
                 </div>
                 <div class="field">
-                  <label for="permBarangay"> Barangay </label>
-                  <input
-                    id="permBarangay"
+                  <label for="permBrgy" class="required"> Barangay </label>
+                  <select
+                    id="permBrgy"
                     v-model="formData.patient.permBrgy"
-                    class="input-form-field"
-                    type="text"
+                    :class="isRequired()"
+                    name="permBrgy"
                     :disabled="inputEdit()"
-                  />
+                    required
+                  >
+                  </select>
                 </div>
               </div>
 
@@ -838,6 +858,8 @@ export default {
   compute: {},
   data() {
     return {
+      validatePatient:true,
+      sameAddress:'',
       ageNo:'',
       tableOptions: {
         tableName: 'cases',
@@ -1057,17 +1079,103 @@ export default {
       else return true;
     },
     isRequired() {
-      if (this.editCase) return "input-form-field";
-      else return "input-form-field input-required";
+      if (this.editCase && !this.validatePatient) return "input-form-field input-required";
+      else return "input-form-field";
     },
-    update(action) {
-      this.editCase=false
-      // TO DO FUNCTION HERE
+    optionsRequired() {
+      if (this.editCase && !this.validatePatient) return "input-required";
+    },
+    getAddress() {
+      if (this.sameAddress) {
+        this.formData.patient.permHouseStreet = this.formData.patient.currHouseStreet;
+        this.formData.patient.permCity = this.formData.patient.currCity;
+        this.getLocBrgyList(this.formData.patient.permCity,'permBarangay');
+        this.formData.patient.permBrgy = this.formData.patient.currBrgy;
+        console.log(this.formData.patient.permBrgy,this.formData.patient.currBrgy)
+      }
+      else {
+        this.formData.patient.permHouseStreet = '';
+        this.formData.patient.permCity = '';
+        this.formData.patient.permBrgy = '';
+      }
+    },
+    getLocBrgyList(city, element) {
+      if (city) {
+        // eslint-disable-next-line no-console
+        console.log(city);
+        const dropdown1 = document.getElementById(element);
+        while (dropdown1.firstChild) dropdown1.removeChild(dropdown1.firstChild);
+
+        const defaultOption = document.createElement('option');
+        defaultOption.text = 'Choose Barangay';
+
+        dropdown1.add(defaultOption);
+        dropdown1.selectedIndex = 0;
+
+        axios.get('barangays.json').then(res => {
+            let option;
+            if (city!== 'Quezon City') city = city.replace(' City','');
+
+            this.locBrgyList = res.data[city].barangay_list;
+
+            for (let i = 0; i < this.locBrgyList.length; i++) {
+              option = document.createElement('option');
+              option.text = this.locBrgyList[i];
+              option.value = this.locBrgyList[i];
+              dropdown1.add(option);
+            }
+          })
+          // eslint-disable-next-line no-console
+          .catch(err => console.log(err))
+      }
+    },
+    validateForm() {
+      if (this.formData.patient.sex!=='' &&
+          this.formData.patient.pregWeeks!=='' &&
+          this.formData.patient.civilStatus!=='' &&
+          this.formData.patient.currHouseStreet!=='' &&
+          this.formData.patient.currCity!=='' &&
+          this.formData.patient.currBrgy!=='' &&
+          this.formData.patient.occupation!=='' &&
+          this.formData.patient.occuLoc!=='' &&
+          this.formData.patient.occuStreet!=='' &&
+          this.formData.patient.occuCity!=='' &&
+          this.formData.patient.occuBrgy!=='' &&
+          this.formData.patient.guardianName!=='' &&
+          this.formData.patient.guardianContact!=='' &&
+          this.formData.patient.sex!== null &&
+          this.formData.patient.pregWeeks!== null &&
+          this.formData.patient.civilStatus!== null &&
+          this.formData.patient.currHouseStreet!== null &&
+          this.formData.patient.currCity!== null &&
+          this.formData.patient.currBrgy!== null &&
+          this.formData.patient.occupation!== null &&
+          this.formData.patient.occuLoc!== null &&
+          this.formData.patient.occuStreet!== null &&
+          this.formData.patient.occuCity!== null &&
+          this.formData.patient.occuBrgy!== null &&
+          this.formData.patient.guardianName!== null &&
+          this.formData.patient.guardianContact!== null &&
+          this.formData.patient.occuLoc!== 'Choose Barangay' &&
+          this.formData.patient.occuBrgy!== 'Choose Barangay'
+          ) this.validatePatient = true;
+          else this.validatePatient = false;
+          if (this.formData.patient.pregWeeks!=='Not Pregnant' && this.formData.patient.pregWeeks<0)
+            {this.formData.patient.pregWeeks = ''; this.validatePatient = false;}
+          if (this.formData.patient.guardianContact<0) {this.formData.patient.guardianContact = ''; this.validatePatient = false;}
+    },
+    update(action) { // TO DO FUNCTIONS
       if (action==='cancel') {
         // reload the data ?
+        this.editCase=false;
       }
       if (action==='done') {
-        // save the data in db
+        this.validateForm();
+        if (this.validatePatient) {
+           // save the data in db
+           this.editCase=false;
+        }
+        else alert("Please fill up all required fields")
       }
     },
     downloadPDF() {
@@ -1101,6 +1209,17 @@ export default {
 </script>
 
 <style>
+
+.input-required:invalid, textarea:invalid { 
+    box-shadow: 0 0 5px #d45252;
+    border-color: hsl(0, 76%, 50%);
+    /* background-color: #ff6961; */
+}
+
+.input-required{
+  border-color: hsl(0, 76%, 50%);
+}
+
 body {
   font-family: 'Work Sans', sans-serif;
   font-weight: 300;

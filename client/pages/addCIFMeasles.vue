@@ -299,20 +299,27 @@
               <div class="field-row-straight">
                 <div class="name-field">
                   <label for="occuCity" class="required"> City </label>
-                  <select id="occuCity" v-model="formData.patient.occuCity" name="occuCity" :disabled="inputEdit()" :class="isRequired()" required>
+                  <select id="occuCity" 
+                    v-model="formData.patient.occuCity" 
+                    name="occuCity" 
+                    :disabled="inputEdit()" 
+                    :class="isRequired()" 
+                    required
+                    @change="getLocBrgyList(formData.patient.occuCity,'occuBarangay')">
                     <option v-for="(city, i) in cityList" :key=i>{{city}}</option>
                   </select>
                 </div>
                 <div class="field">
-                  <label for="occuBrgy" class="required"> Barangay </label>
-                  <input
-                    id="occuBrgy"
+                  <label for="occuBarangay" class="required"> Barangay </label>
+                  <select
+                    id="occuBarangay"
                     v-model="formData.patient.occuBrgy"
                     :class="isRequired()"
-                    type="text"
+                    name="occuBarangay"
                     :disabled="inputEdit()"
                     required
-                  />
+                  >
+                  </select>
                 </div>
               </div>
 
@@ -333,20 +340,28 @@
               <div class="field-row-straight">
                 <div class="name-field">
                   <label for="currCity" class="required"> City </label>
-                  <select id="currCity" v-model="formData.patient.currCity" name="currCity" :disabled="inputEdit()" :class="isRequired()" required>
+                  <select id="currCity" 
+                    v-model="formData.patient.currCity" 
+                    name="currCity" 
+                    :disabled="inputEdit()" 
+                    :class="isRequired()" 
+                    required
+                    @change="getLocBrgyList(formData.patient.currCity,'currBarangay')"
+                    >
                     <option v-for="(city, i) in cityList" :key=i>{{city}}</option>
                   </select>
                 </div>
                 <div class="field">
                   <label for="currBarangay" class="required"> Barangay </label>
-                  <input
+                  <select
                     id="currBarangay"
                     v-model="formData.patient.currBrgy"
                     :class="isRequired()"
-                    type="text"
+                    name="currBarangay"
                     :disabled="inputEdit()"
                     required
-                  />
+                  >
+                  </select>
                 </div>
               </div>
 
@@ -386,19 +401,22 @@
                     v-model="formData.patient.permCity"
                     name="permCity"
                     :disabled="inputEdit()"
+                    @change="getLocBrgyList(formData.patient.permCity,'permBarangay')"
                   >
                   <option v-for="(city, i) in cityList" :key=i>{{city}}</option>
                   </select>
                 </div>
                 <div class="field">
                   <label for="permBarangay"> Barangay </label>
-                  <input
+                  <select
                     id="permBarangay"
                     v-model="formData.patient.permBrgy"
-                    class="input-form-field"
-                    type="text"
+                    :class="isRequired()"
+                    name="permBarangay"
                     :disabled="inputEdit()"
-                  />
+                    required
+                  >
+                  </select>
                 </div>
               </div>
 
@@ -492,7 +510,7 @@
                       <label for="noAdmitted"> No </label>
                     </div>
                   </div>
-                  <div class="dateAdmitted-field field">
+                  <div v-if="formData.caseData.patientAdmitted=='Yes'" class="dateAdmitted-field field">
                     <label for="dateAdmitted" class="required">
                       Date Admitted / Seen
                     </label>
@@ -506,16 +524,6 @@
                       required
                     />
                   </div>
-                </div>
-                <div class="indigenousGroup-field field" style="width: 40%">
-                  <label for="indigenousGroup"> Indigenous Group </label>
-                  <input
-                    id="indigenousGroup"
-                    v-model="formData.patient.indGroup"
-                    class="input-form-field"
-                    type="text"
-                    :disabled="inputEdit()"
-                  />
                 </div>
               </div>
 
@@ -2165,7 +2173,7 @@
                     </label>
                     <input
                       id="labDateCollected"
-                      v-model="formData.cases.labDateCollected"
+                      v-model="formData.caseData.labDateCollected"
                       :max="today"
                       class="input-form-field"
                       type="date"
@@ -2180,7 +2188,7 @@
                     </label>
                     <input
                       id="labDateSent"
-                      v-model="formData.cases.labDateSent"
+                      v-model="formData.caseData.labDateSent"
                       :max="today"
                       class="input-form-field"
                       type="date"
@@ -2195,7 +2203,7 @@
                     </label>
                     <input
                       id="labDateReceived"
-                      v-model="formData.cases.labDateReceived"
+                      v-model="formData.caseData.labDateReceived"
                       :max="today"
                       class="input-form-field"
                       type="date"
@@ -2213,7 +2221,7 @@
                     </label>
                     <input
                       id="labMeaslesResult"
-                      v-model="formData.cases.labMeaslesResult"
+                      v-model="formData.caseData.labMeaslesResult"
                       class="input-form-field"
                       type="text"
                       :disabled="inputEdit()"
@@ -2227,7 +2235,7 @@
                     </label>
                     <input
                       id="labRubellaResult"
-                      v-model="formData.cases.labRubellaResult"
+                      v-model="formData.caseData.labRubellaResult"
                       class="input-form-field"
                       type="text"
                       :disabled="inputEdit()"
@@ -2244,7 +2252,7 @@
                     </label>
                     <input
                       id="labVirusResult"
-                      v-model="formData.cases.labVirusResult"
+                      v-model="formData.caseData.labVirusResult"
                       class="input-form-field"
                       type="text"
                       :disabled="inputEdit()"
@@ -2258,7 +2266,7 @@
                     </label>
                     <input
                       id="labPCRResult"
-                      v-model="formData.cases.labPCRResult"
+                      v-model="formData.caseData.labPCRResult"
                       class="input-form-field"
                       type="text"
                       :disabled="inputEdit()"
@@ -2354,6 +2362,7 @@ export default {
     return {
       patientExist: '',
       sameAddress:'',
+      locBrgyList: [],
       today:'',
       hasLabTest:'',
       isOpen: true,
@@ -2595,7 +2604,9 @@ export default {
       if (this.sameAddress) {
         this.formData.patient.permHouseStreet = this.formData.patient.currHouseStreet;
         this.formData.patient.permCity = this.formData.patient.currCity;
+        this.getLocBrgyList(this.formData.patient.permCity,'permBarangay');
         this.formData.patient.permBrgy = this.formData.patient.currBrgy;
+        console.log(this.formData.patient.permBrgy,this.formData.patient.currBrgy)
       }
       else {
         this.formData.patient.permHouseStreet = '';
@@ -2687,7 +2698,9 @@ export default {
           this.formData.patient.occuCity!== null &&
           this.formData.patient.occuBrgy!== null &&
           this.formData.patient.guardianName!== null &&
-          this.formData.patient.guardianContact!== null
+          this.formData.patient.guardianContact!== null &&
+          this.formData.patient.occuLoc!== 'Choose Barangay' &&
+          this.formData.patient.occuBrgy!== 'Choose Barangay'
           ) this.pageDone[page] = true;
           else this.pageDone[page] = false;
           if (this.formData.patient.ageNo<0) {this.formData.patient.ageNo = ''; this.pageDone[page] = false;}
@@ -2791,13 +2804,13 @@ export default {
                 this.formData.cases.investigatorLab!=='') ||
                 (this.hasLabTest==='Yes' &&
                 this.formData.caseData.labSpecimen!=='' &&
-                this.formData.cases.labDateCollected!=='' &&
+                this.formData.caseData.labDateCollected!=='' &&
                 this.formData.caseData.labDateSent!=='' &&
-                this.formData.cases.labDateReceived!=='' &&
-                this.formData.cases.labMeaslesResult!=='' &&
-                this.formData.cases.labRubellaResult!=='' &&
-                this.formData.cases.labVirusResult!=='' &&
-                this.formData.cases.labPCRResult!=='' &&
+                this.formData.caseData.labDateReceived!=='' &&
+                this.formData.caseData.labMeaslesResult!=='' &&
+                this.formData.caseData.labRubellaResult!=='' &&
+                this.formData.caseData.labVirusResult!=='' &&
+                this.formData.caseData.labPCRResult!=='' &&
                 this.formData.cases.investigationDate!=='' &&
                 this.formData.cases.investigatorName!=='' &&
                 this.formData.cases.investigatorContact!==''))
@@ -2849,14 +2862,19 @@ export default {
       this.formData.patient.sex = patient.sex;
       this.formData.patient.pregWeeks = patient.pregWeeks;
       this.formData.patient.currHouseStreet = patient.currHouseStreet;
-      this.formData.patient.currBrgy = patient.currBrgy;
       this.formData.patient.currCity = patient.currCity;
       this.formData.patient.permHouseStreet = patient.permHouseStreet;
-      this.formData.patient.permBrgy = patient.permBrgy;
       this.formData.patient.permCity = patient.permCity;
       this.formData.patient.guardianName = patient.guardianName;
       this.formData.patient.guardianContact = patient.guardianContact;
+      this.formData.patient.currBrgy = patient.currBrgy;
+      this.formData.patient.permBrgy = patient.permBrgy;
       this.pageNum++;
+
+      // this.getLocBrgyList(this.formData.patient.occuCity,'occuBarangay');
+      // this.getLocBrgyList(this.formData.patient.currCity,'currBarangay');
+      // this.getLocBrgyList(this.formData.patient.permCity,'permBarangay');
+
     },
     searchPatient(event) {
       this.patientResult = [];
@@ -2870,6 +2888,36 @@ export default {
             ctr++;
           }
         }
+      }
+    },
+    getLocBrgyList(city, element) {
+      if (city) {
+        // eslint-disable-next-line no-console
+        console.log(city);
+        const dropdown1 = document.getElementById(element);
+        while (dropdown1.firstChild) dropdown1.removeChild(dropdown1.firstChild);
+
+        const defaultOption = document.createElement('option');
+        defaultOption.text = 'Choose Barangay';
+
+        dropdown1.add(defaultOption);
+        dropdown1.selectedIndex = 0;
+
+        axios.get('barangays.json').then(res => {
+            let option;
+            if (city!== 'Quezon City') city = city.replace(' City','');
+
+            this.locBrgyList = res.data[city].barangay_list;
+
+            for (let i = 0; i < this.locBrgyList.length; i++) {
+              option = document.createElement('option');
+              option.text = this.locBrgyList[i];
+              option.value = this.locBrgyList[i];
+              dropdown1.add(option);
+            }
+          })
+          // eslint-disable-next-line no-console
+          .catch(err => console.log(err))
       }
     },
   },

@@ -104,10 +104,15 @@
               </div>
             </div>
 
-            <div class="field-row" style="display: inline-flex; margin-bottom: -1 px">
+            <div
+              class="field-row"
+              style="display: inline-flex; margin-bottom: -1 px"
+            >
               <div class="half-half half-half1">
                 <div class="birthday-field field">
-                  <label for="birthdate" class="required"> Date of Birth </label>
+                  <label for="birthdate" class="required">
+                    Date of Birth
+                  </label>
                   <input
                     id="birthdate"
                     v-model="formData.patient.birthDate"
@@ -126,11 +131,14 @@
                     :disabled="inputEdit()"
                   />
                 </div>
+              </div>
+
+              <div class="half-half half-half2">
                 <div class="sex-field field">
                   <label class="required"> Sex </label>
                   <div style="display: inline-flex; align-items: center">
                     <input
-                      id="female"
+                      id="Female"
                       v-model="formData.patient.sex"
                       value="Female"
                       class="input-radio"
@@ -138,11 +146,11 @@
                       type="radio"
                       :disabled="inputEdit()"
                     />
-                    <label for="female"> Female </label>
+                    <label for="Female"> Female </label>
                   </div>
                   <div style="display: inline-flex; align-items: center">
                     <input
-                      id="male"
+                      id="Male"
                       v-model="formData.patient.sex"
                       value="Male"
                       class="input-radio"
@@ -150,29 +158,68 @@
                       type="radio"
                       :disabled="inputEdit()"
                     />
-                    <label for="male"> Male </label>
+                    <label for="Male"> Male </label>
+                  </div>
+                </div>
+                <div class="pregnancy-field field">
+                  <label class="required"> Pregnancy </label>
+                  <div style="display: inline-flex; align-items: center">
+                    <input
+                      id="Not Pregnant"
+                      v-model="formData.caseData.pregnancy"
+                      value="Not Pregnant"
+                      class="input-radio"
+                      name="pregnancy"
+                      type="radio"
+                      :disabled="inputEdit()"
+                    />
+                    <label for="Not Pregnant"> Not Pregnant </label>
+                  </div>
+
+                  <div style="display: inline-flex; align-items: center">
+                    <input
+                      id="Pregnant"
+                      value="pregnant"
+                      class="input-radio"
+                      name="pregnancy"
+                      type="radio"
+                      :disabled="inputEdit()"
+                    />
+                    <label for="pregnancyWeeks" style="display: inline-flex">
+                      <input
+                        id="pregnancy"
+                        v-model="formData.patient.pregMonths"
+                        class="input-form-field"
+                        type="number"
+                        style="width: 50px; height: 20px; margin: 0 2px"
+                        :disabled="inputEdit()"
+                      />
+                      Weeks Pregnant
+                    </label>
                   </div>
                 </div>
               </div>
+            </div>
 
-              <div class="half-half half-half2">
-                <div class="status-field field">
-                  <label for="civilStatus" class="required">
-                    Civil Status
-                  </label>
-                  <select
-                    id="civilStatus"
-                    v-model="formData.patient.civilStatus"
-                    name="civilStatus"
-                    :disabled="inputEdit()"
-                  >
-                    <option value="Single">Single</option>
-                    <option value="Married">Married</option>
-                    <option value="Separated">Separated</option>
-                    <option value="Widowed">Widowed</option>
-                  </select>
-                </div>
-                <div class="field">
+            <div class="field-row-straight">
+              <div class="status-field field">
+                <label for="civilStatus" class="required">
+                  Civil Status
+                </label>
+                <select
+                  id="civilStatus"
+                  v-model="formData.patient.civilStatus"
+                  name="civilStatus"
+                  :disabled="inputEdit()"
+                  class="input-form-field"
+                >
+                  <option value="Single">Single</option>
+                  <option value="Married">Married</option>
+                  <option value="Separated">Separated</option>
+                  <option value="Widowed">Widowed</option>
+                </select>
+              </div>
+              <div class="field">
                 <label for="indigenousGroup"> Indigenous Group </label>
                 <input
                   id="indigenousGroup"
@@ -182,6 +229,68 @@
                   :disabled="inputEdit()"
                 />
               </div>
+            </div>
+
+            <div class="field-row-straight">
+              <div class="field">
+                <label for="occupation" class="required"> Occupation </label>
+                <input
+                  id="occupation"
+                  v-model="formData.patient.occupation"
+                  class="input-form-field"
+                  type="text"
+                  :disabled="inputEdit()"
+                />
+              </div>
+              <div class="field">
+                <label for="occuLoc" class="required"> Occupation Location (Work/School) </label>
+                <input
+                  id="occuLoc"
+                  v-model="formData.patient.occuLoc"
+                  class="input-form-field"
+                  type="text"
+                  :disabled="inputEdit()"
+                />
+              </div>
+            </div>
+
+            <hr/>
+
+            <div class="field-row">
+              <div class="field">
+                <label for="occuStreet" class="required"> Occupation Address: Street / House No. </label>
+                <input
+                  id="occuStreet"
+                  v-model="formData.patient.occuStreet"
+                  class="input-form-field"
+                  type="text"
+                  :disabled="inputEdit()"
+                />
+              </div>
+            </div>
+
+            <div class="field-row-straight">
+              <div class="name-field">
+                <label for="occuCity" class="required"> City </label>
+                <select id="occuCity" 
+                  v-model="formData.patient.occuCity" 
+                  name="occuCity" 
+                  :disabled="inputEdit()" 
+                  class="input-form-field"
+                  >
+                  <option v-for="(city, i) in cityList" :key=i>{{city}}</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="occuBarangay" class="required"> Barangay </label>
+                <select
+                  id="occuBarangay"
+                  v-model="formData.patient.occuBrgy"
+                  class="input-form-field"
+                  name="occuBarangay"
+                  :disabled="inputEdit()"
+                >
+                </select>
               </div>
             </div>
 
@@ -251,6 +360,8 @@
               </div>
             </div>
 
+            <hr/>
+
             <div class="field-row-straight">
               <div class="field">
                 <label for="contactperson" class="required"> Parent / Caregiver </label>
@@ -273,6 +384,29 @@
                 />
               </div>
             </div>
+
+            <div class="field-row-straight">
+              <div class="field">
+                <label for="HCPN"> HCPN </label>
+                <input
+                  id="HCPN"
+                  v-model="formData.patient.HCPN"
+                  class="input-form-field"
+                  type="text"
+                  :disabled="inputEdit()"
+                />
+              </div>
+              <div class="field">
+                <label for="ILHZ"> ILHZ </label>
+                <input
+                  id="ILHZ"
+                  v-model="formData.patient.ILHZ"
+                  class="input-form-field"
+                  type="text"
+                  :disabled="inputEdit()"
+                />
+              </div>
+            </div>
           </div>
         </form>
         <hr v-if="isPrint" />
@@ -289,7 +423,7 @@
                     <input
                       id="noConsult"
                       v-model="formData.caseData.patientConsulted"
-                      value="no"
+                      value="No"
                       class="input-radio"
                       name="patientConsulted"
                       type="radio"
@@ -301,7 +435,7 @@
                     <input
                       id="yesConsult"
                       v-model="formData.caseData.patientConsulted"
-                      value="yesConsult"
+                      value="Yes"
                       class="input-radio"
                       name="patientConsulted"
                       type="radio"
@@ -311,7 +445,7 @@
                   </div>
                 </div>
               </div>
-              <div class="patientConsultDate-field field">
+              <div v-if="formData.caseData.patientConsulted=='Yes'" class="patientConsultDate-field field">
                 <label for="patientConsultDate">
                   Date of First Consultation
                 </label>
@@ -323,7 +457,7 @@
                   :disabled="inputEdit()"
                 />
               </div>
-              <div class="indigenousGroup-field field" style="width: 40%">
+              <div v-if="formData.caseData.patientConsulted=='Yes'" class="indigenousGroup-field field" style="width: 40%">
                 <label for="patientConsultPlace"> Place of Consultation </label>
                 <input
                   id="patientConsultPlace"
@@ -343,7 +477,7 @@
                     <input
                       id="noAdmit"
                       v-model="formData.patient.admitStatus"
-                      value="noAdmit"
+                      value="No"
                       class="input-radio"
                       name="admitStatus"
                       type="radio"
@@ -355,7 +489,7 @@
                     <input
                       id="yesAdmit"
                       v-model="formData.patient.admitStatus"
-                      value="yesAdmit"
+                      value="Yes"
                       class="input-radio"
                       name="admitStatus"
                       type="radio"
@@ -365,7 +499,7 @@
                   </div>
                 </div>
               </div>
-              <div class="patientConsultDate-field field">
+              <div v-if="formData.patient.admitStatus=='Yes'" class="patientConsultDate-field field">
                 <label for="patientConsultDate">
                   Date Admitted / Seen / Consulted
                 </label>
@@ -1415,7 +1549,9 @@ export default {
           civilStatus: '',
           occupation: '',
           occuLoc: '',
-          occuAddrID: '',
+          occuStreet: '',
+          occuCity: '',
+          occuBrgy: '',
           guardianName: '',
           guardianContact: '',
           indGroup: '',
