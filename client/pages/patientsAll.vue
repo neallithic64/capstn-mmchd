@@ -112,7 +112,7 @@ export default {
     }
   },
   async mounted() {
-    const rows = (await axios.get('http://localhost:8080/api/getCases')).data;
+    const rows = (await axios.get('http://localhost:8080/api/getPatients')).data;
 	console.log("all cases count: " + rows.length);
 	for (let i = 0; i < rows.length; i++) {
 	  rows[i].reportDate = rows[i].reportDate ? rows[i].reportDate.substr(0, 10) : "undefined";
