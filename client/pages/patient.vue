@@ -2,7 +2,7 @@
   <div id="viewPatient">
     <!--Top Bar of the screen-->
     <TopNav />
-    <div ref="content" class="viewPatient-container">
+    <div ref="content" class="viewPatient-container" id="printPage">
       <div class="viewPatient-details" style="align-text: left">
         <div class="patientNumbers">
           <h1 style="margin: -10px 0">Patient No. {{ formData.patient.patientID }}</h1>
@@ -358,14 +358,13 @@
                   </select>
                 </div>
                 <div class="field">
-                  <label for="permBrgy" class="required"> Barangay </label>
+                  <label for="permBrgy"> Barangay </label>
                   <select
                     id="permBrgy"
                     v-model="formData.patient.permBrgy"
                     :class="isRequired()"
                     name="permBrgy"
                     :disabled="inputEdit()"
-                    required
                   >
                   </select>
                 </div>
@@ -437,7 +436,22 @@
                     <div class="field">
                       <h3 class="required">Lifestyle:</h3>
                       <div style="flex-direction: column; align-items: center">
-                        <div style="padding-left: 7px">
+
+                        <div style="display: flex; align-items: center;">
+                          <input
+                            id="LNone"
+                            v-model="riskFactors.lifestyle"
+                            value="LNone"
+                            name="riskFactorsL"
+                            type="checkbox"
+                            :disabled="inputEdit()"
+                            :class="optionsRequired()"
+                            required
+                          />
+                          <label for="LNone">None</label>
+                        </div>
+
+                        <div style="display: flex; align-items: center;">
                           <input
                             id="LSmoking"
                             v-model="formData.riskFactors.LSmoking"
@@ -445,11 +459,12 @@
                             name="riskFactorsL"
                             type="checkbox"
                             :disabled="inputEdit()"
+                            class="input-radio"
                           />
                           <label for="LSmoking">Smoking</label>
                         </div>
 
-                        <div style="padding-left: 7px">
+                        <div style="display: flex; align-items: center;">
                           <input
                             id="LAlcoholism"
                             v-model="formData.riskFactors.LAlcoholism"
@@ -457,11 +472,12 @@
                             name="riskFactorsL"
                             type="checkbox"
                             :disabled="inputEdit()"
+                            class="input-radio"
                           />
-                          <label for="source">Alcoholism</label>
+                          <label for="LAlcoholism">Alcoholism</label>
                         </div>
 
-                        <div style="padding-left: 7px">
+                        <div style="display: flex; align-items: center;">
                           <input
                             id="LDrugUse"
                             v-model="formData.riskFactors.LDrugUse"
@@ -469,11 +485,12 @@
                             name="riskFactorsL"
                             type="checkbox"
                             :disabled="inputEdit()"
+                            class="input-radio"
                           />
                           <label for="LDrugUse">Drug Use</label>
                         </div>
 
-                        <div style="padding-left: 7px">
+                        <div style="display: flex; align-items: center;">
                           <input
                             id="LPhysicalInactivity"
                             v-model="formData.riskFactors.LPhysicalInactivity"
@@ -481,6 +498,7 @@
                             name="riskFactorsL"
                             type="checkbox"
                             :disabled="inputEdit()"
+                            class="input-radio"
                           />
                           <label for="LPhysicalInactivity"
                             >Physical Inactivity</label
@@ -519,6 +537,21 @@
                     <div class="field">
                       <h3 class="required">Current Health Conditions:</h3>
                       <div style="flex-direction: column; align-items: center">
+
+                        <div style="display: flex; align-items: center;">
+                          <input
+                            id="CNone"
+                            v-model="riskFactors.CurrentCondition"
+                            value="CNone"
+                            name="riskFactorsC"
+                            type="checkbox"
+                            :disabled="inputEdit()"
+                            :class="optionsRequired()"
+                            required
+                          />
+                          <label for="CNone">None</label>
+                        </div>
+
                         <div style="display: flex; align-items: center">
                           <input
                             id="CAsthma"
@@ -529,7 +562,7 @@
                             type="checkbox"
                             :disabled="inputEdit()"
                           />
-                          <label for="Others"> Asthma </label>
+                          <label for="CAsthma"> Asthma </label>
                         </div>
 
                         <div style="display: flex; align-items: center">
@@ -542,7 +575,7 @@
                             type="checkbox"
                             :disabled="inputEdit()"
                           />
-                          <label for="Others"> Hereditary </label>
+                          <label for="CHereditary"> Hereditary </label>
                         </div>
 
                         <div style="display: flex; align-items: center">
@@ -572,11 +605,26 @@
                   </div>
                 </div>
 
-                 <div style="display: block">
+                <div style="display: block">
                   <div class="risk-factors" style="display: inline-flex; margin-bottom: -1 px; flex-direction: column;">
                     <div class="field">
                       <h3 class="required">Historical Health Data:</h3>
                       <div style="flex-direction: column; align-items: center">
+
+                        <div style="display: flex; align-items: center;">
+                          <input
+                            id="HNone"
+                            v-model="riskFactors.Hsitorical"
+                            value="HNone"
+                            name="riskFactorsH"
+                            type="checkbox"
+                            :disabled="inputEdit()"
+                            :class="optionsRequired()"
+                            required
+                          />
+                          <label for="HNone">None</label>
+                        </div>
+
                         <div style="display: flex; align-items: center">
                           <input
                             id="HDiabetes"
@@ -660,7 +708,22 @@
                   <div class="field" style="display: block">
                     <h3 class="required">Other Risks:</h3>
                     <div style="display:inline-flex; flex-direction:row">
-                      <div class="otherRisk">
+                      <div class="otherRisk" style="margin-right: 10px;">
+
+                        <div style="display: flex; align-items: center;">
+                          <input
+                            id="ONone"
+                            v-model="riskFactors.Other"
+                            value="ONone"
+                            name="riskFactorsO"
+                            type="checkbox"
+                            :disabled="inputEdit()"
+                            :class="optionsRequired()"
+                            required
+                          />
+                          <label for="ONone">None</label>
+                        </div>
+
                         <div style="display: flex; align-items: center">
                           <input
                             id="OAirPollution"
@@ -860,6 +923,7 @@ export default {
     return {
       validatePatient:true,
       sameAddress:'',
+      today:'',
       ageNo:'',
       tableOptions: {
         tableName: 'cases',
@@ -1038,6 +1102,12 @@ export default {
           OOthers: '',
         },
       },
+      riskFactors: {
+        Lifestyle:'',
+        CurrentCondition:'',
+        Historical:'',
+        Other:'',
+      },
       cityList: [
         'Caloocan City',
         'Las Piñas City',
@@ -1059,7 +1129,19 @@ export default {
     }
   },
   mounted() {
-    var today = new Date();
+    const today = new Date();
+    let dd = today.getDate();
+    let mm = today.getMonth()+1;
+    const yyyy = today.getFullYear();
+    if(dd<10){
+      dd='0'+dd
+    } 
+    if(mm<10){
+      mm='0'+mm
+    } 
+    this.today = yyyy+'-'+mm+'-'+dd;
+    // document.getElementById('birthdate').setAttribute('max', today);
+    console.log(today);
     this.ageNo = today.getFullYear() - parseInt(this.formData.patient.birthDate.substr(0,4));
   },
   async fetch() {
@@ -1083,7 +1165,8 @@ export default {
       else return "input-form-field";
     },
     optionsRequired() {
-      if (this.editCase && !this.validatePatient) return "input-required";
+      if (this.editCase && !this.validatePatient) return "input-radio input-required";
+      else return "input-radio";
     },
     getAddress() {
       if (this.sameAddress) {
@@ -1157,7 +1240,22 @@ export default {
           this.formData.patient.guardianName!== null &&
           this.formData.patient.guardianContact!== null &&
           this.formData.patient.occuLoc!== 'Choose Barangay' &&
-          this.formData.patient.occuBrgy!== 'Choose Barangay'
+          this.formData.patient.occuBrgy!== 'Choose Barangay' &&
+
+          (this.riskFactors.Lifestyle || this.formData.riskFactors.LSmoking || 
+            this.formData.riskFactors.LAlcoholism || this.formData.riskFactors.LDrugUse || 
+            this.formData.riskFactors.LPhysicalInactivity || this.formData.riskFactors.LOthers) && 
+          (this.riskFactors.CurrentCondition || this.formData.riskFactors.CAsthma || 
+            this.formData.riskFactors.CHereditary || this.formData.riskFactors.COthers) && 
+          (this.riskFactors.Historical || this.formData.riskFactors.HDiabetes || 
+            this.formData.riskFactors.HHeartDisease || this.formData.riskFactors.HHypertension || 
+            this.formData.riskFactors.HObesity || this.formData.riskFactors.HOthers) && 
+          (this.riskFactors.Other || this.formData.riskFactors.OAirPollution || 
+            this.formData.riskFactors.OCleanWater || this.formData.riskFactors.OFlooding || 
+            this.formData.riskFactors.OHealthEdu || this.formData.riskFactors.OHealthFacility || 
+            this.formData.riskFactors.OPoverty || this.formData.riskFactors.OShelter || 
+            this.formData.riskFactors.OWasteMgmt || this.formData.riskFactors.OVacCoverage || 
+            this.formData.riskFactors.OOthers)
           ) this.validatePatient = true;
           else this.validatePatient = false;
           if (this.formData.patient.pregWeeks!=='Not Pregnant' && this.formData.patient.pregWeeks<0)
@@ -1177,6 +1275,19 @@ export default {
         }
         else alert("Please fill up all required fields")
       }
+    },
+    download() {
+      this.isPrint = !this.isPrint;
+
+      var pdf = new jsPDF();
+      var element = document.getElementById('printPage');
+      var width= element.style.width;
+      var height = element.style.height;
+      html2canvas(element).then(canvas => {
+          var image = canvas.toDataURL('image/png');
+          pdf.addImage(image, 'JPEG', 15, 40, width, height);
+          pdf.save('printPage' + '.pdf');
+      });
     },
     downloadPDF() {
       this.isPrint = !this.isPrint
