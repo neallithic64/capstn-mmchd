@@ -1085,6 +1085,39 @@ const indexFunctions = {
 		}
 	},
 	
+	postEditCIFLab: async function(req, res) {
+		/* for the lab data, the records already exist, they're within CASE_DATA. */
+		let { caseID, caseData } = req.body;
+		try {
+			// collect all CASE_DATA records with the caseID and containing "lab" in fieldName
+			let rows = await db.exec(`SELECT * FROM mmchddb.CASE_DATA WHERE caseID = '${caseID}' AND fieldName LIKE 'lab%';`);
+			
+			// reconstruct array as an object for easier update
+			let labData = rows.reduce((r, i) => {
+				r[i.fieldName] = i.value;
+				return r;
+			}, {});
+			
+			console.log(labData);
+			consosle.log("~~~~~~~~~~~~~~ processing ~~~~~~~~~~~~~~");
+			// might be redundant?
+			let filtered = Object.keys(caseData)
+				.filter(key => key.includes("lab"))
+				.reduce((obj, key) => {
+					return { ...obj, [key]: caseData[key] };
+				}, {});
+			// update every attr in the object for the input information
+			Object.keys(labData).forEach(e => {
+				labData[e] = caseData[e];
+			});
+			console.log(labData);
+			res.status(200).send(labData);
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error.");
+		}
+	},
+	
 	postSubmitCases: async function(req, res) {
 		try {
 			// let {} = req.body;
