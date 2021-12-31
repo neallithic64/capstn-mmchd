@@ -12,7 +12,19 @@
         <div class="CRFstatus" style="align-text: right">
           <h3>Week No: {{ weekNo }} </h3>
           <div v-show="!isPrint" class="CRFActionButtons">
-            <img src="~/assets/img/pdf.png" class="printCRFButton" @click="downloadPDF" />
+            <ul class="CRFActionButton">
+              <img
+                src="~/assets/img/pdf.png"
+                class="printButton"
+                @click="downloadPDF"
+              />
+            </ul>
+            <ul class="CRFActionButton">
+              <img src="~/assets/img/csv.png" 
+              class="printButton"
+              @click="csvExport()"
+            />
+            </ul>
           </div>
         </div>
       </div>
@@ -190,6 +202,49 @@ export default {
       console.log(this.$refs.content)
       setTimeout(() => (this.isPrint = !this.isPrint), 5000)
     },
+    csvExport() {
+      let csvContent = "data:text/csv;charset=utf-8,";
+      let header = this.getCols();
+      let arrData = this.getTable();
+      // let header = Object.keys(arrData[0]).join(",");
+      csvContent += [
+        header,
+        ...arrData.map(item => Object.values(item).join(","))
+      ]
+        .join("\n")
+        .replace(/(^\[)|(\]$)/gm, "");
+
+      const data = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", data);
+      link.setAttribute("download", "CRF"+this.disease+".csv");
+      link.click();
+    },
+    getCols() {
+      var columns='';
+      for (let i=0; i<Object.keys(this.tableOptions.columns).length; i++) {
+        columns += this.tableOptions.columns[i].title;
+        if (i+1!==Object.keys(this.tableOptions.columns)) columns += ','
+      }
+      return columns;
+    },
+    getTable() {
+      let data = [];
+      for (let i=0; i<this.crfData.length; i++) {
+        let name = "\""+ this.crfData[i].patientName +"\"";
+        data[i] =  {
+          caseID : this.crfData[i].caseID,
+          patientName : name,
+          city : this.crfData[i].city,
+          ageNo : this.crfData[i].ageNo,
+          sex : this.crfData[i].sex,
+          reportDate : this.crfData[i].reportDate,
+          updatedDate : this.crfData[i].updatedDate,
+          caseLevel : this.crfData[i].caseLevel,
+        }
+      }
+      return data;
+    }
   },
 }
 </script>
@@ -227,6 +282,13 @@ body {
   justify-content: flex-end;
   align-items: center;
   cursor: pointer;
+}
+
+.printButton {
+  width: 30px;
+  height: 30px;
+  /* margin: 0 5px; */
+  margin: 5px;
 }
 
 h1 {

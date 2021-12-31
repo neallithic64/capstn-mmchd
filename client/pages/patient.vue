@@ -2,7 +2,7 @@
   <div id="viewPatient">
     <!--Top Bar of the screen-->
     <TopNav />
-    <div ref="content" class="viewPatient-container">
+    <div ref="content" class="viewPatient-container" id="printPage">
       <div class="viewPatient-details" style="align-text: left">
         <div class="patientNumbers">
           <h1 style="margin: -10px 0">Patient No. {{ formData.patient.patientID }}</h1>
@@ -1275,6 +1275,19 @@ export default {
         }
         else alert("Please fill up all required fields")
       }
+    },
+    download() {
+      this.isPrint = !this.isPrint;
+
+      var pdf = new jsPDF();
+      var element = document.getElementById('printPage');
+      var width= element.style.width;
+      var height = element.style.height;
+      html2canvas(element).then(canvas => {
+          var image = canvas.toDataURL('image/png');
+          pdf.addImage(image, 'JPEG', 15, 40, width, height);
+          pdf.save('printPage' + '.pdf');
+      });
     },
     downloadPDF() {
       this.isPrint = !this.isPrint

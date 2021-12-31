@@ -1859,7 +1859,7 @@
                       <label :for="i">
                         {{ name }}
                       </label>
-                      <div class="tooltip">
+                      <!-- <div class="tooltip">
                         <img
                           id="infofever"
                           class="info-icon-img"
@@ -1868,7 +1868,7 @@
                         <span class="tooltipText" style="width: 650px">{{
                           value
                         }}</span>
-                      </div>
+                      </div> -->
                     </div>
                   </div>
                 </div>
