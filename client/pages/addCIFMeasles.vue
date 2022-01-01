@@ -312,7 +312,7 @@
                     :disabled="inputEdit()" 
                     :class="isRequired()" 
                     required
-                    @change="getLocBrgyList(formData.patient.occuCity,'occuBarangay')">
+                    @change="getLocBrgyList()">
                     <option v-for="(city, i) in cityList" :key=i>{{city}}</option>
                   </select>
                 </div>
@@ -353,7 +353,7 @@
                     :disabled="inputEdit()" 
                     :class="isRequired()" 
                     required
-                    @change="getLocBrgyList(formData.patient.currCity,'currBarangay')"
+                    @change="getLocBrgyList()"
                     >
                     <option v-for="(city, i) in cityList" :key=i>{{city}}</option>
                   </select>
@@ -408,7 +408,7 @@
                     v-model="formData.patient.permCity"
                     name="permCity"
                     :disabled="inputEdit()"
-                    @change="getLocBrgyList(formData.patient.permCity,'permBarangay')"
+                    @change="getLocBrgyList()"
                   >
                   <option v-for="(city, i) in cityList" :key=i>{{city}}</option>
                   </select>
@@ -2683,7 +2683,8 @@ export default {
       if (this.sameAddress) {
         this.formData.patient.permHouseStreet = this.formData.patient.currHouseStreet;
         this.formData.patient.permCity = this.formData.patient.currCity;
-        this.getLocBrgyList(this.formData.patient.permCity,'permBarangay');
+        // this.getLocBrgyList(this.formData.patient.permCity,'permBarangay');
+        this.getLocBrgyList();
         this.formData.patient.permBrgy = this.formData.patient.currBrgy;
         // console.log(this.formData.patient.permBrgy,this.formData.patient.currBrgy)
       }
@@ -3016,35 +3017,61 @@ export default {
         }
       }
     },
-    getLocBrgyList(city, element) {
-      if (city) {
+    // getLocBrgyList(city, element) {
+    //   if (city) {
+    //     // eslint-disable-next-line no-console
+    //     console.log(city);
+    //     const dropdown1 = document.getElementById(element);
+    //     while (dropdown1.firstChild) dropdown1.removeChild(dropdown1.firstChild);
+
+    //     const defaultOption = document.createElement('option');
+    //     defaultOption.text = 'Choose Barangay';
+
+    //     dropdown1.add(defaultOption);
+    //     dropdown1.selectedIndex = 0;
+
+    //     axios.get('barangays.json').then(res => {
+    //         let option;
+    //         if (city!== 'Quezon City') city = city.replace(' City','');
+
+    //         this.locBrgyList = res.data[city].barangay_list;
+
+    //         for (let i = 0; i < this.locBrgyList.length; i++) {
+    //           option = document.createElement('option');
+    //           option.text = this.locBrgyList[i];
+    //           option.value = this.locBrgyList[i];
+    //           dropdown1.add(option);
+    //         }
+    //       })
+    //       // eslint-disable-next-line no-console
+    //       .catch(err => console.log(err))
+    //   }
+    getLocBrgyList() {
+      // eslint-disable-next-line no-console
+      console.log(this.healthEvent.locCity);
+      const dropdown1 = document.getElementById('locBrgy');
+      while (dropdown1.firstChild) dropdown1.removeChild(dropdown1.firstChild);
+
+      const defaultOption = document.createElement('option');
+      defaultOption.text = 'Choose Barangay';
+
+      dropdown1.add(defaultOption);
+      dropdown1.selectedIndex = 0;
+
+      axios.get('barangays.json').then(res => {
+          let option;
+
+          this.locBrgyList = res.data[this.formData.patient.currCity].barangay_list;
+
+          for (let i = 0; i < this.locBrgyList.length; i++) {
+            option = document.createElement('option');
+            option.text = this.locBrgyList[i];
+            option.value = this.locBrgyList[i];
+            dropdown1.add(option);
+          }
+        })
         // eslint-disable-next-line no-console
-        console.log(city);
-        const dropdown1 = document.getElementById(element);
-        while (dropdown1.firstChild) dropdown1.removeChild(dropdown1.firstChild);
-
-        const defaultOption = document.createElement('option');
-        defaultOption.text = 'Choose Barangay';
-
-        dropdown1.add(defaultOption);
-        dropdown1.selectedIndex = 0;
-
-        axios.get('barangays.json').then(res => {
-            let option;
-            if (city!== 'Quezon City') city = city.replace(' City','');
-
-            this.locBrgyList = res.data[city].barangay_list;
-
-            for (let i = 0; i < this.locBrgyList.length; i++) {
-              option = document.createElement('option');
-              option.text = this.locBrgyList[i];
-              option.value = this.locBrgyList[i];
-              dropdown1.add(option);
-            }
-          })
-          // eslint-disable-next-line no-console
-          .catch(err => console.log(err))
-      }
+        .catch(err => console.log(err))
     },
   },
 }
