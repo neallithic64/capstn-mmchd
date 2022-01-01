@@ -2746,7 +2746,7 @@ export default {
       // console.log(this.pageDone)
 
       this.$nextTick(() => {
-        if ((page === 1 || page === 8) && this.formData.patient.occuBrgy != null) {
+        if ((page === 1 || page === 10) && this.formData.patient.occuBrgy != null) {
           const dropdown = document.getElementById('occuBarangay');
           const defaultOption = document.createElement('option');
           defaultOption.text = this.formData.patient.occuBrgy;
@@ -2754,7 +2754,7 @@ export default {
           dropdown.selectedIndex = 0;
         }
 
-        if ((page === 1 || page === 8) && this.formData.patient.currBrgy != null) {
+        if ((page === 1 || page === 10) && this.formData.patient.currBrgy != null) {
           const dropdown = document.getElementById('currBarangay');
           const defaultOption = document.createElement('option');
           defaultOption.text = this.formData.patient.currBrgy;
@@ -2762,7 +2762,7 @@ export default {
           dropdown.selectedIndex = 0;
         }
 
-        if ((page === 1 || page === 8) && this.formData.patient.permBrgy != null) {
+        if ((page === 1 || page === 10) && this.formData.patient.permBrgy != null) {
           const dropdown = document.getElementById('permBarangay');
           const defaultOption = document.createElement('option');
           defaultOption.text = this.formData.patient.permBrgy;
