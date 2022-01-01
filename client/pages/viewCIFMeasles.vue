@@ -2334,6 +2334,7 @@ export default {
       isPrint: false,
       diseaseID: 'DI-0000000000000',
       caseDefs: [],
+	  cityList: [],
       pageNum: 1,
       formPart: 'Measles0',
       dateLastUpdated: '',
@@ -2675,6 +2676,14 @@ export default {
       console.log(this.$refs.content)
       setTimeout(() => (this.isPrint = !this.isPrint), 5000)
     },
+	async updateLab() {
+	  const serve = (await axios.post("http://localhost:8080/api/editCIFLab", {
+	    caseID: this.formData.cases.caseID,
+		caseData: this.formData.caseData
+	  })).data;
+	  // need to enable the lab fields
+	  /* if (this.$auth.user.SOMETHING === "") */
+	},
   },
 }
 </script>
