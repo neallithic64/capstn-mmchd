@@ -25,15 +25,15 @@ export default {
   middleware: 'is-auth',
   data() {
     return {
-      notifs: {}
+      notifs: []
     }
   },
   async fetch() {
     // need to fetch notifs here
-    this.notifs = (await axios.get('http://localhost:8080/api/getNotifs?userID=' + this.$auth.user.userID)).data;
+    const rows = (await axios.get('http://localhost:8080/api/getNotifs?userID=' + this.$auth.user.userID)).data;
     // create dateString for notif-time
     const currentDate = new Date();
-    this.notifs.forEach(function(element, index) {
+    rows.forEach(function(element, index) {
       const dateDiff = currentDate - new Date(element.dateCreated);
 
       if(dateDiff < 1000 * 60 * 60) // within an hour
@@ -42,8 +42,9 @@ export default {
         element.dateString = Math.floor(dateDiff / (1000 * 60 * 60)) + "h";
       else if(dateDiff < (1000 * 60 * 60 * 24 * 14)) // within 14 days
         element.dateString = Math.floor(dateDiff / (1000 * 60 * 60 * 24)) + "d";
-      else this.notifs.splice(index,1);
+      else rows.splice(index, 1);
     });
+    this.notifs = rows;
     // console.log(this.notifs);
   },
   methods: {
