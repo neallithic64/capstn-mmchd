@@ -2681,6 +2681,8 @@ export default {
 	    caseID: this.formData.cases.caseID,
 		caseData: this.formData.caseData
 	  })).data;
+	  // need to enable the lab fields
+	  /* if (this.$auth.user.SOMETHING === "") */
 	},
   },
 }

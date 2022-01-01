@@ -1108,9 +1108,12 @@ const indexFunctions = {
 				}, {});
 			// update every attr in the object for the input information
 			Object.keys(labData).forEach(e => {
+				// should call `filtered`, but might not need it
 				labData[e] = caseData[e];
 			});
 			console.log(labData);
+			// where updating happens
+			// await db.updateRows("mmchddb.CASE_DATA", labData);
 			res.status(200).send(labData);
 		} catch (e) {
 			console.log(e);
