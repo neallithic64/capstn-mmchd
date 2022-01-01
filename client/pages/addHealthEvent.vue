@@ -523,15 +523,23 @@ export default {
       // eslint-disable-next-line no-console
       console.log(this.healthEvent.locBrgy);
       this.$nextTick(() => {
+        // if ((page === 1 || page === 3) && this.healthEvent.locBrgy != null) {
+        //   for (let i = 0; i < this.locBrgyList.length; i++) {
+        //     const option = document.createElement('option');
+        //     option.text = this.locBrgyList[i];
+        //     option.value = this.locBrgyList[i];
+        //     document.getElementById('locBrgy').add(option);
+        //     if (this.healthEvent.locBrgy === this.locBrgyList[i])
+        //       document.getElementById('locBrgy').selectedIndex = i+1;
+        //   }
+        // }
         if ((page === 1 || page === 3) && this.healthEvent.locBrgy != null) {
-          for (let i = 0; i < this.locBrgyList.length; i++) {
-            const option = document.createElement('option');
-            option.text = this.locBrgyList[i];
-            option.value = this.locBrgyList[i];
-            document.getElementById('locBrgy').add(option);
-            if (this.healthEvent.locBrgy === this.locBrgyList[i])
-              document.getElementById('locBrgy').selectedIndex = i+1;
-          }
+          const dropdown = document.getElementById('locBrgy');
+          while (dropdown.firstChild) dropdown.removeChild(dropdown.firstChild);
+          const defaultOption = document.createElement('option');
+          defaultOption.text = this.healthEvent.locBrgy;
+          dropdown.add(defaultOption);
+          dropdown.selectedIndex = 0;
         }
       })
 
