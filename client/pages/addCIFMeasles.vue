@@ -96,6 +96,7 @@
                   <input
                     id="lastname"
                     v-model="formData.patient.lastName"
+                    class="input-form-field"
                     :class="isRequired()"
                     type="text"
                     :disabled="inputEdit()"
@@ -107,6 +108,7 @@
                   <input
                     id="firstname"
                     v-model="formData.patient.firstName"
+                    class="input-form-field"
                     :class="isRequired()"
                     type="text"
                     :disabled="inputEdit()"
@@ -118,6 +120,7 @@
                   <input
                     id="middlename"
                     v-model="formData.patient.midName"
+                    class="input-form-field"
                     :class="isRequired()"
                     type="text"
                     :disabled="inputEdit()"
@@ -134,6 +137,7 @@
                       id="birthdate"
                       v-model="formData.patient.birthDate"
                       :max="today"
+                      class="input-form-field"
                       :class="isRequired()"
                       type="date"
                       :disabled="inputEdit()"
@@ -146,6 +150,7 @@
                     <input
                       id="age"
                       v-model="formData.patient.ageNo"
+                      class="input-form-field"
                       :class="isRequired()"
                       type="number"
                       min="0"
@@ -167,7 +172,7 @@
                         name="sex"
                         type="radio"
                         :disabled="inputEdit()"
-                        :class="optionsRequired()"
+                        :class="isRequired()"
                         required
                       />
                       <label for="Female"> Female </label>
@@ -181,7 +186,7 @@
                         name="sex"
                         type="radio"
                         :disabled="inputEdit()"
-                        :class="optionsRequired()"
+                        :class="isRequired()"
                         required
                       />
                       <label for="Male"> Male </label>
@@ -196,8 +201,9 @@
                         name="pregWeeks"
                         type="radio"
                         value="Not Pregnant"
+                        class="input-radio"
                         :disabled="inputEdit()"
-                        :class="optionsRequired()"
+                        :class="isRequired()"
                         required
                       />
                       <label for="Not Pregnant"> Not Pregnant </label>
@@ -208,8 +214,9 @@
                         id="pregnancyWeeks"
                         name="pregWeeks"
                         type="radio"
+                        class="input-radio"
                         :disabled="inputEdit()"
-                        :class="optionsRequired()"
+                        :class="isRequired()"
                         required
                       />
                       <label for="pregnancyWeeks" style="display: inline-flex">
@@ -268,6 +275,7 @@
                   <input
                     id="occupation"
                     v-model="formData.patient.occupation"
+                    class="input-form-field"
                     :class="isRequired()"
                     type="text"
                     :disabled="inputEdit()"
@@ -279,6 +287,7 @@
                   <input
                     id="occuLoc"
                     v-model="formData.patient.occuLoc"
+                    class="input-form-field"
                     :class="isRequired()"
                     type="text"
                     :disabled="inputEdit()"
@@ -295,6 +304,7 @@
                   <input
                     id="occuStreet"
                     v-model="formData.patient.occuStreet"
+                    class="input-form-field"
                     :class="isRequired()"
                     type="text"
                     :disabled="inputEdit()"
@@ -310,6 +320,7 @@
                     v-model="formData.patient.occuCity" 
                     name="occuCity" 
                     :disabled="inputEdit()" 
+                    class="input-form-field"
                     :class="isRequired()" 
                     required
                     @change="getLocBrgyList(formData.patient.occuCity, 'occuBarangay')">
@@ -321,6 +332,7 @@
                   <select
                     id="occuBarangay"
                     v-model="formData.patient.occuBrgy"
+                    class="input-form-field"
                     :class="isRequired()"
                     name="occuBarangay"
                     :disabled="inputEdit()"
@@ -336,6 +348,7 @@
                   <input
                     id="currentAddress"
                     v-model="formData.patient.currHouseStreet"
+                    class="input-form-field"
                     :class="isRequired()"
                     type="text"
                     :disabled="inputEdit()"
@@ -351,6 +364,7 @@
                     v-model="formData.patient.currCity" 
                     name="currCity" 
                     :disabled="inputEdit()" 
+                    class="input-form-field"
                     :class="isRequired()" 
                     required
                     @change="getLocBrgyList(formData.patient.currCity, 'currBarangay')"
@@ -363,6 +377,7 @@
                   <select
                     id="currBarangay"
                     v-model="formData.patient.currBrgy"
+                    class="input-form-field"
                     :class="isRequired()"
                     name="currBarangay"
                     :disabled="inputEdit()"
@@ -377,6 +392,7 @@
                   <input
                     id="sameAddress"
                     v-model="sameAddress"
+                    class="input-form-field"
                     :class="isRequired()"
                     type="checkbox"
                     :disabled="inputEdit()"
@@ -406,6 +422,7 @@
                   <select
                     id="permCity"
                     v-model="formData.patient.permCity"
+                    class="input-form-field"
                     name="permCity"
                     :disabled="inputEdit()"
                   >
@@ -417,7 +434,7 @@
                   <select
                     id="permBarangay"
                     v-model="formData.patient.permBrgy"
-                    :class="isRequired()"
+                    class="input-form-field"
                     name="permBarangay"
                     :disabled="inputEdit()"
                   >
@@ -433,6 +450,7 @@
                   <input
                     id="contactperson"
                     v-model="formData.patient.guardianName"
+                    class="input-form-field"
                     :class="isRequired()"
                     type="text"
                     :disabled="inputEdit()"
@@ -444,6 +462,7 @@
                   <input
                     id="contactpersonNum"
                     v-model="formData.patient.guardianContact"
+                    class="input-form-field"
                     :class="isRequired()"
                     type="number"
                     :disabled="inputEdit()"
@@ -458,6 +477,7 @@
                   <input
                     id="HCPN"
                     v-model="formData.patient.HCPN"
+                    class="input-form-field"
                     :class="isRequired()"
                     type="text"
                     :disabled="inputEdit()"
@@ -468,6 +488,7 @@
                   <input
                     id="ILHZ"
                     v-model="formData.patient.ILHZ"
+                    class="input-form-field"
                     :class="isRequired()"
                     type="text"
                     :disabled="inputEdit()"
@@ -495,7 +516,7 @@
                         name="patientAdmitted"
                         type="radio"
                         :disabled="inputEdit()"
-                        :class="optionsRequired()"
+                        :class="isRequired()"
                         required
                       />
                       <label for="yesAdmitted"> Yes </label>
@@ -509,7 +530,7 @@
                         name="patientAdmitted"
                         type="radio"
                         :disabled="inputEdit()"
-                        :class="optionsRequired()"
+                        :class="isRequired()"
                         required
                       />
                       <label for="noAdmitted"> No </label>
@@ -523,6 +544,7 @@
                       id="dateAdmitted"
                       v-model="formData.cases.dateAdmitted"
                       :max="today"
+                      class="input-form-field"
                       :class="isRequired()"
                       type="date"
                       :disabled="inputEdit()"
@@ -541,6 +563,7 @@
                     id="reportDate"
                     v-model="formData.cases.reportDate"
                     :max="today"
+                    class="input-form-field"
                     :class="isRequired()"
                     type="date"
                     :disabled="inputEdit()"
@@ -552,6 +575,7 @@
                   <input
                     id="reporter"
                     v-model="formData.cases.reporterName"
+                    class="input-form-field"
                     :class="isRequired()"
                     type="text"
                     :disabled="inputEdit()"
@@ -565,6 +589,7 @@
                   <input
                     id="reporterNum"
                     v-model="formData.cases.reporterContact"
+                    class="input-form-field"
                     :class="isRequired()"
                     type="number"
                     :disabled="inputEdit()"
@@ -603,8 +628,9 @@
                               value="LNone"
                               name="riskFactorsL"
                               type="checkbox"
+                              class="input-radio"
                               :disabled="inputEdit()"
-                              :class="optionsRequired()"
+                              :class="isRequired()"
                               required
                             />
                             <label for="LNone">None</label>
@@ -704,8 +730,9 @@
                               value="CNone"
                               name="riskFactorsC"
                               type="checkbox"
+                              class="input-radio"
                               :disabled="inputEdit()"
-                              :class="optionsRequired()"
+                              :class="isRequired()"
                               required
                             />
                             <label for="CNone">None</label>
@@ -777,8 +804,9 @@
                               value="HNone"
                               name="riskFactorsH"
                               type="checkbox"
+                              class="input-radio"
                               :disabled="inputEdit()"
-                              :class="optionsRequired()"
+                              :class="isRequired()"
                               required
                             />
                             <label for="HNone">None</label>
@@ -876,8 +904,9 @@
                               value="ONone"
                               name="riskFactorsO"
                               type="checkbox"
+                              class="input-radio"
                               :disabled="inputEdit()"
-                              :class="optionsRequired()"
+                              :class="isRequired()"
                               required
                             />
                             <label for="ONone">None</label>
@@ -1285,7 +1314,7 @@
                       name="mcv"
                       type="radio"
                       :disabled="inputEdit()"
-                      :class="optionsRequired()"
+                      :class="isRequired()"
                       required
                     />
                     <label for="mcvNo"> No </label>
@@ -1299,7 +1328,7 @@
                       name="mcv"
                       type="radio"
                       :disabled="inputEdit()"
-                      :class="optionsRequired()"
+                      :class="isRequired()"
                       required
                     />
                     <label for="mcvYes"> Yes </label>
@@ -1359,6 +1388,7 @@
                     id="MCVlastDoseDate"
                     v-model="formData.caseData.MCVlastDoseDate"
                     :max="today"
+                    class="input-form-field"
                     :class="isRequired()"
                     type="date"
                     style="width: 175px; height: 25px"
@@ -1380,7 +1410,7 @@
                       name="MCVvalidation"
                       type="radio"
                       :disabled="inputEdit()"
-                      :class="optionsRequired()"
+                      :class="isRequired()"
                       required
                     />
                     <label for="Vaccination Card"> Vaccination Card </label>
@@ -1395,7 +1425,7 @@
                       name="MCVvalidation"
                       type="radio"
                       :disabled="inputEdit()"
-                      :class="optionsRequired()"
+                      :class="isRequired()"
                       required
                     />
                     <label for="Logsheet"> Logsheet </label>
@@ -1410,7 +1440,7 @@
                       name="MCVvalidation"
                       type="radio"
                       :disabled="inputEdit()"
-                      :class="optionsRequired()"
+                      :class="isRequired()"
                       required
                     />
                     <label for="By recall"> By recall </label>
@@ -1424,7 +1454,7 @@
                       name="MCVvalidation"
                       type="radio"
                       :disabled="inputEdit()"
-                      :class="optionsRequired()"
+                      :class="isRequired()"
                       required
                     />
                     <label for="VaccineValidateOthers" style="display: inline-flex">
@@ -1455,7 +1485,7 @@
                         name="MCVCampaign"
                         type="radio"
                         :disabled="inputEdit()"
-                        :class="optionsRequired()"
+                        :class="isRequired()"
                         required
                       />
                       <label for="VaxCampaignNo"> No </label>
@@ -1469,7 +1499,7 @@
                         name="MCVCampaign"
                         type="radio"
                         :disabled="inputEdit()"
-                        :class="optionsRequired()"
+                        :class="isRequired()"
                         required
                       />
                       <label for="VaxCampaignYes"> Yes </label>
@@ -1492,7 +1522,7 @@
                         name="noMCVreason"
                         type="checkbox"
                         :disabled="inputEdit()"
-                        :class="optionsRequired()"
+                        :class="isRequired()"
                         required
                       />
                       <label v-if="i > 0" :for="reason" style="display: inline-flex">
@@ -1540,7 +1570,7 @@
                       name="vitA"
                       type="radio"
                       :disabled="inputEdit()"
-                      :class="optionsRequired()"
+                      :class="isRequired()"
                       required
                     />
                     <label for="vitANo"> No </label>
@@ -1554,7 +1584,7 @@
                       name="vitA"
                       type="radio"
                       :disabled="inputEdit()"
-                      :class="optionsRequired()"
+                      :class="isRequired()"
                       required
                     />
                     <label for="vitAYes"> Yes </label>
@@ -1587,7 +1617,7 @@
                           name="travelHistory"
                           type="radio"
                           :disabled="inputEdit()"
-                          :class="optionsRequired()"
+                          :class="isRequired()"
                           required
                         />
                         <label for="noHistory"> No </label>
@@ -1601,7 +1631,7 @@
                           name="travelHistory"
                           type="radio"
                           :disabled="inputEdit()"
-                          :class="optionsRequired()"
+                          :class="isRequired()"
                           required
                         />
                         <label for="yesHistory"> Yes </label>
@@ -1618,6 +1648,7 @@
                     <input
                       id="travelHistoryPlace"
                       v-model="formData.caseData.travelHistoryPlace"
+                      class="input-form-field"
                       :class="isRequired()"
                       type="text"
                       :disabled="inputEdit()"
@@ -1633,6 +1664,7 @@
                         id="travelHistoryDate"
                         v-model="formData.caseData.travelHistoryDate"
                         :max="today"
+                        class="input-form-field"
                         :class="isRequired()"
                         type="date"
                         :disabled="inputEdit()"
@@ -1650,7 +1682,7 @@
                           name="travelDaysRashOnset"
                           type="radio"
                           :disabled="inputEdit()"
-                          :class="optionsRequired()"
+                          :class="isRequired()"
                           required
                         />
                         <label for="less"> &lt; 7 days </label>
@@ -1664,7 +1696,7 @@
                           name="travelDaysRashOnset"
                           type="radio"
                           :disabled="inputEdit()"
-                          :class="optionsRequired()"
+                          :class="isRequired()"
                           required
                         />
                         <label for="more"> 7-23 days </label>
@@ -1689,7 +1721,7 @@
                           name="expContactMeasles"
                           type="radio"
                           :disabled="inputEdit()"
-                          :class="optionsRequired()"
+                          :class="isRequired()"
                           required
                         />
                         <label for="noMeasles"> No </label>
@@ -1703,7 +1735,7 @@
                           name="expContactMeasles"
                           type="radio"
                           :disabled="inputEdit()"
-                          :class="optionsRequired()"
+                          :class="isRequired()"
                           required
                         />
                         <label for="unknownMeasles"> Unknown </label>
@@ -1717,7 +1749,7 @@
                           name="expContactMeasles"
                           type="radio"
                           :disabled="inputEdit()"
-                          :class="optionsRequired()"
+                          :class="isRequired()"
                           required
                         />
                         <label for="yesMeasles"> Yes </label>
@@ -1742,7 +1774,7 @@
                           name="expContactRubella"
                           type="radio"
                           :disabled="inputEdit()"
-                          :class="optionsRequired()"
+                          :class="isRequired()"
                           required
                         />
                         <label for="noRubella"> No </label>
@@ -1756,7 +1788,7 @@
                           name="expContactRubella"
                           type="radio"
                           :disabled="inputEdit()"
-                          :class="optionsRequired()"
+                          :class="isRequired()"
                           required
                         />
                         <label for="unknownRubella"> Unknown </label>
@@ -1770,7 +1802,7 @@
                           name="expContactRubella"
                           type="radio"
                           :disabled="inputEdit()"
-                          :class="optionsRequired()"
+                          :class="isRequired()"
                           required
                         />
                         <label for="yesRubella"> Yes </label>
@@ -1788,6 +1820,7 @@
                       <input
                         id="expContactName"
                         v-model="formData.caseData.expContactName"
+                        class="input-form-field"
                         :class="isRequired()"
                         type="text"
                         :disabled="inputEdit()"
@@ -1801,6 +1834,7 @@
                       <input
                         id="expContactPlace"
                         v-model="formData.caseData.expContactPlace"
+                        class="input-form-field"
                         :class="isRequired()"
                         type="text"
                         :disabled="inputEdit()"
@@ -1815,6 +1849,7 @@
                         id="expContactDate"
                         v-model="formData.caseData.expContactDate"
                         :max="today"
+                        class="input-form-field"
                         :class="isRequired()"
                         type="date"
                         :disabled="inputEdit()"
@@ -1836,7 +1871,7 @@
                           name="expPlaceType"
                           type="radio"
                           :disabled="inputEdit()"
-                          :class="optionsRequired()"
+                          :class="isRequired()"
                           required
                         />
                         <label for="Day care"> Day care </label>
@@ -1850,7 +1885,7 @@
                           name="expPlaceType"
                           type="radio"
                           :disabled="inputEdit()"
-                          :class="optionsRequired()"
+                          :class="isRequired()"
                           required
                         />
                         <label for="Barangay"> Barangay </label>
@@ -1864,7 +1899,7 @@
                           name="expPlaceType"
                           type="radio"
                           :disabled="inputEdit()"
-                          :class="optionsRequired()"
+                          :class="isRequired()"
                           required
                         />
                         <label for="Home"> Home </label>
@@ -1878,7 +1913,7 @@
                           name="expPlaceType"
                           type="radio"
                           :disabled="inputEdit()"
-                          :class="optionsRequired()"
+                          :class="isRequired()"
                           required
                         />
                         <label for="School"> School </label>
@@ -1892,7 +1927,7 @@
                           name="expPlaceType"
                           type="radio"
                           :disabled="inputEdit()"
-                          :class="optionsRequired()"
+                          :class="isRequired()"
                           required
                         />
                         <label for="Health Care Facility">
@@ -1908,7 +1943,7 @@
                           name="expPlaceType"
                           type="radio"
                           :disabled="inputEdit()"
-                          :class="optionsRequired()"
+                          :class="isRequired()"
                           required
                         />
                         <label for="Dormitory"> Dormitory </label>
@@ -1922,7 +1957,7 @@
                           name="expPlaceType"
                           type="radio"
                           :disabled="inputEdit()"
-                          :class="optionsRequired()"
+                          :class="isRequired()"
                           required
                         />
                         <label for="ExposurePlaceTypeOthers" style="display: inline-flex">
@@ -1956,7 +1991,7 @@
                           name="otherCommunityCases"
                           type="radio"
                           :disabled="inputEdit()"
-                          :class="optionsRequired()"
+                          :class="isRequired()"
                           required
                         />
                         <label for="noCommunityCases"> No </label>
@@ -1970,7 +2005,7 @@
                           name="otherCommunityCases"
                           type="radio"
                           :disabled="inputEdit()"
-                          :class="optionsRequired()"
+                          :class="isRequired()"
                           required
                         />
                         <label for="unknownCommunityCases"> Unknown </label>
@@ -1984,7 +2019,7 @@
                           name="otherCommunityCases"
                           type="radio"
                           :disabled="inputEdit()"
-                          :class="optionsRequired()"
+                          :class="isRequired()"
                           required
                         />
                         <label for="yesCommunityCases"> Yes </label>
@@ -2025,7 +2060,7 @@
                                 name="finalClassification"
                                 type="radio"
                                 :disabled="inputEdit()"
-                                :class="optionsRequired()"
+                                :class="isRequired()"
                                 required
                               />
                               {{ name }}
@@ -2063,8 +2098,9 @@
                       :value="source"
                       name="product"
                       type="radio"
+                      class="input-radio"
                       :disabled="inputEdit()"
-                      :class="optionsRequired()"
+                      :class="isRequired()"
                       required
                     />
                     <label :for="source">{{ source }}</label>
@@ -2094,7 +2130,7 @@
                         name="outcome"
                         type="radio"
                         :disabled="inputEdit()"
-                        :class="optionsRequired()"
+                        :class="isRequired()"
                         required
                       />
                       <label for="Alive"> Alive </label>
@@ -2109,7 +2145,7 @@
                         name="outcome"
                         type="radio"
                         :disabled="inputEdit()"
-                        :class="optionsRequired()"
+                        :class="isRequired()"
                         required
                       />
                       <label for="Dead"> Dead </label>
@@ -2123,6 +2159,7 @@
                         id="dateDied"
                         v-model="formData.caseData.dateDied"
                         :max="today"
+                        class="input-form-field"
                         :class="isRequired()"
                         style="width: 175px"
                         type="date"
@@ -2142,6 +2179,7 @@
                   <input
                     id="finalDiagnosis"
                     v-model="formData.caseData.finalDiagnosis"
+                    class="input-form-field"
                     :class="isRequired()"
                     style="width: 50%"
                     type="text"
@@ -2172,7 +2210,7 @@
                       name="labTest"
                       type="radio"
                       :disabled="inputEdit()"
-                      :class="optionsRequired()"
+                      :class="isRequired()"
                       required
                     />
                     <label for="noLabTest"> No </label>
@@ -2186,7 +2224,7 @@
                       name="labTest"
                       type="radio"
                       :disabled="inputEdit()"
-                      :class="optionsRequired()"
+                      :class="isRequired()"
                       required
                     />
                     <label for="processingLabTest"> Processing </label>
@@ -2200,7 +2238,7 @@
                       name="labTest"
                       type="radio"
                       :disabled="inputEdit()"
-                      :class="optionsRequired()"
+                      :class="isRequired()"
                       required
                     />
                     <label for="yesLabTest"> Yes </label>
@@ -2214,7 +2252,8 @@
                       v-model="formData.cases.investigatorLab"
                       name="investigatorLab"
                       :disabled="inputEdit()"
-                      :class="optionsRequired()"
+                      class="input-form-field"
+                      :class="isRequired()"
                       required>
                     <option v-for="(lab, i) in labList" :key=i :value=lab.userID> {{ lab.druName }} </option>
                   </select>
@@ -2230,7 +2269,8 @@
                       name="labSpecimen" 
                       style="width: 300px" 
                       :disabled="inputEdit()"
-                      :class="optionsRequired()"
+                      class="input-form-field"
+                      :class="isRequired()"
                       required>
                     <option value="Serum">Serum</option>
                     <option value="Dried Blood Spot">Dried Blood Spot</option>
@@ -2250,7 +2290,7 @@
                       class="input-form-field"
                       type="date"
                       :disabled="inputEdit()"
-                      :class="optionsRequired()"
+                      :class="isRequired()"
                       required
                     />
                   </div>
@@ -2265,7 +2305,7 @@
                       class="input-form-field"
                       type="date"
                       :disabled="inputEdit()"
-                      :class="optionsRequired()"
+                      :class="isRequired()"
                       required
                     />
                   </div>
@@ -2280,7 +2320,7 @@
                       class="input-form-field"
                       type="date"
                       :disabled="inputEdit()"
-                      :class="optionsRequired()"
+                      :class="isRequired()"
                       required
                     />
                   </div>
@@ -2297,7 +2337,7 @@
                       class="input-form-field"
                       type="text"
                       :disabled="inputEdit()"
-                      :class="optionsRequired()"
+                      :class="isRequired()"
                       required
                     />
                   </div>
@@ -2311,7 +2351,7 @@
                       class="input-form-field"
                       type="text"
                       :disabled="inputEdit()"
-                      :class="optionsRequired()"
+                      :class="isRequired()"
                       required
                     />
                   </div>
@@ -2328,7 +2368,7 @@
                       class="input-form-field"
                       type="text"
                       :disabled="inputEdit()"
-                      :class="optionsRequired()"
+                      :class="isRequired()"
                       required
                     />
                   </div>
@@ -2342,7 +2382,7 @@
                       class="input-form-field"
                       type="text"
                       :disabled="inputEdit()"
-                      :class="optionsRequired()"
+                      :class="isRequired()"
                       required
                     />
                   </div>
@@ -2360,7 +2400,7 @@
                       class="input-form-field"
                       type="date"
                       :disabled="inputEdit()"
-                      :class="optionsRequired()"
+                      :class="isRequired()"
                       required
                     />
                   </div>
@@ -2374,7 +2414,7 @@
                       class="input-form-field"
                       type="text"
                       :disabled="inputEdit()"
-                      :class="optionsRequired()"
+                      :class="isRequired()"
                       required
                     />
                   </div>
@@ -2388,7 +2428,7 @@
                       class="input-form-field"
                       type="number"
                       :disabled="inputEdit()"
-                      :class="optionsRequired()"
+                      :class="isRequired()"
                       required
                     />
                   </div>
@@ -2973,12 +3013,7 @@ export default {
       if (this.pageDone[page]) this.pageColor[page] = true;
     },
     isRequired() {
-      if (this.pageDone[this.pageNum]) return "input-form-field";
-      else return "input-form-field input-required";
-    },
-    optionsRequired() {
-      if (this.pageDone[this.pageNum]) return "input-radio";
-      else return "input-radio input-required"
+      if (!this.pageDone[this.pageNum]) return "input-required";
     },
     inputEdit() {
       if (this.pageNum === Object.keys(this.disease.formNames).length) {
