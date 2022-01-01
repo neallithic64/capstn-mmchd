@@ -600,7 +600,7 @@
                           <div style="display: flex; align-items: center;">
                             <input
                               id="LNone"
-                              v-model="riskFactors.lifestyle"
+                              v-model="riskFactors.Lifestyle"
                               value="LNone"
                               name="riskFactorsL"
                               type="checkbox"
@@ -774,7 +774,7 @@
                           <div style="display: flex; align-items: center;">
                             <input
                               id="HNone"
-                              v-model="riskFactors.Hsitorical"
+                              v-model="riskFactors.Historical"
                               value="HNone"
                               name="riskFactorsH"
                               type="checkbox"
@@ -2677,7 +2677,18 @@ export default {
     },
     getAge() {
       const today = new Date();
-      this.formData.patient.ageNo = today.getFullYear() - parseInt(this.formData.patient.birthDate.substr(0,4));
+      const age = today.getFullYear() - parseInt(this.formData.patient.birthDate.substr(0,4));
+      console.log(today.getMonth()+1)
+      console.log(parseInt(this.formData.patient.birthDate.substr(5,2)))
+      if (today.getMonth()+1>parseInt(this.formData.patient.birthDate.substr(5,2))) this.formData.patient.ageNo = age;
+      else if (today.getMonth()+1===parseInt(this.formData.patient.birthDate.substr(5,2))) {
+        console.log(today)
+        console.log(parseInt(this.formData.patient.birthDate.substr(8,2)))
+        if (today.getDate()>=parseInt(this.formData.patient.birthDate.substr(8,2))) this.formData.patient.ageNo = age;
+        else this.formData.patient.ageNo = age-1;
+      }
+      else this.formData.patient.ageNo = age-1;
+      if (this.formData.patient.ageNo<0) this.formData.patient.ageNo = 0;
     },
     getAddress() {
       if (this.sameAddress) {
