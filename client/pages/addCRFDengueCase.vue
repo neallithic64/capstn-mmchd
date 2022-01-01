@@ -409,7 +409,6 @@
                     v-model="formData.patient.permCity"
                     name="permCity"
                     :disabled="inputEdit()"
-                    @change="getLocBrgyList(formData.patient.permCity,'permBarangay')"
                   >
                   <option v-for="(city, i) in cityList" :key=i>{{city}}</option>
                   </select>
@@ -1744,22 +1743,22 @@ export default {
       },
       classification: {},
       cityList: [
-        'Caloocan City',
-        'Las Piñas City',
-        'Makati City',
-        'Malabon City',
-        'Mandaluyong City',
-        'Manila City',
-        'Marikina City',
-        'Muntinlupa City',
-        'Navotas City',
-        'Parañaque City',
-        'Pasay City',
-        'Pasig City',
+        'Caloocan',
+        'Las Piñas',
+        'Makati',
+        'Malabon',
+        'Mandaluyong',
+        'Manila',
+        'Marikina',
+        'Muntinlupa',
+        'Navotas',
+        'Parañaque',
+        'Pasay',
+        'Pasig',
         'Quezon City',
-        'San Juan City',
-        'Taguig City',
-        'Valenzuela City',
+        'San Juan',
+        'Taguig',
+        'Valenzuela',
       ],
       clinicalClassification: [
         {name: 'Dengue Without Warning Signs',
@@ -1872,6 +1871,35 @@ export default {
         this.$forceUpdate();
       }
       // console.log(this.pageDone)
+
+      this.$nextTick(() => {
+        if ((page === 1 || page === 8) && this.formData.patient.occuBrgy != null) {
+          const dropdown = document.getElementById('occuBrgy');
+          while (dropdown.firstChild) dropdown.removeChild(dropdown.firstChild);
+          const defaultOption = document.createElement('option');
+          defaultOption.text = this.formData.patient.occuBrgy;
+          dropdown.add(defaultOption);
+          dropdown.selectedIndex = 0;
+        }
+
+        if ((page === 1 || page === 8) && this.formData.patient.currBrgy != null) {
+          const dropdown = document.getElementById('currBarangay');
+          while (dropdown.firstChild) dropdown.removeChild(dropdown.firstChild);
+          const defaultOption = document.createElement('option');
+          defaultOption.text = this.formData.patient.currBrgy;
+          dropdown.add(defaultOption);
+          dropdown.selectedIndex = 0;
+        }
+
+        if ((page === 1 || page === 8) && this.formData.patient.permBrgy != null) {
+          const dropdown = document.getElementById('permBarangay');
+          while (dropdown.firstChild) dropdown.removeChild(dropdown.firstChild);
+          const defaultOption = document.createElement('option');
+          defaultOption.text = this.formData.patient.permBrgy;
+          dropdown.add(defaultOption);
+          dropdown.selectedIndex = 0;
+        }
+      })
     },
     validateForm(page) {
       switch (page) {
@@ -2100,8 +2128,9 @@ export default {
       if (this.sameAddress) {
         this.formData.patient.permHouseStreet = this.formData.patient.currHouseStreet;
         this.formData.patient.permCity = this.formData.patient.currCity;
-        this.getLocBrgyList(this.formData.patient.permCity,'permBarangay');
-        this.formData.patient.permBrgy = this.formData.patient.currBrgy;
+        this.getBrgy();
+        // this.getLocBrgyList(this.formData.patient.permCity,'permBarangay');
+        // this.formData.patient.permBrgy = this.formData.patient.currBrgy;
         // console.log(this.formData.patient.permBrgy,this.formData.patient.currBrgy)
       }
       else {
@@ -2125,7 +2154,6 @@ export default {
 
         axios.get('barangays.json').then(res => {
             let option;
-            if (city!== 'Quezon City') city = city.replace(' City','');
 
             this.locBrgyList = res.data[city].barangay_list;
 
@@ -2139,6 +2167,20 @@ export default {
           // eslint-disable-next-line no-console
           .catch(err => console.log(err))
       }
+    },
+    getBrgy() {
+      const perm = document.getElementById('permBarangay');
+      const defaultOption = document.createElement('option');
+      defaultOption.text = this.formData.patient.currBrgy;
+      perm.add(defaultOption);
+      perm.selectedIndex = 0;
+
+      this.formData.patient.permBrgy = this.formData.patient.currBrgy;
+
+      // eslint-disable-next-line no-console
+      console.log(this.formData.patient.permBrgy)
+      // eslint-disable-next-line no-console
+      console.log(this.formData.patient.currBrgy)
     },
   },
 }
