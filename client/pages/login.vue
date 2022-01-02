@@ -53,13 +53,18 @@ export default {
       title: 'Login'
   },
   data() {
-      return {
-          userEmail: '',
-          userPassword: '', 
-          genError: '',
-          emailError: '',
-          passError: ''
-      }
+    return {
+      userEmail: '',
+      userPassword: '', 
+      genError: '',
+      emailError: '',
+      passError: ''
+    }
+  },
+  head() {
+    return {
+      title: 'IDSR Login'
+    }
   },
   methods: {
     checkForm(e) {
@@ -100,6 +105,7 @@ export default {
             },
           })
           this.$router.push('/');
+          this.$toast.success('Successfully authenticated', {duration: 1000});
         } catch (e) {
           // eslint-disable-next-line no-console
             console.log(e.response);
