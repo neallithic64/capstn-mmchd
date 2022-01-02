@@ -2008,8 +2008,17 @@
 
         <form v-if="pageNum == 9 || isPrint" id="measles9" type="submit">
           <div id="case-investigation-form" class="center">
-            <h2 id="form-header">
+            <h2 id="form-header" style="display: inline-flex;">
               {{ Object.values(disease.formNames)[9] }}
+              <!-- ADD this in ul v-show below: 
+                && $auth.user.userID === formData.cases.investigatorLab -->
+              <ul
+                v-show="!isPrint && !editLab"
+                class="CIFEdit"
+                @click="editLab=true"
+              >
+                <img src="~/assets/img/pen.png" />
+              </ul>
             </h2>
             <div class="vaccine-field field">
               <label class="required" style="margin-right: 50px">
@@ -2019,50 +2028,65 @@
                 <div class="center-center">
                   <input
                     id="noLabTest"
-                    v-model="hasLabTest"
+                    v-model="newLabData.hasLabTest"
                     value="No"
                     class="input-radio"
                     name="labTest"
                     type="radio"
                     :disabled="inputEdit()"
+                    :class="isRequired()"
+                    required
                   />
                   <label for="noLabTest"> No </label>
                 </div>
                 <div class="center-center" style="margin: 0 20px">
                   <input
                     id="processingLabTest"
-                    v-model="hasLabTest"
+                    v-model="newLabData.hasLabTest"
                     value="Processing"
                     class="input-radio"
                     name="labTest"
                     type="radio"
                     :disabled="inputEdit()"
+                    :class="isRequired()"
+                    required
                   />
                   <label for="processingLabTest"> Processing </label>
                 </div>
                 <div class="center-center" style="margin: 0 20px">
                   <input
                     id="yesLabTest"
-                    v-model="hasLabTest"
+                    v-model="newLabData.hasLabTest"
                     value="Yes"
                     class="input-radio"
                     name="labTest"
                     type="radio"
                     :disabled="inputEdit()"
+                    :class="isRequired()"
+                    required
                   />
                   <label for="yesLabTest"> Yes </label>
                 </div>
               </div>
             </div>
 
-            <div v-show="hasLabTest==='No'">
+            <div v-show="newLabData.hasLabTest==='No'">
               <div class="name-field" style="width:50%">
                 <label for="investigatorLab" class="required"> Choose Lab to forward the case to </label>
-                <input v-model="formData.cases.investigatorLab" name="investigatorLab" :disabled="inputEdit()"/>
+                  <select id="investigatorLab"
+                      v-model="newLabData.investigatorLab"
+                      name="investigatorLab"
+                      :disabled="inputEdit()"
+                      class="input-form-field"
+                      :class="isRequired()"
+                      required
+                    >
+                    <option v-for="(lab, i) in labList" :key=i :value=lab.userID> {{ lab.druName }} </option>
+                  </select>
               </div>
             </div>
 
-            <div v-show="hasLabTest==='Yes'">
+            <div v-show="newLabData.hasLabTest==='Yes'">
               <div
                 class="field"
                 style="display: inline-flex; flex-direction: row"
@@ -2073,10 +2097,13 @@
                 </label>
                 <select
                   id="labspecimen"
-                  v-model="formData.caseData.labspecimen"
+                  v-model="newLabData.labspecimen"
                   name="labspecimen"
                   style="width: 300px"
                   :disabled="inputEdit()"
+                  class="input-form-field"
+                  :class="isRequired()"
+                  required
                 >
                   <option value="Serum">Serum</option>
                   <option value="Dried Blood Spot">Dried Blood Spot</option>
@@ -2093,10 +2120,12 @@
                   </label>
                   <input
                     id="labDateCollected"
-                    v-model="formData.cases.labDateCollected"
+                    v-model="newLabData.labDateCollected"
                     class="input-form-field"
                     type="date"
                     :disabled="inputEdit()"
+                    :class="isRequired()"
+                    required
                   />
                 </div>
                 <div class="field">
@@ -2105,10 +2134,12 @@
                   </label>
                   <input
                     id="labDateSent"
-                    v-model="formData.cases.labDateSent"
+                    v-model="newLabData.labDateSent"
                     class="input-form-field"
                     type="date"
                     :disabled="inputEdit()"
+                    :class="isRequired()"
+                    required
                   />
                 </div>
                 <div class="field">
@@ -2117,10 +2148,12 @@
                   </label>
                   <input
                     id="labDateReceived"
-                    v-model="formData.cases.labDateReceived"
+                    v-model="newLabData.labDateReceived"
                     class="input-form-field"
                     type="date"
                     :disabled="inputEdit()"
+                    :class="isRequired()"
+                    required
                   />
                 </div>
               </div>
@@ -2132,10 +2165,12 @@
                   </label>
                   <input
                     id="labMeaslesResult"
-                    v-model="formData.cases.labMeaslesResult"
+                    v-model="newLabData.labMeaslesResult"
                     class="input-form-field"
                     type="text"
                     :disabled="inputEdit()"
+                    :class="isRequired()"
+                    required
                   />
                 </div>
                 <div class="field">
@@ -2144,10 +2179,12 @@
                   </label>
                   <input
                     id="labRubellaResult"
-                    v-model="formData.cases.labRubellaResult"
+                    v-model="newLabData.labRubellaResult"
                     class="input-form-field"
                     type="text"
                     :disabled="inputEdit()"
+                    :class="isRequired()"
+                    required
                   />
                 </div>
               </div>
@@ -2159,20 +2196,24 @@
                   </label>
                   <input
                     id="labVirusResult"
-                    v-model="formData.cases.labVirusResult"
+                    v-model="newLabData.labVirusResult"
                     class="input-form-field"
                     type="text"
                     :disabled="inputEdit()"
+                    :class="isRequired()"
+                    required
                   />
                 </div>
                 <div class="field">
                   <label for="labPCRResult" class="required"> PRC Result </label>
                   <input
                     id="labPCRResult"
-                    v-model="formData.cases.labPCRResult"
+                    v-model="newLabData.labPCRResult"
                     class="input-form-field"
                     type="text"
                     :disabled="inputEdit()"
+                    :class="isRequired()"
+                    required
                   />
                 </div>
               </div>
@@ -2184,10 +2225,12 @@
                   </label>
                   <input
                     id="investigationDate"
-                    v-model="formData.cases.investigationDate"
+                    v-model="newLabData.investigationDate"
                     class="input-form-field"
                     type="date"
                     :disabled="inputEdit()"
+                    :class="isRequired()"
+                    required
                   />
                 </div>
                 <div class="field">
@@ -2196,10 +2239,12 @@
                   </label>
                   <input
                     id="investigator"
-                    v-model="formData.cases.investigatorName"
+                    v-model="newLabData.investigatorName"
                     class="input-form-field"
                     type="text"
                     :disabled="inputEdit()"
+                    :class="isRequired()"
+                    required
                   />
                 </div>
                 <div class="field">
@@ -2208,13 +2253,21 @@
                   </label>
                   <input
                     id="investigatorContact"
-                    v-model="formData.cases.investigatorContact"
+                    v-model="newLabData.investigatorContact"
                     class="input-form-field"
                     type="number"
                     :disabled="inputEdit()"
+                    :class="isRequired()"
+                    required
                   />
                 </div>
               </div>
+            </div>
+            <div v-show="editLab" style="margin: -10px 10 5px; margin-left: auto;text-align: -webkit-right;">
+              <button class="back-button" type="button" @click="editLabResult('cancel')">
+                Cancel </button>
+              <button class="next-button" type="button" @click="editLabResult('save')">
+                Save </button>
             </div>
           </div>
         </form>
@@ -2326,6 +2379,8 @@ export default {
   compute: {},
   data() {
     return {
+      editLab: false,
+      editLabValidate:true,
       editStatus:false,
       newStatus:'',
       hasLabTest:'',
@@ -2338,6 +2393,21 @@ export default {
       pageNum: 1,
       formPart: 'Measles0',
       dateLastUpdated: '',
+      newLabData: {
+        hasLabTest : '',
+        investigatorLab : '',
+        labspecimen : '',
+        labDateCollected : '',
+        labDateSent : '',
+        labDateReceived : '',
+        labMeaslesResult : '',
+        labRubellaResult : '',
+        labVirusResult : '',
+        labPCRResult : '',
+        investigationDate : '',
+        investigatorName : '',
+        investigatorContact : '',
+      },
       tableOptions: {
         tableName: 'cases',
         columns: [
@@ -2549,14 +2619,6 @@ export default {
         'Suspected Case':
           'Any individual, regardless of age, with the following signs and symptoms: fever (38°C or more) or hot to touch; and Maculo-papular rash (non-vesicular) AND at least one of the following: cough, coryza (runny nose), or conjunctivitis (red eyes)',
       },
-      info: {
-        complications: 'i',
-        otherSymptoms: 'j',
-        diagnosis: 'k',
-        // page 3
-        MCVaccine: '',
-        vitA: '',
-      },
       disease: {
         idname: 'Measles',
         name: 'Measles/Rubella',
@@ -2582,18 +2644,7 @@ export default {
         updatedDate: '2020-10-10',
         status: 'IDK',
       },
-      diseases: {
-        cif: {
-          Measles: '/cifMeasles',
-          Diphtheria: '/cifDiphtheria',
-          'Neonatal Tetanus': '/cifNeonatalTetanus',
-          Pertussis: '/cifPertussis',
-          'Meningococcal Disease': '/cifMeningococcal',
-        },
-        crf: {
-          Dengue: 'crfDengue',
-        },
-      },
+      labList: [],
     }
   },
   async fetch() {
@@ -2605,7 +2656,11 @@ export default {
     this.DRUData = data.DRUData;
     this.caseHistory = data.caseHistory;
     this.dateLastUpdated = data.dateLastUpdated;
+    this.editLabResult('cancel')
     // fixing dates
+
+    let rows = (await axios.get('http://localhost:8080/api/getLabUsers')).data;
+    this.labList = rows;
 
     // console.log(data);
   }, 
@@ -2619,8 +2674,11 @@ export default {
     },
     inputEdit() {
       // not sure about the "this.cases"
-      if (this.pageNum === 9 && this.$auth.user.userID === this.formData.cases.investigatorLab) return false;
+      if (this.pageNum === 9 && this.editLab) return false;
       else return true;
+    },
+    isRequired() {
+      if (!this.editLabValidate) return "input-required"
     },
     statusInputEdit(value) {
       if (this.editStatus & value!==this.formData.cases.caseLevel ) return false
@@ -2628,6 +2686,78 @@ export default {
     },
     popup() {
       this.editStatus = !this.editStatus
+    },
+    validateLab() {
+      this.editLabValidate = false;
+      if (this.newLabData.hasLabTest!=='') {
+        if (this.newLabData.hasLabTest==='Processing' ||
+            (this.newLabData.hasLabTest==='No' && 
+            this.newLabData.investigatorLab!=='') ||
+            (this.newLabData.hasLabTest==='Yes' &&
+            this.newLabData.labSpecimen!=='' &&
+            this.newLabData.labDateCollected!=='' &&
+            this.newLabData.labDateSent!=='' &&
+            this.newLabData.labDateReceived!=='' &&
+            this.newLabData.labMeaslesResult!=='' &&
+            this.newLabData.labRubellaResult!=='' &&
+            this.newLabData.labVirusResult!=='' &&
+            this.newLabData.labPCRResult!=='' &&
+            this.newLabData.investigationDate!=='' &&
+            this.newLabData.investigatorName!=='' &&
+            this.newLabData.investigatorContact!==''))
+          this.editLabValidate = true;
+        else this.editLabValidate = false;
+        if (this.newLabData.investigatorContact<0) {
+          this.newLabData.investigatorContact = '';
+          this.editLabValidate = false;
+        }
+      }
+      else this.editLabValidate = false;
+    },
+    editLabResult(change) {
+      if (change==='save') {
+        this.validateLab();
+        if (this.editLabValidate) {
+          this.hasLabTest = this.newLabData.hasLabTest
+          this.formData.cases.investigatorLab = this.newLabData.investigatorLab
+          this.formData.caseData.labspecimen = this.newLabData.labspecimen
+          this.formData.cases.labDateCollected = this.newLabData.labDateCollected
+          this.formData.cases.labDateSent = this.newLabData.labDateSent
+          this.formData.cases.labDateReceived = this.newLabData.labDateReceived
+          this.formData.cases.labMeaslesResult = this.newLabData.labMeaslesResult
+          this.formData.cases.labRubellaResult = this.newLabData.labRubellaResult
+          this.formData.cases.labVirusResult = this.newLabData.labVirusResult
+          this.formData.cases.labPCRResult = this.newLabData.labPCRResult
+          this.formData.cases.investigationDate = this.newLabData.investigationDate
+          this.formData.cases.investigatorName = this.newLabData.investigatorName
+          this.formData.cases.investigatorContact = this.newLabData.investigatorContact
+        
+          // TO DO: save change in db
+
+          this.editLab = false;
+        }
+        else {
+          alert('Please fill up the required fields');
+          this.$forceUpdate();
+        }
+      }
+      if (change==='cancel') {
+        this.newLabData.hasLabTest = this.hasLabTest
+        this.newLabData.investigatorLab = this.formData.cases.investigatorLab
+        this.newLabData.labspecimen = this.formData.caseData.labspecimen
+        this.newLabData.labDateCollected = this.formData.cases.labDateCollected
+        this.newLabData.labDateSent = this.formData.cases.labDateSent
+        this.newLabData.labDateReceived = this.formData.cases.labDateReceived
+        this.newLabData.labMeaslesResult = this.formData.cases.labMeaslesResult
+        this.newLabData.labRubellaResult = this.formData.cases.labRubellaResult
+        this.newLabData.labVirusResult = this.formData.cases.labVirusResult
+        this.newLabData.labPCRResult = this.formData.cases.labPCRResult
+        this.newLabData.investigationDate = this.formData.cases.investigationDate
+        this.newLabData.investigatorName = this.formData.cases.investigatorName
+        this.newLabData.investigatorContact = this.formData.cases.investigatorContact
+        
+        this.editLab = false;
+      }
     },
     async status(change) {
       if (change==='save') {
@@ -2689,6 +2819,17 @@ export default {
 </script>
 
 <style>
+
+.input-required:invalid { 
+    box-shadow: 0 0 5px #d45252;
+    border-color: hsl(0, 76%, 50%);
+    /* background-color: #ff6961; */
+}
+
+.input-required{
+  border-color: hsl(0, 76%, 50%);
+}
+
 body {
   font-family: 'Work Sans', sans-serif;
   font-weight: 300;
@@ -2794,6 +2935,11 @@ h3 {
   flex-direction: row;
   margin-bottom: 10px;
   justify-content: space-between;
+}
+@media only screen and (max-width: 900px) {
+  .viewCIF-details {
+    flex-direction: column;
+  }
 }
 .CIFnumbers,
 .CIFstatus {
@@ -2905,6 +3051,18 @@ tr:nth-child(odd) {background-color: #f2f2f2;}
   left: 0;
   background: rgba(100, 100, 100, 0.4);
   /* border: 100px solid rgba(100, 100, 100, 0.4); */
+}
+
+@media only screen and (max-width: 550px) {
+  .overlay {
+    padding: 85px;
+  }
+}
+
+@media only screen and (max-width: 400px) {
+  .overlay {
+    padding: 40px;
+  }
 }
 
 .overlay-form {
