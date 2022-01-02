@@ -49,6 +49,11 @@ export default {
     }
     this.notifs = filtNotifs;
   },
+  head() {
+    return {
+      title: 'Notifications'
+    }
+  },
   methods: {
     goTo(link) {
         window.location.href = link;

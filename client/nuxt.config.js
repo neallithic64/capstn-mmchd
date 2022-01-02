@@ -44,8 +44,22 @@ export default {
   modules: [
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
-    '@nuxtjs/auth-next'
+    '@nuxtjs/auth-next',
+    '@nuxtjs/toast'
   ],
+
+  toast: {
+    position: 'bottom-right',
+    register: [ // Register custom toasts
+      {
+        name: 'success',
+        message: 'Success!',
+        options: {
+          type: 'success'
+        }
+      }
+    ]
+},
 
   router: {
     // middleware: ['auth']
