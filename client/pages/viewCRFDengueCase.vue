@@ -1188,7 +1188,7 @@
                     :class="isRequired()"
                     required
                     >
-                    <option v-for="(lab, i) in labList" :key=i>{{lab}}</option>
+                    <option v-for="(lab, i) in labList" :key=i>{{lab.druName}}</option>
                   </select>
                 </div>
               </div>
@@ -1760,7 +1760,7 @@ export default {
     this.labList = rows;
 
     console.log(data);
-  }, 
+  },
   methods: {
     formListClass(index) {
       if (index === this.pageNum) return 'formSummaryItems selected'
