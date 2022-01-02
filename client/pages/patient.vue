@@ -2,7 +2,7 @@
   <div id="viewPatient">
     <!--Top Bar of the screen-->
     <TopNav />
-    <div ref="content" class="viewPatient-container" id="printPage">
+    <div id="printPage" ref="content" class="viewPatient-container">
       <div class="viewPatient-details" style="align-text: left">
         <div class="patientNumbers">
           <h1 style="margin: -10px 0">Patient No. {{ formData.patient.patientID }}</h1>
@@ -108,7 +108,7 @@
                     <div style="display: inline-flex; align-items: center">
                       <input
                         id="Female"
-                        v-model="formData.patient.sex"
+                        v-model="newPatientInfo.sex"
                         value="Female"
                         class="input-radio"
                         name="sex"
@@ -120,7 +120,7 @@
                     <div style="display: inline-flex; align-items: center">
                       <input
                         id="Male"
-                        v-model="formData.patient.sex"
+                        v-model="newPatientInfo.sex"
                         value="Male"
                         class="input-radio"
                         name="sex"
@@ -135,7 +135,7 @@
                     <div style="display: inline-flex; align-items: center">
                       <input
                         id="Not Pregnant"
-                        v-model="formData.patient.pregWeeks"
+                        v-model="newPatientInfo.pregWeeks"
                         name="pregWeeks"
                         type="radio"
                         value="Not Pregnant"
@@ -158,7 +158,7 @@
                       <label for="pregnancyWeeks" style="display: inline-flex">
                         <input
                           id="pregnancyWeeks"
-                          v-model="formData.patient.pregWeeks"
+                          v-model="newPatientInfo.pregWeeks"
                           type="number"
                           min="0"
                           class="input-form-field"
@@ -181,7 +181,7 @@
                   </label>
                   <select
                     id="civilStatus"
-                    v-model="formData.patient.civilStatus"
+                    v-model="newPatientInfo.civilStatus"
                     name="civilStatus"
                     :disabled="inputEdit()"
                     :class="isRequired()"
@@ -197,7 +197,7 @@
                   <label for="indigenousGroup"> Indigenous Group </label>
                   <input
                     id="indigenousGroup"
-                    v-model="formData.patient.indGroup"
+                    v-model="newPatientInfo.indGroup"
                     class="input-form-field"
                     type="text"
                     :disabled="inputEdit()"
@@ -210,7 +210,7 @@
                   <label for="occupation" class="required"> Occupation </label>
                   <input
                     id="occupation"
-                    v-model="formData.patient.occupation"
+                    v-model="newPatientInfo.occupation"
                     :class="isRequired()"
                     type="text"
                     :disabled="inputEdit()"
@@ -221,7 +221,7 @@
                   <label for="occuLoc" class="required"> Occupation Location (Work/School) </label>
                   <input
                     id="occuLoc"
-                    v-model="formData.patient.occuLoc"
+                    v-model="newPatientInfo.occuLoc"
                     :class="isRequired()"
                     type="text"
                     :disabled="inputEdit()"
@@ -237,7 +237,7 @@
                   <label for="occuStreet" class="required"> Occupation Address: Street / House No. </label>
                   <input
                     id="occuStreet"
-                    v-model="formData.patient.occuStreet"
+                    v-model="newPatientInfo.occuStreet"
                     :class="isRequired()"
                     type="text"
                     :disabled="inputEdit()"
@@ -250,23 +250,23 @@
                 <div class="name-field">
                   <label for="occuCity" class="required"> City </label>
                   <select id="occuCity" 
-                    v-model="formData.patient.occuCity" 
+                    v-model="newPatientInfo.occuCity" 
                     name="occuCity" 
                     :disabled="inputEdit()" 
                     :class="isRequired()" 
                     required
-                    @change="getLocBrgyList(formData.patient.occuCity,'occuBrgy')"
+                    @change="getLocBrgyList(newPatientInfo.occuCity,'occuBarangay')"
                     >
                     <option v-for="(city, i) in cityList" :key=i>{{city}}</option>
                   </select>
                 </div>
                 <div class="field">
-                  <label for="occuBrgy" class="required"> Barangay </label>
+                  <label for="occuBarangay" class="required"> Barangay </label>
                   <select
-                    id="occuBrgy"
-                    v-model="formData.patient.occuBrgy"
+                    id="occuBarangay"
+                    v-model="newPatientInfo.occuBrgy"
                     :class="isRequired()"
-                    name="occuBrgy"
+                    name="occuBarangay"
                     :disabled="inputEdit()"
                     required
                   >
@@ -279,7 +279,7 @@
                   <label for="currentAddress" class="required"> Current Address: Street / House No. </label>
                   <input
                     id="currentAddress"
-                    v-model="formData.patient.currHouseStreet"
+                    v-model="newPatientInfo.currHouseStreet"
                     :class="isRequired()"
                     type="text"
                     :disabled="inputEdit()"
@@ -292,23 +292,23 @@
                 <div class="name-field">
                   <label for="currCity" class="required"> City </label>
                   <select id="currCity" 
-                    v-model="formData.patient.currCity" 
+                    v-model="newPatientInfo.currCity" 
                     name="currCity" 
                     :disabled="inputEdit()" 
                     :class="isRequired()" 
                     required
-                    @change="getLocBrgyList(formData.patient.currCity,'currBrgy')">
+                    @change="getLocBrgyList(newPatientInfo.currCity,'currBarangay')">
                     >
                     <option v-for="(city, i) in cityList" :key=i>{{city}}</option>
                   </select>
                 </div>
                 <div class="field">
-                  <label for="currBrgy" class="required"> Barangay </label>
+                  <label for="currBarangay" class="required"> Barangay </label>
                   <select
-                    id="currBrgy"
-                    v-model="formData.patient.currBrgy"
+                    id="currBarangay"
+                    v-model="newPatientInfo.currBrgy"
                     :class="isRequired()"
-                    name="currBrgy"
+                    name="currBarangay"
                     :disabled="inputEdit()"
                     required
                   >
@@ -336,7 +336,7 @@
                   <label for="permAddress"> Permanent Address: Street / House No. </label>
                   <input
                     id="permAddress"
-                    v-model="formData.patient.permHouseStreet"
+                    v-model="newPatientInfo.permHouseStreet"
                     class="input-form-field"
                     type="text"
                     :disabled="inputEdit()"
@@ -349,21 +349,21 @@
                   <label for="permCity"> City </label>
                   <select
                     id="permCity"
-                    v-model="formData.patient.permCity"
+                    v-model="newPatientInfo.permCity"
                     name="permCity"
                     :disabled="inputEdit()"
-                    @change="getLocBrgyList(formData.patient.permCity,'permBrgy')"
+                    @change="getLocBrgyList(newPatientInfo.permCity,'permBarangay')"
                   >
                   <option v-for="(city, i) in cityList" :key=i>{{city}}</option>
                   </select>
                 </div>
                 <div class="field">
-                  <label for="permBrgy"> Barangay </label>
+                  <label for="permBarangay"> Barangay </label>
                   <select
-                    id="permBrgy"
-                    v-model="formData.patient.permBrgy"
-                    :class="isRequired()"
-                    name="permBrgy"
+                    id="permBarangay"
+                    v-model="newPatientInfo.permBrgy"
+                    class="input-form-field"
+                    name="permBarangay"
                     :disabled="inputEdit()"
                   >
                   </select>
@@ -377,7 +377,7 @@
                   <label for="contactperson" class="required"> Parent / Caregiver </label>
                   <input
                     id="contactperson"
-                    v-model="formData.patient.guardianName"
+                    v-model="newPatientInfo.guardianName"
                     :class="isRequired()"
                     type="text"
                     :disabled="inputEdit()"
@@ -388,7 +388,7 @@
                   <label for="contactpersonNum" class="required"> Contact No. </label>
                   <input
                     id="contactpersonNum"
-                    v-model="formData.patient.guardianContact"
+                    v-model="newPatientInfo.guardianContact"
                     :class="isRequired()"
                     type="number"
                     :disabled="inputEdit()"
@@ -402,7 +402,7 @@
                   <label for="HCPN"> HCPN </label>
                   <input
                     id="HCPN"
-                    v-model="formData.patient.HCPN"
+                    v-model="newPatientInfo.HCPN"
                     :class="isRequired()"
                     type="text"
                     :disabled="inputEdit()"
@@ -412,7 +412,7 @@
                   <label for="ILHZ"> ILHZ </label>
                   <input
                     id="ILHZ"
-                    v-model="formData.patient.ILHZ"
+                    v-model="newPatientInfo.ILHZ"
                     :class="isRequired()"
                     type="text"
                     :disabled="inputEdit()"
@@ -440,7 +440,7 @@
                         <div style="display: flex; align-items: center;">
                           <input
                             id="LNone"
-                            v-model="riskFactors.lifestyle"
+                            v-model="riskFactors.Lfestyle"
                             value="LNone"
                             name="riskFactorsL"
                             type="checkbox"
@@ -454,7 +454,7 @@
                         <div style="display: flex; align-items: center;">
                           <input
                             id="LSmoking"
-                            v-model="formData.riskFactors.LSmoking"
+                            v-model="newPatientInfo.riskFactors.LSmoking"
                             value="LSmoking"
                             name="riskFactorsL"
                             type="checkbox"
@@ -467,7 +467,7 @@
                         <div style="display: flex; align-items: center;">
                           <input
                             id="LAlcoholism"
-                            v-model="formData.riskFactors.LAlcoholism"
+                            v-model="newPatientInfo.riskFactors.LAlcoholism"
                             value="LAlcoholism"
                             name="riskFactorsL"
                             type="checkbox"
@@ -480,7 +480,7 @@
                         <div style="display: flex; align-items: center;">
                           <input
                             id="LDrugUse"
-                            v-model="formData.riskFactors.LDrugUse"
+                            v-model="newPatientInfo.riskFactors.LDrugUse"
                             value="LDrugUse"
                             name="riskFactorsL"
                             type="checkbox"
@@ -493,7 +493,7 @@
                         <div style="display: flex; align-items: center;">
                           <input
                             id="LPhysicalInactivity"
-                            v-model="formData.riskFactors.LPhysicalInactivity"
+                            v-model="newPatientInfo.riskFactors.LPhysicalInactivity"
                             value="LPhysicalInactivity"
                             name="riskFactorsL"
                             type="checkbox"
@@ -519,7 +519,7 @@
                               Others:
                               <input
                                 id="LifestyleOthers"
-                                v-model="formData.riskFactors.LOthers"
+                                v-model="newPatientInfo.riskFactors.LOthers"
                                 class="riskfactorsInput"
                                 type="text"
                                 :disabled="inputEdit()"
@@ -555,7 +555,7 @@
                         <div style="display: flex; align-items: center">
                           <input
                             id="CAsthma"
-                            v-model="formData.riskFactors.CAsthma"
+                            v-model="newPatientInfo.riskFactors.CAsthma"
                             value="CAsthma"
                             class="input-radio"
                             name="riskFactorsC"
@@ -568,7 +568,7 @@
                         <div style="display: flex; align-items: center">
                           <input
                             id="CHereditary"
-                            v-model="formData.riskFactors.CHereditary"
+                            v-model="newPatientInfo.riskFactors.CHereditary"
                             value="CHereditary"
                             class="input-radio"
                             name="riskFactorsC"
@@ -592,7 +592,7 @@
                               Others:
                               <input
                                 id="ConditionOthers"
-                                v-model="formData.riskFactors.COthers"
+                                v-model="newPatientInfo.riskFactors.COthers"
                                 class="riskfactorsInput"
                                 type="text"
                                 :disabled="inputEdit()"
@@ -614,7 +614,7 @@
                         <div style="display: flex; align-items: center;">
                           <input
                             id="HNone"
-                            v-model="riskFactors.Hsitorical"
+                            v-model="riskFactors.Historical"
                             value="HNone"
                             name="riskFactorsH"
                             type="checkbox"
@@ -628,7 +628,7 @@
                         <div style="display: flex; align-items: center">
                           <input
                             id="HDiabetes"
-                            v-model="formData.riskFactors.HDiabetes"
+                            v-model="newPatientInfo.riskFactors.HDiabetes"
                             value="HDiabetes"
                             class="input-radio"
                             name="riskFactorsH"
@@ -641,7 +641,7 @@
                         <div style="display: flex; align-items: center">
                           <input
                             id="HHeartDisease"
-                            v-model="formData.riskFactors.HHeartDisease"
+                            v-model="newPatientInfo.riskFactors.HHeartDisease"
                             value="HHeartDisease"
                             class="input-radio"
                             name="riskFactorsH"
@@ -654,7 +654,7 @@
                         <div style="display: flex; align-items: center">
                           <input
                             id="HHypertension"
-                            v-model="formData.riskFactors.HHypertension"
+                            v-model="newPatientInfo.riskFactors.HHypertension"
                             value="HHypertension"
                             class="input-radio"
                             name="riskFactorsH"
@@ -667,7 +667,7 @@
                         <div style="display: flex; align-items: center">
                           <input
                             id="HObesity"
-                            v-model="formData.riskFactors.HObesity"
+                            v-model="newPatientInfo.riskFactors.HObesity"
                             value="HObesity"
                             class="input-radio"
                             name="riskFactorsH"
@@ -691,7 +691,7 @@
                               Others:
                               <input
                                 id="HistoricalOthers"
-                                v-model="formData.riskFactors.HOthers"
+                                v-model="newPatientInfo.riskFactors.HOthers"
                                 class="riskfactorsInput"
                                 type="text"
                                 :disabled="inputEdit()"
@@ -727,7 +727,7 @@
                         <div style="display: flex; align-items: center">
                           <input
                             id="OAirPollution"
-                            v-model="formData.riskFactors.OAirPollution"
+                            v-model="newPatientInfo.riskFactors.OAirPollution"
                             value="OAirPollution"
                             class="input-radio"
                             name="riskFactorsO"
@@ -740,7 +740,7 @@
                         <div style="display: flex; align-items: center">
                           <input
                             id="OCleanWater"
-                            v-model="formData.riskFactors.OCleanWater"
+                            v-model="newPatientInfo.riskFactors.OCleanWater"
                             value="OCleanWater"
                             class="input-radio"
                             name="riskFactorsO"
@@ -755,7 +755,7 @@
                         <div style="display: flex; align-items: center">
                           <input
                             id="OFlooding"
-                            v-model="formData.riskFactors.OFlooding"
+                            v-model="newPatientInfo.riskFactors.OFlooding"
                             value="OFlooding"
                             class="input-radio"
                             name="riskFactorsO"
@@ -768,7 +768,7 @@
                         <div style="display: flex; align-items: center">
                           <input
                             id="OHealthEdu"
-                            v-model="formData.riskFactors.OHealthEdu"
+                            v-model="newPatientInfo.riskFactors.OHealthEdu"
                             value="OHealthEdu"
                             class="input-radio"
                             name="riskFactorsO"
@@ -781,7 +781,7 @@
                         <div style="display: flex; align-items: center">
                           <input
                             id="OHealthFacility"
-                            v-model="formData.riskFactors.OHealthFacility"
+                            v-model="newPatientInfo.riskFactors.OHealthFacility"
                             value="OHealthFacility"
                             class="input-radio"
                             name="riskFactorsO"
@@ -797,7 +797,7 @@
                         <div style="display: flex; align-items: center">
                           <input
                             id="OPoverty"
-                            v-model="formData.riskFactors.OPoverty"
+                            v-model="newPatientInfo.riskFactors.OPoverty"
                             value="OPoverty"
                             class="input-radio"
                             name="riskFactorsO"
@@ -810,7 +810,7 @@
                         <div style="display: flex; align-items: center">
                           <input
                             id="OShelter"
-                            v-model="formData.riskFactors.OShelter"
+                            v-model="newPatientInfo.riskFactors.OShelter"
                             value="OShelter"
                             class="input-radio"
                             type="checkbox"
@@ -822,7 +822,7 @@
                         <div style="display: flex; align-items: center">
                           <input
                             id="OWasteMgmt"
-                            v-model="formData.riskFactors.OWasteMgmt"
+                            v-model="newPatientInfo.riskFactors.OWasteMgmt"
                             value="OWasteMgmt"
                             class="input-radio"
                             name="riskFactorsO"
@@ -835,7 +835,7 @@
                         <div style="display: flex; align-items: center">
                           <input
                             id="OVacCoverage"
-                            v-model="formData.riskFactors.OVacCoverage"
+                            v-model="newPatientInfo.riskFactors.OVacCoverage"
                             value="OVacCoverage"
                             class="input-radio"
                             name="riskFactorsO"
@@ -861,7 +861,7 @@
                               Others:
                               <input
                                 id="OtherOthers"
-                                v-model="formData.riskFactors.OOthers"
+                                v-model="newPatientInfo.riskFactors.OOthers"
                                 class="riskfactorsInput"
                                 type="text"
                                 :disabled="inputEdit()"
@@ -924,7 +924,53 @@ export default {
       validatePatient:true,
       sameAddress:'',
       today:'',
-      ageNo:'',
+      newPatientInfo: {
+        sex:'',
+        pregWeeks:'',
+        civilStatus:'',
+        currHouseStreet:'',
+        currCity:'',
+        currBrgy:'',
+        occupation:'',
+        occuLoc:'',
+        occuStreet:'',
+        occuCity:'',
+        occuBrgy:'',
+        guardianName:'',
+        guardianContact:'',
+        riskFactors: {
+          caseID: '',
+          LAlcoholism: '',
+          LDrugUse: '',
+          LPhysicalInactivity: '',
+          LSmoking: '',
+          LOthers: '',
+          CAsthma: '',
+          CHereditary: '',
+          COthers: '',
+          HDiabetes: '',
+          HHeartDisease: '',
+          HHypertension: '',
+          HObesity: '',
+          HOthers: '',
+          OAirPollution: '',
+          OCleanWater: '',
+          OFlooding: '',
+          OHealthEdu: '',
+          OHealthFacility: '',
+          OPoverty: '',
+          OShelter: '',
+          OWasteMgmt: '',
+          OVacCoverage: '',
+          OOthers: '',
+        },
+      },
+      riskFactors: {
+        Lifestyle:'',
+        CurrentCondition:'',
+        Historical:'',
+        Other:'',
+      },
       tableOptions: {
         tableName: 'cases',
         columns: [
@@ -1102,12 +1148,6 @@ export default {
           OOthers: '',
         },
       },
-      riskFactors: {
-        Lifestyle:'',
-        CurrentCondition:'',
-        Historical:'',
-        Other:'',
-      },
       cityList: [
         'Caloocan City',
         'Las Piñas City',
@@ -1142,7 +1182,6 @@ export default {
     this.today = yyyy+'-'+mm+'-'+dd;
     // document.getElementById('birthdate').setAttribute('max', today);
     console.log(today);
-    this.ageNo = today.getFullYear() - parseInt(this.formData.patient.birthDate.substr(0,4));
   },
   async fetch() {
     const data = (await axios.get('http://localhost:8080/api/getPatientData?patientID=' + this.$route.query.patientID)).data;
@@ -1153,6 +1192,7 @@ export default {
     this.DRUData = data.DRUData;
     this.allData = data.rowData;
     // console.log(data);
+    this.update('cancel')
   }, 
   methods: {
     inputEdit() {
@@ -1170,17 +1210,32 @@ export default {
     },
     getAddress() {
       if (this.sameAddress) {
-        this.formData.patient.permHouseStreet = this.formData.patient.currHouseStreet;
-        this.formData.patient.permCity = this.formData.patient.currCity;
-        this.getLocBrgyList(this.formData.patient.permCity,'permBarangay');
-        this.formData.patient.permBrgy = this.formData.patient.currBrgy;
-        console.log(this.formData.patient.permBrgy,this.formData.patient.currBrgy)
+        this.newPatientInfo.permHouseStreet = this.newPatientInfo.currHouseStreet;
+        this.newPatientInfo.permCity = this.newPatientInfo.currCity;
+        this.getBrgy();
+        // this.getLocBrgyList(this.newPatientInfo.permCity,'permBarangay');
+        // this.newPatientInfo.permBrgy = this.newPatientInfo.currBrgy;
+        // console.log(this.newPatientInfo.permBrgy,this.newPatientInfo.currBrgy)
       }
       else {
-        this.formData.patient.permHouseStreet = '';
-        this.formData.patient.permCity = '';
-        this.formData.patient.permBrgy = '';
+        this.newPatientInfo.permHouseStreet = '';
+        this.newPatientInfo.permCity = '';
+        this.newPatientInfo.permBrgy = '';
       }
+    },
+    getBrgy() {
+      const perm = document.getElementById('permBarangay');
+      const defaultOption = document.createElement('option');
+      defaultOption.text = this.newPatientInfo.currBrgy;
+      perm.add(defaultOption);
+      perm.selectedIndex = 0;
+
+      this.newPatientInfo.permBrgy = this.newPatientInfo.currBrgy;
+
+      // eslint-disable-next-line no-console
+      console.log(this.newPatientInfo.permBrgy)
+      // eslint-disable-next-line no-console
+      console.log(this.newPatientInfo.currBrgy)
     },
     getLocBrgyList(city, element) {
       if (city) {
@@ -1213,67 +1268,124 @@ export default {
       }
     },
     validateForm() {
-      if (this.formData.patient.sex!=='' &&
-          this.formData.patient.pregWeeks!=='' &&
-          this.formData.patient.civilStatus!=='' &&
-          this.formData.patient.currHouseStreet!=='' &&
-          this.formData.patient.currCity!=='' &&
-          this.formData.patient.currBrgy!=='' &&
-          this.formData.patient.occupation!=='' &&
-          this.formData.patient.occuLoc!=='' &&
-          this.formData.patient.occuStreet!=='' &&
-          this.formData.patient.occuCity!=='' &&
-          this.formData.patient.occuBrgy!=='' &&
-          this.formData.patient.guardianName!=='' &&
-          this.formData.patient.guardianContact!=='' &&
-          this.formData.patient.sex!== null &&
-          this.formData.patient.pregWeeks!== null &&
-          this.formData.patient.civilStatus!== null &&
-          this.formData.patient.currHouseStreet!== null &&
-          this.formData.patient.currCity!== null &&
-          this.formData.patient.currBrgy!== null &&
-          this.formData.patient.occupation!== null &&
-          this.formData.patient.occuLoc!== null &&
-          this.formData.patient.occuStreet!== null &&
-          this.formData.patient.occuCity!== null &&
-          this.formData.patient.occuBrgy!== null &&
-          this.formData.patient.guardianName!== null &&
-          this.formData.patient.guardianContact!== null &&
-          this.formData.patient.occuLoc!== 'Choose Barangay' &&
-          this.formData.patient.occuBrgy!== 'Choose Barangay' &&
+      if (this.newPatientInfo.sex!=='' &&
+          this.newPatientInfo.pregWeeks!=='' &&
+          this.newPatientInfo.civilStatus!=='' &&
+          this.newPatientInfo.currHouseStreet!=='' &&
+          this.newPatientInfo.currCity!=='' &&
+          this.newPatientInfo.currBrgy!=='' &&
+          this.newPatientInfo.occupation!=='' &&
+          this.newPatientInfo.occuLoc!=='' &&
+          this.newPatientInfo.occuStreet!=='' &&
+          this.newPatientInfo.occuCity!=='' &&
+          this.newPatientInfo.occuBrgy!=='' &&
+          this.newPatientInfo.guardianName!=='' &&
+          this.newPatientInfo.guardianContact!=='' &&
+          this.newPatientInfo.sex!== null &&
+          this.newPatientInfo.pregWeeks!== null &&
+          this.newPatientInfo.civilStatus!== null &&
+          this.newPatientInfo.currHouseStreet!== null &&
+          this.newPatientInfo.currCity!== null &&
+          this.newPatientInfo.currBrgy!== null &&
+          this.newPatientInfo.occupation!== null &&
+          this.newPatientInfo.occuLoc!== null &&
+          this.newPatientInfo.occuStreet!== null &&
+          this.newPatientInfo.occuCity!== null &&
+          this.newPatientInfo.occuBrgy!== null &&
+          this.newPatientInfo.guardianName!== null &&
+          this.newPatientInfo.guardianContact!== null &&
 
-          (this.riskFactors.Lifestyle || this.formData.riskFactors.LSmoking || 
-            this.formData.riskFactors.LAlcoholism || this.formData.riskFactors.LDrugUse || 
-            this.formData.riskFactors.LPhysicalInactivity || this.formData.riskFactors.LOthers) && 
-          (this.riskFactors.CurrentCondition || this.formData.riskFactors.CAsthma || 
-            this.formData.riskFactors.CHereditary || this.formData.riskFactors.COthers) && 
-          (this.riskFactors.Historical || this.formData.riskFactors.HDiabetes || 
-            this.formData.riskFactors.HHeartDisease || this.formData.riskFactors.HHypertension || 
-            this.formData.riskFactors.HObesity || this.formData.riskFactors.HOthers) && 
-          (this.riskFactors.Other || this.formData.riskFactors.OAirPollution || 
-            this.formData.riskFactors.OCleanWater || this.formData.riskFactors.OFlooding || 
-            this.formData.riskFactors.OHealthEdu || this.formData.riskFactors.OHealthFacility || 
-            this.formData.riskFactors.OPoverty || this.formData.riskFactors.OShelter || 
-            this.formData.riskFactors.OWasteMgmt || this.formData.riskFactors.OVacCoverage || 
-            this.formData.riskFactors.OOthers)
+          (this.riskFactors.Lifestyle || this.newPatientInfo.riskFactors.LSmoking || 
+            this.newPatientInfo.riskFactors.LAlcoholism || this.newPatientInfo.riskFactors.LDrugUse || 
+            this.newPatientInfo.riskFactors.LPhysicalInactivity || this.newPatientInfo.riskFactors.LOthers) && 
+          (this.riskFactors.CurrentCondition || this.newPatientInfo.riskFactors.CAsthma || 
+            this.newPatientInfo.riskFactors.CHereditary || this.newPatientInfo.riskFactors.COthers) && 
+          (this.riskFactors.Historical || this.newPatientInfo.riskFactors.HDiabetes || 
+            this.newPatientInfo.riskFactors.HHeartDisease || this.newPatientInfo.riskFactors.HHypertension || 
+            this.newPatientInfo.riskFactors.HObesity || this.newPatientInfo.riskFactors.HOthers) && 
+          (this.riskFactors.Other || this.newPatientInfo.riskFactors.OAirPollution || 
+            this.newPatientInfo.riskFactors.OCleanWater || this.newPatientInfo.riskFactors.OFlooding || 
+            this.newPatientInfo.riskFactors.OHealthEdu || this.newPatientInfo.riskFactors.OHealthFacility || 
+            this.newPatientInfo.riskFactors.OPoverty || this.newPatientInfo.riskFactors.OShelter || 
+            this.newPatientInfo.riskFactors.OWasteMgmt || this.newPatientInfo.riskFactors.OVacCoverage || 
+            this.newPatientInfo.riskFactors.OOthers)
           ) this.validatePatient = true;
           else this.validatePatient = false;
-          if (this.formData.patient.pregWeeks!=='Not Pregnant' && this.formData.patient.pregWeeks<0)
-            {this.formData.patient.pregWeeks = ''; this.validatePatient = false;}
-          if (this.formData.patient.guardianContact<0) {this.formData.patient.guardianContact = ''; this.validatePatient = false;}
+          if (this.newPatientInfo.pregWeeks!=='Not Pregnant' && this.newPatientInfo.pregWeeks<0)
+            {this.newPatientInfo.pregWeeks = ''; this.validatePatient = false;}
+          if (this.newPatientInfo.guardianContact<0) {this.newPatientInfo.guardianContact = ''; this.validatePatient = false;}
+      
+      this.$nextTick(() => {
+        if (this.newPatientInfo.occuBrgy != null) {
+          const dropdown = document.getElementById('occuBarangay');
+          const defaultOption = document.createElement('option');
+          defaultOption.text = this.newPatientInfo.occuBrgy;
+          dropdown.add(defaultOption);
+          dropdown.selectedIndex = 0;
+        }
+
+        if (this.newPatientInfo.currBrgy != null) {
+          const dropdown = document.getElementById('currBarangay');
+          const defaultOption = document.createElement('option');
+          defaultOption.text = this.newPatientInfo.currBrgy;
+          dropdown.add(defaultOption);
+          dropdown.selectedIndex = 0;
+        }
+
+        if (this.newPatientInfo.permBrgy != null) {
+          const dropdown = document.getElementById('permBarangay');
+          const defaultOption = document.createElement('option');
+          defaultOption.text = this.newPatientInfo.permBrgy;
+          dropdown.add(defaultOption);
+          dropdown.selectedIndex = 0;
+        }
+      })
     },
     update(action) { // TO DO FUNCTIONS
       if (action==='cancel') {
-        // reload the data ?
+        this.newPatientInfo.sex = this.formData.patient.sex;
+        this.newPatientInfo.pregWeeks = this.formData.patient.pregWeeks;
+        this.newPatientInfo.civilStatus = this.formData.patient.civilStatus;
+        this.newPatientInfo.currHouseStreet = this.formData.patient.currHouseStreet;
+        this.newPatientInfo.currCity = this.formData.patient.currCity;
+        this.newPatientInfo.currBrgy = this.formData.patient.currBrgy;
+        this.newPatientInfo.occupation = this.formData.patient.occupation;
+        this.newPatientInfo.occuLoc = this.formData.patient.occuLoc;
+        this.newPatientInfo.occuStreet = this.formData.patient.occuStreet;
+        this.newPatientInfo.occuCity = this.formData.patient.occuCity;
+        this.newPatientInfo.occuBrgy = this.formData.patient.occuBrgy;
+        this.newPatientInfo.guardianName = this.formData.patient.guardianName;
+        this.newPatientInfo.guardianContact = this.formData.patient.guardianContact;
+        this.newPatientInfo.riskFactors = this.formData.riskFactors;
+
         this.editCase=false;
       }
       if (action==='done') {
         this.validateForm();
         if (this.validatePatient) {
+          this.formData.patient.sex = this.newPatientInfo.sex;
+          this.formData.patient.pregWeeks = this.newPatientInfo.pregWeeks;
+          this.formData.patient.civilStatus = this.newPatientInfo.civilStatus;
+          this.formData.patient.currHouseStreet = this.newPatientInfo.currHouseStreet;
+          this.formData.patient.currCity = this.newPatientInfo.currCity;
+          this.formData.patient.currBrgy = this.newPatientInfo.currBrgy;
+          this.formData.patient.occupation = this.newPatientInfo.occupation;
+          this.formData.patient.occuLoc = this.newPatientInfo.occuLoc;
+          this.formData.patient.occuStreet = this.newPatientInfo.occuStreet;
+          this.formData.patient.occuCity = this.newPatientInfo.occuCity;
+          this.formData.patient.occuBrgy = this.newPatientInfo.occuBrgy;
+          this.formData.patient.guardianName = this.newPatientInfo.guardianName;
+          this.formData.patient.guardianContact = this.newPatientInfo.guardianContact;
+          this.formData.riskFactors = this.newPatientInfo.riskFactors;
+
            // save the data in db
            this.editCase=false;
         }
-        else alert("Please fill up all required fields")
+        else {
+          alert("Please fill up all required fields")
+          this.$forceUpdate();
+        }
+        
       }
     },
     download() {

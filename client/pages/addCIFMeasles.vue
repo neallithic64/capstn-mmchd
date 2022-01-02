@@ -2718,12 +2718,8 @@ export default {
     getAge() {
       const today = new Date();
       const age = today.getFullYear() - parseInt(this.formData.patient.birthDate.substr(0,4));
-      console.log(today.getMonth()+1)
-      console.log(parseInt(this.formData.patient.birthDate.substr(5,2)))
       if (today.getMonth()+1>parseInt(this.formData.patient.birthDate.substr(5,2))) this.formData.patient.ageNo = age;
       else if (today.getMonth()+1===parseInt(this.formData.patient.birthDate.substr(5,2))) {
-        console.log(today)
-        console.log(parseInt(this.formData.patient.birthDate.substr(8,2)))
         if (today.getDate()>=parseInt(this.formData.patient.birthDate.substr(8,2))) this.formData.patient.ageNo = age;
         else this.formData.patient.ageNo = age-1;
       }
@@ -3091,31 +3087,33 @@ export default {
       }
     },
     getLocBrgyList(city, element) {
-      // eslint-disable-next-line no-console
-      console.log(this.formData.patient.currCity);
-      const dropdown1 = document.getElementById(element);
-      while (dropdown1.firstChild) dropdown1.removeChild(dropdown1.firstChild);
-
-      const defaultOption = document.createElement('option');
-      defaultOption.text = 'Choose Barangay';
-
-      dropdown1.add(defaultOption);
-      dropdown1.selectedIndex = 0;
-
-      axios.get('barangays.json').then(res => {
-          let option;
-
-          this.locBrgyList = res.data[city].barangay_list;
-
-          for (let i = 0; i < this.locBrgyList.length; i++) {
-            option = document.createElement('option');
-            option.text = this.locBrgyList[i];
-            option.value = this.locBrgyList[i];
-            dropdown1.add(option);
-          }
-        })
+      if (city) {
         // eslint-disable-next-line no-console
-        .catch(err => console.log(err))
+        console.log(this.formData.patient.currCity);
+        const dropdown1 = document.getElementById(element);
+        while (dropdown1.firstChild) dropdown1.removeChild(dropdown1.firstChild);
+
+        const defaultOption = document.createElement('option');
+        defaultOption.text = 'Choose Barangay';
+
+        dropdown1.add(defaultOption);
+        dropdown1.selectedIndex = 0;
+
+        axios.get('barangays.json').then(res => {
+            let option;
+
+            this.locBrgyList = res.data[city].barangay_list;
+
+            for (let i = 0; i < this.locBrgyList.length; i++) {
+              option = document.createElement('option');
+              option.text = this.locBrgyList[i];
+              option.value = this.locBrgyList[i];
+              dropdown1.add(option);
+            }
+          })
+          // eslint-disable-next-line no-console
+          .catch(err => console.log(err))
+      }
     },
     getBrgy() {
       const perm = document.getElementById('permBarangay');
