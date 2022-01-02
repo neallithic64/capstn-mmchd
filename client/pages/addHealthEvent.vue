@@ -362,7 +362,7 @@
         <!-- Buttons -->
         <div style="margin: -10px 0 5px; float: right">
           <button v-if="pageNum == 0" class="back-button" type="button">
-            <nuxt-link to="/"> Cancel </nuxt-link>
+            <nuxt-link to="/allHealthEvents"> Cancel </nuxt-link>
           </button>
           <button v-if="pageNum != 0" class="back-button" type="button" @click="move(pageNum - 1)">
             Back
