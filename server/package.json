@@ -29,9 +29,11 @@
     "morgan": "^1.10.0",
     "mysql2": "^2.3.2",
     "node-cron": "^3.0.0",
+    "nuxt-tailvue": "^1.0.95",
     "vue-toastification": "^2.0.0-rc.5"
   },
   "devDependencies": {
+    "@nuxtjs/tailwindcss": "^4.2.1",
     "nodemon": "^2.0.14"
   }
 }

@@ -2748,13 +2748,15 @@ export default {
       this.formData.cases.caseLevel = this.formData.caseData.finalClassification;
       const result = await axios.post('http://localhost:8080/api/newCase', {formData: this.formData});
       if (result.status === 200) {
-        alert('case submitted!');
+        // alert('Case submitted!');
+        this.$toast.success('Case submitted!', {duration: 4000, icon: 'check_circle'});
         window.location.href = '/allCases';
 
         // TODO: add notif/alert checking here 
       } else {
         // eslint-disable-next-line no-console
         console.log(result);
+        this.$toast.error('Something went wrong!', {duration: 4000, icon: 'error'});
       }
     },
     move(page) {
@@ -2786,7 +2788,8 @@ export default {
         }
       }
       else {
-        alert('Please fill up the required fields');
+        // alert('Please fill up the required fields');
+        this.$toast.error('Please fill up the required fields.', {position: 'top-right', duration: 4000, icon: 'error'});
         // document.getElementsByClassName('input-form-field').className = 'input-form-field input-required';
         this.$forceUpdate();
       }

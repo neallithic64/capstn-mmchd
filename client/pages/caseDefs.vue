@@ -28,7 +28,7 @@
           <form v-if="pageNum === -1" id="instructEdit" type="submit">
             <div id="new-user-form" class="center">
                 <h2 id="form-header"> Instructions </h2>
-              <div>
+              <div v-if="$auth.user.userType === 'lhsdChief' || $auth.user.userType === 'resuHead' || $auth.user.userType === 'chdDirector'">
                 <ul v-for="(value, name, i) in instructions" :key="i" style="displayLinline-flex">
                     <li>
                       <label :for="name" class="defsLabel">
@@ -38,6 +38,20 @@
                      <ul>
                         <li>
                           {{ value }}
+                        </li>
+                     </ul>
+                </ul>
+              </div>
+              <div v-if="$auth.user.userType !== 'lhsdChief' || $auth.user.userType !== 'resuHead' || $auth.user.userType !== 'chdDirector'">
+                <ul style="displayLinline-flex">
+                    <li>
+                      <label class="defsLabel">
+                        To see case definitions:
+                      </label>
+                    </li>
+                     <ul>
+                        <li>
+                          Please click the disease name from the list seen at the left side of the screen.
                         </li>
                      </ul>
                 </ul>
@@ -126,7 +140,7 @@ export default {
     
     // setting diseaseNames
     const tempA = {};
-	const tempB = {};
+	  const tempB = {};
     for (let i = 0; i < diseases.length; i++) {
       tempA[i] = diseases[i].diseaseName;
 	  tempB[i] = diseases[i].diseaseID;
@@ -204,6 +218,17 @@ export default {
       });
 	    // eslint-disable-next-line no-console
 	    console.log(result);
+
+      if (result.status === 200) {
+        // alert('Health event submitted!');
+        this.$toast.success('Edit successful!', {duration: 4000, icon: 'check_circle'});
+      } else {
+        // eslint-disable-next-line no-console
+        console.log(result);
+        this.$toast.error('Something went wrong!', {duration: 4000, icon: 'error'});
+      }
+
+
       // TODO: add notif send to all drus that a case definition was edited
       // notif message: The case definitions of <disease> have been updated.
       // notif type: updateNotif

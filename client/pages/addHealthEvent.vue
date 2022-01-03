@@ -173,7 +173,7 @@
                     :disabled="inputEdit()"
                     required
                   />
-                  <label for="public"> Public </label>
+                  <label for="public">Public </label>
                 </div>
               </div>
 
@@ -502,8 +502,18 @@ export default {
         this.healthEvent.userID = this.$auth.user.userID;
         const result = await axios.post('http://localhost:8080/api/newEvent', {event: this.healthEvent});
         // eslint-disable-next-line no-console
-        console.log(result);
-        this.$router.push('/');
+        // console.log(result);
+        // this.$router.push('/');
+
+        if (result.status === 200) {
+          // alert('Health event submitted!');
+          this.$toast.success('Health event submitted!', {duration: 4000, icon: 'check_circle'});
+          window.location.href = '/allHealthEvents';
+        } else {
+          // eslint-disable-next-line no-console
+          console.log(result);
+          this.$toast.error('Something went wrong!', {duration: 4000, icon: 'error'});
+        }
       } catch (err) {
         // eslint-disable-next-line no-console
         console.log(err);
@@ -516,7 +526,8 @@ export default {
       if (this.pageDone[this.pageNum] || this.pageNum === 2) {
         this.pageNum = page;
       } else {
-        alert('Please fill up the required fields');
+        // alert('Please fill up the required fields');
+        this.$toast.error('Please fill up the required fields.', {position: 'top-right', duration: 4000, icon: 'error'});
         this.$forceUpdate(); 
       }
 
