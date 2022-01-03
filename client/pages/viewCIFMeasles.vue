@@ -2334,7 +2334,7 @@ export default {
       isPrint: false,
       diseaseID: 'DI-0000000000000',
       caseDefs: [],
-	  cityList: [],
+      cityList: [],
       pageNum: 1,
       formPart: 'Measles0',
       dateLastUpdated: '',
@@ -2618,7 +2618,6 @@ export default {
       this.pageNum = i
     },
     inputEdit() {
-      // not sure about the "this.cases"
       if (this.pageNum === 9 && this.$auth.user.userID === this.formData.cases.investigatorLab) return false;
       else return true;
     },
@@ -2676,14 +2675,13 @@ export default {
       console.log(this.$refs.content)
       setTimeout(() => (this.isPrint = !this.isPrint), 5000)
     },
-	async updateLab() {
-	  const serve = (await axios.post("http://localhost:8080/api/editCIFLab", {
-	    caseID: this.formData.cases.caseID,
-		caseData: this.formData.caseData
-	  })).data;
-	  // need to enable the lab fields
-	  /* if (this.$auth.user.SOMETHING === "") */
-	},
+    async updateLab() {
+      // needs to be triggered by some button perhaps, somewhere around line 2009
+      const serve = (await axios.post("http://localhost:8080/api/editCIFLab", {
+        caseID: this.formData.cases.caseID,
+        caseData: this.formData.caseData
+      })).data;
+    },
   },
 }
 </script>
