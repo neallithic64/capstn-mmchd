@@ -1,19 +1,19 @@
 <template>
-  <div id="viewevents">
+  <div id="viewoutbreaks">
     <!--Top Bar of the screen-->
     <TopNav/>
-    <div ref="content" class="allevents-container">
+    <div ref="content" class="alloutbreaks-container">
       <div class="exportButtons">
-        <h1 class="pageHeader">All Health Events</h1>
+        <h1 class="pageHeader">All Outbreaks</h1>
         <div v-show="!isPrint" class="actionButtons">
-          <ul class="HEActionButton" @click="downloadPDF">
+          <ul class="OBActionButton" @click="downloadPDF()">
           <img
             src="~/assets/img/pdf.png"
             class="printButton"
             @click="downloadPDF()"
           />
           </ul>
-          <ul class="HEActionButton">
+          <ul class="OBActionButton">
             <img src="~/assets/img/csv.png" 
             class="printButton"
             @click="csvExport(getTable())"
@@ -21,12 +21,12 @@
           </ul>
         </div>
       </div>
-      <div class="allevents-component">
+      <div class="alloutbreaks-component">
         <div id="vue-root">
           <dataTable
             :options="tableOptions"
-            :datavalues="allEvents"
-            :casetype="'events'"
+            :datavalues="allOutbreaks"
+            :casetype="'outbreaks'"
           />
         </div>
       </div>
@@ -53,37 +53,28 @@ export default {
     return {
       isPrint: false,
       tableOptions: {
-        tableName: 'events',
+        tableName: 'outbreaks',
         columns: [
           {
-            title: 'Event ID',
-            key: 'eventID',
+            title: 'Outbreak ID',
+            key: 'outbreakID',
             type: 'clickable',
-            source: 'events',
+            source: 'ourbreaks',
             uniqueField: 'id',
           },
           {
-            title: 'Source',
-            key: 'source',
+            title: 'Disease',
+            key: 'disease',
             type: 'text',
-            source: 'events',
+            source: 'outbreaks',
           },
           {
-            title: 'Date Captured',
-            key: 'dateCaptured',
+            title: 'Date Started',
+            key: 'dateStarted',
             type: 'text',
             dateFormat: true,
             currentFormat: 'YYYY-MM-DD',
             expectFormat: 'DD MMM YYYY',
-          },
-          {
-            title: 'City',
-            key: 'city',
-            type: 'text',
-            source: 'events',
-            uniqueField: 'id',
-            sortable: true,
-            filter: true,
           },
           {
             title: 'No. of Cases',
@@ -98,41 +89,76 @@ export default {
             source: 'events'
           },
           {
-            title: 'Status',
-            key: 'eventStatus',
+            title: 'Two-week Growth Rate',
+            key: 'growthRate',
+            type: 'text',
+            source: 'events'
+          },
+          {
+            title: 'Attack Rate per 10k',
+            key: 'attackRate',
+            type: 'text',
+            source: 'events'
+          },
+          {
+            title: 'Outbreak Status',
+            key: 'outbreakStatus',
             type: 'text',
             source: 'events',
             sortable: true,
+          },
+          {
+            title: 'Date Closed',
+            key: 'dateClosed',
+            type: 'text',
+            dateFormat: true,
+            currentFormat: 'YYYY-MM-DD',
+            expectFormat: 'DD MMM YYYY',
           },
         ],
         // source: 'http://demo.datatable/api/users',
         search: true,
       },
-      allEvents: [
+      allOutbreaks: [
         {
-          eventID: '123',
-          source: 'Print',
-          dateCaptured: '2021-12-31',
-          city: 'Pasay',
-          numCases: '6',
+          outbreakID: '123',
+          disease: 'Measles',
+          dateStarted: '2021-12-31',
+          numCases: '200',
           numDeaths: '0',
-          eventStatus: 'For Validation'
+          growthRate: '813%',
+          attackRate: '1.07%',
+          outbreakStatus: 'Ongoing',
+          dateClosed: 'N/A'
         },
         {
-          eventID: '1234',
-          source: 'Public',
-          dateCaptured: '2021-12-24',
-          city: 'Pasay',
+          outbreakID: '124',
+          disease: 'Dengue',
+          dateStarted: '2021-12-09',
           numCases: '1',
-          numDeaths: '1',
-          eventStatus: 'Ongoing'
+          numDeaths: '0',
+          growthRate: '813%',
+          attackRate: '1.07%',
+          outbreakStatus: 'Controlled',
+          dateClosed: 'N/A'
+        },
+        {
+          outbreakID: '124',
+          disease: 'Dengue',
+          dateStarted: '2021-12-01',
+          numCases: '1',
+          numDeaths: '0',
+          growthRate: '813%',
+          attackRate: '1.07%',
+          outbreakStatus: 'Closed',
+          dateClosed: 'N/A'
         },
       ],
     }
   },
   head() {
     return {
-      title: 'Health Events'
+      title: 'Outbreaks'
     }
   },
   // async mounted() {
@@ -208,20 +234,20 @@ body {
   color: #346083;
 }
 
-.allevents-container {
+.alloutbreaks-container {
   padding: 80px 20px 5px 20px;
   width: 100%;
 }
 
 @media only screen and (max-width: 800px) {
-  .allevents-ontainer {
+  .alloutbreaks-ontainer {
     width: 100%;
     align-items: center;
     margin: 0px;
   }
 }
 
-.allevents-section-container {
+.alloutbreaks-section-container {
   /* left: 275px; */
   /* position: relative; */
   /* width: calc(100vw - 320px); */
@@ -232,12 +258,12 @@ body {
 }
 
 @media only screen and (max-width: 800px) {
-  .allevents-section-container {
+  .alloutbreaks-section-container {
     width: 95%;
   }
 }
 
-.allevents-component {
+.alloutbreaks-component {
   /* position: relative;
   display: inline-flex;
   flex-direction: row; */
@@ -252,7 +278,7 @@ body {
   margin-bottom: 40px;
 }
 @media only screen and (max-width: 800px) {
-  .allevents-component {
+  .alloutbreaks-component {
     position: relative;
     top: 0px;
     min-height: fit-content;
