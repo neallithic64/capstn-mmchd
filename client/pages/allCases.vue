@@ -3,7 +3,7 @@
     <!--Top Bar of the screen-->
     <TopNav />
     <div ref="content" class="viewcases-container">
-      <h1 class="pageHeader">View Cases</h1>
+      <h1 class="pageHeader">All Case Reports</h1>
       <div class="exportButtons">
         <div class="CIF-SummaryContainer">
           <ul :class="formListClass('all')" @click="clickTab('all')">
