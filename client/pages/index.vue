@@ -8,6 +8,16 @@
 <script>
 export default {
   middleware: 'is-auth',
+  data() {
+    return {
+
+    }
+  },
+  head() {
+    return {
+      title: 'Dashboard'
+    }
+  },
 }
 </script>
 

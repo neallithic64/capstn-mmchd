@@ -280,7 +280,6 @@
                 <div class="field">
                   <label for="locBrgy" class="required"> Barangay </label>
                   <select
-                    v-if="true"
                     id="locBrgy"
                     v-model="healthEvent.locBrgy"
                     :class="isRequired()"
@@ -363,7 +362,7 @@
         <!-- Buttons -->
         <div style="margin: -10px 0 5px; float: right">
           <button v-if="pageNum == 0" class="back-button" type="button">
-            <nuxt-link to="/allUsers"> Cancel </nuxt-link>
+            <nuxt-link to="/allHealthEvents"> Cancel </nuxt-link>
           </button>
           <button v-if="pageNum != 0" class="back-button" type="button" @click="move(pageNum - 1)">
             Back
@@ -520,8 +519,7 @@ export default {
         alert('Please fill up the required fields');
         this.$forceUpdate(); 
       }
-      // eslint-disable-next-line no-console
-      console.log(this.healthEvent.locBrgy);
+
       this.$nextTick(() => {
         // if ((page === 1 || page === 3) && this.healthEvent.locBrgy != null) {
         //   for (let i = 0; i < this.locBrgyList.length; i++) {
@@ -533,13 +531,12 @@ export default {
         //       document.getElementById('locBrgy').selectedIndex = i+1;
         //   }
         // }
-        if ((page === 1 || page === 3) && this.healthEvent.locBrgy != null) {
-          const dropdown = document.getElementById('locBrgy');
-          while (dropdown.firstChild) dropdown.removeChild(dropdown.firstChild);
+        if (((page === 1 || page === 3) && this.pageNum !== 0) && this.healthEvent.locBrgy != null) {
           const defaultOption = document.createElement('option');
           defaultOption.text = this.healthEvent.locBrgy;
-          dropdown.add(defaultOption);
-          dropdown.selectedIndex = 0;
+          defaultOption.value = this.healthEvent.locBrgy;
+          document.getElementById('locBrgy').add(defaultOption);
+          document.getElementById('locBrgy').selectedIndex = 0;
         }
       })
 

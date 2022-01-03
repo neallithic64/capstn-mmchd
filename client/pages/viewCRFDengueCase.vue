@@ -310,7 +310,14 @@
             <div class="field-row-straight">
               <div class="name-field">
                 <label for="currCity" class="required"> City </label>
-                <input id="currCity" v-model="formData.patient.currCity" class="input-form-field" name="currCity" :disabled="inputEdit()"/>
+                <select id="currCity" 
+                  v-model="formData.patient.currCity" 
+                  name="currCity" 
+                  :disabled="inputEdit()" 
+                  class="input-form-field"
+                  >
+                  <option v-for="(city, i) in cityList" :key=i>{{city}}</option>
+                </select>
               </div>
               <div class="field">
                 <label for="currBarangay" class="required"> Barangay </label>
@@ -340,13 +347,14 @@
             <div class="field-row-straight">
               <div class="name-field">
                 <label for="permCity"> City </label>
-                <input
-                  id="permCity"
-                  v-model="formData.patient.permCity"
-                  class="input-form-field"
-                  name="permCity"
-                  :disabled="inputEdit()"
-                />
+                <select
+                    id="permCity"
+                    v-model="formData.patient.permCity"
+                    name="permCity"
+                    :disabled="inputEdit()"
+                  >
+                  <option v-for="(city, i) in cityList" :key=i>{{city}}</option>
+                  </select>
               </div>
               <div class="field">
                 <label for="permBarangay"> Barangay </label>
@@ -1120,8 +1128,17 @@
 
         <form v-if="pageNum == 6 || isPrint" id="dengue6" type="submit">
           <div id="case-investigation-form" class="center">
-            <h2 id="form-header">
+            <h2 id="form-header" style="display: inline-flex;">
               {{ Object.values(disease.formNames)[6] }}
+              <!-- ADD this in ul v-show below: 
+                && $auth.user.userID === formData.cases.investigatorLab -->
+              <ul
+                v-show="!isPrint && !editLab"
+                class="CRFEdit"
+                @click="editLab=true"
+              >
+                <img src="~/assets/img/pen.png" />
+              </ul>
             </h2>
 
             <div class="vaccine-field field">
@@ -1132,40 +1149,51 @@
                   <div class="center-center">
                     <input
                       id="noLabTest"
-                      v-model="hasLabTest"
+                      v-model="newLabData.hasLabTest"
                       value="No"
                       class="input-radio"
                       name="labTest"
                       type="radio"
                       :disabled="inputEdit()"
+                      :class="isRequired()"
+                      required
                     />
                     <label for="noLabTest"> No </label>
                   </div>
                   <div class="center-center" style="margin: 0 20px">
                     <input
                       id="yesLabTest"
-                      v-model="hasLabTest"
+                      v-model="newLabData.hasLabTest"
                       value="Yes"
                       class="input-radio"
                       name="labTest"
                       type="radio"
                       :disabled="inputEdit()"
+                      :class="isRequired()"
+                      required
                     />
                     <label for="yesLabTest"> Yes </label>
                   </div>
                 </div>
               </div>
 
-              <div v-show="hasLabTest==='No'">
+              <div v-show="newLabData.hasLabTest==='No'">
                 <div class="name-field" style="width:50%">
                   <label for="investigatorLab" class="required"> Choose Lab to forward the case to </label>
-                  <select id="investigatorLab" v-model="formData.cases.investigatorLab" name="investigatorLab" :disabled="inputEdit()">
-                    <option v-for="(lab, i) in labList" :key=i>{{lab}}</option>
+                  <select id="investigatorLab" 
+                    v-model="newLabData.investigatorLab" 
+                    name="investigatorLab" 
+                    :disabled="inputEdit()"
+                    class="input-form-field"
+                    :class="isRequired()"
+                    required
+                    >
+                    <option v-for="(lab, i) in labList" :key=i>{{lab.druName}}</option>
                   </select>
                 </div>
               </div>
 
-              <div v-show="hasLabTest==='Yes'" style="margin-left:7px;">
+              <div v-show="newLabData.hasLabTest==='Yes'" style="margin-left:7px;">
                 <div class="field-row-straight" style="display: inline-flex; flex-direction: row">
                   <div style="width:10%; align-self:center;font-size:20px;font-weight:500">
                     <label for="labSpecimen">
@@ -1178,7 +1206,7 @@
                     </label>
                     <input
                       id="ns1Date"
-                      v-model="formData.caseData.ns1Date"
+                      v-model="newLabData.ns1Date"
                       class="input-form-field"
                       type="date"
                       :disabled="inputEdit()"
@@ -1190,8 +1218,9 @@
                     </label>
                     <select
                       id="ns1Result"
-                      v-model="formData.caseData.ns1Result"
+                      v-model="newLabData.ns1Result"
                       name="ns1Result"
+                      class="input-form-field"
                       :disabled="inputEdit()"
                     >
                       <option value="Single">Positive</option>
@@ -1213,7 +1242,7 @@
                     </label>
                     <input
                       id="iggDate"
-                      v-model="formData.caseData.iggDate"
+                      v-model="newLabData.iggDate"
                       class="input-form-field"
                       type="date"
                       :disabled="inputEdit()"
@@ -1225,8 +1254,9 @@
                     </label>
                     <select
                       id="iggResult"
-                      v-model="formData.caseData.iggResult"
+                      v-model="newLabData.iggResult"
                       name="iggResult"
+                      class="input-form-field"
                       :disabled="inputEdit()"
                     >
                       <option value="Single">Positive</option>
@@ -1248,7 +1278,7 @@
                     </label>
                     <input
                       id="igmDate"
-                      v-model="formData.caseData.igmDate"
+                      v-model="newLabData.igmDate"
                       class="input-form-field"
                       type="date"
                       :disabled="inputEdit()"
@@ -1260,8 +1290,9 @@
                     </label>
                     <select
                       id="igmResult"
-                      v-model="formData.caseData.igmResult"
+                      v-model="newLabData.igmResult"
                       name="igmResult"
+                      class="input-form-field"
                       :disabled="inputEdit()"
                     >
                       <option value="Single">Positive</option>
@@ -1283,7 +1314,7 @@
                     </label>
                     <input
                       id="pcrDate"
-                      v-model="formData.caseData.pcrDate"
+                      v-model="newLabData.pcrDate"
                       class="input-form-field"
                       type="date"
                       :disabled="inputEdit()"
@@ -1295,8 +1326,9 @@
                     </label>
                     <select
                       id="pcrResult"
-                      v-model="formData.caseData.pcrResult"
+                      v-model="newLabData.pcrResult"
                       name="pcrResult"
+                      class="input-form-field"
                       :disabled="inputEdit()"
                     >
                       <option value="Single">Positive</option>
@@ -1307,7 +1339,14 @@
                   </div>
                 </div>
               </div>
-            
+
+            <div v-show="editLab" style="margin: -10px 10 5px; margin-left: auto;text-align: -webkit-right;">
+              <button class="back-button" type="button" @click="editLabResult('cancel')">
+                Cancel </button>
+              <button class="next-button" type="button" @click="editLabResult('save')">
+                Save </button>
+            </div>
+
           </div>
         </form>
         <hr v-if="isPrint" />
@@ -1360,7 +1399,6 @@
                 </div>
               </div>
             </div>
-
           </div>
         </form>
         <hr v-if="isPrint" />
@@ -1446,9 +1484,11 @@ export default {
   compute: {},
   data() {
     return {
+      editLab: false,
+      editLabValidate:true,
       editStatus:false,
       weekNo: '2021-20',
-      labList: ['a','b','c','d'],
+      labList: [],
       newStatus:'',
       hasLabTest:'',
       isDisabled: false,
@@ -1459,6 +1499,18 @@ export default {
       pageNum: 1,
       formPart: 'Dengue0',
       dateLastUpdated:'',
+      newLabData: {
+        hasLabTest : '',
+        investigatorLab : '',
+        ns1Date : '',
+        ns1Result : '',
+        iggDate : '',
+        iggResult : '',
+        igmDate : '',
+        igmResult : '',
+        pcrDate : '',
+        pcrResult : '',
+      },
       tableOptions: {
         tableName: 'cases',
         columns: [
@@ -1649,6 +1701,24 @@ export default {
         updatedDate: '2020-10-10',
         status: 'IDK',
       },
+      cityList: [
+        'Caloocan',
+        'Las Piñas',
+        'Makati',
+        'Malabon',
+        'Mandaluyong',
+        'Manila',
+        'Marikina',
+        'Muntinlupa',
+        'Navotas',
+        'Parañaque',
+        'Pasay',
+        'Pasig',
+        'Quezon City',
+        'San Juan',
+        'Taguig',
+        'Valenzuela',
+      ],
       clinicalClassification: [
         {name: 'Dengue Without Warning Signs',
           description: 'Person with acute febrile illness of 2-7 days duration plus two of the following:',
@@ -1682,11 +1752,15 @@ export default {
     this.CRFData = data.crfData;
     this.dateLastUpdated = data.dateLastUpdated;
     this.caseHistory = data.caseHistory;
+    this.editLabResult('cancel')
     
     // fixing dates
 
+    let rows = (await axios.get('http://localhost:8080/api/getLabUsers')).data;
+    this.labList = rows;
+
     console.log(data);
-  }, 
+  },
   methods: {
     formListClass(index) {
       if (index === this.pageNum) return 'formSummaryItems selected'
@@ -1696,8 +1770,12 @@ export default {
       this.pageNum = i
     },
     inputEdit() {
-      if (this.pageNum === 6 && this.$auth.user.userID === this.formData.cases.investigatorLab) return false;
+      // this.$auth.user.userID === this.formData.cases.investigatorLab
+      if (this.pageNum === 6 && this.editLab) return false;
       else return true;
+    },
+    isRequired() {
+      if (!this.editLabValidate) return "input-required"
     },
     statusInputEdit(value) {
       if (this.editStatus & value!==this.formData.cases.caseLevel ) return false
@@ -1705,6 +1783,62 @@ export default {
     },
     popup() {
       this.editStatus = !this.editStatus
+    },
+    validateLab() {
+      this.editLabValidate = false;
+      if (this.newLabData.hasLabTest!=='') {
+        if (this.newLabData.hasLabTest==='Processing'||
+            (this.newLabData.hasLabTest==='No' && 
+             this.newLabData.investigatorLab!=='' && 
+             this.newLabData.investigatorLab!==undefined) || 
+            (this.newLabData.hasLabTest==='Yes' &&
+             ((this.newLabData.ns1Date!== '' && this.newLabData.ns1Result!== '') ||
+              (this.newLabData.iggDate!== '' && this.newLabData.iggResult!== '') ||
+              (this.newLabData.igmDate!== '' && this.newLabData.igmResult!== '') ||
+              (this.newLabData.pcrDate!== '' && this.newLabData.pcrResult!== ''))) )
+            this.editLabValidate = true;
+         else this.editLabValidate = false;
+      }
+      else this.editLabValidate = false;
+    },
+    editLabResult(change) {
+      if (change==='save') {
+        this.validateLab();
+        if (this.editLabValidate) {
+          this.hasLabTest = this.newLabData.hasLabTest
+          this.formData.cases.investigatorLab = this.newLabData.investigatorLab
+          this.formData.caseData.ns1Date = this.newLabData.ns1Date
+          this.formData.caseData.ns1Result = this.newLabData.ns1Result
+          this.formData.caseData.iggDate = this.newLabData.iggDate
+          this.formData.caseData.iggResult = this.newLabData.iggResult
+          this.formData.caseData.igmDate = this.newLabData.igmDate
+          this.formData.caseData.igmResult = this.newLabData.igmResult
+          this.formData.caseData.pcrDate = this.newLabData.pcrDate
+          this.formData.caseData.pcrResult = this.newLabData.pcrResult
+          
+          // TO DO: save change in db
+
+          this.editLab = false;
+        }
+        else {
+          alert('Please fill up the required fields');
+          this.$forceUpdate();
+        }
+      }
+      if (change==='cancel') {
+        this.newLabData.hasLabTest = this.hasLabTest
+        this.newLabData.investigatorLab = this.formData.cases.investigatorLab
+        this.newLabData.ns1Date = this.formData.caseData.ns1Date
+        this.newLabData.ns1Result = this.formData.caseData.ns1Result
+        this.newLabData.iggDate = this.formData.caseData.iggDate
+        this.newLabData.iggResult = this.formData.caseData.iggResult
+        this.newLabData.igmDate = this.formData.caseData.igmDate
+        this.newLabData.igmResult = this.formData.caseData.igmResult
+        this.newLabData.pcrDate = this.formData.caseData.pcrDate
+        this.newLabData.pcrResult = this.formData.caseData.pcrResult
+        
+        this.editLab = false;
+      }
     },
     async status(change) {
       if (change==='save') {
@@ -1758,6 +1892,17 @@ export default {
 </script>
 
 <style>
+
+.input-required:invalid { 
+    box-shadow: 0 0 5px #d45252;
+    border-color: hsl(0, 76%, 50%);
+    /* background-color: #ff6961; */
+}
+
+.input-required{
+  border-color: hsl(0, 76%, 50%);
+}
+
 body {
   font-family: 'Work Sans', sans-serif;
   font-weight: 300;
@@ -1854,6 +1999,11 @@ h3 {
   flex-direction: row;
   margin-bottom: 10px;
   justify-content: space-between;
+}
+@media only screen and (max-width: 900px) {
+  .viewCRF-details {
+    flex-direction: column;
+  }
 }
 .CRFnumbers,
 .CRFstatus {
@@ -1965,6 +2115,17 @@ tr:nth-child(odd) {background-color: #f2f2f2;}
   left: 0;
   background: rgba(100, 100, 100, 0.4);
   /* border: 100px solid rgba(100, 100, 100, 0.4); */
+}
+@media only screen and (max-width: 550px) {
+  .overlay {
+    padding: 85px;
+  }
+}
+
+@media only screen and (max-width: 400px) {
+  .overlay {
+    padding: 40px;
+  }
 }
 
 .overlay-form {
