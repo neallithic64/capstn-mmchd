@@ -105,11 +105,12 @@ export default {
             },
           })
           this.$router.push('/');
-          this.$toast.success('Successfully authenticated', {duration: 1000});
+          this.$toast.success('Login successful!', {duration: 4000, icon: 'check_circle'});
         } catch (e) {
           // eslint-disable-next-line no-console
             console.log(e.response);
             this.genError = e.response.data;
+            this.$toast.error('Something went wrong!', {duration: 4000, icon: 'error'});
         }
       }
       e.preventDefault();

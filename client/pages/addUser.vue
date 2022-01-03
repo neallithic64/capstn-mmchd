@@ -565,8 +565,18 @@ export default {
       try {
         const result = await axios.post('http://localhost:8080/api/newUser', {user: this.user});
         // eslint-disable-next-line no-console
-        console.log(result);
-        this.$router.push('/');
+        // console.log(result);
+        // this.$router.push('/');
+
+        if (result.status === 200) {
+          // alert('Health event submitted!');
+          this.$toast.success('User added!', {duration: 4000, icon: 'check_circle'});
+          window.location.href = '/';
+        } else {
+          // eslint-disable-next-line no-console
+          console.log(result);
+          this.$toast.error('Something went wrong!', {duration: 4000, icon: 'error'});
+        }
       } catch (err) {
         // eslint-disable-next-line no-console
         console.log(err);
