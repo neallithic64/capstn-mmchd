@@ -77,13 +77,13 @@ export default {
             expectFormat: 'DD MMM YYYY',
           },
           {
-            title: 'No. of Cases',
+            title: 'Total Active Cases',
             key: 'numCases',
             type: 'text',
             source: 'events'
           },
           {
-            title: 'No. of Deaths',
+            title: 'Total Deaths',
             key: 'numDeaths',
             type: 'text',
             source: 'events'
@@ -95,13 +95,13 @@ export default {
             source: 'events'
           },
           {
-            title: 'Attack Rate per 10k',
+            title: 'Attack Rate per 100k',
             key: 'attackRate',
             type: 'text',
             source: 'events'
           },
           {
-            title: 'Outbreak Status',
+            title: 'Status',
             key: 'outbreakStatus',
             type: 'text',
             source: 'events',
