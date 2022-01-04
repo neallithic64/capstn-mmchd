@@ -173,7 +173,7 @@
                     :disabled="inputEdit()"
                     required
                   />
-                  <label for="public"> Public </label>
+                  <label for="public">Public </label>
                 </div>
               </div>
 
@@ -280,7 +280,6 @@
                 <div class="field">
                   <label for="locBrgy" class="required"> Barangay </label>
                   <select
-                    v-if="true"
                     id="locBrgy"
                     v-model="healthEvent.locBrgy"
                     :class="isRequired()"
@@ -363,7 +362,7 @@
         <!-- Buttons -->
         <div style="margin: -10px 0 5px; float: right">
           <button v-if="pageNum == 0" class="back-button" type="button">
-            <nuxt-link to="/allUsers"> Cancel </nuxt-link>
+            <nuxt-link to="/allHealthEvents"> Cancel </nuxt-link>
           </button>
           <button v-if="pageNum != 0" class="back-button" type="button" @click="move(pageNum - 1)">
             Back
@@ -503,8 +502,18 @@ export default {
         this.healthEvent.userID = this.$auth.user.userID;
         const result = await axios.post('http://localhost:8080/api/newEvent', {event: this.healthEvent});
         // eslint-disable-next-line no-console
-        console.log(result);
-        this.$router.push('/');
+        // console.log(result);
+        // this.$router.push('/');
+
+        if (result.status === 200) {
+          // alert('Health event submitted!');
+          this.$toast.success('Health event submitted!', {duration: 4000, icon: 'check_circle'});
+          window.location.href = '/allHealthEvents';
+        } else {
+          // eslint-disable-next-line no-console
+          console.log(result);
+          this.$toast.error('Something went wrong!', {duration: 4000, icon: 'error'});
+        }
       } catch (err) {
         // eslint-disable-next-line no-console
         console.log(err);
@@ -517,21 +526,28 @@ export default {
       if (this.pageDone[this.pageNum] || this.pageNum === 2) {
         this.pageNum = page;
       } else {
-        alert('Please fill up the required fields');
+        // alert('Please fill up the required fields');
+        this.$toast.error('Please fill up the required fields.', {position: 'top-right', duration: 4000, icon: 'error'});
         this.$forceUpdate(); 
       }
-      // eslint-disable-next-line no-console
-      console.log(this.healthEvent.locBrgy);
+
       this.$nextTick(() => {
-        if ((page === 1 || page === 3) && this.healthEvent.locBrgy != null) {
-          for (let i = 0; i < this.locBrgyList.length; i++) {
-            const option = document.createElement('option');
-            option.text = this.locBrgyList[i];
-            option.value = this.locBrgyList[i];
-            document.getElementById('locBrgy').add(option);
-            if (this.healthEvent.locBrgy === this.locBrgyList[i])
-              document.getElementById('locBrgy').selectedIndex = i+1;
-          }
+        // if ((page === 1 || page === 3) && this.healthEvent.locBrgy != null) {
+        //   for (let i = 0; i < this.locBrgyList.length; i++) {
+        //     const option = document.createElement('option');
+        //     option.text = this.locBrgyList[i];
+        //     option.value = this.locBrgyList[i];
+        //     document.getElementById('locBrgy').add(option);
+        //     if (this.healthEvent.locBrgy === this.locBrgyList[i])
+        //       document.getElementById('locBrgy').selectedIndex = i+1;
+        //   }
+        // }
+        if (((page === 1 || page === 3) && this.pageNum !== 0) && this.healthEvent.locBrgy != null) {
+          const defaultOption = document.createElement('option');
+          defaultOption.text = this.healthEvent.locBrgy;
+          defaultOption.value = this.healthEvent.locBrgy;
+          document.getElementById('locBrgy').add(defaultOption);
+          document.getElementById('locBrgy').selectedIndex = 0;
         }
       })
 

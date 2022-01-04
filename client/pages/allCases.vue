@@ -3,7 +3,7 @@
     <!--Top Bar of the screen-->
     <TopNav />
     <div ref="content" class="viewcases-container">
-      <h1 class="pageHeader">View Cases</h1>
+      <h1 class="pageHeader">All Case Reports</h1>
       <div class="exportButtons">
         <div class="CIF-SummaryContainer">
           <ul :class="formListClass('all')" @click="clickTab('all')">
@@ -443,7 +443,7 @@ export default {
       // doc.save('test.pdf')
       console.log(this.$refs.content)
       setTimeout(() => (this.isPrint = !this.isPrint), 3000)
-   },
+    },
     getCols() {
       var colName, columns='';
       if (this.caseTab==='all') colName = this.allColumns;
@@ -471,14 +471,72 @@ export default {
       const data = encodeURI(csvContent);
       const link = document.createElement("a");
       link.setAttribute("href", data);
-      link.setAttribute("download", this.caseTab+".csv");
+      link.setAttribute("download", this.caseTab.toUpperCase()+".csv");
       link.click();
     },
     getTable() {
-      if (this.caseTab==='all') return this.allData;
-      else if (this.caseTab==='cif') return this.cifData;
-      else if (this.caseTab==='crfDRU') return this.crfDRUData;
-      else if (this.caseTab==='crfCHD') return this.crfCHDData;
+      let data = [];
+      if (this.caseTab==='all') {
+        for (let i=0; i<this.allData.length; i++) {
+          let name = "\""+ this.allData[i].patientName +"\"";
+          data[i] =  {
+            type:this.allData[i].type,
+            caseID : this.allData[i].caseID,
+            diseaseName : this.allData[i].diseaseName,
+            reportedBy : this.allData[i].reportedBy,
+            patientName : name,
+            city : this.allData[i].city,
+            reportDate : this.allData[i].reportDate,
+            updatedDate : this.allData[i].updatedDate,
+            caseLevel : this.allData[i].caseLevel,
+          }
+        }
+        return data;
+      }
+      else if (this.caseTab==='cif') {
+        for (let i=0; i<this.cifData.length; i++) {
+          let name = "\""+ this.cifData[i].patientName +"\"";
+          data[i] =  {
+            caseID : this.cifData[i].caseID,
+            diseaseName : this.cifData[i].diseaseName,
+            reportedBy : this.cifData[i].reportedBy,
+            patientName : name,
+            city : this.cifData[i].city,
+            reportDate : this.cifData[i].reportDate,
+            updatedDate : this.cifData[i].updatedDate,
+            caseLevel : this.cifData[i].caseLevel,
+          }
+        }
+        return data;
+      }
+      else if (this.caseTab==='crfDRU') {
+        for (let i=0; i<this.crfDRUData.length; i++) {
+          data[i] =  {
+            weekNo : this.crfDRUData[i].weekNo,
+            CRFID : this.crfDRUData[i].CRFID,
+            diseaseName : this.crfDRUData[i].diseaseName,
+            submitStatus : this.crfDRUData[i].submitStatus,
+            submittedOn : this.crfDRUData[i].submittedOn,
+            reportStatus : this.crfDRUData[i].reportStatus,
+          }
+        }
+        return data;
+      }
+      else if (this.caseTab==='crfCHD') {
+        for (let i=0; i<this.crfCHDData.length; i++) {
+          data[i] =  {
+            weekNo : this.crfCHDData[i].weekNo,
+            CRFID : this.crfCHDData[i].CRFID,
+            diseaseName : this.crfCHDData[i].diseaseName,
+            userID : this.crfCHDData[i].userID,
+            city : this.crfCHDData[i].city,
+            submitStatus : this.crfCHDData[i].submitStatus,
+            submittedOn : this.crfCHDData[i].submittedOn,
+            reportStatus : this.crfCHDData[i].reportStatus,
+          }
+        }
+        return data;
+      }
     }
   },
 }

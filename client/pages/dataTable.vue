@@ -668,7 +668,13 @@ table {
   white-space: nowrap;
 }
 
-@media only screen and (max-width: 950px) {
+@media only screen and (max-width: 1400px) {
+  table {
+    display: block;
+  }
+}
+
+@media only screen and (max-width: 1400px) {
   table {
     display: block;
   }

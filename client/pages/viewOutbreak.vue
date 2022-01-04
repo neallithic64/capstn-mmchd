@@ -1,29 +1,32 @@
 <template>
-  <div id="viewHE">
+  <div id="viewOB">
     <!--Top Bar of the screen-->
     <TopNav/>
-    <div ref="content" class="viewHE-container">
-      <div class="viewHE-details" style="align-text: left">
-        <div class="HEnumbers">
-          <h1 style="margin: -10px 0">Event No. {{ healthEvent.eventID }}</h1>
+    <div ref="content" class="viewOB-container">
+      <div class="viewOB-details" style="align-text: left">
+        <div class="OBnumbers">
+          <h1 style="margin: -10px 0">Outbreak No. {{ outbreak.outbreakID }}</h1>
+          <h2 style="margin-top: -1px">
+            {{ outbreak.disease }}
+          </h2>
         </div>
-        <div class="HEstatus" style="align-text: right">
+        <div class="OBstatus" style="align-text: right">
           <span style="display: inline-flex; align-items: center"
-            >Health Event Status:&nbsp;
-            <div v-show="!editStatus" class="HEActionButtons">
+            >Outbreak Status:&nbsp;
+            <div v-show="!editStatus" class="OBActionButtons">
               <h1 style="line-height: 1; align-items: center">
-                {{ healthEvent.eventStatus }}
+                {{ outbreak.outbreakStatus }}
               </h1>
               <ul
                 v-show="!isPrint"
-                class="HEEdit"
+                class="OBEdit"
                 @click="popup()"
               >
                 <img src="~/assets/img/pen.png" />
               </ul>
             </div>
           </span>
-          <div v-show="!editStatus && !isPrint" class="HEActionButtons">
+          <div v-show="!editStatus && !isPrint" class="OBActionButtons">
             <img
               src="~/assets/img/pdf.png"
               class="printCaseButton"
@@ -32,18 +35,13 @@
           </div>
         </div>
       </div>
-      <div class="viewHE-details" style="align-text: left">
+      <div class="viewOB-details" style="align-text: left">
         <div class="CIFnumbers">
-          <p>Date Captured: <b> {{ healthEvent.dateCaptured }} </b></p>
-          <p>Time Captured: <b> {{ healthEvent.timeCaptured }} </b></p>
-          <p>Location: <b> {{ healthEvent.locBrgy }}, {{ healthEvent.locCity }} </b></p>
-        </div>
-        <div class="CRFstatus" style="align-text: right">
-          <p>Source: <b> {{ healthEvent.source }} </b> </p>
-          <p>Reporting Source: <b>{{ healthEvent.reportSource }}</b></p>
+          <p>Date Started: <b> {{ outbreak.dateStarted }} </b></p>
+          <p>Date Closed: <b> {{ outbreak.dateClosed }} </b></p>
         </div>
       </div>
-      <div v-show="!isPrint" class="HE-SummaryContainer">
+      <div v-show="!isPrint" class="OB-SummaryContainer">
         <ul
           v-for="(value, name, i) in formSection.formNames"
           :key="i"
@@ -58,237 +56,41 @@
         </ul>
       </div>
 
-      <div class="viewHEform-component">
+      <div class="viewOBform-component">
 
-        <form v-if="pageNum == 0 || isPrint" id="he1" type="submit">
+        <form v-if="pageNum == 0 || isPrint" id="ob1" type="submit">
           <div id="case-report-form" class="center">
             <h2 id="form-header">
               {{ Object.values(formSection.formNames)[0] }}
             </h2>
 
-            <div class="field-row-straight">
-              <div class="name-field">
-                <div style="display: flex; flex-direction: row;">
-                  <label for="dateCaptured" class="required"> Date Captured </label>
-                </div>
-                <input id="dateCaptured" 
-                  v-model="healthEvent.dateCaptured"
-                  class="input-form-field"
-                  type="date"
-                  name="dateCaptured"
-                  :disabled="inputEdit()"/>
-              </div>
-
-              <div class="field">
-                <div style="display: flex; flex-direction: row;">
-                  <label for="timeCaptured" class="required"> Time Captured</label>
-                </div>
-                <input 
-                  id="timeCaptured"
-                  v-model="healthEvent.timeCaptured"
-                  class="input-form-field"
-                  type="time"
-                  name="timeCaptured"
-                  :disabled="inputEdit()"
-                />
-              </div>
-            </div>
-
-            <div class="field">
-              <div style="display: flex; flex-direction: row;">
-                <label for="source" class="required"> Source </label>
-              </div>
-              <div style="display: inline-flex; align-items: center">
-                <input
-                  id="print"
-                  v-model="healthEvent.source"
-                  value="Print"
-                  class="input-radio"
-                  name="source"
-                  type="radio"
-                  :disabled="inputEdit()"
-                />
-                <label for="print"> Print </label>
-              </div>
-              <div style="display: inline-flex; align-items: center">
-                <input
-                  id="internet"
-                  v-model="healthEvent.source"
-                  value="Internet"
-                  class="input-radio"
-                  name="source"
-                  type="radio"
-                  :disabled="inputEdit()"
-                />
-                <label for="internet"> Internet </label>
-              </div>
-              <div style="display: inline-flex; align-items: center">
-                <input
-                  id="television"
-                  v-model="healthEvent.source"
-                  value="Television"
-                  class="input-radio"
-                  name="source"
-                  type="radio"
-                  :disabled="inputEdit()"
-                />
-                <label for="television"> Television </label>
-              </div>
-              <div style="display: inline-flex; align-items: center">
-                <input
-                  id="radioSource"
-                  v-model="healthEvent.source"
-                  value="Radio"
-                  class="input-radio"
-                  name="source"
-                  type="radio"
-                  :disabled="inputEdit()"
-                />
-                <label for="radioSource"> Radio </label>
-              </div>
-              <div style="display: inline-flex; align-items: center">
-                <input
-                  id="doh"
-                  v-model="healthEvent.source"
-                  value="DOH"
-                  class="input-radio"
-                  name="source"
-                  type="radio"
-                  :disabled="inputEdit()"
-                />
-                <label for="doh"> DOH </label>
-              </div>
-              <div>
-                <input
-                  id="public"
-                  v-model="healthEvent.source"
-                  value="Public"
-                  class="input-radio"
-                  name="source"
-                  type="radio"
-                  :disabled="inputEdit()"
-                />
-                <label for="public"> Public </label>
-              </div>
-            </div>
-
-            <div class="name-field">
-              <div style="display: flex; flex-direction: row;">
-                <label for="reportSource" class="required"> Reporting Source </label>
-              </div>
-              <input id="reportSource" 
-                v-model="healthEvent.reportSource"
-                class="input-form-field"
-                type="text"
-                name="reportSource"
-                :disabled="inputEdit()"
+            <div class="OB-summary">
+              <dataTable
+                :options="obSummaryOptions"
+                :datavalues="obSummary"
+                :casetype="'summary'"
               />
             </div>
+
           </div>
+
+            
         </form>
 
         <hr v-if="isPrint" />
 
-        <form v-if="pageNum == 1 || isPrint" id="he2" type="submit">
+        <form v-if="pageNum == 1 || isPrint" id="ob2" type="submit">
           <div id="case-report-form" class="center">
             <h2 id="form-header"> {{ Object.values(formSection.formNames)[1] }} </h2>
 
-            <div class="name-field">
-                <div style="display: flex; flex-direction: row;">
-                  <label for="eventDetails" class="required"> Health Event </label>
-                </div>
-                <textarea 
-                  id="eventDetails"
-                  v-model="healthEvent.eventDetails"
-                  class="textarea-form-field"
-                  type="text"
-                  name="eventDetails"
-                  :disabled="inputEdit()"
-                />
-              </div>
+            <div class="OB-cases">
+              <dataTable
+                :options="obCasesOptions"
+                :datavalues="obCases"
+                :casetype="'cases'"
+              />
+            </div>
 
-              <!-- Location -->
-              <div class="field-row" style="margin-left: 0px">
-                <div class="field">
-                  <div style="display: flex; flex-direction: row;">
-                    <label for="locHouseStreet" class="required"> Street / House No. </label>
-                  </div>
-                  <input
-                    id="locHouseStreet"
-                    v-model="healthEvent.locHouseStreet"
-                    class="input-form-field"
-                    type="text"
-                    :disabled="inputEdit()"
-                  />
-                </div>
-              </div>
-
-              <div class="field-row-straight">
-                <div class="name-field">
-                  <label for="locCity" class="required"> City </label>
-                  <input id="locCity" v-model="healthEvent.locCity"
-                    class="input-form-field"
-                    name="locCity"
-                    :disabled="inputEdit()"/>
-                </div>
-
-                <div class="field">
-                  <label for="locBrgy" class="required"> Barangay </label>
-                  <input
-                    id="locBrgy"
-                    v-model="healthEvent.locBrgy"
-                    class="input-form-field"
-                    name="locBrgy"
-                    :disabled="inputEdit()"/>
-                </div>
-              </div>
-
-              <!-- Cases -->
-              <div class="field-row-straight">
-                <div class="field">
-                  <div style="display: flex; flex-direction: row;">
-                    <label for="numCases" class="required"> Number of Cases </label>
-                  </div>
-                  <input
-                    id="numCases"
-                    v-model="healthEvent.numCases"
-                    class="input-form-field"
-                    type="number"
-                    min="0"
-                    :disabled="inputEdit()"
-                  />
-                </div>
-                <div class="field">
-                  <div style="display: flex; flex-direction: row;">
-                    <label for="numDeaths" class="required"> Number of Deaths </label>
-                  </div>
-                  
-                  <input
-                    id="numDeaths"
-                    v-model="healthEvent.numDeaths"
-                    class="input-form-field"
-                    type="number"
-                    min="0"
-                    :disabled="inputEdit()"
-                  />
-                </div>
-              </div>
-
-              <!-- Remarks -->
-              <div class="field-row" style="margin-left: 0px">
-                <div class="field">
-                  <label for="remarks">
-                    Remarks
-                  </label>
-                  <textarea 
-                    id="remarks"
-                    v-model="healthEvent.remarks"
-                    class="textarea-form-field"
-                    type="text"
-                    name="remarks"
-                    :disabled="inputEdit()"/>
-                </div>
-              </div>
 
           </div>
         </form>
@@ -297,10 +99,10 @@
       
       </div>
 
-      <div class="HE-statusHistory">
-        <h2 style="border-bottom: gray solid; width: fit-content; padding: 0 7px 0 5px;">Event Status History</h2>
+      <div class="OB-statusHistory">
+        <h2 style="border-bottom: gray solid; width: fit-content; padding: 0 7px 0 5px;">Outbreak Status History</h2>
         <dataTable
-          :options="tableOptions"
+          :options="historyOptions"
           :datavalues="eventHistory"
           :casetype="'patient'"
         />
@@ -313,7 +115,7 @@
         <div class="field-row" style="display: inline-flex; margin-bottom: -1 px">
           <div class="field">
             <h2 id="form-header" class="required">
-              Please select the health event status.
+              Please select the outbreak status.
             </h2>
             <div>
               <!-- <div style="display: inline-flex; flex-direction: column"> -->
@@ -385,7 +187,99 @@ export default {
       isPrint: false, 
       pageNum: 0,
       dateLastUpdated:'',
-      tableOptions: {
+      obSummaryOptions: {
+        tableName: 'summary',
+        columns: [
+          {
+            title: 'City',
+            key: 'city',
+            type: 'text',
+            source: 'outbreak',
+            uniqueField: 'id',
+          },
+          {
+            title: 'Total Active Cases',
+            key: 'numCases',
+            type: 'text',
+            source: 'outbreak'
+          },
+          {
+            title: 'Two-week Growth Rate',
+            key: 'growthRate',
+            type: 'text',
+            source: 'outbreak'
+          },
+          {
+            title: 'Attack Rate per 100k',
+            key: 'attackRate',
+            type: 'text',
+            source: 'outbreak'
+          },
+          {
+            title: 'Risk Classification',
+            key: 'risk',
+            type: 'text',
+            source: 'outbreak'
+          },
+        ]
+      },
+      obCasesOptions: {
+        tableName: 'obcases',
+        columns: [
+          {
+            title: 'Case ID',
+            key: 'caseID',
+            type: 'clickable',
+            source: 'cases',
+            uniqueField: 'id',
+            sortable: true,
+          },
+          {
+            title: 'DRU ID',
+            key: 'reportedBy',
+            type: 'text',
+            source: 'cases',
+            uniqueField: 'id',
+          },
+          {
+            title: 'City',
+            key: 'city',
+            type: 'text',
+            source: 'cases',
+            uniqueField: 'id',
+            sortable: true,
+            filter: true,
+          },
+          {
+            title: 'Submitted on',
+            key: 'reportDate',
+            type: 'text',
+            dateFormat: true,
+            currentFormat: 'YYYY-MM-DD',
+            expectFormat: 'DD MMM YYYY',
+            // sortable: true,
+          },
+          {
+            title: 'Last updated',
+            key: 'updatedDate',
+            type: 'text',
+            dateFormat: true,
+            currentFormat: 'YYYY-MM-DD',
+            expectFormat: 'DD MMM YYYY',
+            sortable: true,
+          },
+          {
+            title: 'Case Status',
+            key: 'caseLevel',
+            type: 'text',
+            source: 'cases',
+            uniqueField: 'id',
+            sortable: true,
+            filter: true,
+          },
+        ],
+      },
+      historyOptions: {
         tableName: 'cases',
         columns: [
           {
@@ -436,26 +330,77 @@ export default {
           reportedBy: 'b',
         }
       ],
-      healthEvent: {
-        eventID: '',
-        userID: '',
-        eventStatus:'For Validation',
-        dateCaptured: '',
-        timeCaptured: '',
-        source: '',
-        reportSource: '',
-        eventDetails: '',
-        locHouseStreet: '',
-        locCity: '',
-        locBrgy: '',
-        numCases: '',
-        numDeaths: '',
-        remarks: ''
+      obSummary: [
+        {
+          city: 'Metro Manila',
+          numCases: '1044',
+          growthRate: '20%',
+          attackRate: '2.01',
+          risk: 'High'
+        },
+        {
+          city: 'Caloocan',
+          numCases: '200',
+          growthRate: '20%',
+          attackRate: '2.01',
+          risk: 'High'
+        },
+        {
+          city: 'Las Piñas',
+          numCases: '200',
+          growthRate: '20%',
+          attackRate: '2.01',
+          risk: 'Low'
+        },
+        {
+          city: 'Makati',
+          numCases: '200',
+          growthRate: '20%',
+          attackRate: '2.01',
+          risk: 'Moderate'
+        },
+      ],
+      obCases: [
+        {
+          caseID: '123',
+          reportedBy: 'SG Diagnostics',
+          city: 'Caloocan',
+          reportDate: '2021-12-14',
+          updatedDate: '2021-12-14',
+          caseLevel: 'Confirmed'
+        },
+        {
+          caseID: '124',
+          reportedBy: 'SG Diagnostics',
+          city: 'Caloocan',
+          reportDate: '2021-12-14',
+          updatedDate: '2021-12-14',
+          caseLevel: 'Confirmed'
+        },
+        {
+          caseID: '124',
+          reportedBy: 'SG Diagnostics',
+          city: 'Caloocan',
+          reportDate: '2021-12-14',
+          updatedDate: '2021-12-14',
+          caseLevel: 'Confirmed'
+        },
+      ],
+      outbreak: {
+        outbreakID: '123',
+        disease: 'Measles',
+        dateStarted: '2021-12-31',
+        numCases: '200',
+        numDeaths: '0',
+        growthRate: '813%',
+        attackRate: '1.07%',
+        outbreakStatus: 'Ongoing',
+        dateClosed: 'N/A'
       },
       formSection: {
         formNames: {
-          form0: 'Source Details',
-          form1: 'Health Event Details'
+          form0: 'Summary',
+          form1: 'Cases'
         },
       },
       eventLevels: {
@@ -494,7 +439,7 @@ export default {
       else return true;
     },
     statusInputEdit(value) {
-      if (this.editStatus & value!==this.healthEvent.eventStatus ) return false
+      if (this.editStatus & value!==this.outbreak.outbreakStatus ) return false
       else return true
     },
     popup() {
@@ -565,20 +510,20 @@ h3 {
   font-weight: 600;
 }
 
-.viewHE-container {
+.viewOB-container {
   padding: 80px 20px 5px 20px;
   width: 100%;
 }
 
 @media only screen and (max-width: 800px) {
-  .viewHE-ontainer {
+  .viewOB-ontainer {
     width: 100%;
     align-items: center;
     margin: 0px;
   }
 }
 
-.viewHE-section-container {
+.viewOB-section-container {
   /* left: 275px; */
   /* position: relative; */
   /* width: calc(100vw - 320px); */
@@ -589,12 +534,12 @@ h3 {
 }
 
 @media only screen and (max-width: 800px) {
-  .viewHE-section-container {
+  .viewOB-section-container {
     width: 95%;
   }
 }
 
-.HE-SummaryContainer {
+.OB-SummaryContainer {
   display: flex;
   flex-direction: row;
   overflow-x: auto;
@@ -621,7 +566,7 @@ h3 {
   pointer-events: none;
 }
 
-.viewHEform-component {
+.viewOBform-component {
   /* position: relative;
   display: inline-flex;
   flex-direction: row; */
@@ -636,21 +581,21 @@ h3 {
   margin-bottom: 20px;
 }
 @media only screen and (max-width: 1400px) {
-  .viewHEform-component {
+  .viewOBform-component {
     position: relative;
     top: 0px;
     min-height: fit-content;
     border-radius: 0 0 10px 10px;
   }
 }
-.viewHE-details {
+.viewOB-details {
   display: flex;
   flex-direction: row;
   margin-bottom: 10px;
   justify-content: space-between;
 }
-.HEnumbers,
-.HEstatus {
+.OBnumbers,
+.OBstatus {
   display: inline-flex;
   flex-direction: column;
 }
@@ -680,7 +625,7 @@ b {
   margin-bottom: 7.5px;
 }
 
-.HEActionButtons {
+.OBActionButtons {
   display: inline-flex;
   flex-direction: row;
   justify-content: flex-end;
@@ -707,7 +652,7 @@ b {
   margin-bottom: -10px;
 }
 
-.HEEdit {
+.OBEdit {
   width: 30px;
   height: 30px;
   padding: 5px;
@@ -718,7 +663,7 @@ b {
 
 } */
 
-.HE-statusHistory {
+.OB-statusHistory {
   margin-top:10px;
   margin-bottom:30px;
 }

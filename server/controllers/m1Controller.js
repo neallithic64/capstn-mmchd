@@ -2,7 +2,6 @@ const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
 const db = require("../models/db");
-const { report } = require("../routers/indexRouter");
 
 const DRUUserTypes = ['BHS','RHU','CHO', 'govtHosp', 'privHosp', 'clinic', 'privLab', 'airseaPort'];
 /** OBJECT CONSTRUCTORS
@@ -908,11 +907,9 @@ const indexFunctions = {
 				brgy: formData.patient.currBrgy,
 				city: formData.patient.currCity
 			});
-			console.log("currAddrID inside postNewCase");
-			console.log(currAddrID);
 			formData.patient.caddressID = currAddrID.id;
 			if (!currAddrID.exists) {
-				let currAddr = new Address(currAddrID, formData.patient.currHouseStreet, formData.patient.currBrgy, formData.patient.currCity);
+				let currAddr = new Address(formData.patient.caddressID, formData.patient.currHouseStreet, formData.patient.currBrgy, formData.patient.currCity);
 				result = await db.insertOne("mmchddb.ADDRESSES", currAddr);
 			}
 			
@@ -923,8 +920,8 @@ const indexFunctions = {
 					city: formData.patient.permCity
 				});
 				formData.patient.paddressID = permAddrID.id;
-				if (!currAddrID.exists) {
-					let permAddr = new Address(permAddrID, formData.patient.permHouseStreet, formData.patient.permBrgy, formData.patient.permCity);
+				if (!permAddrID.exists) {
+					let permAddr = new Address(formData.patient.paddressID, formData.patient.permHouseStreet, formData.patient.permBrgy, formData.patient.permCity);
 					result = await db.insertOne("mmchddb.ADDRESSES", permAddr);
 				}
 				
@@ -1082,6 +1079,42 @@ const indexFunctions = {
 					}
 				} else res.status(500).send("Error making db transaction.");
 			} else res.status(404).send("No case with such ID found.");
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error.");
+		}
+	},
+	
+	postEditCIFLab: async function(req, res) {
+		/* for the lab data, the records already exist, they're within CASE_DATA. */
+		let { caseID, caseData } = req.body;
+		try {
+			// collect all CASE_DATA records with the caseID and containing "lab" in fieldName
+			let rows = await db.exec(`SELECT * FROM mmchddb.CASE_DATA WHERE caseID = '${caseID}' AND fieldName LIKE 'lab%';`);
+			
+			// reconstruct array as an object for easier update
+			let labData = rows.reduce((r, i) => {
+				r[i.fieldName] = i.value;
+				return r;
+			}, {});
+			
+			console.log(labData);
+			consosle.log("~~~~~~~~~~~~~~ processing ~~~~~~~~~~~~~~");
+			// might be redundant?
+			let filtered = Object.keys(caseData)
+				.filter(key => key.includes("lab"))
+				.reduce((obj, key) => {
+					return { ...obj, [key]: caseData[key] };
+				}, {});
+			// update every attr in the object for the input information
+			Object.keys(labData).forEach(e => {
+				// should call `filtered`, but might not need it
+				labData[e] = caseData[e];
+			});
+			console.log(labData);
+			// where updating happens
+			// await db.updateRows("mmchddb.CASE_DATA", labData);
+			res.status(200).send(labData);
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error.");

@@ -25,26 +25,34 @@ export default {
   middleware: 'is-auth',
   data() {
     return {
-      notifs: {}
+      notifs: []
     }
   },
   async fetch() {
     // need to fetch notifs here
-    this.notifs = (await axios.get('http://localhost:8080/api/getNotifs?userID=' + this.$auth.user.userID)).data;
+    const rows = (await axios.get('http://localhost:8080/api/getNotifs?userID=' + this.$auth.user.userID)).data;
     // create dateString for notif-time
     const currentDate = new Date();
-    this.notifs.forEach(function(element, index) {
-      const dateDiff = currentDate - new Date(element.dateCreated);
-
-      if(dateDiff < 1000 * 60 * 60) // within an hour
-        element.dateString = Math.floor(dateDiff / (1000 * 60)) + "min";
-      else if(dateDiff < (1000 * 60 * 60 * 24)) // within the day
-        element.dateString = Math.floor(dateDiff / (1000 * 60 * 60)) + "h";
-      else if(dateDiff < (1000 * 60 * 60 * 24 * 14)) // within 14 days
-        element.dateString = Math.floor(dateDiff / (1000 * 60 * 60 * 24)) + "d";
-      else this.notifs.splice(index,1);
-    });
-    // console.log(this.notifs);
+    const filtNotifs = [];
+    let dateDiff;
+    
+    for (const e of rows) {
+      dateDiff = currentDate - new Date(e.dateCreated);
+      
+      if (dateDiff < (1000 * 60 * 60)) // within an hour
+        e.dateString = Math.floor(dateDiff / (1000 * 60)) + "min";
+      else if (dateDiff < (1000 * 60 * 60 * 24)) // within the day
+        e.dateString = Math.floor(dateDiff / (1000 * 60 * 60)) + "h";
+      else if (dateDiff < (1000 * 60 * 60 * 24 * 14)) // within 14 days
+        e.dateString = Math.floor(dateDiff / (1000 * 60 * 60 * 24)) + "d";
+      if (e.dateString) filtNotifs.push(e);
+    }
+    this.notifs = filtNotifs;
+  },
+  head() {
+    return {
+      title: 'Notifications'
+    }
   },
   methods: {
     goTo(link) {

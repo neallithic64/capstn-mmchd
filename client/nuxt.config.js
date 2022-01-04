@@ -14,7 +14,8 @@ export default {
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/doh-logo.ico' },
       { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700&display=swap' },
-      { rel: 'stylesheet', href: 'http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css' }
+      { rel: 'stylesheet', href: 'http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css' },
+      { rel: 'stylesheet', href: 'https://fonts.googleapis.com/icon?family=Material+Icons'}
     ]
   },
 
@@ -44,8 +45,23 @@ export default {
   modules: [
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
-    '@nuxtjs/auth-next'
+    '@nuxtjs/auth-next',
+    '@nuxtjs/toast'
+    // ['nuxt-tailvue', {toast: true}]
   ],
+
+  toast: {
+    position: 'bottom-right',
+    register: [ // Register custom toasts
+      // {
+      //   name: 'success',
+      //   message: 'Success!',
+      //   options: {
+      //     type: 'success'
+      //   }
+      // }
+    ]
+},
 
   router: {
     // middleware: ['auth']

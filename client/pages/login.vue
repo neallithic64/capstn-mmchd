@@ -53,13 +53,18 @@ export default {
       title: 'Login'
   },
   data() {
-      return {
-          userEmail: '',
-          userPassword: '', 
-          genError: '',
-          emailError: '',
-          passError: ''
-      }
+    return {
+      userEmail: '',
+      userPassword: '', 
+      genError: '',
+      emailError: '',
+      passError: ''
+    }
+  },
+  head() {
+    return {
+      title: 'IDSR Login'
+    }
   },
   methods: {
     checkForm(e) {
@@ -100,10 +105,12 @@ export default {
             },
           })
           this.$router.push('/');
+          this.$toast.success('Login successful!', {duration: 4000, icon: 'check_circle'});
         } catch (e) {
           // eslint-disable-next-line no-console
             console.log(e.response);
             this.genError = e.response.data;
+            this.$toast.error('Something went wrong!', {duration: 4000, icon: 'error'});
         }
       }
       e.preventDefault();
