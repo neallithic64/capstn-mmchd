@@ -1087,31 +1087,38 @@ const indexFunctions = {
 	
 	postEditCIFLab: async function(req, res) {
 		/* for the lab data, the records already exist, they're within CASE_DATA. */
-		let { caseID, caseData } = req.body;
+		let { caseID, newLabData, submitted } = req.body;
+		let auditArr = [], dateNow = new Date();
 		try {
 			// collect all CASE_DATA records with the caseID and containing "lab" in fieldName
 			let rows = await db.exec(`SELECT * FROM mmchddb.CASE_DATA WHERE caseID = '${caseID}' AND fieldName LIKE 'lab%';`);
 			
 			// reconstruct array as an object for easier update
-			let labData = rows.reduce((r, i) => {
+			let labData = rows.reduce(function(r, i) {
 				r[i.fieldName] = i.value;
 				return r;
 			}, {});
 			
-			console.log(labData);
-			consosle.log("~~~~~~~~~~~~~~ processing ~~~~~~~~~~~~~~");
-			// might be redundant?
-			let filtered = Object.keys(caseData)
-				.filter(key => key.includes("lab"))
-				.reduce((obj, key) => {
-					return { ...obj, [key]: caseData[key] };
-				}, {});
+			// constructing audit array
+			
 			// update every attr in the object for the input information
-			Object.keys(labData).forEach(e => {
-				// should call `filtered`, but might not need it
-				labData[e] = caseData[e];
+			// key basis is newLabData to account for cases with no initial info
+			Object.keys(newLabData).forEach(e => {
+				if (e.includes("lab")) {
+					if (labData[e] !== newLabData[e]) {
+						auditArr.push({
+							editedID: caseID,
+							dateModified: dateNow,
+							fieldName: e,
+							prevValue: labData[e],
+							modifiedBy: submitted
+						});
+					}
+					labData[e] = newLabData[e];
+				}
 			});
 			console.log(labData);
+			console.log(auditArr);
 			// where updating happens
 			// await db.updateRows("mmchddb.CASE_DATA", labData);
 			res.status(200).send(labData);
