@@ -1873,11 +1873,13 @@ export default {
       this.formData.cases.reportDate = now.getFullYear() + '-' + (now.getMonth()+1) + '-' + now.getDate();
       const result = await axios.post('http://localhost:8080/api/newCase', {formData: this.formData, CRFID: this.$route.query.CRFID});
       if (result.status === 200) {
-        alert('CRF case submitted!');
+        // alert('CRF case submitted!');
+        this.$toast.success('Case saved!', {duration: 4000, icon: 'check_circle'});
         window.location.href = '/allCases';
       } else {
         // eslint-disable-next-line no-console
         console.log(result);
+        this.$toast.error('Something went wrong!', {duration: 4000, icon: 'error'});
       }
     },
     move(page) {
@@ -1907,7 +1909,8 @@ export default {
         }
       }
       else {
-        alert('Please fill up the required fields');
+        // alert('Please fill up the required fields');
+        this.$toast.error('Please fill up the required fields.', {position: 'top-right', duration: 4000, icon: 'error'});
         // document.getElementsByClassName('input-form-field').className = 'input-form-field input-required';
         this.$forceUpdate();
       }
