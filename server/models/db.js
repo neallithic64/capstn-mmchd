@@ -114,7 +114,7 @@ const database = {
 	
 	/** Inserts a row of data into the specified table. Accepts a string for the
 	 * table name and an object for the row to be inserted. The function's
-	 * return is also void.
+	 * return value is the success state of the operation.
 	 */
 	insertOne: async function(table, object) {
 		try {
@@ -122,6 +122,26 @@ const database = {
 			let [rows, fields] = await pool.query(statement, object);
 			console.log("Inserted " + rows.affectedRows + " rows");
 			// if (rows.serverStatus === 2)
+			return true;
+		} catch (e) {
+			console.log(e);
+			return false;
+		}
+	},
+	
+	/** Inserts multiple rows of data into the specified table. Accepts a string for the
+	 * table name, an array of keys of values, and an array of the objects to be inserted.
+	 * The function's return value is the success state of the operation. Typically, the
+	 * `keys` parameter already expects an Object.keys() object passed to it for convenience.
+	 * 
+	 * Additionally, this function is still not final and is subject to change.
+	 */
+	insertRows: async function(table, keys, objects) {
+		try {
+			let keyList = JSON.stringify(keys).replace(/\"/g, "").slice(1, -1).replace(/,/g, ", ");
+			let statement = "INSERT INTO " + table + " (" + keyList + ") VALUES ?";
+			let [rows, fields] = await pool.query(statement, [objects]);
+			console.log("Inserted " + rows.affectedRows + " rows");
 			return true;
 		} catch (e) {
 			console.log(e);

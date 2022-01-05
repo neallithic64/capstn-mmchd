@@ -1099,12 +1099,11 @@ const indexFunctions = {
 				return r;
 			}, {});
 			
-			// constructing audit array
-			
 			// update every attr in the object for the input information
 			// key basis is newLabData to account for cases with no initial info
 			Object.keys(newLabData).forEach(e => {
 				if (e.includes("lab")) {
+					// constructing audit array
 					if (labData[e] !== newLabData[e]) {
 						auditArr.push({
 							editedID: caseID,
@@ -1121,6 +1120,7 @@ const indexFunctions = {
 			console.log(auditArr);
 			// where updating happens
 			// await db.updateRows("mmchddb.CASE_DATA", labData);
+			await db.insertRows("mmchddb.AUDIT_LOG", Object.keys(auditArr[0]), auditArr.map(Object.values));
 			res.status(200).send(labData);
 		} catch (e) {
 			console.log(e);
