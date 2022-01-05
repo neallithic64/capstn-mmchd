@@ -1116,10 +1116,17 @@ const indexFunctions = {
 					labData[e] = newLabData[e];
 				}
 			});
-			console.log(labData);
-			console.log(auditArr);
+			// console.log(labData); console.log(auditArr);
+			
 			// where updating happens
-			// await db.updateRows("mmchddb.CASE_DATA", labData);
+			for (let i = 0; i < Object.keys(labData).length; i++)
+				await db.updateRows("mmchddb.CASE_DATA", {
+					caseID: caseID,
+					fieldName: Object.keys(labData)[i]
+				}, { value: newLabData[Object.keys(labData)[i]] });
+			// need updating of investigator deets too
+			// await db.updateRows("mmchddb.CASES", {caseID: caseID}, newLabData.);
+			// const filteredByKey = Object.fromEntries(Object.entries(obj).filter(([key, value]) => key.includes('_hadoop')));
 			await db.insertRows("mmchddb.AUDIT_LOG", Object.keys(auditArr[0]), auditArr.map(Object.values));
 			res.status(200).send(labData);
 		} catch (e) {
