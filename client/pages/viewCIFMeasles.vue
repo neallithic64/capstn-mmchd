@@ -2744,6 +2744,18 @@ export default {
             this.$toast.error("Something went wrong!", {duration: 4000, icon: "error"});
           }
 
+          if (serve.status === 200) {
+          // alert('Case submitted!');
+            this.$toast.success('Case updated!', {duration: 4000, icon: 'check_circle'});
+            // window.location.href = '/allCases';
+
+            // TODO: add notif/alert checking here 
+          } else {
+            // eslint-disable-next-line no-console
+            console.log(serve);
+            this.$toast.error('Something went wrong!', {duration: 4000, icon: 'error'});
+          }
+
           this.editLab = false;
         }
         else {
@@ -2778,11 +2790,13 @@ export default {
           newStatus: this.newStatus
         });
         if (updateCase.status === 200) {
-          alert('CIF status updated!');
+          // alert('CIF status updated!');
           location.reload();
+          this.$toast.success('Case Status updated!', {duration: 4000, icon: 'check_circle'});
         } else {
           // eslint-disable-next-line no-console
           console.log(result);
+          this.$toast.error('Something went wrong!', {duration: 4000, icon: 'error'});
         }
       }
       if (change==='cancel') {

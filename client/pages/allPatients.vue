@@ -150,8 +150,8 @@ export default {
    },
     csvExport(arrData) {
       let csvContent = "data:text/csv;charset=utf-8,";
-      let header = this.getCols();
-      // let header = Object.keys(arrData[0]).join(",");
+      // let header = this.getCols();
+      let header = Object.keys(arrData[0]).join(",");
       csvContent += [
         header,
         ...arrData.map(item => Object.values(item).join(","))
@@ -162,9 +162,30 @@ export default {
       const data = encodeURI(csvContent);
       const link = document.createElement("a");
       link.setAttribute("href", data);
-      link.setAttribute("download", this.caseTab+".csv");
+      link.setAttribute("download", "patients.csv");
       link.click();
     },
+    getTable() {
+      return this.allPatients;
+      /*
+      let data = [];
+      for (let i=0; i<this.allOutbreaks.length; i++) {
+        let name = "\""+ this.allData[i].patientName +"\"";
+        data[i] =  {
+          // CHANGE VALUES, depends on backend
+          caseID : this.allData[i].caseID,
+          patientName : name,
+          diseaseName : this.allData[i].diseaseName,
+          reportedBy : this.allData[i].reportedBy,
+          city : this.allData[i].city,
+          reportDate : this.allData[i].reportDate,
+          updatedDate : this.allData[i].updatedDate,
+          caseLevel : this.allData[i].caseLevel,
+        }
+      }
+      return data;
+      */
+    }
   },
 }
 </script>

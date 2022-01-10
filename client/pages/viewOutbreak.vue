@@ -58,7 +58,7 @@
 
       <div class="viewOBform-component">
 
-        <form v-if="pageNum == 0 || isPrint" id="ob1" type="submit">
+        <form v-show="pageNum == 0 || isPrint" id="ob1" type="submit">
           <div id="case-report-form" class="center">
             <h2 id="form-header">
               {{ Object.values(formSection.formNames)[0] }}
@@ -71,15 +71,12 @@
                 :casetype="'summary'"
               />
             </div>
-
           </div>
-
-            
         </form>
 
         <hr v-if="isPrint" />
 
-        <form v-if="pageNum == 1 || isPrint" id="ob2" type="submit">
+        <form v-show="pageNum == 1 || isPrint" id="ob2" type="submit">
           <div id="case-report-form" class="center">
             <h2 id="form-header"> {{ Object.values(formSection.formNames)[1] }} </h2>
 
@@ -90,8 +87,6 @@
                 :casetype="'cases'"
               />
             </div>
-
-
           </div>
         </form>
 
@@ -184,7 +179,7 @@ export default {
       newStatus: '',
       isDisabled: false,
       editCase: false,
-      isPrint: false, 
+      isPrint: false,
       pageNum: 0,
       dateLastUpdated:'',
       obSummaryOptions: {
@@ -378,7 +373,7 @@ export default {
           caseLevel: 'Confirmed'
         },
         {
-          caseID: '124',
+          caseID: '125',
           reportedBy: 'SG Diagnostics',
           city: 'Caloocan',
           reportDate: '2021-12-14',
