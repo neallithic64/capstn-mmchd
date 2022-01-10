@@ -22,7 +22,7 @@
           </ul>
         </div>
         <div v-show="!isPrint" class="CRFActionButtons">
-          <ul class="CRFActionButton" @click="downloadPDF">
+          <ul class="CRFActionButton">
           <img
             src="~/assets/img/pdf.png"
             class="printButton"
@@ -44,24 +44,28 @@
             :options="tableOptions"
             :datavalues="allData"
             :casetype="'all'"
+            :print="printTab('all')"
           />
           <dataTable
             v-show="caseTab === 'cif'"
             :options="tableOptions"
             :datavalues="cifData"
             :casetype="'cif'"
+            :print="printTab('cif')"
           />
           <dataTable
             v-show="caseTab === 'crfDRU'"
             :options="tableOptions"
             :datavalues="crfDRUData"
             :casetype="'crfDRU'"
+            :print="printTab('crfDRU')"
           />
           <dataTable
             v-show="caseTab === 'crfCHD'"
             :options="tableOptions"
             :datavalues="crfCHDData"
             :casetype="'crfCHD'"
+            :print="printTab('crfCHD')"
           />
         </div>
       </div>
@@ -417,6 +421,10 @@ export default {
     formListClass(caseTab) {
       if (caseTab === this.caseTab) return 'formSummaryItems selected';
       else return 'formSummaryItems';
+    },
+    printTab(tab) {
+      if (this.isPrint && this.caseTab===tab) return true;
+      else return false;
     },
     downloadPDF() {
       // this.isPrint = !this.isPrint

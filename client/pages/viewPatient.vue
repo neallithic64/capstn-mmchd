@@ -1378,8 +1378,23 @@ export default {
           this.formData.patient.guardianContact = this.newPatientInfo.guardianContact;
           this.formData.riskFactors = this.newPatientInfo.riskFactors;
 
-           // save the data in db
+          // TO DO: save change in db - HI MACHI
+          // Pls uncomment the chunk below if oke na
+/*
+          if (serve.status === 200) {
+          // alert('Case submitted!');
+            this.$toast.success('Case updated!', {duration: 4000, icon: 'check_circle'});
+            // window.location.href = '/allCases';
+
+            // TODO: add notif/alert checking here 
+          } else {
+            // eslint-disable-next-line no-console
+            console.log(serve);
+            this.$toast.error('Something went wrong!', {duration: 4000, icon: 'error'});
+          }
+*/
            this.editCase=false;
+
         }
         else {
           alert("Please fill up all required fields")
