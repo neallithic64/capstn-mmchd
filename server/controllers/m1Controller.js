@@ -1116,11 +1116,22 @@ const indexFunctions = {
 					labData[e] = newLabData[e];
 				}
 			});
-			console.log(labData);
-			console.log(auditArr);
+			// console.log(labData); console.log(auditArr);
+			
 			// where updating happens
-			// await db.updateRows("mmchddb.CASE_DATA", labData);
-			await db.insertRows("mmchddb.AUDIT_LOG", Object.keys(auditArr[0]), auditArr.map(Object.values));
+			for (let i = 0; i < Object.keys(labData).length; i++)
+				await db.updateRows("mmchddb.CASE_DATA", {
+					caseID: caseID,
+					fieldName: Object.keys(labData)[i]
+				}, { value: newLabData[Object.keys(labData)[i]] });
+			
+			// null check before audit log insertion, esp on Object.keys
+			if (auditArr.length > 0) {
+				await db.insertRows("mmchddb.AUDIT_LOG", Object.keys(auditArr[0]), auditArr.map(Object.values));
+			}
+			// need updating of investigator details too
+			let investigat = Object.fromEntries(Object.entries(newLabData).filter(([key, value]) => key.includes("investigat")));
+			await db.updateRows("mmchddb.CASES", {caseID: caseID}, investigat);
 			res.status(200).send(labData);
 		} catch (e) {
 			console.log(e);
