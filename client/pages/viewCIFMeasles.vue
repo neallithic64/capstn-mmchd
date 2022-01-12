@@ -2091,14 +2091,14 @@
                 class="field"
                 style="display: inline-flex; flex-direction: row"
               >
-                <label for="labspecimen" class="required">
+                <label for="labSpecimen" class="required">
                   Please select the specimen collected with the following
                   information
                 </label>
                 <select
-                  id="labspecimen"
-                  v-model="newLabData.labspecimen"
-                  name="labspecimen"
+                  id="labSpecimen"
+                  v-model="newLabData.labSpecimen"
+                  name="labSpecimen"
                   style="width: 300px"
                   :disabled="inputEdit()"
                   class="input-form-field"
@@ -2389,14 +2389,14 @@ export default {
       isPrint: false,
       diseaseID: 'DI-0000000000000',
       caseDefs: [],
-	  cityList: [],
+      cityList: [],
       pageNum: 1,
       formPart: 'Measles0',
       dateLastUpdated: '',
       newLabData: {
         hasLabTest : '',
         investigatorLab : '',
-        labspecimen : '',
+        labSpecimen : '',
         labDateCollected : '',
         labDateSent : '',
         labDateReceived : '',
@@ -2574,7 +2574,7 @@ export default {
           expPlaceType: '',
           otherCommunityCases: '',
           // page 5
-          labspecimen: '',
+          labSpecimen: '',
           labDateCollected: '',
           labDateSent: '',
           labDateReceived: '',
@@ -2673,7 +2673,6 @@ export default {
       this.pageNum = i
     },
     inputEdit() {
-      // not sure about the "this.cases"
       if (this.pageNum === 9 && this.editLab) return false;
       else return true;
     },
@@ -2714,25 +2713,41 @@ export default {
       }
       else this.editLabValidate = false;
     },
-    editLabResult(change) {
+    async editLabResult(change) {
       if (change==='save') {
         this.validateLab();
         if (this.editLabValidate) {
           this.hasLabTest = this.newLabData.hasLabTest
           this.formData.cases.investigatorLab = this.newLabData.investigatorLab
-          this.formData.caseData.labspecimen = this.newLabData.labspecimen
-          this.formData.cases.labDateCollected = this.newLabData.labDateCollected
-          this.formData.cases.labDateSent = this.newLabData.labDateSent
-          this.formData.cases.labDateReceived = this.newLabData.labDateReceived
-          this.formData.cases.labMeaslesResult = this.newLabData.labMeaslesResult
-          this.formData.cases.labRubellaResult = this.newLabData.labRubellaResult
-          this.formData.cases.labVirusResult = this.newLabData.labVirusResult
-          this.formData.cases.labPCRResult = this.newLabData.labPCRResult
           this.formData.cases.investigationDate = this.newLabData.investigationDate
           this.formData.cases.investigatorName = this.newLabData.investigatorName
           this.formData.cases.investigatorContact = this.newLabData.investigatorContact
+          this.formData.caseData.labDateCollected = this.newLabData.labDateCollected
+          this.formData.caseData.labDateSent = this.newLabData.labDateSent
+          this.formData.caseData.labDateReceived = this.newLabData.labDateReceived
+          this.formData.caseData.labMeaslesResult = this.newLabData.labMeaslesResult
+          this.formData.caseData.labRubellaResult = this.newLabData.labRubellaResult
+          this.formData.caseData.labVirusResult = this.newLabData.labVirusResult
+          this.formData.caseData.labPCRResult = this.newLabData.labPCRResult
+          this.formData.caseData.labSpecimen = this.newLabData.labSpecimen
         
-          // TO DO: save change in db
+		  const serve = (await axios.post("http://localhost:8080/api/editCIFLab", {
+			caseID: this.formData.cases.caseID,
+			newLabData: this.newLabData,
+			submitted: this.$auth.user.userID
+		  })).data;
+
+          if (serve.status === 200) {
+          // alert('Case submitted!');
+            this.$toast.success('Case updated!', {duration: 4000, icon: 'check_circle'});
+            // window.location.href = '/allCases';
+
+            // TODO: add notif/alert checking here 
+          } else {
+            // eslint-disable-next-line no-console
+            console.log(serve);
+            this.$toast.error('Something went wrong!', {duration: 4000, icon: 'error'});
+          }
 
           this.editLab = false;
         }
@@ -2744,17 +2759,17 @@ export default {
       if (change==='cancel') {
         this.newLabData.hasLabTest = this.hasLabTest
         this.newLabData.investigatorLab = this.formData.cases.investigatorLab
-        this.newLabData.labspecimen = this.formData.caseData.labspecimen
-        this.newLabData.labDateCollected = this.formData.cases.labDateCollected
-        this.newLabData.labDateSent = this.formData.cases.labDateSent
-        this.newLabData.labDateReceived = this.formData.cases.labDateReceived
-        this.newLabData.labMeaslesResult = this.formData.cases.labMeaslesResult
-        this.newLabData.labRubellaResult = this.formData.cases.labRubellaResult
-        this.newLabData.labVirusResult = this.formData.cases.labVirusResult
-        this.newLabData.labPCRResult = this.formData.cases.labPCRResult
         this.newLabData.investigationDate = this.formData.cases.investigationDate
         this.newLabData.investigatorName = this.formData.cases.investigatorName
         this.newLabData.investigatorContact = this.formData.cases.investigatorContact
+        this.newLabData.labDateCollected = this.formData.caseData.labDateCollected
+        this.newLabData.labDateSent = this.formData.caseData.labDateSent
+        this.newLabData.labDateReceived = this.formData.caseData.labDateReceived
+        this.newLabData.labMeaslesResult = this.formData.caseData.labMeaslesResult
+        this.newLabData.labRubellaResult = this.formData.caseData.labRubellaResult
+        this.newLabData.labVirusResult = this.formData.caseData.labVirusResult
+        this.newLabData.labPCRResult = this.formData.caseData.labPCRResult
+        this.newLabData.labSpecimen = this.formData.caseData.labSpecimen
         
         this.editLab = false;
       }
@@ -2768,11 +2783,13 @@ export default {
           newStatus: this.newStatus
         });
         if (updateCase.status === 200) {
-          alert('CIF status updated!');
+          // alert('CIF status updated!');
           location.reload();
+          this.$toast.success('Case Status updated!', {duration: 4000, icon: 'check_circle'});
         } else {
           // eslint-disable-next-line no-console
           console.log(result);
+          this.$toast.error('Something went wrong!', {duration: 4000, icon: 'error'});
         }
       }
       if (change==='cancel') {
@@ -2806,14 +2823,6 @@ export default {
       console.log(this.$refs.content)
       setTimeout(() => (this.isPrint = !this.isPrint), 5000)
     },
-	async updateLab() {
-	  const serve = (await axios.post("http://localhost:8080/api/editCIFLab", {
-	    caseID: this.formData.cases.caseID,
-		caseData: this.formData.caseData
-	  })).data;
-	  // need to enable the lab fields
-	  /* if (this.$auth.user.SOMETHING === "") */
-	},
   },
 }
 </script>

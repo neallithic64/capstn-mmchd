@@ -1087,33 +1087,51 @@ const indexFunctions = {
 	
 	postEditCIFLab: async function(req, res) {
 		/* for the lab data, the records already exist, they're within CASE_DATA. */
-		let { caseID, caseData } = req.body;
+		let { caseID, newLabData, submitted } = req.body;
+		let auditArr = [], dateNow = new Date();
 		try {
 			// collect all CASE_DATA records with the caseID and containing "lab" in fieldName
 			let rows = await db.exec(`SELECT * FROM mmchddb.CASE_DATA WHERE caseID = '${caseID}' AND fieldName LIKE 'lab%';`);
 			
 			// reconstruct array as an object for easier update
-			let labData = rows.reduce((r, i) => {
+			let labData = rows.reduce(function(r, i) {
 				r[i.fieldName] = i.value;
 				return r;
 			}, {});
 			
-			console.log(labData);
-			consosle.log("~~~~~~~~~~~~~~ processing ~~~~~~~~~~~~~~");
-			// might be redundant?
-			let filtered = Object.keys(caseData)
-				.filter(key => key.includes("lab"))
-				.reduce((obj, key) => {
-					return { ...obj, [key]: caseData[key] };
-				}, {});
 			// update every attr in the object for the input information
-			Object.keys(labData).forEach(e => {
-				// should call `filtered`, but might not need it
-				labData[e] = caseData[e];
+			// key basis is newLabData to account for cases with no initial info
+			Object.keys(newLabData).forEach(e => {
+				if (e.includes("lab")) {
+					// constructing audit array
+					if (labData[e] !== newLabData[e]) {
+						auditArr.push({
+							editedID: caseID,
+							dateModified: dateNow,
+							fieldName: e,
+							prevValue: labData[e],
+							modifiedBy: submitted
+						});
+					}
+					labData[e] = newLabData[e];
+				}
 			});
-			console.log(labData);
+			// console.log(labData); console.log(auditArr);
+			
 			// where updating happens
-			// await db.updateRows("mmchddb.CASE_DATA", labData);
+			for (let i = 0; i < Object.keys(labData).length; i++)
+				await db.updateRows("mmchddb.CASE_DATA", {
+					caseID: caseID,
+					fieldName: Object.keys(labData)[i]
+				}, { value: newLabData[Object.keys(labData)[i]] });
+			
+			// null check before audit log insertion, esp on Object.keys
+			if (auditArr.length > 0) {
+				await db.insertRows("mmchddb.AUDIT_LOG", Object.keys(auditArr[0]), auditArr.map(Object.values));
+			}
+			// need updating of investigator details too
+			let investigat = Object.fromEntries(Object.entries(newLabData).filter(([key, value]) => key.includes("investigat")));
+			await db.updateRows("mmchddb.CASES", {caseID: caseID}, investigat);
 			res.status(200).send(labData);
 		} catch (e) {
 			console.log(e);
