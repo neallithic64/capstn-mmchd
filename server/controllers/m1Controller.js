@@ -1182,8 +1182,47 @@ const indexFunctions = {
 	},
 	
 	postUpdatePatient: async function(req, res) {
-		let { newPatientInfo } = req.body;
+		let { patientID, newPatientInfo } = req.body;
+		/* attributes:
+			sex, pregWeeks, civilStatus, occupation, occuLoc, guardianName, guardianContact
+			currHouseStreet, currCity, currBrgy (caddressID)
+			occuStreet, occuCity, occuBrgy (occuAddrID)
+			riskFactors
+		*/
+		
+		// extracting objects that belong to different tables from newPatientInfo
+		let cAddress = {
+			houseStreet: newPatientInfo.currHouseStreet,
+			city: newPatientInfo.currCity,
+			brgy: newPatientInfo.currBrgy
+		}, oAddress = {
+			houseStreet: newPatientInfo.occuStreet,
+			city: newPatientInfo.occuCity,
+			brgy: newPatientInfo.occuBrgy
+		}, riskFactors = newPatientInfo.riskFactors;
+		
 		try {
+			// deleting extracted attributes
+			delete newPatientInfo.currHouseStreet;
+			delete newPatientInfo.currCity;
+			delete newPatientInfo.currBrgy;
+			delete newPatientInfo.occuStreet;
+			delete newPatientInfo.occuCity;
+			delete newPatientInfo.occuBrgy;
+			delete newPatientInfo.riskFactors;
+			
+			// retrieving address, risk factor rows for need-for-update checking
+			
+			
+			// updating patient
+			await db.updateRows("mmchddb.PATIENTS", { patientID: patientID }, newPatientInfo);
+			
+			// updating both addresses
+			
+			
+			// updating risk factors
+			// this is attached to the caseID, not the patient...
+			
 			res.status(200).send(labData);
 		} catch (e) {
 			console.log(e);

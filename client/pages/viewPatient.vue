@@ -1379,8 +1379,8 @@ export default {
           this.formData.riskFactors = this.newPatientInfo.riskFactors;
 
           const serve = (await axios.post("http://localhost:8080/api/updatePatientDetails", {
-            newPatientInfo: this.newPatientInfo,
-            submitted: this.$auth.user.userID
+            patientID: this.formData.patient.patientID,
+            newPatientInfo: this.newPatientInfo
           })).data;
           
           if (serve.status === 200) {
