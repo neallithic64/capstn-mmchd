@@ -245,62 +245,6 @@ export default {
       }
       return data;
     },
-    async editLabResult(change) {
-      if (change==='save') {
-        this.validateLab();
-        if (this.editLabValidate) {
-          this.hasLabTest = this.newLabData.hasLabTest
-          this.formData.cases.investigatorLab = this.newLabData.investigatorLab
-          this.formData.cases.investigationDate = this.newLabData.investigationDate
-          this.formData.cases.investigatorName = this.newLabData.investigatorName
-          this.formData.cases.investigatorContact = this.newLabData.investigatorContact
-          this.formData.caseData.labDateCollected = this.newLabData.labDateCollected
-          this.formData.caseData.labDateSent = this.newLabData.labDateSent
-          this.formData.caseData.labDateReceived = this.newLabData.labDateReceived
-          this.formData.caseData.labMeaslesResult = this.newLabData.labMeaslesResult
-          this.formData.caseData.labRubellaResult = this.newLabData.labRubellaResult
-          this.formData.caseData.labVirusResult = this.newLabData.labVirusResult
-          this.formData.caseData.labPCRResult = this.newLabData.labPCRResult
-          this.formData.caseData.labSpecimen = this.newLabData.labSpecimen
-        
-          const serve = (await axios.post("http://localhost:8080/api/editCIFLab", {
-            caseID: this.formData.cases.caseID,
-            newLabData: this.newLabData,
-            submitted: this.$auth.user.userID
-          })).data;
-          
-          if (serve.status === 200) {
-            this.$toast.success("Case updated!", {duration: 4000, icon: "check_circle"});
-          } else {
-            console.log(serve);
-            this.$toast.error("Something went wrong!", {duration: 4000, icon: "error"});
-          }
-
-          this.editLab = false;
-        }
-        else {
-          alert('Please fill up the required fields');
-          this.$forceUpdate();
-        }
-      }
-      if (change==='cancel') {
-        this.newLabData.hasLabTest = this.hasLabTest
-        this.newLabData.investigatorLab = this.formData.cases.investigatorLab
-        this.newLabData.investigationDate = this.formData.cases.investigationDate
-        this.newLabData.investigatorName = this.formData.cases.investigatorName
-        this.newLabData.investigatorContact = this.formData.cases.investigatorContact
-        this.newLabData.labDateCollected = this.formData.caseData.labDateCollected
-        this.newLabData.labDateSent = this.formData.caseData.labDateSent
-        this.newLabData.labDateReceived = this.formData.caseData.labDateReceived
-        this.newLabData.labMeaslesResult = this.formData.caseData.labMeaslesResult
-        this.newLabData.labRubellaResult = this.formData.caseData.labRubellaResult
-        this.newLabData.labVirusResult = this.formData.caseData.labVirusResult
-        this.newLabData.labPCRResult = this.formData.caseData.labPCRResult
-        this.newLabData.labSpecimen = this.formData.caseData.labSpecimen
-        
-        this.editLab = false;
-      }
-    },
   },
 }
 </script>

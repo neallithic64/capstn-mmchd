@@ -39,6 +39,7 @@ router.post("/newCase", m1Cont.postNewCase);
 router.post("/editDiseaseDef", m1Cont.postEditDiseaseDef);
 router.post("/updateCaseStatus", m1Cont.postUpdateCaseStatus);
 router.post("/editCIFLab", m1Cont.postEditCIFLab);
+router.post("/updatePatientDetails", m1Cont.postUpdatePatient);
 
 // CRON Routes
 cron.schedule("00 14 * * 3", m1Cont.cronCRFDeadlineNotif);

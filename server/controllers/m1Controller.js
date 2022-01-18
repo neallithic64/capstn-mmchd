@@ -1180,6 +1180,16 @@ const indexFunctions = {
 			res.status(500).send("Server error.");
 		}
 	},
+	
+	postUpdatePatient: async function(req, res) {
+		let { newPatientInfo } = req.body;
+		try {
+			res.status(200).send(labData);
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error.");
+		}
+	},
 
 	/*
 	 * CRON METHODS

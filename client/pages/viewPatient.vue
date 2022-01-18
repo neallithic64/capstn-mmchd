@@ -1196,7 +1196,7 @@ export default {
   }, 
   methods: {
     inputEdit() {
-	  // not sure about the "this.cases"
+      // not sure about the "this.cases"
       if (this.editCase) return false;
       else return true;
     },
@@ -1378,22 +1378,20 @@ export default {
           this.formData.patient.guardianContact = this.newPatientInfo.guardianContact;
           this.formData.riskFactors = this.newPatientInfo.riskFactors;
 
-          // TO DO: save change in db - HI MACHI
-          // Pls uncomment the chunk below if oke na
-/*
+          const serve = (await axios.post("http://localhost:8080/api/updatePatientDetails", {
+            newPatientInfo: this.newPatientInfo,
+            submitted: this.$auth.user.userID
+          })).data;
+          
           if (serve.status === 200) {
-          // alert('Case submitted!');
-            this.$toast.success('Case updated!', {duration: 4000, icon: 'check_circle'});
-            // window.location.href = '/allCases';
-
-            // TODO: add notif/alert checking here 
+            this.$toast.success('Patient records updated!', {duration: 4000, icon: 'check_circle'});
+            window.location.href = '/allCases';
           } else {
             // eslint-disable-next-line no-console
             console.log(serve);
             this.$toast.error('Something went wrong!', {duration: 4000, icon: 'error'});
           }
-*/
-           this.editCase=false;
+          this.editCase = false;
 
         }
         else {
