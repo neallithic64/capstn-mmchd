@@ -1341,7 +1341,7 @@ export default {
         }
       })
     },
-    update(action) { // TO DO FUNCTIONS
+    async update(action) {
       if (action==='cancel') {
         this.newPatientInfo.sex = this.formData.patient.sex;
         this.newPatientInfo.pregWeeks = this.formData.patient.pregWeeks;
@@ -1398,7 +1398,6 @@ export default {
           alert("Please fill up all required fields")
           this.$forceUpdate();
         }
-        
       }
     },
     download() {
