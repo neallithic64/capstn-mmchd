@@ -108,26 +108,7 @@ export default {
         // source: 'http://demo.datatable/api/users',
         search: true,
       },
-      allEvents: [
-        {
-          eventID: '123',
-          source: 'Print',
-          dateCaptured: '2021-12-31',
-          city: 'Pasay',
-          numCases: '6',
-          numDeaths: '0',
-          eventStatus: 'For Validation'
-        },
-        {
-          eventID: '1234',
-          source: 'Public',
-          dateCaptured: '2021-12-24',
-          city: 'Pasay',
-          numCases: '1',
-          numDeaths: '1',
-          eventStatus: 'Ongoing'
-        },
-      ],
+      allEvents: [],
     }
   },
   head() {
@@ -135,16 +116,14 @@ export default {
       title: 'Health Events'
     }
   },
-  // async mounted() {
-  //   const rows = (await axios.get('http://localhost:8080/api/getPatients')).data;
-	// console.log("all cases count: " + rows.length);
-	// for (let i = 0; i < rows.length; i++) {
-	//   rows[i].reportDate = rows[i].reportDate ? rows[i].reportDate.substr(0, 10) : "undefined";
-	//   // default to reportDate if updatedDate is null
-	//   rows[i].updatedDate = rows[i].updatedDate ? rows[i].updatedDate.substr(0, 10) : rows[i].reportDate;
-	//   rows[i].disease = rows[i].diseaseName;
-	// }
-  // },
+  async fetch() {
+    const DRUUserTypes = ['BHS','RHU','CHO', 'govtHosp', 'privHosp', 'clinic', 'privLab', 'airseaPort'];
+    const rows = (await axios.get('http://localhost:8080/api/getAllEvents')).data;
+    
+    if(DRUUserTypes.includes(this.$auth.user.userType)){
+      this.allEvents = rows.filter(e => e.userID === this.$auth.user.userID);
+    } else this.allEvents = rows;
+  },
   methods: {
     downloadPDF() {
       // this.isPrint = !this.isPrint

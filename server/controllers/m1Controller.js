@@ -754,6 +754,82 @@ const indexFunctions = {
 		}
 	},
 
+	getAllEvents: async function(req, res) {
+		try {
+			let match = await db.exec("SELECT e.*, a.city FROM mmchddb.EVENTS e " +
+									"JOIN mmchddb.ADDRESSES a ON a.addressID = e.addressID;");
+			console.log(match);
+			match.forEach(function(element){
+				element.dateCaptured = dateToString(element.dateCaptured);
+			});
+			res.status(200).send(match);
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
+
+	getEvent: async function(req, res) {
+		try {
+			let match = await db.exec("SELECT e.*, a.city AS 'locCity', a.houseStreet AS 'locHouseStreet', a.brgy AS 'locBrgy' " + 
+									"FROM mmchddb.EVENTS e " +  
+									"JOIN mmchddb.ADDRESSES a ON a.addressID = e.addressID " +
+									"WHERE e.eventID = '" + req.query.eventID + "';");						
+			if (match.length > 0){
+				let reporterData = await db.findRows("mmchddb.USERS", {userID: match[0].userID});
+				let eventAudit = await db.exec("SELECT a.dateModified AS 'reportDate', a.prevValue AS 'from', "+ 
+										"CONCAT(u.firstName,' ', u.midName, ' ', u.lastName, ', ' , u.druName) AS 'reportedBy' " +
+										"FROM mmchddb.AUDIT_LOG a JOIN mmchddb.USERS u ON a.modifiedBy = u.userID " +
+										"WHERE a.editedID = '" + req.query.eventID + "' " +
+										"ORDER BY a.dateModified;");
+				match[0].timeCaptured = new Date(match[0].dateCaptured).toTimeString().substr(0,8);
+				match[0].dateCaptured = dateToString(match[0].dateCaptured);
+
+				let i = 0;
+				if(eventAudit.length > 0){
+					for(i = 0; i < eventAudit.length; i++){
+						dateLastUpdated = new Date(eventAudit[i].reportDate);
+						if(i + 1 == eventAudit.length)
+							eventAudit[i].to = match[0].eventStatus;
+						else
+							eventAudit[i].to = eventAudit[i+1].from;
+						eventAudit[i].reportDate = dateToString(eventAudit[i].reportDate);
+					}
+	
+					eventAudit = eventAudit.reverse();
+				
+					eventAudit[i] = {
+						reportDate: dateToString(match[0].dateCaptured),
+						reportedBy: reporterData[0].firstName + ' ' + reporterData[0].midName + ' '+ reporterData[0].lastName + 
+									', ' + reporterData[0].druName,
+						from: '',
+						to: eventAudit[i-1].from
+					};
+	
+				} else{
+					eventAudit[i] = {
+						reportDate: dateToString(match[0].dateCaptured),
+						reportedBy: reporterData[0].firstName + ' ' + reporterData[0].midName + ' '+ reporterData[0].lastName + 
+									', ' + reporterData[0].druName,
+						from: '',
+						to: match[0].eventStatus
+					};
+				}
+
+				console.log(eventAudit);			
+				res.status(200).send({
+					event: match[0],
+					eventHistory : eventAudit
+				});
+			}
+			else
+				res.status(500).send("No Event found");
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
+
 	/*
 	 * POST METHODS
 	 */
@@ -1085,6 +1161,48 @@ const indexFunctions = {
 		}
 	},
 	
+	postUpdateEventStatus: async function(req, res) {
+		let { eventID, newStatus, modifiedBy } = req.body;
+		try {
+			// retrieve the case (that hopefully exists)
+			let eventData = await db.findRows("mmchddb.EVENTS", {eventID: eventID});
+			if (eventData.length > 0) {
+				// constructing the case audit object
+				let eventAudit = {
+					editedID: eventID,
+					dateModified: new Date(),
+					fieldName: "eventStatus",
+					prevValue: eventData[0].eventStatus,
+					modifiedBy: modifiedBy
+				};
+				// inserting the case audit object to the db
+				let newEventAudit = await db.insertOne("mmchddb.AUDIT_LOG", eventAudit);
+				// then updating the case object itself
+				let updateEvent = await db.updateRows("mmchddb.EVENTS",
+						{eventID: eventID},
+						{eventStatus: newStatus});
+				if (newEventAudit && updateEvent) {
+					// actual notification object insertion
+					let notification = new Notification(null, eventData[0].userID, 'updateNotif',
+							'EVENT UPDATE: Health Event ' + eventID + ' has been updated from ' + eventData[0].eventStatus + ' to ' + newStatus + '.',
+							null, eventAudit.dateModified, "http://localhost:3000/viewHealthEvent?eventID=" + eventID, false);
+					notification.notificationID = (await generateID("mmchddb.NOTIFICATIONS")).id;
+					let newNotif = await db.insertOne("mmchddb.NOTIFICATIONS", notification);
+					
+					if (newNotif) {
+						res.status(200).send("Case has been updated!");
+					} else {
+						console.log("Add Notification failed");
+						res.status(500).send("Add Notification failed");
+					}
+				} else res.status(500).send("Error making db transaction.");
+			} else res.status(404).send("No case with such ID found.");
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error.");
+		}
+	},
+
 	postEditCIFLab: async function(req, res) {
 		/* for the lab data, the records already exist, they're within CASE_DATA. */
 		let { caseID, newLabData, submitted } = req.body;

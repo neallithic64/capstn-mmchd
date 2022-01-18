@@ -27,6 +27,8 @@ router.get("/getCRFPage", m1Cont.getCRFPage);
 router.get("/getNewNotifs", m1Cont.getNewNotifs);
 router.get("/getPatientData", m1Cont.getPatientData);
 
+router.get("/getAllEvents", m1Cont.getAllEvents);
+router.get("/getEvent", m1Cont.getEvent);
 // POST Routes
 router.post("/login", m1Cont.postLogin);
 router.post("/newUser", m1Cont.postRegUser);
@@ -40,6 +42,7 @@ router.post("/editDiseaseDef", m1Cont.postEditDiseaseDef);
 router.post("/updateCaseStatus", m1Cont.postUpdateCaseStatus);
 router.post("/editCIFLab", m1Cont.postEditCIFLab);
 
+router.post("/updateEventStatus", m1Cont.postUpdateEventStatus);
 // CRON Routes
 cron.schedule("00 14 * * 3", m1Cont.cronCRFDeadlineNotif);
 cron.schedule("00 17 * * 5", m1Cont.cronCRFPushData);
