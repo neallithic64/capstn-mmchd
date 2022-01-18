@@ -1340,6 +1340,7 @@ const indexFunctions = {
 			
 			// updating risk factors
 			// this is attached to the caseID, not the patient...
+			// UPDATE: RISK FACTORS ARE READONLY
 			
 			res.status(200).send(labData);
 		} catch (e) {

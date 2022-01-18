@@ -336,7 +336,7 @@ export default {
         selected: [],
       },
       caseStatusFilters: {
-        options: ['Suspected', 'Probable', 'Confirmed'],
+        options: ['Suspect', 'Probable', 'Confirmed'],
         selected: [],
       },
       submitStatusFilters: {
@@ -457,7 +457,7 @@ export default {
           let value = this.datavalues[i][key];
           if (typeof value !== 'undefined') {
             value = value.toString();
-            if (value.includes(this.requestParams.search)) {
+            if (value.toLowerCase().includes(this.requestParams.search.toLowerCase())) {
               this.dataSearched.push(this.datavalues[i]);
               break;
             }
@@ -504,7 +504,7 @@ export default {
         for (let i = 0; i < Object.keys(this.datavalues).length; i++)
           if ((this.diseaseFilters.selected.length === 0 || this.diseaseFilters.selected.includes(this.datavalues[i].disease)) &&
             (this.cityFilters.selected.length === 0 || this.cityFilters.selected.includes(this.datavalues[i].city)) &&
-            (this.caseStatusFilters.selected.length === 0 || this.caseStatusFilters.selected.includes(this.datavalues[i].caseLevel))) {
+            (this.caseStatusFilters.selected.length === 0 || this.caseStatusFilters.selected.find(e => this.datavalues[i].caseLevel.includes(e)) !== undefined)) {
             this.dataFiltered.push(this.datavalues[i]);
           }
 
