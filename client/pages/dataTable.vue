@@ -248,6 +248,11 @@
                   :href="'/view' + data['type'] + data['disease'] + '?caseID=' + data[column.key]">
                   {{ data[column.key] }}
                 </a>
+                <a v-else-if="column.key === 'eventID'"
+                  style="color: #346083; text-decoration-line: underline"
+                  :href="'/viewHealthEvent' + '?eventID=' + data[column.key]">
+                  {{ data[column.key] }}
+                </a>
                 <!-- <a
                   style="text-decoration: none"
                   v-bind:href="column.source + '/' + data[column.key]"
