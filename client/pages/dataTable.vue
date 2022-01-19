@@ -294,6 +294,10 @@
         &raquo;
       </a>
     </div>
+    <div v-show="casetype==='all' || casetype==='cif' || casetype==='crfDRU' || casetype==='crfCHD'"
+      style="margin-top:5px;">
+      Last updated: <b> {{dayTime}} </b>
+    </div>
   </div>
 </template>
 
@@ -305,6 +309,7 @@ export default {
   props: ['options', 'datavalues', 'casetype','print'],
   data() {
     return {
+      dayTime:'',
       pageType: '',
       diseaseOpen: false,
       cityOpen: false,
@@ -381,6 +386,11 @@ export default {
     */
   },
   mounted() {
+    const today = new Date();
+    const monthsList = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Aug', 'Oct', 'Nov', 'Dec'];
+    this.dayTime = monthsList[today.getMonth()] + ' ' + today.getDate() + ', ' + today.getFullYear()
+                     + ' ' + today.getHours() + ':' + today.getMinutes();
+
     this.pageType = this.casetype;
     // this.requestParams.sortedKey = this.options.columns[0].key;
     this.filterOff();

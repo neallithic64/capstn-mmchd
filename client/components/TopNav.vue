@@ -42,6 +42,7 @@
       <div class="dropdown-content">
         <nuxt-link to="/addProgReport"> Add Program Report </nuxt-link>
         <nuxt-link to="/allProgReports"> View Program Reports </nuxt-link>
+        <nuxt-link to="/progTargets"> Program Targets </nuxt-link>
       </div>
     </div>
     <div 
