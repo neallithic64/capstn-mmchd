@@ -1369,7 +1369,6 @@ export default {
           
           if (serve.status === 200) {
             this.$toast.success('Patient records updated!', {duration: 4000, icon: 'check_circle'});
-            window.location.href = '/allCases';
           } else {
             // eslint-disable-next-line no-console
             console.log(serve);
