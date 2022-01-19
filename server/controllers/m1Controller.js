@@ -763,6 +763,18 @@ const indexFunctions = {
 			res.status(500).send("Server error");
 		}
 	},
+	
+	getAllOutbreaks: async function(req, res) {
+		try {
+			let outbreaks = await db.exec(`SELECT o.*, d.diseaseName
+					FROM mmchddb.OUTBREAKS o
+					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = o.diseaseID;`);
+			res.status(200).send(outbreaks);
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
 
 	getAllEvents: async function(req, res) {
 		try {
@@ -1243,7 +1255,7 @@ const indexFunctions = {
 							modifiedBy: submitted
 						});
 					}
-					labData[e] = newLabData[e];
+					labData[e1] = newLabData[e1];
 				}
 			});
 			// console.log(labData); console.log(auditArr);

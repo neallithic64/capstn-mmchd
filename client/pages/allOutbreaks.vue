@@ -22,7 +22,7 @@
         </div>
       </div>
       <div class="alloutbreaks-component">
-        <div id="vue-root">
+        <div v-if="allOutbreaks.length > 0" id="vue-root">
           <dataTable
             :options="tableOptions"
             :datavalues="allOutbreaks"
@@ -145,32 +145,6 @@ export default {
           dateClosed: 'N/A',
           responseTime: '15m'
         },
-        {
-          outbreakID: '124',
-          disease: 'Dengue',
-          type: 'Alert',
-          dateStarted: '2021-12-09',
-          numCases: '1',
-          numDeaths: '0',
-          growthRate: '813%',
-          attackRate: '1.07%',
-          outbreakStatus: 'Controlled',
-          dateClosed: 'N/A',
-          responseTime: '18h'
-        },
-        {
-          outbreakID: '124',
-          disease: 'Dengue',
-          type: 'Alert',
-          dateStarted: '2021-12-01',
-          numCases: '1',
-          numDeaths: '0',
-          growthRate: '813%',
-          attackRate: '1.07%',
-          outbreakStatus: 'Closed',
-          dateClosed: 'N/A',
-          responseTime: '21h'
-        },
       ],
     }
   },
@@ -179,16 +153,14 @@ export default {
       title: 'Outbreaks'
     }
   },
-  // async mounted() {
-  //   const rows = (await axios.get('http://localhost:8080/api/getPatients')).data;
-	// console.log("all cases count: " + rows.length);
-	// for (let i = 0; i < rows.length; i++) {
-	//   rows[i].reportDate = rows[i].reportDate ? rows[i].reportDate.substr(0, 10) : "undefined";
-	//   // default to reportDate if updatedDate is null
-	//   rows[i].updatedDate = rows[i].updatedDate ? rows[i].updatedDate.substr(0, 10) : rows[i].reportDate;
-	//   rows[i].disease = rows[i].diseaseName;
-	// }
-  // },
+  async mounted() {
+    const rows = (await axios.get('http://localhost:8080/api/getOutbreaks')).data;
+	console.log(rows[0]);
+	for (let i = 0; i < rows.length; i++) {
+	  rows[i].disease = rows[i].diseaseName;
+	}
+	this.allOutbreaks = rows;
+  },
   methods: {
     downloadPDF() {
       // this.isPrint = !this.isPrint
