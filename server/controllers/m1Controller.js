@@ -1317,7 +1317,7 @@ const indexFunctions = {
 			houseStreet: newPatientInfo.occuStreet,
 			city: newPatientInfo.occuCity,
 			brgy: newPatientInfo.occuBrgy
-		}, riskFactors = newPatientInfo.riskFactors;
+		};
 		
 		try {
 			// deleting extracted attributes
@@ -1329,19 +1329,30 @@ const indexFunctions = {
 			delete newPatientInfo.occuBrgy;
 			delete newPatientInfo.riskFactors;
 			
-			// retrieving address, risk factor rows for need-for-update checking
+			// retrieving address rows for need-for-update checking
+			let userAddr = await db.exec(`SELECT p.caddressID, p.occuAddrID, a1.houseStreet AS currHouseStreet,
+										a1.brgy AS currBrgy, a1.city AS currCity, a2.houseStreet AS occuHouseStreet,
+										a2.brgy AS occuBrgy, a2.city AS occuCity FROM mmchddb.PATIENTS p
+										LEFT JOIN mmchddb.ADDRESSES a1 ON p.caddressID = a1.addressID
+										LEFT JOIN mmchddb.ADDRESSES a2 ON p.occuAddrID = a2.addressID
+										WHERE p.patientID = '${patientID}';`);
 			
+			// checking both addresses
+			let cAddress.addressID = await generateID(table, cAddress);
+			let oAddress.addressID = await generateID(table, oAddress);
+			if (newPatientInfo.caddressID !== cAddress.addressID) {
+				newPatientInfo.caddressID = cAddress.addressID;
+				// insert new address obj
+				await db.insertOne("mmchddb.ADDRESSES", cAddress);
+			}
+			if (newPatientInfo.occuAddressID !== oAddress.addressID) {
+				newPatientInfo.occuAddressID = oAddress.addressID;
+				// insert new address obj
+				await db.insertOne("mmchddb.ADDRESSES", oAddress);
+			}
 			
 			// updating patient
 			await db.updateRows("mmchddb.PATIENTS", { patientID: patientID }, newPatientInfo);
-			
-			// updating both addresses
-			
-			
-			// updating risk factors
-			// this is attached to the caseID, not the patient...
-			// UPDATE: RISK FACTORS ARE READONLY
-			
 			res.status(200).send(labData);
 		} catch (e) {
 			console.log(e);
