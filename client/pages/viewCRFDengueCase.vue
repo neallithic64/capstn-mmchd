@@ -1223,10 +1223,10 @@
                       class="input-form-field"
                       :disabled="inputEdit()"
                     >
-                      <option value="Single">Positive</option>
-                      <option value="Married">Negative</option>
-                      <option value="Separated">Equivocal</option>
-                      <option value="Widowed">Pending Result</option>
+                      <option value="Positive">Positive</option>
+                      <option value="Negative">Negative</option>
+                      <option value="Equivocal">Equivocal</option>
+                      <option value="Pending Result">Pending Result</option>
                     </select>
                   </div>
                 </div>
@@ -1259,10 +1259,10 @@
                       class="input-form-field"
                       :disabled="inputEdit()"
                     >
-                      <option value="Single">Positive</option>
-                      <option value="Married">Negative</option>
-                      <option value="Separated">Equivocal</option>
-                      <option value="Widowed">Pending Result</option>
+                      <option value="Positive">Positive</option>
+                      <option value="Negative">Negative</option>
+                      <option value="Equivocal">Equivocal</option>
+                      <option value="Pending Result">Pending Result</option>
                     </select>
                   </div>
                 </div>
@@ -1295,10 +1295,10 @@
                       class="input-form-field"
                       :disabled="inputEdit()"
                     >
-                      <option value="Single">Positive</option>
-                      <option value="Married">Negative</option>
-                      <option value="Separated">Equivocal</option>
-                      <option value="Widowed">Pending Result</option>
+                      <option value="Positive">Positive</option>
+                      <option value="Negative">Negative</option>
+                      <option value="Equivocal">Equivocal</option>
+                      <option value="Pending Result">Pending Result</option>
                     </select>
                   </div>
                 </div>
@@ -1331,10 +1331,10 @@
                       class="input-form-field"
                       :disabled="inputEdit()"
                     >
-                      <option value="Single">Positive</option>
-                      <option value="Married">Negative</option>
-                      <option value="Separated">Equivocal</option>
-                      <option value="Widowed">Pending Result</option>
+                      <option value="Positive">Positive</option>
+                      <option value="Negative">Negative</option>
+                      <option value="Equivocal">Equivocal</option>
+                      <option value="Pending Result">Pending Result</option>
                     </select>
                   </div>
                 </div>
