@@ -205,7 +205,7 @@
                 </a>
                 <a v-else-if="(pageType === 'patients')"
                   style="color: #346083; text-decoration-line: underline"
-                  :href="'/patient'">
+                  :href="'/viewPatient?patientID=' + data[column.key]">
                   {{ data[column.key] }}
                 </a>
                 <a v-else-if="(pageType === 'all' || pageType === 'patient') && data['type'] === 'CIF'"
