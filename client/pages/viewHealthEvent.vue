@@ -12,7 +12,7 @@
             >Health Event Status:&nbsp;
             <div v-show="!editStatus" class="HEActionButtons">
               <h1 style="line-height: 1; align-items: center">
-                {{ healthEvent.eventStatus }}
+                {{ status }}
               </h1>
               <ul
                 v-show="!isPrint"
@@ -380,6 +380,7 @@ export default {
     return {
       editStatus: false,
       newStatus: '',
+      status:'',
       isDisabled: false,
       editCase: false,
       isPrint: false, 
@@ -469,6 +470,9 @@ export default {
     const data = (await axios.get('http://localhost:8080/api/getEvent?eventID=' + this.$route.query.eventID)).data;
     // const data = (await axios.get('http://localhost:8080/api/getCRF?caseID=' + 'CA-0000000000007')).data;
     this.healthEvent = data.event;
+    if(this.healthEvent.eventStatus == 'forValidation')
+      this.status = "For Validation"
+    else this.status = this.healthEvent.eventStatus;
     this.eventHistory = data.eventHistory;
     
     // fixing dates

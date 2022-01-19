@@ -43,10 +43,10 @@
             time, place, and person analysis will be pushed.</p>
           <p style="margin:10px 5px; font-size:12px"> You can update this in your settings anytime.</p>
           <div class="popupButtons">
-            <button class="back-button" type="button" @click="popup()">
+            <button class="back-button" type="button" @click="popup(false)">
               Disagree
             </button>
-            <button class="next-button" type="button" @click="popup()">
+            <button class="next-button" type="button" @click="popup(true)">
               Agree
             </button>
           </div>
@@ -210,12 +210,32 @@ export default {
     this.crfData = rows.crfData;
 	this.weekNo = rows.CRF.year + "-" + rows.CRF.week;
 	this.CRFID = rows.CRF.CRFID;
+  if(rows.pushDataAccept === null)
+    this.popupOpen = true;
+  else this.popupOpen = false;
   },
   compute: {},
   mounted() {},
   methods: {
-    popup() {
-      this.popupOpen = !this.popupOpen
+    async popup(change) {
+      try {
+        this.popupOpen = !this.popupOpen
+        const result = await axios.post('http://localhost:8080/api/updatePushData', {userID: this.$auth.user.userID, pushDataAccept: change});
+        if (result.status === 200) {
+          // alert('Health event submitted!');
+          this.$toast.success('User Settings Updated!', {duration: 4000, icon: 'check_circle'});
+          window.location.href = '/allHealthEvents';
+        } else {
+          // eslint-disable-next-line no-console
+          console.log(result);
+          this.$toast.error('Something went wrong!', {duration: 4000, icon: 'error'});
+        }
+        location.reload()
+      } catch(e) {
+        // eslint-disable-next-line no-console
+        console.log(e);
+        this.$toast.error('Something went wrong!', {duration: 4000, icon: 'error'});
+      }
     },
     inputEdit() {
       return false
