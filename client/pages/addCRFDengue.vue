@@ -208,8 +208,8 @@ export default {
     })).data;
     console.log(rows);
     this.crfData = rows.crfData;
-	this.weekNo = rows.CRF.year + "-" + rows.CRF.week;
-	this.CRFID = rows.CRF.CRFID;
+    this.weekNo = rows.CRF.year + "-" + rows.CRF.week;
+    this.CRFID = rows.CRF.CRFID;
   if(rows.pushDataAccept === null)
     this.popupOpen = true;
   else this.popupOpen = false;

@@ -1212,11 +1212,12 @@ const indexFunctions = {
 			res.status(500).send("Server error.");
 		}
 	},
-
+	
 	postEditCIFLab: async function(req, res) {
 		/* for the lab data, the records already exist, they're within CASE_DATA. */
 		let { caseID, newLabData, submitted } = req.body;
 		let auditArr = [], dateNow = new Date();
+		let keywords = ["lab", "ns1", "igg", "igm", "pcr"];
 		try {
 			// collect all CASE_DATA records with the caseID and containing "lab" in fieldName
 			let rows = await db.exec(`SELECT * FROM mmchddb.CASE_DATA WHERE caseID = '${caseID}' AND fieldName LIKE 'lab%';`);
@@ -1348,22 +1349,22 @@ const indexFunctions = {
 										WHERE p.patientID = '${patientID}';`);
 			
 			// checking both addresses
-			cAddress.addressID = await generateID(table, cAddress);
-			oAddress.addressID = await generateID(table, oAddress);
+			cAddress.addressID = (await generateID("mmchddb.ADDRESSES", cAddress)).id;
+			oAddress.addressID = (await generateID("mmchddb.ADDRESSES", oAddress)).id;
 			if (newPatientInfo.caddressID !== cAddress.addressID) {
 				newPatientInfo.caddressID = cAddress.addressID;
 				// insert new address obj
 				await db.insertOne("mmchddb.ADDRESSES", cAddress);
 			}
-			if (newPatientInfo.occuAddressID !== oAddress.addressID) {
-				newPatientInfo.occuAddressID = oAddress.addressID;
+			if (newPatientInfo.occuAddrID !== oAddress.addressID) {
+				newPatientInfo.occuAddrID = oAddress.addressID;
 				// insert new address obj
 				await db.insertOne("mmchddb.ADDRESSES", oAddress);
 			}
 			
 			// updating patient
 			await db.updateRows("mmchddb.PATIENTS", { patientID: patientID }, newPatientInfo);
-			res.status(200).send(labData);
+			res.status(200).send(newPatientInfo);
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error.");

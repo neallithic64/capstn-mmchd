@@ -1293,27 +1293,11 @@ export default {
           this.newPatientInfo.occuCity!== null &&
           this.newPatientInfo.occuBrgy!== null &&
           this.newPatientInfo.guardianName!== null &&
-          this.newPatientInfo.guardianContact!== null &&
-
-          (this.riskFactors.Lifestyle || this.newPatientInfo.riskFactors.LSmoking || 
-            this.newPatientInfo.riskFactors.LAlcoholism || this.newPatientInfo.riskFactors.LDrugUse || 
-            this.newPatientInfo.riskFactors.LPhysicalInactivity || this.newPatientInfo.riskFactors.LOthers) && 
-          (this.riskFactors.CurrentCondition || this.newPatientInfo.riskFactors.CAsthma || 
-            this.newPatientInfo.riskFactors.CHereditary || this.newPatientInfo.riskFactors.COthers) && 
-          (this.riskFactors.Historical || this.newPatientInfo.riskFactors.HDiabetes || 
-            this.newPatientInfo.riskFactors.HHeartDisease || this.newPatientInfo.riskFactors.HHypertension || 
-            this.newPatientInfo.riskFactors.HObesity || this.newPatientInfo.riskFactors.HOthers) && 
-          (this.riskFactors.Other || this.newPatientInfo.riskFactors.OAirPollution || 
-            this.newPatientInfo.riskFactors.OCleanWater || this.newPatientInfo.riskFactors.OFlooding || 
-            this.newPatientInfo.riskFactors.OHealthEdu || this.newPatientInfo.riskFactors.OHealthFacility || 
-            this.newPatientInfo.riskFactors.OPoverty || this.newPatientInfo.riskFactors.OShelter || 
-            this.newPatientInfo.riskFactors.OWasteMgmt || this.newPatientInfo.riskFactors.OVacCoverage || 
-            this.newPatientInfo.riskFactors.OOthers)
-          ) this.validatePatient = true;
+          this.newPatientInfo.guardianContact!== null) this.validatePatient = true;
           else this.validatePatient = false;
           if (this.newPatientInfo.pregWeeks!=='Not Pregnant' && this.newPatientInfo.pregWeeks<0)
             {this.newPatientInfo.pregWeeks = ''; this.validatePatient = false;}
-          if (this.newPatientInfo.guardianContact<0) {this.newPatientInfo.guardianContact = ''; this.validatePatient = false;}
+          // if (this.newPatientInfo.guardianContact<0) {this.newPatientInfo.guardianContact = ''; this.validatePatient = false;}
       
       this.$nextTick(() => {
         if (this.newPatientInfo.occuBrgy != null) {
@@ -1381,7 +1365,7 @@ export default {
           const serve = (await axios.post("http://localhost:8080/api/updatePatientDetails", {
             patientID: this.formData.patient.patientID,
             newPatientInfo: this.newPatientInfo
-          })).data;
+          }));
           
           if (serve.status === 200) {
             this.$toast.success('Patient records updated!', {duration: 4000, icon: 'check_circle'});

@@ -2644,7 +2644,7 @@ export default {
     this.caseHistory = data.caseHistory;
     this.dateLastUpdated = data.dateLastUpdated;
     this.editLabResult('cancel')
-	this.hasLabTest = this.formData.caseData.labDateSent ? "Yes" : "No";
+    this.hasLabTest = this.formData.caseData.labDateSent ? "Yes" : "No";
 
     let rows = (await axios.get('http://localhost:8080/api/getLabUsers')).data;
     this.labList = rows;
@@ -2722,11 +2722,10 @@ export default {
             caseID: this.formData.cases.caseID,
             newLabData: this.newLabData,
             submitted: this.$auth.user.userID
-          })).data;
+          }));
           
           if (serve.status === 200) {
             this.$toast.success('Case updated!', {duration: 4000, icon: 'check_circle'});
-            window.location.href = '/allCases';
           } else {
             // eslint-disable-next-line no-console
             console.log(serve);
