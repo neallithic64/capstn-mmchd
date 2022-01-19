@@ -12,7 +12,7 @@
             >Health Event Status:&nbsp;
             <div v-show="!editStatus" class="HEActionButtons">
               <h1 style="line-height: 1; align-items: center">
-                {{ healthEvent.eventStatus }}
+                {{ status }}
               </h1>
               <ul
                 v-show="!isPrint"
@@ -380,6 +380,7 @@ export default {
     return {
       editStatus: false,
       newStatus: '',
+      status:'',
       isDisabled: false,
       editCase: false,
       isPrint: false, 
@@ -465,22 +466,19 @@ export default {
       }
     }
   },
-  // async fetch() {
-  //   const data = (await axios.get('http://localhost:8080/api/getCRF?caseID=' + this.$route.query.caseID)).data;
-  //   // const data = (await axios.get('http://localhost:8080/api/getCRF?caseID=' + 'CA-0000000000007')).data;
-  //   this.formData.cases = data.cases;
-  //   this.formData.caseData = data.caseData;
-  //   this.formData.patient = data.patient;
-  //   this.formData.riskFactors = data.riskFactors; // working already
-  //   this.DRUData = data.DRUData;
-  //   this.CRFData = data.crfData;
-  //   this.dateLastUpdated = data.dateLastUpdated;
-  //   this.caseHistory = data.caseHistory;
+  async fetch() {
+    const data = (await axios.get('http://localhost:8080/api/getEvent?eventID=' + this.$route.query.eventID)).data;
+    // const data = (await axios.get('http://localhost:8080/api/getCRF?caseID=' + 'CA-0000000000007')).data;
+    this.healthEvent = data.event;
+    if(this.healthEvent.eventStatus == 'forValidation')
+      this.status = "For Validation"
+    else this.status = this.healthEvent.eventStatus;
+    this.eventHistory = data.eventHistory;
     
-  //   // fixing dates
+    // fixing dates
 
-  //   console.log(data);
-  // }, 
+    // console.log(data);
+  }, 
   methods: {
     formListClass(index) {
       if (index === this.pageNum) return 'formSummaryItems selected'
@@ -500,27 +498,29 @@ export default {
     popup() {
       this.editStatus = !this.editStatus
     },
-    // async status(change) {
-    //   if (change==='save') {
-    //     this.formData.caseData.finalClassification = this.newStatus;
-    //     this.formData.cases.caseLevel = this.newStatus;
-    //     const updateCase = await axios.post('http://localhost:8080/api/updateCaseStatus', {
-    //       caseId: this.formData.cases.caseID,
-    //       newStatus: this.newStatus
-    //     });
-    //     if (updateCase.status === 200) {
-    //       alert('CRF case status updated!');
-    //       location.reload();
-    //     } else {
-    //       // eslint-disable-next-line no-console
-    //       console.log(result);
-    //     }
-    //   }
-    //   if (change==='cancel') {
-    //     this.newStatus = this.formData.cases.caseLevel;
-    //   }
-    //   this.popup()
-    // },
+    async status(change) {
+      if (change==='save') {
+        this.healthEvent.eventStatus = this.newStatus;
+        const updateCase = await axios.post('http://localhost:8080/api/updateEventStatus', {
+          eventID: this.healthEvent.eventID,
+          newStatus: this.newStatus,
+          modifiedBy: this.$auth.user.userID
+        });
+        if (updateCase.status === 200) {
+          // alert('Event status updated!');
+          this.$toast.success('Status updated!', {duration: 4000, icon: 'check_circle'});
+          location.reload();
+        } else {
+          // eslint-disable-next-line no-console
+          console.log(result);
+          this.$toast.error('Something went wrong!', {duration: 4000, icon: 'error'});
+        }
+      }
+      if (change==='cancel') {
+        this.newStatus = this.healthEvent.eventStatus;
+      }
+      this.popup()
+    },
     downloadPDF() {
       this.isPrint = !this.isPrint
 

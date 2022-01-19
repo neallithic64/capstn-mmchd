@@ -123,7 +123,7 @@
                       <label :for="name" class="collapseLabel">
                         <input
                           :id="name"
-                          v-model="newStatus"
+                          v-model="auditLog.newStatus"
                           :value="name"
                           class="input-checkbox"
                           name="finalClassification"
@@ -137,6 +137,20 @@
                       </ul>
                     </li>
                   </ul>
+                </div>
+                <!-- Remarks -->
+                <div class="field-row" style="margin-left: 0px">
+                  <div class="field">
+                    <label for="remarks" class="required">
+                      Remarks
+                    </label>
+                    <textarea 
+                      id="outbreakRemarks"
+                      v-model="auditLog.remarks"
+                      class="textarea-form-field"
+                      type="text"
+                      name="remarks"/>
+                  </div>
                 </div>
               </div>
             </div>
@@ -176,7 +190,10 @@ export default {
   data() {
     return {
       editStatus: false,
-      newStatus: '',
+      auditLog: {
+        newStatus: '',
+        remarks: '',
+      },
       isDisabled: false,
       editCase: false,
       isPrint: false,
@@ -301,6 +318,12 @@ export default {
             uniqueField: 'id',
           },
           {
+            title: 'Remarks',
+            key: 'remarks',
+            type: 'text',
+            source: 'cases',
+          },
+          {
             title: 'Reported By',
             key: 'reportedBy',
             type: 'text',
@@ -313,15 +336,17 @@ export default {
       },
       eventHistory: [
         {
-          reportDate: '2020-10-10',
-          from: 'a',
-          to: 'a',
+          reportDate: '2020-12-10',
+          from: 'Ongoing',
+          to: 'Controlled',
+          remarks: 'Visited by coordinator and provided feedback to the representative',
           reportedBy: 'a',
         },
         {
-          reportDate: '2021-10-10',
-          from: 'b',
-          to: 'b',
+          reportDate: '2020-10-10',
+          from: '',
+          to: 'Ongoing',
+          remarks: '',
           reportedBy: 'b',
         }
       ],

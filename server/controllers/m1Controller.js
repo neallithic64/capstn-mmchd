@@ -257,6 +257,10 @@ async function sendBulkNotifs(userTypes, notificationType, message, caseID) {
 	}
 }
 
+async function checkIfOutbreak(diseaseID){
+
+}
+
 const indexFunctions = {
 	/*
 	 * GET METHODS
@@ -300,12 +304,14 @@ const indexFunctions = {
 	
 	getPatients: async function(req, res) {
 		try {
-			let match = await db.exec("SELECT p.*, "
-					+ "a1.houseStreet AS currHouseStreet, a1.brgy AS currBrgy, a1.city AS "
-					+ "currCity, a2.houseStreet AS permHouseStreet, a2.brgy AS permBrgy, "
-					+ "a2.city AS permCity FROM mmchddb.PATIENTS p INNER JOIN "
-					+ "mmchddb.ADDRESSES a1 ON p.caddressID = a1.addressID "
-					+ "INNER JOIN mmchddb.ADDRESSES a2 ON p.paddressID = a2.addressID;");
+			let match = await db.exec(`SELECT p.*, a1.houseStreet AS currHouseStreet,
+					a1.brgy AS currBrgy, a1.city AS currCity, a2.houseStreet AS permHouseStreet,
+					a2.brgy AS permBrgy, a2.city AS permCity, MAX(c.reportDate) AS updatedDate
+					FROM mmchddb.PATIENTS p
+					INNER JOIN mmchddb.ADDRESSES a1 ON p.caddressID = a1.addressID
+					INNER JOIN mmchddb.ADDRESSES a2 ON p.paddressID = a2.addressID
+					LEFT JOIN mmchddb.CASES c ON p.patientID = c.patientID
+					GROUP BY p.patientID;`);
 			res.status(200).send(match);
 		} catch (e) {
 			console.log(e);
@@ -652,6 +658,7 @@ const indexFunctions = {
 	
 	getCRFPage: async function(req, res) {
 		try {
+			let userSettings = await db.findRows("mmchddb.USER_SETTINGS", {userID: req.query.userID});
 			if (req.query.CRFID) {
 				// if viewing the CRF as a report
 				let CRFobj = await db.findRows("mmchddb.CRFS", {CRFID: req.query.CRFID});
@@ -667,7 +674,8 @@ const indexFunctions = {
 										GROUP BY c.caseID;`);
 				res.status(200).send({
 					CRF: CRFobj[0],
-					crfData: data
+					crfData: data,
+					pushDataAccept: userSettings[0].pushDataAccept
 				});
 			} else {
 				// if viewing the CRF to add a case
@@ -689,7 +697,8 @@ const indexFunctions = {
 										GROUP BY c.caseID;`);
 					res.status(200).send({
 						CRF: r[r.length - 1],
-						crfData: data
+						crfData: data,
+						pushDataAccept: userSettings[0].pushDataAccept
 					});
 				} else {
 					Date.prototype.getWeek = function() {
@@ -709,7 +718,8 @@ const indexFunctions = {
 					let firstR = await db.insertOne("mmchddb.CRFS", firstCRF);
 					res.status(200).send({
 						CRF: firstCRF,
-						crfData: []
+						crfData: [],
+						pushDataAccept: userSettings[0].pushDataAccept
 					});
 				}
 			}
@@ -748,6 +758,82 @@ const indexFunctions = {
 		try {
 			let newNotifCount = await db.findNewNotifsCount(req.query.userID);
 			res.status(200).send({newNotifCount:newNotifCount});
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
+
+	getAllEvents: async function(req, res) {
+		try {
+			let match = await db.exec("SELECT e.*, a.city FROM mmchddb.EVENTS e " +
+									"JOIN mmchddb.ADDRESSES a ON a.addressID = e.addressID;");
+			console.log(match);
+			match.forEach(function(element){
+				element.dateCaptured = dateToString(element.dateCaptured);
+			});
+			res.status(200).send(match);
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
+
+	getEvent: async function(req, res) {
+		try {
+			let match = await db.exec("SELECT e.*, a.city AS 'locCity', a.houseStreet AS 'locHouseStreet', a.brgy AS 'locBrgy' " + 
+									"FROM mmchddb.EVENTS e " +  
+									"JOIN mmchddb.ADDRESSES a ON a.addressID = e.addressID " +
+									"WHERE e.eventID = '" + req.query.eventID + "';");						
+			if (match.length > 0){
+				let reporterData = await db.findRows("mmchddb.USERS", {userID: match[0].userID});
+				let eventAudit = await db.exec("SELECT a.dateModified AS 'reportDate', a.prevValue AS 'from', "+ 
+										"CONCAT(u.firstName,' ', u.midName, ' ', u.lastName, ', ' , u.druName) AS 'reportedBy' " +
+										"FROM mmchddb.AUDIT_LOG a JOIN mmchddb.USERS u ON a.modifiedBy = u.userID " +
+										"WHERE a.editedID = '" + req.query.eventID + "' " +
+										"ORDER BY a.dateModified;");
+				match[0].timeCaptured = new Date(match[0].dateCaptured).toTimeString().substr(0,8);
+				match[0].dateCaptured = dateToString(match[0].dateCaptured);
+
+				let i = 0;
+				if(eventAudit.length > 0){
+					for(i = 0; i < eventAudit.length; i++){
+						dateLastUpdated = new Date(eventAudit[i].reportDate);
+						if(i + 1 == eventAudit.length)
+							eventAudit[i].to = match[0].eventStatus;
+						else
+							eventAudit[i].to = eventAudit[i+1].from;
+						eventAudit[i].reportDate = dateToString(eventAudit[i].reportDate);
+					}
+	
+					eventAudit = eventAudit.reverse();
+				
+					eventAudit[i] = {
+						reportDate: dateToString(match[0].dateCaptured),
+						reportedBy: reporterData[0].firstName + ' ' + reporterData[0].midName + ' '+ reporterData[0].lastName + 
+									', ' + reporterData[0].druName,
+						from: '',
+						to: eventAudit[i-1].from
+					};
+	
+				} else{
+					eventAudit[i] = {
+						reportDate: dateToString(match[0].dateCaptured),
+						reportedBy: reporterData[0].firstName + ' ' + reporterData[0].midName + ' '+ reporterData[0].lastName + 
+									', ' + reporterData[0].druName,
+						from: '',
+						to: match[0].eventStatus
+					};
+				}
+
+				console.log(eventAudit);			
+				res.status(200).send({
+					event: match[0],
+					eventHistory : eventAudit
+				});
+			}
+			else
+				res.status(500).send("No Event found");
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
@@ -1085,6 +1171,48 @@ const indexFunctions = {
 		}
 	},
 	
+	postUpdateEventStatus: async function(req, res) {
+		let { eventID, newStatus, modifiedBy } = req.body;
+		try {
+			// retrieve the case (that hopefully exists)
+			let eventData = await db.findRows("mmchddb.EVENTS", {eventID: eventID});
+			if (eventData.length > 0) {
+				// constructing the case audit object
+				let eventAudit = {
+					editedID: eventID,
+					dateModified: new Date(),
+					fieldName: "eventStatus",
+					prevValue: eventData[0].eventStatus,
+					modifiedBy: modifiedBy
+				};
+				// inserting the case audit object to the db
+				let newEventAudit = await db.insertOne("mmchddb.AUDIT_LOG", eventAudit);
+				// then updating the case object itself
+				let updateEvent = await db.updateRows("mmchddb.EVENTS",
+						{eventID: eventID},
+						{eventStatus: newStatus});
+				if (newEventAudit && updateEvent) {
+					// actual notification object insertion
+					let notification = new Notification(null, eventData[0].userID, 'updateNotif',
+							'EVENT UPDATE: Health Event ' + eventID + ' has been updated from ' + eventData[0].eventStatus + ' to ' + newStatus + '.',
+							null, eventAudit.dateModified, "http://localhost:3000/viewHealthEvent?eventID=" + eventID, false);
+					notification.notificationID = (await generateID("mmchddb.NOTIFICATIONS")).id;
+					let newNotif = await db.insertOne("mmchddb.NOTIFICATIONS", notification);
+					
+					if (newNotif) {
+						res.status(200).send("Case has been updated!");
+					} else {
+						console.log("Add Notification failed");
+						res.status(500).send("Add Notification failed");
+					}
+				} else res.status(500).send("Error making db transaction.");
+			} else res.status(404).send("No case with such ID found.");
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error.");
+		}
+	},
+
 	postEditCIFLab: async function(req, res) {
 		/* for the lab data, the records already exist, they're within CASE_DATA. */
 		let { caseID, newLabData, submitted } = req.body;
@@ -1180,7 +1308,82 @@ const indexFunctions = {
 			res.status(500).send("Server error.");
 		}
 	},
+	
+	postUpdatePatient: async function(req, res) {
+		let { patientID, newPatientInfo } = req.body;
+		/* attributes:
+			sex, pregWeeks, civilStatus, occupation, occuLoc, guardianName, guardianContact
+			currHouseStreet, currCity, currBrgy (caddressID)
+			occuStreet, occuCity, occuBrgy (occuAddrID)
+			riskFactors
+		*/
+		
+		// extracting objects that belong to different tables from newPatientInfo
+		let cAddress = {
+			houseStreet: newPatientInfo.currHouseStreet,
+			city: newPatientInfo.currCity,
+			brgy: newPatientInfo.currBrgy
+		}, oAddress = {
+			houseStreet: newPatientInfo.occuStreet,
+			city: newPatientInfo.occuCity,
+			brgy: newPatientInfo.occuBrgy
+		};
+		
+		try {
+			// deleting extracted attributes
+			delete newPatientInfo.currHouseStreet;
+			delete newPatientInfo.currCity;
+			delete newPatientInfo.currBrgy;
+			delete newPatientInfo.occuStreet;
+			delete newPatientInfo.occuCity;
+			delete newPatientInfo.occuBrgy;
+			delete newPatientInfo.riskFactors;
+			
+			// retrieving address rows for need-for-update checking
+			let userAddr = await db.exec(`SELECT p.caddressID, p.occuAddrID, a1.houseStreet AS currHouseStreet,
+										a1.brgy AS currBrgy, a1.city AS currCity, a2.houseStreet AS occuHouseStreet,
+										a2.brgy AS occuBrgy, a2.city AS occuCity FROM mmchddb.PATIENTS p
+										LEFT JOIN mmchddb.ADDRESSES a1 ON p.caddressID = a1.addressID
+										LEFT JOIN mmchddb.ADDRESSES a2 ON p.occuAddrID = a2.addressID
+										WHERE p.patientID = '${patientID}';`);
+			
+			// checking both addresses
+			cAddress.addressID = await generateID(table, cAddress);
+			oAddress.addressID = await generateID(table, oAddress);
+			if (newPatientInfo.caddressID !== cAddress.addressID) {
+				newPatientInfo.caddressID = cAddress.addressID;
+				// insert new address obj
+				await db.insertOne("mmchddb.ADDRESSES", cAddress);
+			}
+			if (newPatientInfo.occuAddressID !== oAddress.addressID) {
+				newPatientInfo.occuAddressID = oAddress.addressID;
+				// insert new address obj
+				await db.insertOne("mmchddb.ADDRESSES", oAddress);
+			}
+			
+			// updating patient
+			await db.updateRows("mmchddb.PATIENTS", { patientID: patientID }, newPatientInfo);
+			res.status(200).send(labData);
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error.");
+		}
+	},
 
+	postUpdatePushData: async function(req,res){
+		try {
+			let {userID, pushDataAccept} = req.body;
+			let updateSettings = await db.updateRows("mmchddb.USER_SETTINGS", {userID:userID}, {pushDataAccept:pushDataAccept});
+			if(updateSettings)
+				res.status(200).send();
+			else
+				res.status(500).send();
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error.");
+		}
+	},
+	
 	/*
 	 * CRON METHODS
 	 */
@@ -1207,7 +1410,9 @@ const indexFunctions = {
 			let JanOne = new Date(date.getFullYear(), 0, 1);
 			let numDay = Math.floor((date - JanOne) / (24 * 60 * 60 * 1000));
 			let week = Math.ceil((1 + numDay) / 7);
-			let pushData = await db.updateRows("mmchddb.CRFS", {isPushed:false}, {isPushed:true});
+			let pushData = await db.exec("UPDATE mmchddb.CRFS c SET c.isPushed = 1 " +
+							"WHERE c.userID IN(SELECT u.userID from mmchddb.USERS u JOIN mmchddb.USER_SETTINGS us ON us.userID = u.userID "+
+							"WHERE us.pushDataAccept = 1) AND c.isPushed = 0;");
 			if(pushData) {
 				let result = await sendBulkNotifs(DRUUserTypes,'pushDataNotif', 
 										'SUBMISSION UPDATE: Your Case Report Forms for Week ' + week + ' has been automatically pushed to MMCHD-RESU', null);
