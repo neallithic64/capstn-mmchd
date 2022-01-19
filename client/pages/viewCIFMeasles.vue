@@ -2086,7 +2086,7 @@
               </div>
             </div>
 
-            <div v-show="newLabData.hasLabTest==='Yes'">
+            <div v-show="hasLabTest==='Yes' || newLabData.hasLabTest==='Yes'">
               <div
                 class="field"
                 style="display: inline-flex; flex-direction: row"
@@ -2284,20 +2284,7 @@
               <th style="width: 25%;">To</th>
               <th style="width: 25%;">By</th>
             </thead>
-            <tbody>
-              <tr>
-                <td>Nov 11, 2021</td>
-                <td>Probable</td>
-                <td>Suspected</td>
-                <td>me</td>
-              </tr>
-              <tr>
-                <td>Nov 11, 2021</td>
-                <td>Probable</td>
-                <td>Suspected</td>
-                <td>me</td>
-              </tr>
-            </tbody>
+            <tbody></tbody>
           </table>
         </div> -->
         <dataTable
@@ -2657,7 +2644,7 @@ export default {
     this.caseHistory = data.caseHistory;
     this.dateLastUpdated = data.dateLastUpdated;
     this.editLabResult('cancel')
-    // fixing dates
+	this.hasLabTest = this.formData.caseData.labDateSent ? "Yes" : "No";
 
     let rows = (await axios.get('http://localhost:8080/api/getLabUsers')).data;
     this.labList = rows;
