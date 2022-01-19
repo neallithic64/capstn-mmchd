@@ -155,11 +155,12 @@ export default {
   },
   async mounted() {
     const rows = (await axios.get('http://localhost:8080/api/getOutbreaks')).data;
-	console.log(rows[0]);
-	for (let i = 0; i < rows.length; i++) {
-	  rows[i].disease = rows[i].diseaseName;
-	}
-	this.allOutbreaks = rows;
+    console.log(rows[0]);
+    for (let i = 0; i < rows.length; i++) {
+      rows[i].disease = rows[i].diseaseName;
+      /* startDate, endDate */
+    }
+    this.allOutbreaks = rows;
   },
   methods: {
     downloadPDF() {
