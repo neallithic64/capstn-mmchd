@@ -103,7 +103,7 @@ export default {
 	console.log(rows[0]);
 	for (let i = 0; i < rows.length; i++) {
 	  rows[i].patientName = rows[i].lastName + ", " + rows[i].firstName + " " + rows[i].midName;
-	  rows[i].updatedDate = rows[i].updatedDate.substr(0, 10);
+	  rows[i].updatedDate = rows[i].updatedDate ? rows[i].updatedDate.substr(0, 10) : "N/A";
 	}
 	this.allPatients = rows;
   },
