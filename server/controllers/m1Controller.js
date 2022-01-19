@@ -1217,6 +1217,7 @@ const indexFunctions = {
 		/* for the lab data, the records already exist, they're within CASE_DATA. */
 		let { caseID, newLabData, submitted } = req.body;
 		let auditArr = [], dateNow = new Date();
+		// keywords for lab-related information under CASE_DATA
 		let keywords = ["lab", "ns1", "igg", "igm", "pcr"];
 		try {
 			// collect all CASE_DATA records with the caseID and containing "lab" in fieldName
@@ -1230,15 +1231,15 @@ const indexFunctions = {
 			
 			// update every attr in the object for the input information
 			// key basis is newLabData to account for cases with no initial info
-			Object.keys(newLabData).forEach(e => {
-				if (e.includes("lab")) {
+			Object.keys(newLabData).forEach(e1 => {
+				if (keywords.find(e2 => e1.includes(e2)) !== undefined) {
 					// constructing audit array
-					if (labData[e] !== newLabData[e]) {
+					if (labData[e1] !== newLabData[e1]) {
 						auditArr.push({
 							editedID: caseID,
 							dateModified: dateNow,
-							fieldName: e,
-							prevValue: labData[e],
+							fieldName: e1,
+							prevValue: labData[e1],
 							modifiedBy: submitted
 						});
 					}
