@@ -19,7 +19,7 @@
         @keyup="search()"
       />
     </div>
-    <table id="datatable">
+    <table id="datatable" :class="getTableDisplay()">
       <thead>
         <th v-for="(column, columnIndex) in options.columns" :key="columnIndex" :style="{ 'text-align': column.textAlign }">
           <span v-if="column.filter" style="float: left">
@@ -205,7 +205,7 @@
                 </a>
                 <a v-else-if="(pageType === 'patients')"
                   style="color: #346083; text-decoration-line: underline"
-                  :href="'/patient'">
+                  :href="'/viewPatient?patientID=' + data[column.key]">
                   {{ data[column.key] }}
                 </a>
                 <a v-else-if="(pageType === 'all' || pageType === 'patient') && data['type'] === 'CIF'"
@@ -236,6 +236,21 @@
                 <a v-else-if="pageType === 'viewcrfID'"
                   style="color: #346083; text-decoration-line: underline"
                   :href="'/view' + 'CRF' + data['disease'] + 'Case?caseID=' + data[column.key] ">
+                  {{ data[column.key] }}
+                </a>
+                <a v-else-if="column.key === 'outbreakID'"
+                  style="color: #346083; text-decoration-line: underline"
+                  :href="'/view' + 'Outbreak?outbreakID=' + data[column.key] ">
+                  {{ data[column.key] }}
+                </a>
+                <a v-else-if="column.key === 'caseID'"
+                  style="color: #346083; text-decoration-line: underline"
+                  :href="'/view' + data['type'] + data['disease'] + '?caseID=' + data[column.key]">
+                  {{ data[column.key] }}
+                </a>
+                <a v-else-if="column.key === 'eventID'"
+                  style="color: #346083; text-decoration-line: underline"
+                  :href="'/viewHealthEvent' + '?eventID=' + data[column.key]">
                   {{ data[column.key] }}
                 </a>
                 <!-- <a
@@ -287,7 +302,7 @@
 // const axios = require('axios');
 
 export default {
-  props: ['options', 'datavalues', 'casetype'],
+  props: ['options', 'datavalues', 'casetype','print'],
   data() {
     return {
       pageType: '',
@@ -321,7 +336,7 @@ export default {
         selected: [],
       },
       caseStatusFilters: {
-        options: ['Suspected', 'Probable', 'Confirmed'],
+        options: ['Suspect', 'Probable', 'Confirmed'],
         selected: [],
       },
       submitStatusFilters: {
@@ -351,7 +366,20 @@ export default {
       showend: 1,
     }
   },
-  watch: {},
+  watch: {
+    /*
+   print: {
+      // the callback will be called immediately after the start of the observation
+      // immediate: true,
+      handler(val){
+        if(this.print) this.showDataAmount = this.totalCount
+        else this.showDataAmount = 10
+       console.log('print '+this.print + this.showDataAmount)
+     },
+     deep: true
+    }
+    */
+  },
   mounted() {
     this.pageType = this.casetype;
     // this.requestParams.sortedKey = this.options.columns[0].key;
@@ -362,11 +390,15 @@ export default {
 	console.log(this.datavalues);
     this.sortedKeyValue(this.requestParams.sortedKey, this.requestParams.sortedType);
     this.totalCount = Object.keys(this.dataSets).length;
+  if (this.pageType === 'patient') this.requestParams.take = this.totalCount;
     this.getPages();
     this.getStartEnd();
     // this.readData();
   },
   methods: {
+    getTableDisplay() {
+      if (this.pageType === 'all') return 'allDisplay';
+    },
     caseStatusClass(c) {
       if (c) {
         if (c.toString().includes('Suspect')) return 'caseStatus suspectedCase';
@@ -425,7 +457,7 @@ export default {
           let value = this.datavalues[i][key];
           if (typeof value !== 'undefined') {
             value = value.toString();
-            if (value.includes(this.requestParams.search)) {
+            if (value.toLowerCase().includes(this.requestParams.search.toLowerCase())) {
               this.dataSearched.push(this.datavalues[i]);
               break;
             }
@@ -472,7 +504,7 @@ export default {
         for (let i = 0; i < Object.keys(this.datavalues).length; i++)
           if ((this.diseaseFilters.selected.length === 0 || this.diseaseFilters.selected.includes(this.datavalues[i].disease)) &&
             (this.cityFilters.selected.length === 0 || this.cityFilters.selected.includes(this.datavalues[i].city)) &&
-            (this.caseStatusFilters.selected.length === 0 || this.caseStatusFilters.selected.includes(this.datavalues[i].caseLevel))) {
+            (this.caseStatusFilters.selected.length === 0 || this.caseStatusFilters.selected.find(e => this.datavalues[i].caseLevel.includes(e)) !== undefined)) {
             this.dataFiltered.push(this.datavalues[i]);
           }
 
@@ -575,9 +607,6 @@ export default {
 
       return rangeWithDots;
     },
-    submit () {
-      // TO DO: Submit CRF
-    }
   },
 }
 </script>
@@ -668,13 +697,11 @@ table {
   white-space: nowrap;
 }
 
-@media only screen and (max-width: 1400px) {
-  table {
-    display: block;
-  }
+.allDisplay {
+  display: block;
 }
 
-@media only screen and (max-width: 1400px) {
+@media only screen and (max-width: 1000px) {
   table {
     display: block;
   }

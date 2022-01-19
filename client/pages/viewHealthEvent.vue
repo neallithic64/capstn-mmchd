@@ -465,22 +465,16 @@ export default {
       }
     }
   },
-  // async fetch() {
-  //   const data = (await axios.get('http://localhost:8080/api/getCRF?caseID=' + this.$route.query.caseID)).data;
-  //   // const data = (await axios.get('http://localhost:8080/api/getCRF?caseID=' + 'CA-0000000000007')).data;
-  //   this.formData.cases = data.cases;
-  //   this.formData.caseData = data.caseData;
-  //   this.formData.patient = data.patient;
-  //   this.formData.riskFactors = data.riskFactors; // working already
-  //   this.DRUData = data.DRUData;
-  //   this.CRFData = data.crfData;
-  //   this.dateLastUpdated = data.dateLastUpdated;
-  //   this.caseHistory = data.caseHistory;
+  async fetch() {
+    const data = (await axios.get('http://localhost:8080/api/getEvent?eventID=' + this.$route.query.eventID)).data;
+    // const data = (await axios.get('http://localhost:8080/api/getCRF?caseID=' + 'CA-0000000000007')).data;
+    this.healthEvent = data.event;
+    this.eventHistory = data.eventHistory;
     
-  //   // fixing dates
+    // fixing dates
 
-  //   console.log(data);
-  // }, 
+    // console.log(data);
+  }, 
   methods: {
     formListClass(index) {
       if (index === this.pageNum) return 'formSummaryItems selected'
@@ -500,27 +494,27 @@ export default {
     popup() {
       this.editStatus = !this.editStatus
     },
-    // async status(change) {
-    //   if (change==='save') {
-    //     this.formData.caseData.finalClassification = this.newStatus;
-    //     this.formData.cases.caseLevel = this.newStatus;
-    //     const updateCase = await axios.post('http://localhost:8080/api/updateCaseStatus', {
-    //       caseId: this.formData.cases.caseID,
-    //       newStatus: this.newStatus
-    //     });
-    //     if (updateCase.status === 200) {
-    //       alert('CRF case status updated!');
-    //       location.reload();
-    //     } else {
-    //       // eslint-disable-next-line no-console
-    //       console.log(result);
-    //     }
-    //   }
-    //   if (change==='cancel') {
-    //     this.newStatus = this.formData.cases.caseLevel;
-    //   }
-    //   this.popup()
-    // },
+    async status(change) {
+      if (change==='save') {
+        this.healthEvent.eventStatus = this.newStatus;
+        const updateCase = await axios.post('http://localhost:8080/api/updateEventStatus', {
+          eventID: this.healthEvent.eventID,
+          newStatus: this.newStatus,
+          modifiedBy: this.$auth.user.userID
+        });
+        if (updateCase.status === 200) {
+          alert('Event status updated!');
+          location.reload();
+        } else {
+          // eslint-disable-next-line no-console
+          console.log(result);
+        }
+      }
+      if (change==='cancel') {
+        this.newStatus = this.healthEvent.eventStatus;
+      }
+      this.popup()
+    },
     downloadPDF() {
       this.isPrint = !this.isPrint
 

@@ -1196,7 +1196,7 @@ export default {
   }, 
   methods: {
     inputEdit() {
-	  // not sure about the "this.cases"
+      // not sure about the "this.cases"
       if (this.editCase) return false;
       else return true;
     },
@@ -1341,7 +1341,7 @@ export default {
         }
       })
     },
-    update(action) { // TO DO FUNCTIONS
+    async update(action) {
       if (action==='cancel') {
         this.newPatientInfo.sex = this.formData.patient.sex;
         this.newPatientInfo.pregWeeks = this.formData.patient.pregWeeks;
@@ -1378,14 +1378,26 @@ export default {
           this.formData.patient.guardianContact = this.newPatientInfo.guardianContact;
           this.formData.riskFactors = this.newPatientInfo.riskFactors;
 
-           // save the data in db
-           this.editCase=false;
+          const serve = (await axios.post("http://localhost:8080/api/updatePatientDetails", {
+            patientID: this.formData.patient.patientID,
+            newPatientInfo: this.newPatientInfo
+          })).data;
+          
+          if (serve.status === 200) {
+            this.$toast.success('Patient records updated!', {duration: 4000, icon: 'check_circle'});
+            window.location.href = '/allCases';
+          } else {
+            // eslint-disable-next-line no-console
+            console.log(serve);
+            this.$toast.error('Something went wrong!', {duration: 4000, icon: 'error'});
+          }
+          this.editCase = false;
+
         }
         else {
           alert("Please fill up all required fields")
           this.$forceUpdate();
         }
-        
       }
     },
     download() {

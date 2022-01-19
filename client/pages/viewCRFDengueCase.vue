@@ -1801,7 +1801,7 @@ export default {
       }
       else this.editLabValidate = false;
     },
-    editLabResult(change) {
+    async editLabResult(change) {
       if (change==='save') {
         this.validateLab();
         if (this.editLabValidate) {
@@ -1816,7 +1816,20 @@ export default {
           this.formData.caseData.pcrDate = this.newLabData.pcrDate
           this.formData.caseData.pcrResult = this.newLabData.pcrResult
           
-          // TO DO: save change in db
+          const serve = (await axios.post("http://localhost:8080/api/editCIFLab", {
+            caseID: this.formData.cases.caseID,
+            newLabData: this.newLabData,
+            submitted: this.$auth.user.userID
+          })).data;
+          
+          if (serve.status === 200) {
+            // alert('Case submitted!');
+            this.$toast.success('Case updated!', {duration: 4000, icon: 'check_circle'});
+          } else {
+            // eslint-disable-next-line no-console
+            console.log(serve);
+            this.$toast.error('Something went wrong!', {duration: 4000, icon: 'error'});
+          }
 
           this.editLab = false;
         }
@@ -1848,12 +1861,15 @@ export default {
           caseId: this.formData.cases.caseID,
           newStatus: this.newStatus
         });
+
         if (updateCase.status === 200) {
-          alert('CRF case status updated!');
+          // alert('CRF case status updated!');
           location.reload();
+          this.$toast.success('Case Status updated!', {duration: 4000, icon: 'check_circle'});
         } else {
           // eslint-disable-next-line no-console
           console.log(result);
+          this.$toast.error('Something went wrong!', {duration: 4000, icon: 'error'});
         }
       }
       if (change==='cancel') {

@@ -22,7 +22,7 @@
         </div>
       </div>
       <div class="viewpatients-component">
-        <div id="vue-root">
+        <div v-if="allPatients.length > 0" id="vue-root">
           <dataTable
             :options="tableOptions"
             :datavalues="allPatients"
@@ -75,7 +75,7 @@ export default {
           },
           {
             title: 'City',
-            key: 'city',
+            key: 'currCity',
             type: 'text',
             source: 'patients',
             uniqueField: 'id',
@@ -95,31 +95,17 @@ export default {
         // source: 'http://demo.datatable/api/users',
         search: true,
       },
-      allPatients: [
-        {
-          patientID:'123',
-          patientName: 'Helo',
-          city: 'Manila City',
-          updatedDate: 'today',
-        },
-        {
-          patientID:'12',
-          patientName: 'Heloe',
-          city: 'Makati City',
-          updatedDate: 'today',
-        },
-      ],
+      allPatients: [],
     }
   },
   async mounted() {
     const rows = (await axios.get('http://localhost:8080/api/getPatients')).data;
-	console.log("all cases count: " + rows.length);
+	console.log(rows[0]);
 	for (let i = 0; i < rows.length; i++) {
-	  rows[i].reportDate = rows[i].reportDate ? rows[i].reportDate.substr(0, 10) : "undefined";
-	  // default to reportDate if updatedDate is null
-	  rows[i].updatedDate = rows[i].updatedDate ? rows[i].updatedDate.substr(0, 10) : rows[i].reportDate;
-	  rows[i].disease = rows[i].diseaseName;
+	  rows[i].patientName = rows[i].lastName + ", " + rows[i].firstName + " " + rows[i].midName;
+	  rows[i].updatedDate = rows[i].updatedDate.substr(0, 10);
 	}
+	this.allPatients = rows;
   },
   methods: {
     downloadPDF() {
@@ -150,8 +136,8 @@ export default {
    },
     csvExport(arrData) {
       let csvContent = "data:text/csv;charset=utf-8,";
-      let header = this.getCols();
-      // let header = Object.keys(arrData[0]).join(",");
+      // let header = this.getCols();
+      let header = Object.keys(arrData[0]).join(",");
       csvContent += [
         header,
         ...arrData.map(item => Object.values(item).join(","))
@@ -162,9 +148,30 @@ export default {
       const data = encodeURI(csvContent);
       const link = document.createElement("a");
       link.setAttribute("href", data);
-      link.setAttribute("download", this.caseTab+".csv");
+      link.setAttribute("download", "patients.csv");
       link.click();
     },
+    getTable() {
+      return this.allPatients;
+      /*
+      let data = [];
+      for (let i=0; i<this.allOutbreaks.length; i++) {
+        let name = "\""+ this.allData[i].patientName +"\"";
+        data[i] =  {
+          // CHANGE VALUES, depends on backend
+          caseID : this.allData[i].caseID,
+          patientName : name,
+          diseaseName : this.allData[i].diseaseName,
+          reportedBy : this.allData[i].reportedBy,
+          city : this.allData[i].city,
+          reportDate : this.allData[i].reportDate,
+          updatedDate : this.allData[i].updatedDate,
+          caseLevel : this.allData[i].caseLevel,
+        }
+      }
+      return data;
+      */
+    }
   },
 }
 </script>
