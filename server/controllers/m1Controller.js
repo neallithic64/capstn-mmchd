@@ -1338,8 +1338,8 @@ const indexFunctions = {
 										WHERE p.patientID = '${patientID}';`);
 			
 			// checking both addresses
-			let cAddress.addressID = await generateID(table, cAddress);
-			let oAddress.addressID = await generateID(table, oAddress);
+			cAddress.addressID = await generateID(table, cAddress);
+			oAddress.addressID = await generateID(table, oAddress);
 			if (newPatientInfo.caddressID !== cAddress.addressID) {
 				newPatientInfo.caddressID = cAddress.addressID;
 				// insert new address obj
