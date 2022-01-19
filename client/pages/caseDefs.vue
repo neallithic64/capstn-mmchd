@@ -63,7 +63,8 @@
             <div id="edit-casedefs-form" class="center">
               <div style="display: flex; flex-direction: row; justify-content:space-between;">
                 <h2 id="form-header"> {{ Object.values(formSection.diseaseNames)[pageNum] }} </h2>
-                <div v-if="$auth.user.userType === 'lhsdChief' || $auth.user.userType === 'resuHead' || $auth.user.userType === 'chdDirector'"> 
+                <div v-if="$auth.user.userType === 'lhsdChief' || $auth.user.userType === 'resuHead' ||
+				  $auth.user.userType === 'chdDirector' || $auth.user.userType === 'techStaff'"> 
                   <button id="instructButton" class="instruct-button" type="button" @click="instruct()">
                     Instructions
                   </button>
