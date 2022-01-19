@@ -22,7 +22,7 @@
         </div>
       </div>
       <div class="viewpatients-component">
-        <div id="vue-root">
+        <div v-if="allPatients.length > 0" id="vue-root">
           <dataTable
             :options="tableOptions"
             :datavalues="allPatients"
@@ -75,7 +75,7 @@ export default {
           },
           {
             title: 'City',
-            key: 'city',
+            key: 'currCity',
             type: 'text',
             source: 'patients',
             uniqueField: 'id',
@@ -95,31 +95,19 @@ export default {
         // source: 'http://demo.datatable/api/users',
         search: true,
       },
-      allPatients: [
-        {
-          patientID:'123',
-          patientName: 'Helo',
-          city: 'Manila City',
-          updatedDate: 'today',
-        },
-        {
-          patientID:'12',
-          patientName: 'Heloe',
-          city: 'Makati City',
-          updatedDate: 'today',
-        },
-      ],
+      allPatients: [],
     }
   },
   async mounted() {
     const rows = (await axios.get('http://localhost:8080/api/getPatients')).data;
-	console.log("all cases count: " + rows.length);
+	console.log(rows[0]);
 	for (let i = 0; i < rows.length; i++) {
-	  rows[i].reportDate = rows[i].reportDate ? rows[i].reportDate.substr(0, 10) : "undefined";
+	  rows[i].patientName = rows[i].lastName + ", " + rows[i].firstName + " " + rows[i].midName;
+	  // rows[i].reportDate = rows[i].reportDate ? rows[i].reportDate.substr(0, 10) : "undefined";
 	  // default to reportDate if updatedDate is null
-	  rows[i].updatedDate = rows[i].updatedDate ? rows[i].updatedDate.substr(0, 10) : rows[i].reportDate;
-	  rows[i].disease = rows[i].diseaseName;
+	  // rows[i].updatedDate = rows[i].updatedDate ? rows[i].updatedDate.substr(0, 10) : rows[i].reportDate;
 	}
+	this.allPatients = rows;
   },
   methods: {
     downloadPDF() {
