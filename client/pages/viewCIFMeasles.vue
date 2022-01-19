@@ -2731,24 +2731,20 @@ export default {
           this.formData.caseData.labPCRResult = this.newLabData.labPCRResult
           this.formData.caseData.labSpecimen = this.newLabData.labSpecimen
         
-		  const serve = (await axios.post("http://localhost:8080/api/editCIFLab", {
-			caseID: this.formData.cases.caseID,
-			newLabData: this.newLabData,
-			submitted: this.$auth.user.userID
-		  })).data;
-
+          const serve = (await axios.post("http://localhost:8080/api/editCIFLab", {
+            caseID: this.formData.cases.caseID,
+            newLabData: this.newLabData,
+            submitted: this.$auth.user.userID
+          })).data;
+          
           if (serve.status === 200) {
-          // alert('Case submitted!');
             this.$toast.success('Case updated!', {duration: 4000, icon: 'check_circle'});
-            // window.location.href = '/allCases';
-
-            // TODO: add notif/alert checking here 
+            window.location.href = '/allCases';
           } else {
             // eslint-disable-next-line no-console
             console.log(serve);
             this.$toast.error('Something went wrong!', {duration: 4000, icon: 'error'});
           }
-
           this.editLab = false;
         }
         else {

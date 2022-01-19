@@ -22,7 +22,7 @@
         </div>
       </div>
       <div class="allevents-component">
-        <div id="vue-root">
+        <div v-if="allEvents.length > 0" id="vue-root">
           <dataTable
             :options="tableOptions"
             :datavalues="allEvents"
@@ -116,11 +116,11 @@ export default {
       title: 'Health Events'
     }
   },
-  async fetch() {
-    const DRUUserTypes = ['BHS','RHU','CHO', 'govtHosp', 'privHosp', 'clinic', 'privLab', 'airseaPort'];
+  async mounted() {
+    const DRUUserTypes = ['BHS', 'RHU', 'CHO', 'govtHosp', 'privHosp', 'clinic', 'privLab', 'airseaPort'];
     const rows = (await axios.get('http://localhost:8080/api/getAllEvents')).data;
     
-    if(DRUUserTypes.includes(this.$auth.user.userType)){
+    if (DRUUserTypes.includes(this.$auth.user.userType)) {
       this.allEvents = rows.filter(e => e.userID === this.$auth.user.userID);
     } else this.allEvents = rows;
   },

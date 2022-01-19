@@ -7,10 +7,10 @@
         </div>
       </div>
       <div id="alert-content">
-        <span style="font-weight: 900; font-size: 50px"> ALERT </span>
-        <span style="font-weight: 200; font-size: 18px; max-width: 300;"> The {{ outbreak.outbreakType }} threshold for {{ outbreak.diseaseName }} has been reached. Response required! </span>
+        <span style="font-weight: 900; font-size: 40px; margin-top: 5px"> POTENTIAL OUTBREAK ALERT </span>
+        <span style="font-weight: 200; font-size: 18px; max-width: 300;"> The <b style="font-weight: 900;"> {{ outbreak.outbreakType }} threshold </b> for <b style="font-weight: 900;"> {{ outbreak.diseaseName }} </b> has been reached. Response required! </span>
       </div>
-      <button class="view-button"> View Outbreak </button>
+      <button class="view-button"> View Outbreak Alert </button>
     </div>
   </div>
 </template>
@@ -21,7 +21,7 @@ export default {
   data() {
     return {
       outbreak: {
-        outbreakType: 'epidemic',
+        outbreakType: 'alert',
         diseaseName: 'Acute Viral Hepatitis'
       }
     }
@@ -38,7 +38,7 @@ export default {
     font-weight: 300;
     padding: 0px;
     margin: 0px;
-    background-color:rgb(246, 226, 226);
+    background-color:#EED202;
   }
 
   #alert-icon {
@@ -69,7 +69,7 @@ export default {
     color: white;
     width: 700px;
     height: fit-content;
-    background-color: #800000;
+    background-color: #a1911d;
   /* Center vertically and horizontally */
     position: absolute;
     top: 50%;
@@ -79,6 +79,8 @@ export default {
     border-radius: 10px;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
     padding-bottom: 30px;
+    padding-right: 20px;
+    padding-left: 20px;
   }
 
   .blink {
@@ -98,22 +100,22 @@ export default {
   }
 
   .view-button {
-    width: 150px;
+    width: 200px;
     height: 30px;
     max-width: 100%;
     font-size: 14px;
     margin-top: 30px;
     font-family: 'Work Sans', sans-serif;
     font-weight: 600;
-    background-color: #800000;
+    background-color: #a1911d;
     color: white;
     border: white solid 1px;
   }
 
   .view-button:hover {
     background-color: white;
-    color: #800000;
-    border: #800000 solid 1px;
+    color: #a1911d;
+    border: #a1911d solid 1px;
   }
 
 
