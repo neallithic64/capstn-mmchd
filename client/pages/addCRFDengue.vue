@@ -201,12 +201,12 @@ export default {
   },
   async fetch() {
     const rows = (await axios.get('http://localhost:8080/api/getCRFPage', {
-	  params: {
-	    diseaseID: "DI-0000000000003",
-	    userID: this.$auth.user.userID
-	  }
-	})).data;
-	console.log(rows);
+      params: {
+        diseaseID: "DI-0000000000003",
+        userID: this.$auth.user.userID
+      }
+    })).data;
+    console.log(rows);
     this.crfData = rows.crfData;
 	this.weekNo = rows.CRF.year + "-" + rows.CRF.week;
 	this.CRFID = rows.CRF.CRFID;

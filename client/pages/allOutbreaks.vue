@@ -69,7 +69,13 @@ export default {
             source: 'outbreaks',
           },
           {
-            title: 'Date Started',
+            title: 'Type',
+            key: 'type',
+            type: 'text',
+            source: 'outbreaks',
+          },
+          {
+            title: 'Start',
             key: 'dateStarted',
             type: 'text',
             dateFormat: true,
@@ -77,13 +83,13 @@ export default {
             expectFormat: 'DD MMM YYYY',
           },
           {
-            title: 'Total Active Cases',
+            title: 'Active Cases',
             key: 'numCases',
             type: 'text',
             source: 'events'
           },
           {
-            title: 'Total Deaths',
+            title: 'Deaths',
             key: 'numDeaths',
             type: 'text',
             source: 'events'
@@ -108,12 +114,18 @@ export default {
             sortable: true,
           },
           {
-            title: 'Date Closed',
+            title: 'End',
             key: 'dateClosed',
             type: 'text',
             dateFormat: true,
             currentFormat: 'YYYY-MM-DD',
             expectFormat: 'DD MMM YYYY',
+          },
+          {
+            title: 'Response Time',
+            key: 'responseTime',
+            type: 'text',
+            source: 'events'
           },
         ],
         // source: 'http://demo.datatable/api/users',
@@ -123,35 +135,41 @@ export default {
         {
           outbreakID: '123',
           disease: 'Measles',
+          type: 'Epidemic',
           dateStarted: '2021-12-31',
           numCases: '200',
           numDeaths: '0',
           growthRate: '813%',
           attackRate: '1.07%',
           outbreakStatus: 'Ongoing',
-          dateClosed: 'N/A'
+          dateClosed: 'N/A',
+          responseTime: '15m'
         },
         {
           outbreakID: '124',
           disease: 'Dengue',
+          type: 'Alert',
           dateStarted: '2021-12-09',
           numCases: '1',
           numDeaths: '0',
           growthRate: '813%',
           attackRate: '1.07%',
           outbreakStatus: 'Controlled',
-          dateClosed: 'N/A'
+          dateClosed: 'N/A',
+          responseTime: '18h'
         },
         {
           outbreakID: '124',
           disease: 'Dengue',
+          type: 'Alert',
           dateStarted: '2021-12-01',
           numCases: '1',
           numDeaths: '0',
           growthRate: '813%',
           attackRate: '1.07%',
           outbreakStatus: 'Closed',
-          dateClosed: 'N/A'
+          dateClosed: 'N/A',
+          responseTime: '21h'
         },
       ],
     }

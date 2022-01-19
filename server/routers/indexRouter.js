@@ -41,6 +41,7 @@ router.post("/newCase", m1Cont.postNewCase);
 router.post("/editDiseaseDef", m1Cont.postEditDiseaseDef);
 router.post("/updateCaseStatus", m1Cont.postUpdateCaseStatus);
 router.post("/editCIFLab", m1Cont.postEditCIFLab);
+router.post("/updatePatientDetails", m1Cont.postUpdatePatient);
 
 router.post("/updateEventStatus", m1Cont.postUpdateEventStatus);
 router.post("/updatePushData", m1Cont.postUpdatePushData);

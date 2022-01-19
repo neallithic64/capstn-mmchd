@@ -162,18 +162,18 @@ export default {
   mounted() {},
   async fetch() {
     const rows = (await axios.get('http://localhost:8080/api/getCRFPage', {
-	  params: {
-	    CRFID: this.$route.query.caseID
-	  }
-	})).data;
-	console.log(rows);
-	for (let i = 0; i < rows.crfData.length; i++) {
-	  rows.crfData[i].updatedDate = rows.crfData[i].updatedDate ? rows.crfData[i].updatedDate.substr(0, 10) : "N/A";
-	  rows.crfData[i].reportDate = rows.crfData[i].reportDate.substr(0, 10);
-	}
+      params: {
+        CRFID: this.$route.query.caseID
+      }
+    })).data;
+    console.log(rows);
+    for (let i = 0; i < rows.crfData.length; i++) {
+      rows.crfData[i].updatedDate = rows.crfData[i].updatedDate ? rows.crfData[i].updatedDate.substr(0, 10) : "N/A";
+      rows.crfData[i].reportDate = rows.crfData[i].reportDate.substr(0, 10);
+    }
     this.crfData = rows.crfData;
-	this.weekNo = rows.CRF.year + "-" + rows.CRF.week;
-	this.CRFID = this.$route.query.caseID;
+    this.weekNo = rows.CRF.year + "-" + rows.CRF.week;
+    this.CRFID = this.$route.query.caseID;
   },
   methods: {
     downloadPDF() {
@@ -244,7 +244,7 @@ export default {
         }
       }
       return data;
-    }
+    },
   },
 }
 </script>

@@ -304,12 +304,14 @@ const indexFunctions = {
 	
 	getPatients: async function(req, res) {
 		try {
-			let match = await db.exec("SELECT p.*, "
-					+ "a1.houseStreet AS currHouseStreet, a1.brgy AS currBrgy, a1.city AS "
-					+ "currCity, a2.houseStreet AS permHouseStreet, a2.brgy AS permBrgy, "
-					+ "a2.city AS permCity FROM mmchddb.PATIENTS p INNER JOIN "
-					+ "mmchddb.ADDRESSES a1 ON p.caddressID = a1.addressID "
-					+ "INNER JOIN mmchddb.ADDRESSES a2 ON p.paddressID = a2.addressID;");
+			let match = await db.exec(`SELECT p.*, a1.houseStreet AS currHouseStreet,
+					a1.brgy AS currBrgy, a1.city AS currCity, a2.houseStreet AS permHouseStreet,
+					a2.brgy AS permBrgy, a2.city AS permCity, MAX(c.reportDate) AS updatedDate
+					FROM mmchddb.PATIENTS p
+					INNER JOIN mmchddb.ADDRESSES a1 ON p.caddressID = a1.addressID
+					INNER JOIN mmchddb.ADDRESSES a2 ON p.paddressID = a2.addressID
+					LEFT JOIN mmchddb.CASES c ON p.patientID = c.patientID
+					GROUP BY p.patientID;`);
 			res.status(200).send(match);
 		} catch (e) {
 			console.log(e);
@@ -1301,6 +1303,67 @@ const indexFunctions = {
 					dateCreated
 			*/
 			// let morbid = await db.insertOne("mmchddb.MORBIDITY", );
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error.");
+		}
+	},
+	
+	postUpdatePatient: async function(req, res) {
+		let { patientID, newPatientInfo } = req.body;
+		/* attributes:
+			sex, pregWeeks, civilStatus, occupation, occuLoc, guardianName, guardianContact
+			currHouseStreet, currCity, currBrgy (caddressID)
+			occuStreet, occuCity, occuBrgy (occuAddrID)
+			riskFactors
+		*/
+		
+		// extracting objects that belong to different tables from newPatientInfo
+		let cAddress = {
+			houseStreet: newPatientInfo.currHouseStreet,
+			city: newPatientInfo.currCity,
+			brgy: newPatientInfo.currBrgy
+		}, oAddress = {
+			houseStreet: newPatientInfo.occuStreet,
+			city: newPatientInfo.occuCity,
+			brgy: newPatientInfo.occuBrgy
+		};
+		
+		try {
+			// deleting extracted attributes
+			delete newPatientInfo.currHouseStreet;
+			delete newPatientInfo.currCity;
+			delete newPatientInfo.currBrgy;
+			delete newPatientInfo.occuStreet;
+			delete newPatientInfo.occuCity;
+			delete newPatientInfo.occuBrgy;
+			delete newPatientInfo.riskFactors;
+			
+			// retrieving address rows for need-for-update checking
+			let userAddr = await db.exec(`SELECT p.caddressID, p.occuAddrID, a1.houseStreet AS currHouseStreet,
+										a1.brgy AS currBrgy, a1.city AS currCity, a2.houseStreet AS occuHouseStreet,
+										a2.brgy AS occuBrgy, a2.city AS occuCity FROM mmchddb.PATIENTS p
+										LEFT JOIN mmchddb.ADDRESSES a1 ON p.caddressID = a1.addressID
+										LEFT JOIN mmchddb.ADDRESSES a2 ON p.occuAddrID = a2.addressID
+										WHERE p.patientID = '${patientID}';`);
+			
+			// checking both addresses
+			cAddress.addressID = await generateID(table, cAddress);
+			oAddress.addressID = await generateID(table, oAddress);
+			if (newPatientInfo.caddressID !== cAddress.addressID) {
+				newPatientInfo.caddressID = cAddress.addressID;
+				// insert new address obj
+				await db.insertOne("mmchddb.ADDRESSES", cAddress);
+			}
+			if (newPatientInfo.occuAddressID !== oAddress.addressID) {
+				newPatientInfo.occuAddressID = oAddress.addressID;
+				// insert new address obj
+				await db.insertOne("mmchddb.ADDRESSES", oAddress);
+			}
+			
+			// updating patient
+			await db.updateRows("mmchddb.PATIENTS", { patientID: patientID }, newPatientInfo);
+			res.status(200).send(labData);
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error.");
