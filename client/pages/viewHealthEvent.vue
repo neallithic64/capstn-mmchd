@@ -503,11 +503,13 @@ export default {
           modifiedBy: this.$auth.user.userID
         });
         if (updateCase.status === 200) {
-          alert('Event status updated!');
+          // alert('Event status updated!');
+          this.$toast.success('Status updated!', {duration: 4000, icon: 'check_circle'});
           location.reload();
         } else {
           // eslint-disable-next-line no-console
           console.log(result);
+          this.$toast.error('Something went wrong!', {duration: 4000, icon: 'error'});
         }
       }
       if (change==='cancel') {
