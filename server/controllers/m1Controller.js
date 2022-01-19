@@ -257,6 +257,10 @@ async function sendBulkNotifs(userTypes, notificationType, message, caseID) {
 	}
 }
 
+async function checkIfOutbreak(diseaseID){
+
+}
+
 const indexFunctions = {
 	/*
 	 * GET METHODS
@@ -1408,7 +1412,7 @@ const indexFunctions = {
 			let week = Math.ceil((1 + numDay) / 7);
 			let pushData = await db.exec("UPDATE mmchddb.CRFS c SET c.isPushed = 1 " +
 							"WHERE c.userID IN(SELECT u.userID from mmchddb.USERS u JOIN mmchddb.USER_SETTINGS us ON us.userID = u.userID "+
-							"WHERE us.pushDataAccept = 1);");
+							"WHERE us.pushDataAccept = 1) AND c.isPushed = 0;");
 			if(pushData) {
 				let result = await sendBulkNotifs(DRUUserTypes,'pushDataNotif', 
 										'SUBMISSION UPDATE: Your Case Report Forms for Week ' + week + ' has been automatically pushed to MMCHD-RESU', null);
