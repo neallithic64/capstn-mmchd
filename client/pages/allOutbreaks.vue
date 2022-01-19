@@ -115,6 +115,12 @@ export default {
             currentFormat: 'YYYY-MM-DD',
             expectFormat: 'DD MMM YYYY',
           },
+          {
+            title: 'Response Time',
+            key: 'responseTime',
+            type: 'text',
+            source: 'events'
+          },
         ],
         // source: 'http://demo.datatable/api/users',
         search: true,
@@ -129,7 +135,8 @@ export default {
           growthRate: '813%',
           attackRate: '1.07%',
           outbreakStatus: 'Ongoing',
-          dateClosed: 'N/A'
+          dateClosed: 'N/A',
+          responseTime: '15m'
         },
         {
           outbreakID: '124',
@@ -140,7 +147,8 @@ export default {
           growthRate: '813%',
           attackRate: '1.07%',
           outbreakStatus: 'Controlled',
-          dateClosed: 'N/A'
+          dateClosed: 'N/A',
+          responseTime: '18h'
         },
         {
           outbreakID: '124',
@@ -151,7 +159,8 @@ export default {
           growthRate: '813%',
           attackRate: '1.07%',
           outbreakStatus: 'Closed',
-          dateClosed: 'N/A'
+          dateClosed: 'N/A',
+          responseTime: '21h'
         },
       ],
     }
