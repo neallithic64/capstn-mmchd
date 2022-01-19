@@ -257,6 +257,10 @@ async function sendBulkNotifs(userTypes, notificationType, message, caseID) {
 	}
 }
 
+async function checkIfOutbreak(diseaseID){
+
+}
+
 const indexFunctions = {
 	/*
 	 * GET METHODS
@@ -654,6 +658,7 @@ const indexFunctions = {
 	
 	getCRFPage: async function(req, res) {
 		try {
+			let userSettings = await db.findRows("mmchddb.USER_SETTINGS", {userID: req.query.userID});
 			if (req.query.CRFID) {
 				// if viewing the CRF as a report
 				let CRFobj = await db.findRows("mmchddb.CRFS", {CRFID: req.query.CRFID});
@@ -669,7 +674,8 @@ const indexFunctions = {
 										GROUP BY c.caseID;`);
 				res.status(200).send({
 					CRF: CRFobj[0],
-					crfData: data
+					crfData: data,
+					pushDataAccept: userSettings[0].pushDataAccept
 				});
 			} else {
 				// if viewing the CRF to add a case
@@ -691,7 +697,8 @@ const indexFunctions = {
 										GROUP BY c.caseID;`);
 					res.status(200).send({
 						CRF: r[r.length - 1],
-						crfData: data
+						crfData: data,
+						pushDataAccept: userSettings[0].pushDataAccept
 					});
 				} else {
 					Date.prototype.getWeek = function() {
@@ -711,7 +718,8 @@ const indexFunctions = {
 					let firstR = await db.insertOne("mmchddb.CRFS", firstCRF);
 					res.status(200).send({
 						CRF: firstCRF,
-						crfData: []
+						crfData: [],
+						pushDataAccept: userSettings[0].pushDataAccept
 					});
 				}
 			}
@@ -1362,6 +1370,20 @@ const indexFunctions = {
 		}
 	},
 
+	postUpdatePushData: async function(req,res){
+		try {
+			let {userID, pushDataAccept} = req.body;
+			let updateSettings = await db.updateRows("mmchddb.USER_SETTINGS", {userID:userID}, {pushDataAccept:pushDataAccept});
+			if(updateSettings)
+				res.status(200).send();
+			else
+				res.status(500).send();
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error.");
+		}
+	},
+	
 	/*
 	 * CRON METHODS
 	 */
@@ -1388,7 +1410,9 @@ const indexFunctions = {
 			let JanOne = new Date(date.getFullYear(), 0, 1);
 			let numDay = Math.floor((date - JanOne) / (24 * 60 * 60 * 1000));
 			let week = Math.ceil((1 + numDay) / 7);
-			let pushData = await db.updateRows("mmchddb.CRFS", {isPushed:false}, {isPushed:true});
+			let pushData = await db.exec("UPDATE mmchddb.CRFS c SET c.isPushed = 1 " +
+							"WHERE c.userID IN(SELECT u.userID from mmchddb.USERS u JOIN mmchddb.USER_SETTINGS us ON us.userID = u.userID "+
+							"WHERE us.pushDataAccept = 1) AND c.isPushed = 0;");
 			if(pushData) {
 				let result = await sendBulkNotifs(DRUUserTypes,'pushDataNotif', 
 										'SUBMISSION UPDATE: Your Case Report Forms for Week ' + week + ' has been automatically pushed to MMCHD-RESU', null);

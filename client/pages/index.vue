@@ -1,7 +1,9 @@
 <template>
   <div>
     <TopNav/>
-    
+    <div class="dashboard-container">
+      
+    </div>
   </div>
 </template>
 

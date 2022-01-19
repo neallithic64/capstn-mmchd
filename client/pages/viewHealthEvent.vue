@@ -12,7 +12,7 @@
             >Health Event Status:&nbsp;
             <div v-show="!editStatus" class="HEActionButtons">
               <h1 style="line-height: 1; align-items: center">
-                {{ healthEvent.eventStatus }}
+                {{ status }}
               </h1>
               <ul
                 v-show="!isPrint"
@@ -380,6 +380,7 @@ export default {
     return {
       editStatus: false,
       newStatus: '',
+      status:'',
       isDisabled: false,
       editCase: false,
       isPrint: false, 
@@ -469,6 +470,9 @@ export default {
     const data = (await axios.get('http://localhost:8080/api/getEvent?eventID=' + this.$route.query.eventID)).data;
     // const data = (await axios.get('http://localhost:8080/api/getCRF?caseID=' + 'CA-0000000000007')).data;
     this.healthEvent = data.event;
+    if(this.healthEvent.eventStatus == 'forValidation')
+      this.status = "For Validation"
+    else this.status = this.healthEvent.eventStatus;
     this.eventHistory = data.eventHistory;
     
     // fixing dates
@@ -503,11 +507,13 @@ export default {
           modifiedBy: this.$auth.user.userID
         });
         if (updateCase.status === 200) {
-          alert('Event status updated!');
+          // alert('Event status updated!');
+          this.$toast.success('Status updated!', {duration: 4000, icon: 'check_circle'});
           location.reload();
         } else {
           // eslint-disable-next-line no-console
           console.log(result);
+          this.$toast.error('Something went wrong!', {duration: 4000, icon: 'error'});
         }
       }
       if (change==='cancel') {
