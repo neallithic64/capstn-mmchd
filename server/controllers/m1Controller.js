@@ -659,6 +659,7 @@ const indexFunctions = {
 	getCRFPage: async function(req, res) {
 		try {
 			let userSettings = await db.findRows("mmchddb.USER_SETTINGS", {userID: req.query.userID});
+			// console.log(req.query);
 			if (req.query.CRFID) {
 				// if viewing the CRF as a report
 				let CRFobj = await db.findRows("mmchddb.CRFS", {CRFID: req.query.CRFID});
@@ -672,6 +673,11 @@ const indexFunctions = {
 										LEFT JOIN mmchddb.AUDIT_LOG al ON c.caseID = al.editedID
 										WHERE c.CRFID = '${req.query.CRFID}'
 										GROUP BY c.caseID;`);
+				console.log({
+					CRF: CRFobj[0],
+					crfData: data,
+					pushDataAccept: userSettings[0].pushDataAccept
+				});
 				res.status(200).send({
 					CRF: CRFobj[0],
 					crfData: data,
@@ -758,6 +764,18 @@ const indexFunctions = {
 		try {
 			let newNotifCount = await db.findNewNotifsCount(req.query.userID);
 			res.status(200).send({newNotifCount:newNotifCount});
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
+	
+	getAllOutbreaks: async function(req, res) {
+		try {
+			let outbreaks = await db.exec(`SELECT o.*, d.diseaseName
+					FROM mmchddb.OUTBREAKS o
+					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = o.diseaseID;`);
+			res.status(200).send(outbreaks);
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
@@ -874,16 +892,37 @@ const indexFunctions = {
 		let { user } = req.body;
 		try {
 			user.userID = (await generateID("mmchddb.USERS")).id;
-			// TODO: address
-			user.addressID = "AD-0000000000000";
+			// extracting address into an object
+			let addrObj = {
+				houseStreet: user.userHouseStreet,
+				brgy: user.userBrgy,
+				city: user.userCity
+			};
+			// then generating an ID for the address
+			let addrID = await generateID("mmchddb.ADDRESSES", addrObj);
+			// set it to the user and address objects
+			addrObj.addressID = addrID.id;
+			user.addressID = addrID.id;
+			// password hashing
+			user.userPassword = await bcrypt.hash(user.userPassword, saltRounds);
+			
+			// deleting unneeded keys
 			delete user.userHouseStreet;
 			delete user.userBrgy;
 			delete user.userCity;
 			delete user.userRePassword;
-			user.userPassword = await bcrypt.hash(user.userPassword, saltRounds);
-
-			let result = await db.insertOne("mmchddb.USERS", user);
-			if (result) res.status(200).send("Register success");
+			
+			// inserting user, user settings, and address rows
+			let resultReg = await db.insertOne("mmchddb.USERS", user);
+			let resultSettings = await db.insertOne("mmchddb.USER_SETTINGS", {
+				userID: user.userID,
+				pushDataAccept: false
+			});
+			if (!addrID.exists) {
+				let resultAddr = await db.insertOne("mmchddb.ADDRESSES", addrObj);
+			}
+			// result checking/validations
+			if (resultReg && resultSet && resultAddr) res.status(200).send("Register success");
 			else res.status(500).send("Register failed");
 		} catch (e) {
 			console.log(e);
@@ -1212,11 +1251,13 @@ const indexFunctions = {
 			res.status(500).send("Server error.");
 		}
 	},
-
+	
 	postEditCIFLab: async function(req, res) {
 		/* for the lab data, the records already exist, they're within CASE_DATA. */
 		let { caseID, newLabData, submitted } = req.body;
 		let auditArr = [], dateNow = new Date();
+		// keywords for lab-related information under CASE_DATA
+		let keywords = ["lab", "ns1", "igg", "igm", "pcr"];
 		try {
 			// collect all CASE_DATA records with the caseID and containing "lab" in fieldName
 			let rows = await db.exec(`SELECT * FROM mmchddb.CASE_DATA WHERE caseID = '${caseID}' AND fieldName LIKE 'lab%';`);
@@ -1229,19 +1270,19 @@ const indexFunctions = {
 			
 			// update every attr in the object for the input information
 			// key basis is newLabData to account for cases with no initial info
-			Object.keys(newLabData).forEach(e => {
-				if (e.includes("lab")) {
+			Object.keys(newLabData).forEach(e1 => {
+				if (keywords.find(e2 => e1.includes(e2)) !== undefined) {
 					// constructing audit array
-					if (labData[e] !== newLabData[e]) {
+					if (labData[e1] !== newLabData[e1]) {
 						auditArr.push({
 							editedID: caseID,
 							dateModified: dateNow,
-							fieldName: e,
-							prevValue: labData[e],
+							fieldName: e1,
+							prevValue: labData[e1],
 							modifiedBy: submitted
 						});
 					}
-					labData[e] = newLabData[e];
+					labData[e1] = newLabData[e1];
 				}
 			});
 			// console.log(labData); console.log(auditArr);
@@ -1267,30 +1308,9 @@ const indexFunctions = {
 		}
 	},
 	
-	postSubmitCases: async function(req, res) {
-		try {
-			// let {} = req.body;
-			/* MORBIDITY (monthly and quarterly, 62) (after cases are done)
-					FK: LGU/userID 
-					FK: diseaseID
-					Month/Quarter
-					Year
-					FK: Age range ID ("0-6 days")
-					City/Location
-					Sex
-					Count
-					dateCreated
-			*/
-			// let morbid = await db.insertOne("mmchddb.MORBIDITY", );
-		} catch (e) {
-			console.log(e);
-			res.status(500).send("Server error.");
-		}
-	},
-	
 	postSubmitCRF: async function(req, res) {
 		try {
-			// let {} = req.body;
+			let { CRFID, diseaseID, userID } = req.body;
 			/* MORBIDITY (monthly and quarterly, 62) (after cases are done)
 					FK: LGU/userID 
 					FK: diseaseID
@@ -1303,6 +1323,21 @@ const indexFunctions = {
 					dateCreated
 			*/
 			// let morbid = await db.insertOne("mmchddb.MORBIDITY", );
+			await db.updateRows({
+				CRFID: CRFID,
+				diseaseID: diseaseID,
+				userID: userID
+			}, { isPushed: true });
+			// generate new CRF
+			/* await db.insertOne("mmchddb.CRFS", {
+				CRFID: CRFID,
+				diseaseID: diseaseID,
+				userID: userID,
+				week: ,
+				year:,
+				isPushed: false
+			}); */
+			res.status(200).send("done");
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error.");
@@ -1315,7 +1350,6 @@ const indexFunctions = {
 			sex, pregWeeks, civilStatus, occupation, occuLoc, guardianName, guardianContact
 			currHouseStreet, currCity, currBrgy (caddressID)
 			occuStreet, occuCity, occuBrgy (occuAddrID)
-			riskFactors
 		*/
 		
 		// extracting objects that belong to different tables from newPatientInfo
@@ -1348,22 +1382,22 @@ const indexFunctions = {
 										WHERE p.patientID = '${patientID}';`);
 			
 			// checking both addresses
-			cAddress.addressID = await generateID(table, cAddress);
-			oAddress.addressID = await generateID(table, oAddress);
+			cAddress.addressID = (await generateID("mmchddb.ADDRESSES", cAddress)).id;
+			oAddress.addressID = (await generateID("mmchddb.ADDRESSES", oAddress)).id;
 			if (newPatientInfo.caddressID !== cAddress.addressID) {
 				newPatientInfo.caddressID = cAddress.addressID;
 				// insert new address obj
 				await db.insertOne("mmchddb.ADDRESSES", cAddress);
 			}
-			if (newPatientInfo.occuAddressID !== oAddress.addressID) {
-				newPatientInfo.occuAddressID = oAddress.addressID;
+			if (newPatientInfo.occuAddrID !== oAddress.addressID) {
+				newPatientInfo.occuAddrID = oAddress.addressID;
 				// insert new address obj
 				await db.insertOne("mmchddb.ADDRESSES", oAddress);
 			}
 			
 			// updating patient
 			await db.updateRows("mmchddb.PATIENTS", { patientID: patientID }, newPatientInfo);
-			res.status(200).send(labData);
+			res.status(200).send(newPatientInfo);
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error.");

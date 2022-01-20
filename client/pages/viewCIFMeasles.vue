@@ -2108,7 +2108,7 @@
               </div>
             </div>
 
-            <div v-show="newLabData.hasLabTest==='Yes'">
+            <div v-show="hasLabTest==='Yes' || newLabData.hasLabTest==='Yes'">
               <div
                 class="field"
                 style="display: inline-flex; flex-direction: row"
@@ -2306,20 +2306,7 @@
               <th style="width: 25%;">To</th>
               <th style="width: 25%;">By</th>
             </thead>
-            <tbody>
-              <tr>
-                <td>Nov 11, 2021</td>
-                <td>Probable</td>
-                <td>Suspected</td>
-                <td>me</td>
-              </tr>
-              <tr>
-                <td>Nov 11, 2021</td>
-                <td>Probable</td>
-                <td>Suspected</td>
-                <td>me</td>
-              </tr>
-            </tbody>
+            <tbody></tbody>
           </table>
         </div> -->
         <dataTable
@@ -2682,8 +2669,8 @@ export default {
     this.caseHistory = data.caseHistory;
     this.dateLastUpdated = data.dateLastUpdated;
     this.editLabResult('cancel')
+    this.hasLabTest = this.formData.caseData.labDateSent ? "Yes" : "No";
     this.editPatientOutcome('cancel')
-    // fixing dates
 
     let rows = (await axios.get('http://localhost:8080/api/getLabUsers')).data;
     this.labList = rows;
@@ -2823,11 +2810,10 @@ export default {
             caseID: this.formData.cases.caseID,
             newLabData: this.newLabData,
             submitted: this.$auth.user.userID
-          })).data;
+          }));
           
           if (serve.status === 200) {
             this.$toast.success('Case updated!', {duration: 4000, icon: 'check_circle'});
-            window.location.href = '/allCases';
           } else {
             // eslint-disable-next-line no-console
             console.log(serve);

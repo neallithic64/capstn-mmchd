@@ -220,12 +220,12 @@
                 </a>
                 <a v-else-if="pageType === 'cif'"
                   style="color: #346083; text-decoration-line: underline"
-                  :href="'/view' + 'CIFMeasles?caseID=' + data[column.key] ">
+                  :href="'/view' + 'CIFMeasles?caseID=' + data[column.key]">
                   {{ data[column.key] }}
                 </a>
                 <a v-else-if="pageType === 'crfDRU' || pageType === 'crfCHD'"
                   style="color: #346083; text-decoration-line: underline"
-                  :href="'/view' + 'CRFDengue?caseID=' + data[column.key]">
+                  :href="'/view' + 'CRFDengue?CRFID=' + data[column.key]">
                   {{ data[column.key] }}
                 </a>
                 <a v-else-if="pageType === 'addcrfID'"
@@ -373,7 +373,7 @@ export default {
   },
   watch: {
     /*
-   print: {
+    print: {
       // the callback will be called immediately after the start of the observation
       // immediate: true,
       handler(val){
@@ -400,10 +400,9 @@ export default {
 	console.log(this.datavalues);
     this.sortedKeyValue(this.requestParams.sortedKey, this.requestParams.sortedType);
     this.totalCount = Object.keys(this.dataSets).length;
-  if (this.pageType === 'patient') this.requestParams.take = this.totalCount;
+    if (this.pageType === 'patient') this.requestParams.take = this.totalCount;
     this.getPages();
     this.getStartEnd();
-    // this.readData();
   },
   methods: {
     getTableDisplay() {
@@ -450,15 +449,7 @@ export default {
         })
       }
     },
-    readData() {
-	  // this.dataSets = response.data.data;
-	  // this.totalCount = response.data.count;
-	  // this.totalPage = Math.ceil(instance.totalCount / instance.requestParams.take);
-	  // this.pages = instance.pagination(instance.currentPage, instance.totalPage);
-      // axios.post(this.options.source, this.requestParams).then(function (response) {}).catch(function (err) {console.log(err);});
-    },
     search() {
-      // this.readData();
       this.dataSearched = [];
       // IF NO FILTERS
       for (let i = 0; i < Object.keys(this.datavalues).length; i++)
@@ -476,7 +467,6 @@ export default {
       this.getDataSet();
     },
     filter() {
-      // this.readData();
       this.dataFiltered = [];
 
       if (this.diseaseFilters.selected.length === 0 && this.cityFilters.selected.length === 0 && this.caseStatusFilters.selected.length === 0
@@ -556,23 +546,7 @@ export default {
     filterOff() {
       this.filters = [];
       for (let i = 0; i < this.options.columns.length; i++)
-        // if (this.options.columns[i].filter)
-        //   this.filters.push({
-        //     filterKey: this.options.columns[i].key,
-        //     filterOpen: false,
-        //     filterOptions: ['ABC', 'ABCD'],
-        //     filterSelected: [],
-        //   })
         if (this.options.columns[i].filter) this.filters[0] = false;
-      // console.log(this.filters)
-      // for (let j = 0; j < this.filters.length; j++) {
-      //   this.filters[j].filterOptions = ['Measles', 'Dengue']
-      // if (this.filterKey[j].key === 'disease') {
-      //   this.filterKey[j].filterOptions = ['Measles', 'Dengue']
-      // } else if (this.filterKey[j].key === 'city') {
-      //   this.filterKey[j].filterOptions = ['Manila', 'Makati']
-      // }
-      // }
     },
     selectedDataAmount() {
       this.readData();

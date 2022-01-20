@@ -208,8 +208,8 @@ export default {
     })).data;
     console.log(rows);
     this.crfData = rows.crfData;
-	this.weekNo = rows.CRF.year + "-" + rows.CRF.week;
-	this.CRFID = rows.CRF.CRFID;
+    this.weekNo = rows.CRF.year + "-" + rows.CRF.week;
+    this.CRFID = rows.CRF.CRFID;
   if(rows.pushDataAccept === null)
     this.popupOpen = true;
   else this.popupOpen = false;
@@ -281,9 +281,22 @@ export default {
       this.formData.patient.guardianContact = patient.guardianContact
       this.pageNum++
     },
-    submit() {
-      // TODO: this submit is the one that will send the cases to CHD/will make the cases visible to CHD
-      // TODO: add notif/alert checking here 
+    async submit() {
+      const submitResponse = (await axios.post('http://localhost:8080/api/submitCRF', {
+        CRFID: this.CRFID,
+        diseaseID: "DI-0000000000003",
+        userID: this.$auth.user.userID
+      }));
+      // console.log(submitResponse.data);
+      
+      if (submitResponse.status === 200) {
+        // location.reload();
+        this.$toast.success('Cases submitted!', {duration: 4000, icon: 'check_circle'});
+      } else {
+        // eslint-disable-next-line no-console
+        console.log(submitResponse);
+        this.$toast.error('Something went wrong!', {duration: 4000, icon: 'error'});
+      }
     }
   },
 }

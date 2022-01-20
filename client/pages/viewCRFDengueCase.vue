@@ -1244,10 +1244,10 @@
                       class="input-form-field"
                       :disabled="inputEdit()"
                     >
-                      <option value="Single">Positive</option>
-                      <option value="Married">Negative</option>
-                      <option value="Separated">Equivocal</option>
-                      <option value="Widowed">Pending Result</option>
+                      <option value="Positive">Positive</option>
+                      <option value="Negative">Negative</option>
+                      <option value="Equivocal">Equivocal</option>
+                      <option value="Pending Result">Pending Result</option>
                     </select>
                   </div>
                 </div>
@@ -1280,10 +1280,10 @@
                       class="input-form-field"
                       :disabled="inputEdit()"
                     >
-                      <option value="Single">Positive</option>
-                      <option value="Married">Negative</option>
-                      <option value="Separated">Equivocal</option>
-                      <option value="Widowed">Pending Result</option>
+                      <option value="Positive">Positive</option>
+                      <option value="Negative">Negative</option>
+                      <option value="Equivocal">Equivocal</option>
+                      <option value="Pending Result">Pending Result</option>
                     </select>
                   </div>
                 </div>
@@ -1316,10 +1316,10 @@
                       class="input-form-field"
                       :disabled="inputEdit()"
                     >
-                      <option value="Single">Positive</option>
-                      <option value="Married">Negative</option>
-                      <option value="Separated">Equivocal</option>
-                      <option value="Widowed">Pending Result</option>
+                      <option value="Positive">Positive</option>
+                      <option value="Negative">Negative</option>
+                      <option value="Equivocal">Equivocal</option>
+                      <option value="Pending Result">Pending Result</option>
                     </select>
                   </div>
                 </div>
@@ -1352,10 +1352,10 @@
                       class="input-form-field"
                       :disabled="inputEdit()"
                     >
-                      <option value="Single">Positive</option>
-                      <option value="Married">Negative</option>
-                      <option value="Separated">Equivocal</option>
-                      <option value="Widowed">Pending Result</option>
+                      <option value="Positive">Positive</option>
+                      <option value="Negative">Negative</option>
+                      <option value="Equivocal">Equivocal</option>
+                      <option value="Pending Result">Pending Result</option>
                     </select>
                   </div>
                 </div>
@@ -1907,17 +1907,15 @@ export default {
             caseID: this.formData.cases.caseID,
             newLabData: this.newLabData,
             submitted: this.$auth.user.userID
-          })).data;
+          }));
           
           if (serve.status === 200) {
-            // alert('Case submitted!');
             this.$toast.success('Case updated!', {duration: 4000, icon: 'check_circle'});
           } else {
             // eslint-disable-next-line no-console
             console.log(serve);
             this.$toast.error('Something went wrong!', {duration: 4000, icon: 'error'});
           }
-
           this.editLab = false;
         }
         else {
