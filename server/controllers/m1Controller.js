@@ -892,16 +892,36 @@ const indexFunctions = {
 		let { user } = req.body;
 		try {
 			user.userID = (await generateID("mmchddb.USERS")).id;
-			// TODO: address
-			user.addressID = "AD-0000000000000";
+			// extracting address into an object
+			let addrObj = {
+				houseStreet: user.userHouseStreet,
+				brgy: user.userBrgy,
+				city: user.userCity
+			};
+			// then generating an ID for the address
+			let addrID = await generateID("mmchddb.ADDRESSES", addrObj);
+			// set it to the user and address objects
+			addrObj.addressID = addrID.id;
+			user.addressID = addrID.id;
+			// password hashing
+			user.userPassword = await bcrypt.hash(user.userPassword, saltRounds);
+			
+			// deleting unneeded keys
 			delete user.userHouseStreet;
 			delete user.userBrgy;
 			delete user.userCity;
 			delete user.userRePassword;
-			user.userPassword = await bcrypt.hash(user.userPassword, saltRounds);
-
-			let result = await db.insertOne("mmchddb.USERS", user);
-			if (result) res.status(200).send("Register success");
+			
+			// inserting user, user settings, and address rows
+			let resultReg = await db.insertOne("mmchddb.USERS", user);
+			let resultSettings = await db.insertOne("mmchddb.USER_SETTINGS", {
+				userID: user.userID,
+				pushDataAccept: false
+			});
+			if (!addrID.exists) let resultAddr = await db.insertOne("mmchddb.ADDRESSES", addrObj);
+			
+			// result checking/validations
+			if (resultReg && resultSet && resultAddr) res.status(200).send("Register success");
 			else res.status(500).send("Register failed");
 		} catch (e) {
 			console.log(e);
