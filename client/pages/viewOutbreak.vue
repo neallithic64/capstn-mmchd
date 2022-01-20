@@ -430,22 +430,15 @@ export default {
       }
     }
   },
-  // async fetch() {
-  //   const data = (await axios.get('http://localhost:8080/api/getCRF?caseID=' + this.$route.query.caseID)).data;
-  //   // const data = (await axios.get('http://localhost:8080/api/getCRF?caseID=' + 'CA-0000000000007')).data;
+  async fetch() {
+    const data = (await axios.get('http://localhost:8080/api/getOutbreak?outbreakID=' + this.$route.query.outbreakID)).data;
   //   this.formData.cases = data.cases;
-  //   this.formData.caseData = data.caseData;
-  //   this.formData.patient = data.patient;
-  //   this.formData.riskFactors = data.riskFactors; // working already
   //   this.DRUData = data.DRUData;
   //   this.CRFData = data.crfData;
   //   this.dateLastUpdated = data.dateLastUpdated;
   //   this.caseHistory = data.caseHistory;
-    
-  //   // fixing dates
-
   //   console.log(data);
-  // }, 
+  }, 
   methods: {
     formListClass(index) {
       if (index === this.pageNum) return 'formSummaryItems selected'

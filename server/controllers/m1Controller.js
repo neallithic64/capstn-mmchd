@@ -772,9 +772,26 @@ const indexFunctions = {
 	
 	getAllOutbreaks: async function(req, res) {
 		try {
+			let outbreaks = await db.exec(`SELECT o.*, d.diseaseName, COUNT(c.caseID) AS numCases
+					FROM mmchddb.OUTBREAKS o
+					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = o.diseaseID
+					LEFT JOIN mmchddb.CASES c ON o.diseaseID = c.diseaseID AND c.reportDate < o.startDate
+					GROUP BY o.outbreakID
+					ORDER BY (CASE WHEN o.type = 'Ongoing' THEN '1' ELSE '2' END) ASC, o.startDate DESC;`);
+			console.log(outbreaks);
+			res.status(200).send(outbreaks);
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
+	
+	getOutbreak: async function(req, res) {
+		try {
 			let outbreaks = await db.exec(`SELECT o.*, d.diseaseName
 					FROM mmchddb.OUTBREAKS o
 					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = o.diseaseID;`);
+			console.log(outbreaks);
 			res.status(200).send(outbreaks);
 		} catch (e) {
 			console.log(e);

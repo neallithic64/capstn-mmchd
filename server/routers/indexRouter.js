@@ -26,7 +26,9 @@ router.get("/getCRF", m1Cont.getCRF);
 router.get("/getCRFPage", m1Cont.getCRFPage);
 router.get("/getNewNotifs", m1Cont.getNewNotifs);
 router.get("/getPatientData", m1Cont.getPatientData);
-router.get("/getOutbreaks", m1Cont.getAllOutbreaks);
+
+router.get("/getAllOutbreaks", m1Cont.getAllOutbreaks);
+router.get("/getOutbreak", m1Cont.getOutbreak);
 
 router.get("/getAllEvents", m1Cont.getAllEvents);
 router.get("/getEvent", m1Cont.getEvent);
