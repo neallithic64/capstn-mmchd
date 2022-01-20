@@ -659,6 +659,7 @@ const indexFunctions = {
 	getCRFPage: async function(req, res) {
 		try {
 			let userSettings = await db.findRows("mmchddb.USER_SETTINGS", {userID: req.query.userID});
+			// console.log(req.query);
 			if (req.query.CRFID) {
 				// if viewing the CRF as a report
 				let CRFobj = await db.findRows("mmchddb.CRFS", {CRFID: req.query.CRFID});
@@ -672,6 +673,11 @@ const indexFunctions = {
 										LEFT JOIN mmchddb.AUDIT_LOG al ON c.caseID = al.editedID
 										WHERE c.CRFID = '${req.query.CRFID}'
 										GROUP BY c.caseID;`);
+				console.log({
+					CRF: CRFobj[0],
+					crfData: data,
+					pushDataAccept: userSettings[0].pushDataAccept
+				});
 				res.status(200).send({
 					CRF: CRFobj[0],
 					crfData: data,
@@ -1281,30 +1287,9 @@ const indexFunctions = {
 		}
 	},
 	
-	postSubmitCases: async function(req, res) {
-		try {
-			// let {} = req.body;
-			/* MORBIDITY (monthly and quarterly, 62) (after cases are done)
-					FK: LGU/userID 
-					FK: diseaseID
-					Month/Quarter
-					Year
-					FK: Age range ID ("0-6 days")
-					City/Location
-					Sex
-					Count
-					dateCreated
-			*/
-			// let morbid = await db.insertOne("mmchddb.MORBIDITY", );
-		} catch (e) {
-			console.log(e);
-			res.status(500).send("Server error.");
-		}
-	},
-	
 	postSubmitCRF: async function(req, res) {
 		try {
-			// let {} = req.body;
+			let { CRFID, diseaseID, userID } = req.body;
 			/* MORBIDITY (monthly and quarterly, 62) (after cases are done)
 					FK: LGU/userID 
 					FK: diseaseID
@@ -1317,6 +1302,21 @@ const indexFunctions = {
 					dateCreated
 			*/
 			// let morbid = await db.insertOne("mmchddb.MORBIDITY", );
+			await db.updateRows({
+				CRFID: CRFID,
+				diseaseID: diseaseID,
+				userID: userID
+			}, { isPushed: true });
+			// generate new CRF
+			/* await db.insertOne("mmchddb.CRFS", {
+				CRFID: CRFID,
+				diseaseID: diseaseID,
+				userID: userID,
+				week: ,
+				year:,
+				isPushed: false
+			}); */
+			res.status(200).send("done");
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error.");
@@ -1329,7 +1329,6 @@ const indexFunctions = {
 			sex, pregWeeks, civilStatus, occupation, occuLoc, guardianName, guardianContact
 			currHouseStreet, currCity, currBrgy (caddressID)
 			occuStreet, occuCity, occuBrgy (occuAddrID)
-			riskFactors
 		*/
 		
 		// extracting objects that belong to different tables from newPatientInfo

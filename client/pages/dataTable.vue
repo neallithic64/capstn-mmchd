@@ -220,12 +220,12 @@
                 </a>
                 <a v-else-if="pageType === 'cif'"
                   style="color: #346083; text-decoration-line: underline"
-                  :href="'/view' + 'CIFMeasles?caseID=' + data[column.key] ">
+                  :href="'/view' + 'CIFMeasles?caseID=' + data[column.key]">
                   {{ data[column.key] }}
                 </a>
                 <a v-else-if="pageType === 'crfDRU' || pageType === 'crfCHD'"
                   style="color: #346083; text-decoration-line: underline"
-                  :href="'/view' + 'CRFDengue?caseID=' + data[column.key]">
+                  :href="'/view' + 'CRFDengue?CRFID=' + data[column.key]">
                   {{ data[column.key] }}
                 </a>
                 <a v-else-if="pageType === 'addcrfID'"
