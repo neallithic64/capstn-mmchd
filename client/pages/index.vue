@@ -2,14 +2,6 @@
   <div>
     <TopNav/>
     <div id="dashboard-container">
-      <div id="dashboard-top">
-        <p id="main-title"> Metro Manila Integrated Disease Surveillance and Response </p>
-        <div id="dashboard-datetime">
-          <p>{{date}}</p>
-          <p>{{time}}</p>
-        </div>
-      </div>
-
       <div id="dashboard-bottom">
         <div id="dashboard-powerbi">
           PowerBI here
@@ -114,16 +106,8 @@ body {
   flex-direction: column;
 }
 
-#dashboard-top {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  color: white;
-  background-color: #008d41;
-  padding: 70px 20px 10px 20px; 
-}
-
 #dashboard-bottom {
+  margin-top: 65px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
