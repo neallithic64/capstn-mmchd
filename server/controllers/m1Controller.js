@@ -918,8 +918,9 @@ const indexFunctions = {
 				userID: user.userID,
 				pushDataAccept: false
 			});
-			if (!addrID.exists) let resultAddr = await db.insertOne("mmchddb.ADDRESSES", addrObj);
-			
+			if (!addrID.exists) {
+				let resultAddr = await db.insertOne("mmchddb.ADDRESSES", addrObj);
+			}
 			// result checking/validations
 			if (resultReg && resultSet && resultAddr) res.status(200).send("Register success");
 			else res.status(500).send("Register failed");
