@@ -111,7 +111,6 @@
         </div>
       </div>
     </div>
-    {{diseaseDefs}}
   </div>
 </template>
 
