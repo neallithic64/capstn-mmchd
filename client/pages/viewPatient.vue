@@ -444,9 +444,8 @@
                             value="LNone"
                             name="riskFactorsL"
                             type="checkbox"
-                            :disabled="inputEdit()"
-                            :class="optionsRequired()"
-                            required
+                            class="input-radio"
+                            disabled
                           />
                           <label for="LNone">None</label>
                         </div>
@@ -458,8 +457,8 @@
                             value="LSmoking"
                             name="riskFactorsL"
                             type="checkbox"
-                            :disabled="inputEdit()"
                             class="input-radio"
+                            disabled
                           />
                           <label for="LSmoking">Smoking</label>
                         </div>
@@ -471,8 +470,8 @@
                             value="LAlcoholism"
                             name="riskFactorsL"
                             type="checkbox"
-                            :disabled="inputEdit()"
                             class="input-radio"
+                            disabled
                           />
                           <label for="LAlcoholism">Alcoholism</label>
                         </div>
@@ -484,8 +483,8 @@
                             value="LDrugUse"
                             name="riskFactorsL"
                             type="checkbox"
-                            :disabled="inputEdit()"
                             class="input-radio"
+                            disabled
                           />
                           <label for="LDrugUse">Drug Use</label>
                         </div>
@@ -497,8 +496,8 @@
                             value="LPhysicalInactivity"
                             name="riskFactorsL"
                             type="checkbox"
-                            :disabled="inputEdit()"
                             class="input-radio"
+                            disabled
                           />
                           <label for="LPhysicalInactivity"
                             >Physical Inactivity</label
@@ -512,7 +511,7 @@
                             class="input-radio"
                             name="riskFactorsL"
                             type="checkbox"
-                            :disabled="inputEdit()"
+                            disabled
                           />
                           <label for="LifestyleOthers">
                             <div style="display: inline-flex">
@@ -522,7 +521,7 @@
                                 v-model="newPatientInfo.riskFactors.LOthers"
                                 class="riskfactorsInput"
                                 type="text"
-                                :disabled="inputEdit()"
+                                disabled
                               />
                             </div>
                           </label>
@@ -545,9 +544,8 @@
                             value="CNone"
                             name="riskFactorsC"
                             type="checkbox"
-                            :disabled="inputEdit()"
-                            :class="optionsRequired()"
-                            required
+                            class="input-radio"
+                            disabled
                           />
                           <label for="CNone">None</label>
                         </div>
@@ -560,7 +558,7 @@
                             class="input-radio"
                             name="riskFactorsC"
                             type="checkbox"
-                            :disabled="inputEdit()"
+                            disabled
                           />
                           <label for="CAsthma"> Asthma </label>
                         </div>
@@ -573,7 +571,7 @@
                             class="input-radio"
                             name="riskFactorsC"
                             type="checkbox"
-                            :disabled="inputEdit()"
+                            disabled
                           />
                           <label for="CHereditary"> Hereditary </label>
                         </div>
@@ -585,7 +583,7 @@
                             class="input-radio"
                             name="riskFactorsL"
                             type="checkbox"
-                            :disabled="inputEdit()"
+                            disabled
                           />
                           <label for="ConditionOthers">
                             <div style="display: inline-flex">
@@ -595,7 +593,7 @@
                                 v-model="newPatientInfo.riskFactors.COthers"
                                 class="riskfactorsInput"
                                 type="text"
-                                :disabled="inputEdit()"
+                                disabled
                               />
                             </div>
                           </label>
@@ -618,9 +616,8 @@
                             value="HNone"
                             name="riskFactorsH"
                             type="checkbox"
-                            :disabled="inputEdit()"
-                            :class="optionsRequired()"
-                            required
+                            class="input-radio"
+                            disabled
                           />
                           <label for="HNone">None</label>
                         </div>
@@ -633,7 +630,7 @@
                             class="input-radio"
                             name="riskFactorsH"
                             type="checkbox"
-                            :disabled="inputEdit()"
+                            disabled
                           />
                           <label for="HDiabetes"> Diabetes </label>
                         </div>
@@ -646,7 +643,7 @@
                             class="input-radio"
                             name="riskFactorsH"
                             type="checkbox"
-                            :disabled="inputEdit()"
+                            disabled
                           />
                           <label for="HHeartDisease"> Heart Disease </label>
                         </div>
@@ -659,7 +656,7 @@
                             class="input-radio"
                             name="riskFactorsH"
                             type="checkbox"
-                            :disabled="inputEdit()"
+                            disabled
                           />
                           <label for="HHypertension"> Hypertension </label>
                         </div>
@@ -672,7 +669,7 @@
                             class="input-radio"
                             name="riskFactorsH"
                             type="checkbox"
-                            :disabled="inputEdit()"
+                            disabled
                           />
                           <label for="HObesity"> Obesity </label>
                         </div>
@@ -684,7 +681,7 @@
                             class="input-radio"
                             name="riskFactorsL"
                             type="checkbox"
-                            :disabled="inputEdit()"
+                            disabled
                           />
                           <label for="HistoricalOthers">
                             <div style="display: inline-flex">
@@ -694,7 +691,7 @@
                                 v-model="newPatientInfo.riskFactors.HOthers"
                                 class="riskfactorsInput"
                                 type="text"
-                                :disabled="inputEdit()"
+                                disabled
                               />
                             </div>
                           </label>
@@ -717,9 +714,8 @@
                             value="ONone"
                             name="riskFactorsO"
                             type="checkbox"
-                            :disabled="inputEdit()"
-                            :class="optionsRequired()"
-                            required
+                            class="input-radio"
+                            disabled
                           />
                           <label for="ONone">None</label>
                         </div>
@@ -732,7 +728,7 @@
                             class="input-radio"
                             name="riskFactorsO"
                             type="checkbox"
-                            :disabled="inputEdit()"
+                            disabled
                           />
                           <label for="OAirPollution"> Air Pollution </label>
                         </div>
@@ -745,7 +741,7 @@
                             class="input-radio"
                             name="riskFactorsO"
                             type="checkbox"
-                            :disabled="inputEdit()"
+                            disabled
                           />
                           <label for="OCleanWater">
                             No access to clean water
@@ -760,7 +756,7 @@
                             class="input-radio"
                             name="riskFactorsO"
                             type="checkbox"
-                            :disabled="inputEdit()"
+                            disabled
                           />
                           <label for="OFlooding"> Flooding </label>
                         </div>
@@ -773,7 +769,7 @@
                             class="input-radio"
                             name="riskFactorsO"
                             type="checkbox"
-                            :disabled="inputEdit()"
+                            disabled
                           />
                           <label for="OHealthEdu"> Lack of health education </label>
                         </div>
@@ -786,7 +782,7 @@
                             class="input-radio"
                             name="riskFactorsO"
                             type="checkbox"
-                            :disabled="inputEdit()"
+                            disabled
                           />
                           <label for="OHealthFacility">
                             Lack of health facilities
@@ -802,7 +798,7 @@
                             class="input-radio"
                             name="riskFactorsO"
                             type="checkbox"
-                            :disabled="inputEdit()"
+                            disabled
                           />
                           <label for="OPoverty"> Poverty </label>
                         </div>
@@ -814,7 +810,7 @@
                             value="OShelter"
                             class="input-radio"
                             type="checkbox"
-                            :disabled="inputEdit()"
+                            disabled
                           />
                           <label for="OShelter"> Inadequate shelter </label>
                         </div>
@@ -827,7 +823,7 @@
                             class="input-radio"
                             name="riskFactorsO"
                             type="checkbox"
-                            :disabled="inputEdit()"
+                            disabled
                           />
                           <label for="OWasteMgmt"> Lack of waste management </label>
                         </div>
@@ -840,7 +836,7 @@
                             class="input-radio"
                             name="riskFactorsO"
                             type="checkbox"
-                            :disabled="inputEdit()"
+                            disabled
                           />
                           <label for="OVacCoverage">
                             Insufficient vaccination coverage
@@ -854,7 +850,7 @@
                             class="input-radio"
                             name="riskFactorsL"
                             type="checkbox"
-                            :disabled="inputEdit()"
+                            disabled
                           />
                           <label for="OtherOthers">
                             <div style="display: inline-flex">
@@ -864,7 +860,7 @@
                                 v-model="newPatientInfo.riskFactors.OOthers"
                                 class="riskfactorsInput"
                                 type="text"
-                                :disabled="inputEdit()"
+                                disabled
                               />
                             </div>
                           </label>
