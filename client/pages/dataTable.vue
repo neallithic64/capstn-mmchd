@@ -259,7 +259,7 @@
                   >{{ data[column.key] }}
                 </a> -->
               </span>
-              <span v-else-if="column.title==='Case Status'" :class="caseStatusClass(data[column.key])">
+              <span v-else-if="column.title==='Case Status' || column.title==='Type'" :class="caseStatusClass(data[column.key])">
                 {{ data[column.key] }}
               </span>
               <span v-else>
@@ -413,6 +413,7 @@ export default {
         if (c.toString().includes('Suspect')) return 'caseStatus suspectedCase';
         else if (c.toString().includes('Probable')) return 'caseStatus probableCase';
         else if (c.toString().includes('Confirmed')) return 'caseStatus confirmedCase';
+		else if (c.toString().includes('Ongoing')) return 'caseStatus ongoingOutbreak';
         return 'none';
       }
     },
@@ -549,7 +550,6 @@ export default {
         if (this.options.columns[i].filter) this.filters[0] = false;
     },
     selectedDataAmount() {
-      this.readData();
       this.currentPage = 1;
       this.getPages();
       this.getStartEnd();
@@ -558,7 +558,6 @@ export default {
       if (page !== 0 && page <= this.totalPage) {
         this.requestParams.skip = (page - 1) * this.requestParams.take;
         this.currentPage = page;
-        this.readData();
       }
       this.currentPage = page;
       this.getStartEnd();
@@ -620,10 +619,13 @@ export default {
 }
 
 .caseStatus {
-  color:white;
-  padding:2px 10px;
+  color: white;
+  padding: 2px 10px;
   border-radius: 10px;
   font-weight: 500;
+}
+.ongoingOutbreak {
+  background: red;
 }
 .confirmedCase {
   background: red;

@@ -2,6 +2,7 @@ const express = require("express");
 const router = express();
 const cron = require('node-cron');
 const m1Cont = require("../controllers/m1Controller");
+const m4Cont = require("../controllers/m4Controller");
 // const middleware = require("../middlewares/indexMiddleware");
 
 // Testing Routes
@@ -26,10 +27,13 @@ router.get("/getCRF", m1Cont.getCRF);
 router.get("/getCRFPage", m1Cont.getCRFPage);
 router.get("/getNewNotifs", m1Cont.getNewNotifs);
 router.get("/getPatientData", m1Cont.getPatientData);
-router.get("/getOutbreaks", m1Cont.getAllOutbreaks);
 
+router.get("/getAllOutbreaks", m1Cont.getAllOutbreaks);
+router.get("/getOutbreak", m1Cont.getOutbreak);
 router.get("/getAllEvents", m1Cont.getAllEvents);
 router.get("/getEvent", m1Cont.getEvent);
+
+router.get("/getProgTargets", m4Cont.getAllProgTargets);
 
 // POST Routes
 router.post("/login", m1Cont.postLogin);

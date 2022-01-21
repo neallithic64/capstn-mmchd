@@ -131,21 +131,7 @@ export default {
         // source: 'http://demo.datatable/api/users',
         search: true,
       },
-      allOutbreaks: [
-        {
-          outbreakID: '123',
-          disease: 'Measles',
-          type: 'Epidemic',
-          dateStarted: '2021-12-31',
-          numCases: '200',
-          numDeaths: '0',
-          growthRate: '813%',
-          attackRate: '1.07%',
-          outbreakStatus: 'Ongoing',
-          dateClosed: 'N/A',
-          responseTime: '15m'
-        },
-      ],
+      allOutbreaks: [],
     }
   },
   head() {
@@ -154,11 +140,20 @@ export default {
     }
   },
   async mounted() {
-    const rows = (await axios.get('http://localhost:8080/api/getOutbreaks')).data;
+    const rows = (await axios.get('http://localhost:8080/api/getAllOutbreaks')).data;
     console.log(rows[0]);
     for (let i = 0; i < rows.length; i++) {
       rows[i].disease = rows[i].diseaseName;
-      /* startDate, endDate */
+	  delete rows[i].diseaseID;
+	  rows[i].dateStarted = rows[i].startDate.substr(0, 10);
+	  rows[i].dateClosed = rows[i].endDate ? rows[i].endDate.substr(0, 10) : "N/A";
+	  rows[i].responseTime = rows[i].responseTime ? rows[i].responseTime : "N/A";
+	  /* columns left:
+	      numCases: 200,
+          numDeaths: 0,
+          growthRate: '813%',
+          attackRate: '1.07%',
+	  */
     }
     this.allOutbreaks = rows;
   },

@@ -28,7 +28,7 @@
           <form v-if="pageNum === -1" id="instructEdit" type="submit">
             <div id="new-user-form" class="center">
                 <h2 id="form-header"> Instructions </h2>
-              <div v-if="$auth.user.userType === 'techStaff'">
+              <div v-if="$auth.user.userType === 'techStaff' || $auth.user.userType === 'BHS'">
                 <ul v-for="(value, name, i) in instructions" :key="i" style="displayLinline-flex">
                     <li>
                       <label :for="name" class="defsLabel">
@@ -63,7 +63,7 @@
             <div id="edit-casedefs-form" class="center">
               <div style="display: flex; flex-direction: row; justify-content:space-between;">
                 <h2 id="form-header"> {{formSection[pageNum].disease}} </h2>
-                <div v-show="!isEdit" v-if="$auth.user.userType === 'techStaff'"> 
+                <div v-show="!isEdit" v-if="$auth.user.userType === 'techStaff' || $auth.user.userType === 'BHS'"> 
                   <button id="instructButton" class="instruct-button" type="button" @click="instruct()">
                     Instructions
                   </button>
@@ -77,17 +77,17 @@
                   <ul v-for="(value, i) in newIndicators" :key="i" style="displayLinline-flex">
                     <li>
                       <label class="defsLabel">
-                        {{ value.indicator }}
+                        {{ value.targetName }}
                       </label>
                       <ul>
                         <li>
-                          <div style="color:gray; margin-bottom:5px">{{value.definition}} <br/></div>
+                          <div style="color:gray; margin-bottom:5px">{{value.targetDesc}} <br/></div>
                           <div class="defsTextArea" style="text-align: center;">
-                            <input v-model="value.numerator" class="target-form-field" type="number" min="0" :disabled="!isEdit"/> 
-                            {{value.numeratorInfo}}
+                            <input class="target-form-field" v-model="value.numerValue" type="number" min="0" :disabled="!isEdit"/> 
+                            {{value.numerName}}
                             &nbsp; &nbsp; per &nbsp; &nbsp;
-                            <input v-model="value.denominator" class="target-form-field" type="number" min="0" :disabled="!isEdit"/> 
-                            {{value.denominatorInfo}}
+                            <input class="target-form-field" v-model="value.denomValue" type="number" min="0" :disabled="!isEdit"/> 
+                            {{value.denomName}}
                           </div>
                         </li>
                       </ul>
@@ -122,72 +122,7 @@ export default {
       pageNum: -1,
       isEdit: false,
       newIndicators:[],
-      formSection: [
-        {
-          disease: 'Malaria',
-          indicators: [
-            {
-              indicator: 'Morbidity Rate of Confirmed Malaria',
-              definition: 'Number of confirmed malaria cases over total population x 100,000 disaggregated by sex and age (>5 and <5 years of age). Types of transmission (define): Stable, Unstable, Sporadic',
-              numerator: '15',
-              numeratorInfo: 'confirmed cases',
-              denominator: '100000',
-              denominatorInfo: 'population',
-              frequency: 'annual'
-            },
-            {
-              indicator: 'Annual Parasite Incidence',
-              definition: 'Number of confirmed malaria cases over population at risk (population of endemic areas with a high risk of Malaria cases) x 1,000 disaggregated by sex and age',
-              numerator: '1',
-              numeratorInfo: 'confirmed cases',
-              denominator: '10000',
-              denominatorInfo: 'population',
-              frequency: 'annual'
-            },
-            {
-              indicator: 'Proportion of Population given LLIN',
-              definition: 'Number of Population at risk (per brgy) given LLIN',
-              numerator: '1',
-              numeratorInfo: 'persons given LLIN',
-              denominator: '2',
-              denominatorInfo: 'population',
-              frequency: 'annual'
-            },
-            {
-              indicator: 'Malaria Mortality Rate',
-              definition: 'Total number of malaria deaths per year among target group divided by mid‐year population of the same target group disaggregated by sex',
-              numerator: '0.05',
-              numeratorInfo: 'Malaria Deaths',
-              denominator: '100000',
-              denominatorInfo: 'population',
-              frequency: 'annual'
-            },
-          ]
-        },
-        {
-          disease: 'Disease 2',
-          indicators: [
-            {
-              indicator: 'a',
-              definition: 'b',
-              numerator: '1',
-              numeratorInfo: 'apples',
-              denominator: '2',
-              denominatorInfo: 'oranges',
-              frequency: ''
-            },
-            {
-              indicator: 'c',
-              definition: 'd',
-              numerator: '3',
-              numeratorInfo: 'wwater',
-              denominator: '4',
-              denominatorInfo: 'rice',
-              frequency: ''
-            }
-          ]
-        },
-      ],
+      formSection: [],
       instructions: {
         'Step 1': 'Click on a disease in the list on the left side to see its case definitions.',
         'Step 2': 'Click on the "Edit" button if you wish to edit the case definitions of the disease.',
@@ -198,32 +133,11 @@ export default {
     }
   },
   async fetch() {
-    /*
-    // getting all diseases to print in left side
-    const diseases = (await axios.get('http://localhost:8080/api/getAllDiseases')).data;
-    
-    // setting diseaseNames
-    const tempA = {};
-	  const tempB = {};
-    for (let i = 0; i < diseases.length; i++) {
-      tempA[i] = diseases[i].diseaseName;
-	    tempB[i] = diseases[i].diseaseID;
-    }
-    this.formSection.diseaseNames = tempA;
-    this.formSection.diseaseIDs = tempB;
-
-    // putting all caseDefs in one object
-    let defs;
-    for (let i = 0; i < diseases.length; i++) {
-      defs = (await axios.get('http://localhost:8080/api/getCaseDefs?diseaseID=' + diseases[i].diseaseID)).data;
-      this.allCaseDefs[this.formSection.diseaseNames[i]] = defs;
-    }
-
-    // setting initial disease (first disease)
-    for (let i = 0; i < this.allCaseDefs[this.formSection.diseaseNames[0]].length; i++) {
-      this.diseaseDefs[this.allCaseDefs[this.formSection.diseaseNames[0]][i].class] = this.allCaseDefs[this.formSection.diseaseNames[0]][i].definition;
-    }
-    */
+    // getting all diseases with targets to print in left side
+    const diseases = (await axios.get('http://localhost:8080/api/getProgTargets', {
+      params: { userID: this.$auth.user.userID }
+    })).data;
+	this.formSection = diseases;
   },
   methods: {
     formColor(index) {
@@ -235,33 +149,18 @@ export default {
     move(page) {
       if (!this.isEdit) {
         this.pageNum = page;
-        for (let i=0; i< this.formSection[this.pageNum].indicators.length ; i++) {
+		this.newIndicators.length = 0; // resetting the list
+        for (let i = 0; i < this.formSection[this.pageNum].indicators.length; i++) {
           this.newIndicators[i] = {
-            indicator: this.formSection[this.pageNum].indicators[i].indicator,
-            definition: this.formSection[this.pageNum].indicators[i].definition,
-            numerator: this.formSection[this.pageNum].indicators[i].numerator,
-            numeratorInfo: this.formSection[this.pageNum].indicators[i].numeratorInfo,
-            denominator: this.formSection[this.pageNum].indicators[i].denominator,
-            denominatorInfo: this.formSection[this.pageNum].indicators[i].denominatorInfo,
+		    targetName: this.formSection[this.pageNum].indicators[i].targetName,
+            targetDesc: this.formSection[this.pageNum].indicators[i].targetDesc,
+            numerValue: this.formSection[this.pageNum].indicators[i].numerValue,
+            numerName: this.formSection[this.pageNum].indicators[i].numerName,
+            denomValue: this.formSection[this.pageNum].indicators[i].denomValue,
+            denomName: this.formSection[this.pageNum].indicators[i].denomName,
           };
         }
       }
-      /*
-
-      // getting the caseDefs of clicked disease
-      const tempo = this.allCaseDefs[value];
-      
-      // deleting values of initial diseaseDefs
-      for (const m in this.diseaseDefs) delete this.diseaseDefs[m];
-      
-      // re-populating diseaseDefs with newly clicked disease
-      for (let j = 0; j < tempo.length; j++) {
-        this.diseaseDefs[tempo[j].class] = tempo[j].definition;
-      }
-
-      // eslint-disable-next-line no-console
-      // console.log(this.diseaseDefs);
-      */
     },
     edit() {
       this.isEdit = true;
@@ -273,12 +172,12 @@ export default {
       }
       else if (action==='Save') 
         for (let i=0; i< this.formSection[this.pageNum].indicators.length ; i++) {
-          this.formSection[this.pageNum].indicators[i].indicator = this.newIndicators[i].indicator;
-          this.formSection[this.pageNum].indicators[i].definition = this.newIndicators[i].definition;
-          this.formSection[this.pageNum].indicators[i].numerator = this.newIndicators[i].numerator;
-          this.formSection[this.pageNum].indicators[i].numeratorInfo = this.newIndicators[i].numeratorInfo;
-          this.formSection[this.pageNum].indicators[i].denominator = this.newIndicators[i].denominator;
-          this.formSection[this.pageNum].indicators[i].denominatorInfo = this.newIndicators[i].denominatorInfo;
+          this.formSection[this.pageNum].indicators[i].targetName = this.newIndicators[i].targetName;
+          this.formSection[this.pageNum].indicators[i].targetDesc = this.newIndicators[i].targetDesc;
+          this.formSection[this.pageNum].indicators[i].numerValue = this.newIndicators[i].numerValue;
+          this.formSection[this.pageNum].indicators[i].numerName = this.newIndicators[i].numerName;
+          this.formSection[this.pageNum].indicators[i].denomValue = this.newIndicators[i].denomValue;
+          this.formSection[this.pageNum].indicators[i].denomName = this.newIndicators[i].denomName;
           // this.formSection[this.pageNum].indicators = this.newIndicators;
 
         // this.save()
@@ -286,13 +185,11 @@ export default {
       }
     },
     async save() {
-      const result = await axios.post('http://localhost:8080/api/editDiseaseDef', {
-          diseaseDefs: this.diseaseDefs,
-          diseaseID: this.formSection.diseaseIDs[this.pageNum]
+      const result = await axios.post('http://localhost:8080/api/editProgTargets', {
+          userID: this.$auth.user.userID,
+		  targets: this.formSection[this.pageNum].indicators
       });
-	    // eslint-disable-next-line no-console
-	    console.log(result);
-
+	  
       if (result.status === 200) {
         // alert('Health event submitted!');
         this.$toast.success('Edit successful!', {duration: 4000, icon: 'check_circle'});
@@ -301,13 +198,6 @@ export default {
         console.log(result);
         this.$toast.error('Something went wrong!', {duration: 4000, icon: 'error'});
       }
-
-      // TODO: add notif send to all drus that a case definition was edited
-      // notif message: The case definitions of <disease> have been updated.
-      // notif type: updateNotif
-      // receiver: all DRUs
-      // redirectTo: addCIF/CRF url of the disease that was updated
-
     },
     instruct() {
       this.pageNum = -1;
