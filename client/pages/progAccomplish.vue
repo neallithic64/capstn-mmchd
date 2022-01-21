@@ -1,309 +1,229 @@
 <template>
-  <div id="addProg">
+  <div id="addCase">
     <!--Top Bar of the screen-->
     <TopNav />
-    <div>
 
+    <!--Everything below = main screen-->
+    <div class="cases-container">
+      <div class="cases-section-container">
+        <!--Name of form-->
+        <div class="page-name">
+          <h1 class="formHeader">Program Accomplishment</h1>
+          <p style="margin: -5px 5px 10px; font-size: 16px">
+            Select the disease of the program:
+          </p>
+        </div>
+
+        <!--Form itself-->
+        <div class="addcases-component">
+          <div id="CIF" class="center formTypeDiv">
+            <div
+              v-for="(value, name, i) in diseases.cif"
+              :key="i"
+              style="width: 100%; align-content: center"
+            >
+              <!-- <a :href="'/progAccomplishDisease'+value" style="margin: auto"> -->
+              <a :href="'/progAccomplish' + value" style="margin: auto">
+                <div class="cases-disease-name">{{ name }}</div>
+              </a>
+            </div>
+          </div>
+
+          <div id="CRF" class="center formTypeDiv">
+            <div
+              v-for="(value, name, i) in diseases.crf"
+              :key="i"
+              style="width: 100%; align-content: center"
+            >
+              <!-- <a :href="'/progAccomplishDisease' + value" style="margin: auto"> -->
+              <a :href="'/progAccomplish' + value" style="margin: auto">
+                <div class="cases-disease-name">{{ name }}</div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-const axios = require('axios');
-
 export default {
   middleware: 'is-auth',
   header: {
-    title: 'Case Report Form - Dengue',
+    title: 'Choose Disease Program Accomplishment',
   },
   data() {
     return {
-      patientExist: false,
-      sameAddress:'',
-      locBrgyList: [],
-      today:'',
-      hasLabTest:'',
-      noLabTest:false,
-      isOpen: true,
-      openCollapse: '',
-      isDisabled: false,
-      diseaseID: 'DI-0000000000003',
-      patients: [],
-      patientResult: [],
-      labList:[],
-      pageNum: 0,
-      formPart: 'Dengue0',
-      pageDone: [true,true,true,true,],
-      pageColor: [true,false,false,false,],
-      formData: {
-        cases: {
-          caseID: '',
-          diseaseID: '',
-          reportedBy: '',
-          caseLevel: '',
-          reportDate: '',
-          investigationDate: '',
-          dateAdmitted: '',
-          dateOnset: '',
-          reporterName: '',
-          reporterContact: '',
-          investigatorName: '',
-          investigatorContact: '',
+      diseases: {
+        cif: {
+          Malaria: 'Malaria',
+          Measles: 'Measles',
+          Tetanus: 'Tetanus',
+          Pertussis: 'Pertussis',
+          Meningococcal: 'Meningococcal',
         },
-        patient: {
-          patientID: '',
-          epiID: '',
-          lastName: '',
-          firstName: '',
-          midName: '',
-          currHouseStreet: '',
-          currBrgy: '',
-          currCity: '',
-          permHouseStreet: '',
-          permBrgy: '',
-          permCity: '',
-          sex: '',
-          birthDate: '',
-          ageNo: '',
-          ageType: '',
-          admitStatus: '',
-          civilStatus: '',
-          occupation: '',
-          occuLoc: '',
-          occuStreet: '',
-          occuCity: '',
-          occuBrgy: '',
-          occuAddrID: '',
-          guardianName: '',
-          guardianContact: '',
-          indGroup: '',
-          pregWeeks: '',
-          HCPN: '',
-          ILHZ: '',
-        },
-        riskFactors: {
-          caseID: '',
-          LAlcoholism: '',
-          LDrugUse: '',
-          LPhysicalInactivity: '',
-          LSmoking: '',
-          LOthers: '',
-          CAsthma: '',
-          CHereditary: '',
-          COthers: '',
-          HDiabetes: '',
-          HHeartDisease: '',
-          HHypertension: '',
-          HObesity: '',
-          HOthers: '',
-          OAirPollution: '',
-          OCleanWater: '',
-          OFlooding: '',
-          OHealthEdu: '',
-          OHealthFacility: '',
-          OPoverty: '',
-          OShelter: '',
-          OWasteMgmt: '',
-          OVacCoverage: '',
-          OOthers: '',
-        },
-        caseData: {
-          patientConsulted: '',
-          patientConsultDate:'',
-          patientConsultPlace:'',
-          // Lab
-          ns1Date:'',
-          ns1Result:'',
-          iggDate:'',
-          iggResult:'',
-          igmDate:'',
-          igmResult:'',
-          pcrDate:'',
-          pcrResult:'',
-          // Page 6++
-          finalClassification: '',
-          clinicalClassification:'',
-          sourceInfection: '',
-          outcome: '',
-          dateDied: '',
-          finalDiagnosis: '',
-          vaccine: '',
-          vaccineFirstDate: '',
-          vaccineLastDate: '',
+        crf: {
+          Dengue: 'Dengue',
+          Cholera: 'Cholera',
+          Leptospirosis: 'Leptospirosis',
+          Chikungunya: 'Chikungunya',
+          Typhoid: 'Typhoid',
         },
       },
-      disease: {
-        idname: 'Dengue',
-        name: 'Dengue',
-        formNames: {
-          form0: 'Program Details',
-          form1: 'Program Information',
-          form2: 'Program ',
-          form3: 'Vaccination History',
-        },
-      },
-      classification: {},
-      cityList: [
-        'Caloocan',
-        'Las Piñas',
-        'Makati',
-        'Malabon',
-        'Mandaluyong',
-        'Manila',
-        'Marikina',
-        'Muntinlupa',
-        'Navotas',
-        'Parañaque',
-        'Pasay',
-        'Pasig',
-        'Quezon City',
-        'San Juan',
-        'Taguig',
-        'Valenzuela',
-      ],
     }
   },
-  async fetch() {
-    let rows = (await axios.get('http://localhost:8080/api/getCaseDefs?diseaseID=' + this.diseaseID)).data;
-    for (let i = 0; i < rows.length; i++) {
-      this.classification[rows[i].class] = rows[i].definition;
-    }
-    rows = (await axios.get('http://localhost:8080/api/getPatients')).data;
-    this.patients = rows;
-    rows = (await axios.get('http://localhost:8080/api/getLabUsers')).data;
-    this.labList = rows;
-  },
-  computed: {},
-  mounted() {},
-  methods: {
-    formpart(disease, pageNum) {
-      this.formPart = disease + pageNum;
-      // if (this.isOpen) this.formStatus(this.pageNum);
-    },
-    formColor(index) {
-      if (this.isOpen) {
-        if (index === this.pageNum) return 'formnum formnumcurr';
-        else if (this.pageColor[index]) return 'formnum formnumdone';
-        else return 'formnum';
-      }
-    },
-    async submit() {
-      // TODO: this submit is the "save" type, the cases should only be visible to the DRU, not yet submitted to MMCHD
-      const now = new Date();
-      this.formData.cases.diseaseID = this.diseaseID;
-      this.formData.cases.reportedBy = this.$auth.user.userID;
-      this.formData.cases.reportDate = now.getFullYear() + '-' + (now.getMonth()+1) + '-' + now.getDate();
-      const result = await axios.post('http://localhost:8080/api/newCase', {formData: this.formData, CRFID: this.$route.query.CRFID});
-      if (result.status === 200) {
-        // alert('CRF case submitted!');
-        this.$toast.success('Case saved!', {duration: 4000, icon: 'check_circle'});
-        window.location.href = '/allCases';
-      } else {
-        // eslint-disable-next-line no-console
-        console.log(result);
-        this.$toast.error('Something went wrong!', {duration: 4000, icon: 'error'});
-      }
-    },
-    move(page) {
-      this.validateForm(this.pageNum);
-      this.pageColor[this.pageNum] = this.pageDone[this.pageNum];
-      this.validateForm(page);
-      this.pageColor[page] = this.pageDone[page];
-      
-      if (this.pageDone[this.pageNum] || this.pageDone[page] || page===0 || this.pageNum ===0) {
-        if (page===4) {
-          if (!this.pageColor[8]) alert('Please fill up the required fields in all pages');
-          else this.pageNum = page;
-        }
-        else if (this.pageNum===4) {
-          this.pageNum = page;
-        }
-        else if (page < Object.keys(this.disease.formNames).length && this.pageNum < Object.keys(this.disease.formNames).length) {
-          if (this.isOpen) {
-            const prevFormNum = 'form' + this.pageNum;
-            document.getElementById(prevFormNum).className = 'formnum formnumdone';
-            const currFormNum = 'form' + page;
-            document.getElementById(currFormNum).className = 'formnum formnumcurr';}
-
-          this.pageDone[this.pageNum] = true;
-          this.pageDone[page] = true;
-          this.pageNum = page;
-        }
-      }
-      else {
-        // alert('Please fill up the required fields');
-        this.$toast.error('Please fill up the required fields.', {position: 'top-right', duration: 4000, icon: 'error'});
-        // document.getElementsByClassName('input-form-field').className = 'input-form-field input-required';
-        this.$forceUpdate();
-      }
-      // console.log(this.pageDone)
-
-    },
-    validateForm(page) {
-      switch (page) {
-        case 1:
-          if (this.patientExist) this.pageDone[page] = true;
-          else this.pageDone[page] = false;
-          if (this.formData.patient.ageNo<0) {this.formData.patient.ageNo = ''; this.pageDone[page] = false;}
-          if (this.formData.patient.pregWeeks!=='Not Pregnant' && this.formData.patient.pregWeeks<0)
-            {this.formData.patient.pregWeeks = ''; this.pageDone[page] = false;}
-          if (this.formData.patient.guardianContact<0) {this.formData.patient.guardianContact = ''; this.pageDone[page] = false;}
-          break;
-        case 3:
-          if (this.formData.caseData.vaccine!=='' &&
-              this.formData.caseData.vaccine!=='') {
-            if (this.formData.caseData.vaccine==='No' ||
-                (this.formData.caseData.vaccine==='Yes' &&
-                this.formData.caseData.vaccineFirstDate!=='' &&
-                this.formData.caseData.vaccineFirstDate!==null &&
-                this.formData.caseData.vaccineLastDate!=='' &&
-                this.formData.caseData.vaccineLastDate!==null))
-              this.pageDone[page] = true;
-            else this.pageDone[page] = false;
-          }
-          else this.pageDone[page] = false;
-          break;
-        case 4:
-          if (this.formData.caseData.clinicalClassification!=='' &&
-              this.formData.caseData.clinicalClassification!==null
-          ) this.pageDone[page] = true;
-          else this.pageDone[page] = false;
-          break;
-        case 7:
-          if (this.formData.cases.caseLevel !=='' &&
-              this.formData.cases.caseLevel !== null &&
-              this.formData.cases.caseLevel !== undefined)
-            this.pageDone[page] = true;
-          else this.pageDone[page] = false;
-          break;
-        case 8:
-          if(this.pageColor[1] && this.pageColor[2] && this.pageColor[3] && this.pageColor[4]
-             && this.pageColor[5] && this.pageColor[6] && this.pageColor[7]) {
-               this.pageColor[8] = true;
-               this.pageDone[8] = true;
-             }
-          break;
-      }
-      if (this.pageDone[page]) this.pageColor[page] = true;
-    },
-    isRequired() {
-      if (!this.pageDone[this.pageNum]) return "input-required";
-    },
-    inputEdit() {
-      if (this.pageNum === Object.keys(this.disease.formNames).length) {
-        // const elems = document.getElementsByTagName('input')
-        // for (let i = 0; i < elems.length; i++) {
-        //   elems[i].disabled = true;
-        //   console.log(elems);
-        // }
-        return true;
-      }
-      else return false;
-    },
-  },
+  methods: {},
 }
 </script>
 
 <style>
+body {
+  font-family: 'Work Sans', sans-serif;
+  font-weight: 300;
+  padding: 0px;
+  margin: 0px;
+  background-image: none;
+}
 
+h3 {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.formHeader {
+  margin: -5px 0;
+  font-weight: 800;
+  font-size: 32px;
+  color: #346083;
+}
+
+.cases-container {
+  padding: 70px 20px 5px 20px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  width: 100%;
+}
+
+@media only screen and (max-width: 800px) {
+  .cases-ontainer {
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    margin: 0px;
+  }
+}
+
+.cases-section-container {
+  /* left: 275px; */
+  position: relative;
+  /* width: calc(100vw - 320px); */
+  /* margin: 5px; */
+  width: 100%;
+  padding: 5px;
+  margin: 10px;
+}
+
+@media only screen and (max-width: 800px) {
+  .cases-section-container {
+    left: 0px;
+    width: 95%;
+  }
+}
+
+.addcases-component {
+  position: relative;
+  display: inline-flex;
+  flex-direction: row;
+  height: max-content;
+  width: 100%;
+  top: -3px;
+
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.25));
+  background-color: #f2f2f2;
+  border-radius: 15px;
+  padding: 15px;
+  z-index: 2;
+  min-height: calc(100vh - 220px);
+}
+@media only screen and (max-width: 800px) {
+  .addcases-component {
+    flex-direction: column;
+    position: relative;
+    top: 0px;
+    min-height: fit-content;
+  }
+}
+
+.formTypeDiv {
+  flex-direction: column;
+  width: 50%;
+  padding: 10px;
+}
+
+#CIF {
+  border: none;
+  border-right: #b8b7b7 0.5px solid;
+}
+
+#CRF {
+  border: none;
+  border-left: #b8b7b7 0.5px solid;
+}
+
+@media only screen and (max-width: 800px) {
+  .formTypeDiv {
+    width: 100%;
+    padding: 30px;
+  }
+
+  #CIF {
+    border: none;
+    border-bottom: black 0.5px solid;
+  }
+
+  #CRF {
+    border: none;
+    border-top: black 0.5px solid;
+  }
+}
+
+h3 {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.cases-disease-name {
+  text-align: center;
+  width: fit-content;
+  max-width: 100%;
+  font-size: 18px;
+  margin: 15px auto 5px;
+  padding: 5px;
+  font-family: 'Work Sans', sans-serif;
+  font-weight: 500;
+  color: #346083;
+  cursor: pointer;
+}
+
+.cases-disease-name:hover {
+  border: #346083 solid 1px;
+  transform: translateY(-5px);
+  transition: 0.3s;
+  font-weight: 800;
+}
+
+.cases-disease-name:active {
+  border: #346083 solid 1px;
+  background: #346083;
+  color: #f2f2f2;
+  transition: 0.3s;
+  font-weight: 800;
+}
+
+hr {
+  margin: 20px 0;
+}
 </style>
+
