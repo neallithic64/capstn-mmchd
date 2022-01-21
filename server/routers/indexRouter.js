@@ -53,6 +53,8 @@ router.post("/updatePatientDetails", m1Cont.postUpdatePatient);
 router.post("/updateEventStatus", m1Cont.postUpdateEventStatus);
 router.post("/updatePushData", m1Cont.postUpdatePushData);
 
+router.post("/editProgTargets", m4Cont.postEditProgTargets);
+
 // CRON Routes
 cron.schedule("00 14 * * 3", m1Cont.cronCRFDeadlineNotif);
 cron.schedule("00 17 * * 5", m1Cont.cronCRFPushData);

@@ -102,7 +102,6 @@ const indexFunctions = {
 	
 	getAllProgTargets: async function(req, res) {
 		try {
-			console.log(req);
 			let match = await db.exec(`SELECT t.*, tr.*, d.diseaseName FROM mmchddb.TARGETS t
 					LEFT JOIN mmchddb.TARGETS_REF tr ON tr.targetID = t.targetID
 					LEFT JOIN mmchddb.DISEASES d ON tr.diseaseID = d.diseaseID
@@ -124,6 +123,23 @@ const indexFunctions = {
 	 * POST METHODS
 	 */
 	
+	postEditProgTargets: async function(req, res) {
+		let { userID, targets } = req.body;
+		try {
+			console.log(targets);
+			for (let i = 0; i < targets.length; i++) {
+				await db.updateRows("mmchddb.TARGETS", {
+					targetID: targets[i].targetID, userID: userID
+				}, {
+					numerValue: targets[i].numerValue, denomValue: targets[i].denomValue
+				});
+			}
+			res.status(200).send("Update targets successful!");
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
 };
 
 module.exports = indexFunctions;
