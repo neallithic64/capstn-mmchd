@@ -137,7 +137,7 @@ export default {
     const diseases = (await axios.get('http://localhost:8080/api/getProgTargets', {
       params: { userID: this.$auth.user.userID }
     })).data;
-	this.formSection = diseases;
+    this.formSection = diseases;
   },
   methods: {
     formColor(index) {
@@ -149,18 +149,19 @@ export default {
     move(page) {
       if (!this.isEdit) {
         this.pageNum = page;
-		this.newIndicators.splice(0, this.newIndicators.length); // resetting the list
+        this.newIndicators.splice(0, this.newIndicators.length); // resetting the list
         for (let i = 0; i < this.formSection[this.pageNum].indicators.length; i++) {
           this.newIndicators.push({
-		    targetName: this.formSection[this.pageNum].indicators[i].targetName,
+            targetName: this.formSection[this.pageNum].indicators[i].targetName,
             targetDesc: this.formSection[this.pageNum].indicators[i].targetDesc,
             numerValue: this.formSection[this.pageNum].indicators[i].numerValue,
             numerName: this.formSection[this.pageNum].indicators[i].numerName,
             denomValue: this.formSection[this.pageNum].indicators[i].denomValue,
             denomName: this.formSection[this.pageNum].indicators[i].denomName,
-			targetID: this.formSection[this.pageNum].indicators[i].targetID
+            targetID: this.formSection[this.pageNum].indicators[i].targetID
           });
         }
+		console.log();
       }
     },
     edit() {
@@ -173,16 +174,6 @@ export default {
       }
       else if (action==='Save') {
         this.formSection[this.pageNum].indicators = this.newIndicators;
-        /*
-        for (let i=0; i<this.formSection[this.pageNum].indicators.length; i++) {
-		  this.formSection[this.pageNum].indicators[i].targetName = this.newIndicators[i].targetName;
-          this.formSection[this.pageNum].indicators[i].targetDesc = this.newIndicators[i].targetDesc;
-          this.formSection[this.pageNum].indicators[i].numerValue = this.newIndicators[i].numerValue;
-          this.formSection[this.pageNum].indicators[i].numerName = this.newIndicators[i].numerName;
-          this.formSection[this.pageNum].indicators[i].denomValue = this.newIndicators[i].denomValue;
-          this.formSection[this.pageNum].indicators[i].denomName = this.newIndicators[i].denomName;
-		}
-		*/
         this.save();
         this.isEdit = false;
       }
@@ -190,9 +181,9 @@ export default {
     async save() {
       const result = await axios.post('http://localhost:8080/api/editProgTargets', {
           userID: this.$auth.user.userID,
-		  targets: this.formSection[this.pageNum].indicators
+          targets: this.formSection[this.pageNum].indicators
       });
-	  
+      
       if (result.status === 200) {
         // alert('Health event submitted!');
         this.$toast.success('Edit successful!', {duration: 4000, icon: 'check_circle'});
