@@ -149,16 +149,17 @@ export default {
     move(page) {
       if (!this.isEdit) {
         this.pageNum = page;
-		this.newIndicators.length = 0; // resetting the list
+		this.newIndicators.splice(0, this.newIndicators.length); // resetting the list
         for (let i = 0; i < this.formSection[this.pageNum].indicators.length; i++) {
-          this.newIndicators[i] = {
+          this.newIndicators.push({
 		    targetName: this.formSection[this.pageNum].indicators[i].targetName,
             targetDesc: this.formSection[this.pageNum].indicators[i].targetDesc,
             numerValue: this.formSection[this.pageNum].indicators[i].numerValue,
             numerName: this.formSection[this.pageNum].indicators[i].numerName,
             denomValue: this.formSection[this.pageNum].indicators[i].denomValue,
             denomName: this.formSection[this.pageNum].indicators[i].denomName,
-          };
+			targetID: this.formSection[this.pageNum].indicators[i].targetID
+          });
         }
       }
     },
@@ -170,17 +171,19 @@ export default {
         this.newIndicators = this.formSection[this.pageNum].indicators;
         this.isEdit = false;
       }
-      else if (action==='Save') 
-        for (let i=0; i< this.formSection[this.pageNum].indicators.length ; i++) {
-          this.formSection[this.pageNum].indicators[i].targetName = this.newIndicators[i].targetName;
+      else if (action==='Save') {
+        this.formSection[this.pageNum].indicators = this.newIndicators;
+        /*
+        for (let i=0; i<this.formSection[this.pageNum].indicators.length; i++) {
+		  this.formSection[this.pageNum].indicators[i].targetName = this.newIndicators[i].targetName;
           this.formSection[this.pageNum].indicators[i].targetDesc = this.newIndicators[i].targetDesc;
           this.formSection[this.pageNum].indicators[i].numerValue = this.newIndicators[i].numerValue;
           this.formSection[this.pageNum].indicators[i].numerName = this.newIndicators[i].numerName;
           this.formSection[this.pageNum].indicators[i].denomValue = this.newIndicators[i].denomValue;
           this.formSection[this.pageNum].indicators[i].denomName = this.newIndicators[i].denomName;
-          // this.formSection[this.pageNum].indicators = this.newIndicators;
-
-        // this.save()
+		}
+		*/
+        this.save();
         this.isEdit = false;
       }
     },
