@@ -149,19 +149,7 @@ export default {
     move(page) {
       if (!this.isEdit) {
         this.pageNum = page;
-        this.newIndicators.splice(0, this.newIndicators.length); // resetting the list
-        for (let i = 0; i < this.formSection[this.pageNum].indicators.length; i++) {
-          this.newIndicators.push({
-            targetName: this.formSection[this.pageNum].indicators[i].targetName,
-            targetDesc: this.formSection[this.pageNum].indicators[i].targetDesc,
-            numerValue: this.formSection[this.pageNum].indicators[i].numerValue,
-            numerName: this.formSection[this.pageNum].indicators[i].numerName,
-            denomValue: this.formSection[this.pageNum].indicators[i].denomValue,
-            denomName: this.formSection[this.pageNum].indicators[i].denomName,
-            targetID: this.formSection[this.pageNum].indicators[i].targetID
-          });
-        }
-		console.log();
+		this.newIndicators = this.formSection[this.pageNum].indicators;
       }
     },
     edit() {
