@@ -94,6 +94,27 @@
       
       </div>
 
+      <div v-if="pageNum == 0 || isPrint" id="risk-legend">
+        <div id="risk-col">
+          <p style="font-weight: 600;"> Risk Classification Legend </p>
+          <p style="color: white; background: red; font-weight: 400; padding: 3px;"> High Risk </p>
+          <p style="color: white; background: #FC8F00; font-weight: 400; padding: 3px;"> Moderate Risk </p>
+          <p style="color: white; background: #008d41; font-weight: 400; padding: 3px;"> Low Risk</p>
+        </div>
+        <div id="risk-col" style="margin-left: 8px;">
+          <p style="font-weight: 600;"> Growth Rate </p>
+          <p style="font-weight: 400; padding: 3px;"> {{ grHighRisk }} </p>
+          <p style="font-weight: 400; padding: 3px;"> {{ grModRisk }} </p>
+          <p style="font-weight: 400; padding: 3px;"> {{ grLowRisk }} </p>
+        </div>
+        <div id="risk-col" style="margin-left: 5px;">
+          <p style="font-weight: 600;"> Attack Rate </p>
+          <p style="font-weight: 400; padding: 3px;"> {{ arHighRisk }} </p>
+          <p style="font-weight: 400; padding: 3px;"> {{ arModRisk }} </p>
+          <p style="font-weight: 400; padding: 3px;"> {{ arLowRisk }} </p>
+        </div>
+      </div>
+
       <div class="OB-statusHistory">
         <h2 style="border-bottom: gray solid; width: fit-content; padding: 0 7px 0 5px;">Outbreak Status History</h2>
         <dataTable
@@ -189,6 +210,12 @@ export default {
   compute: {},
   data() {
     return {
+      grLowRisk: '<=0%',
+      grModRisk: '>0% to <=200%',
+      grHighRisk: '>200%',
+      arLowRisk: '>1',
+      arModRisk: '>=1 to <=7',
+      arHighRisk: '>7',
       editStatus: false,
       auditLog: {
         newStatus: '',
@@ -868,6 +895,20 @@ ul ul li {
   flex-direction: column;
   padding-bottom: 5px;
   align-items: baseline;
+}
+
+#risk-legend {
+  font-size: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+}
+
+#risk-col {
+  font-size: 10px;
+  display: flex;
+  flex-direction: column;
+  /* justify-content: end; */
 }
 
 .halffield {

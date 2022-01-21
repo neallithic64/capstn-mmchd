@@ -259,7 +259,7 @@
                   >{{ data[column.key] }}
                 </a> -->
               </span>
-              <span v-else-if="column.title==='Case Status' || column.title==='Type'" :class="caseStatusClass(data[column.key])">
+              <span v-else-if="column.title==='Case Status' || column.title==='Type' || column.title==='Risk Classification'" :class="caseStatusClass(data[column.key])">
                 {{ data[column.key] }}
               </span>
               <span v-else>
@@ -414,6 +414,9 @@ export default {
         else if (c.toString().includes('Probable')) return 'caseStatus probableCase';
         else if (c.toString().includes('Confirmed')) return 'caseStatus confirmedCase';
 		else if (c.toString().includes('Ongoing')) return 'caseStatus ongoingOutbreak';
+    else if (c.toString().includes('High')) return 'caseStatus confirmedCase';
+    else if (c.toString().includes('Moderate')) return 'caseStatus suspectedCase';
+    else if (c.toString().includes('Low')) return 'caseStatus lowRisk';
         return 'none';
       }
     },
@@ -635,6 +638,9 @@ export default {
 }
 .probableCase {
   background: #FDCE00;
+}
+.lowRisk {
+  background: #008d41;
 }
 
 .filterButton {
