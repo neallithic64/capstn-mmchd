@@ -12,11 +12,13 @@
             <a :href="'/viewOutbreak?outbreakID='">
               <div id="outbreak-content" class="dboard-right-content" style="border-left-color: #c70000;">
                 <div id="outbreak-text">
-                  <p> Disease </p>
-                  <p> Active Cases </p>
+                  <span style="padding-top: 5px; font-weight: 900"> Measles </span>
+                  <span> <span style="color: red; font-size: 16px; font-weight: 600"> 1826 </span> Active Cases </span>
                 </div>
-                <div id="outbreak-countdown">
-                  <p> Countdown here </p>
+                <div id="outbreak-countdown" style="color: red;">
+                  <client-only>
+                    <Countdown deadline="January 22, 2022 23:39:00"></Countdown>
+                  </client-only>
                 </div>
               </div>
             </a>
@@ -24,8 +26,8 @@
           <div id="latest-case-container">
             <span class="dboard-right-titles" style="background-color: #346083;"> Latest Case </span>
             <div class="dboard-right-content" style="border-left-color: #346083;">
-              <p> Disease, Status </p>
-              <p> City, Barangay </p>
+              <span style="padding-top: 5px; font-weight: 900"> Measles, Suspected </span>
+              <span> Pasay City, BARANGAY 171 </span>
             </div>
           </div>
           <div id="tracker-container">
@@ -57,8 +59,11 @@
 </template>
 
 <script>
-
+import Countdown from 'vuejs-countdown'
 export default {
+  components: { 
+    Countdown
+  },
   middleware: 'is-auth',
   data() {
     return {
@@ -153,19 +158,19 @@ body {
   margin-right: 5px;
   margin-left: 5px;
   margin-top: 5px;
-  font-weight: 400;
-  font-size: 12.5px;
+  font-weight: 500;
+  font-size: 13px;
 }
 
 #latest-case-container {
-  width: 300px;
+  width: 350px;
   display: flex;
   flex-direction: column;
   padding: 5px 5px 5px 5px;
 }
 
 #outbreak-container {
-  width: 300px;
+  width: 350px;
   display: flex;
   flex-direction: column;
   margin-top: 5px;
@@ -175,6 +180,7 @@ body {
 #outbreak-content {
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
 }
 
 #outbreak-text {
@@ -187,7 +193,7 @@ body {
 }
 
 #tracker-container {
-  width: 300px;
+  width: 350px;
   display: flex;
   flex-direction: column;
   margin-top: 5px;
@@ -204,9 +210,16 @@ body {
   border-left-style: solid;
   border-left-width: 2px;
   padding-left: 5px;
+  padding-bottom: 5px;
+  display: flex;
+  flex-direction: column;
 }
 
 .dboard-right-content:hover {
   background:rgba(245, 245, 245, 0.904);
+}
+
+#outbreak-countdown {
+  padding-left: 20px;
 }
 </style>

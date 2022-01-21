@@ -3,6 +3,13 @@
     <!--Top Bar of the screen-->
     <TopNav/>
     <div ref="content" class="viewOB-container">
+      <!-- TODO: place v-if here to remove the timer after initial response -->
+      <div id="countdown-container">
+        <client-only>
+          <Countdown deadline="January 22, 2022 23:39:00"></Countdown>
+        </client-only>
+        <span style="font-weight: 600;"> TIME LEFT FOR INITIAL RESPONSE </span>
+      </div>
       <div class="viewOB-details" style="align-text: left">
         <div class="OBnumbers">
           <h1 style="margin: -10px 0">Outbreak No. {{ outbreak.outbreakID }}</h1>
@@ -200,9 +207,11 @@ const axios = require('axios');
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
 import dataTable from './dataTable.vue'
+import Countdown from 'vuejs-countdown'
 export default {
   components: {
     dataTable,
+    Countdown
   },
   middleware: 'is-auth',
   header: {
@@ -903,7 +912,7 @@ ul ul li {
   font-size: 10px;
   display: flex;
   flex-direction: row;
-  justify-content: end;
+  justify-content: flex-end;
 }
 
 #risk-col {
@@ -1180,6 +1189,17 @@ select {
 
 img:hover + .info-desc {
   display: block;
+}
+
+#countdown-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: red;
+  color: white;
+  margin-bottom: 10px;
+  padding-bottom: 5px;
 }
 
 .info-desc {
