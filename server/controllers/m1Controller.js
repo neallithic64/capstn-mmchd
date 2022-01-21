@@ -1325,6 +1325,56 @@ const indexFunctions = {
 		}
 	},
 	
+	postEditPatientOutcome: async function(req, res) {
+		let { caseID, newOutcome, submitted } = req.body;
+		let auditArr = [], dateNow = new Date();
+		try {
+			console.log(newOutcome);
+			// reconstruct array as an object for easier update
+			
+			// newOutcome.reduce is not a function
+			let outcomeData = newOutcome.reduce(function(r, i) {
+				r[i.fieldName] = i.value;
+				return r;
+			}, {});
+			console.log(outcomeData);
+			
+			/*
+			// update every attr in the object for the input information
+			// key basis is newLabData to account for cases with no initial info
+			Object.keys(newOutcome).forEach(e1 => {
+				// constructing audit array
+				if (outcomeData[e1] !== newOutcome[e1]) {
+					auditArr.push({
+						editedID: caseID,
+						dateModified: dateNow,
+						fieldName: e1,
+						prevValue: outcomeData[e1],
+						modifiedBy: submitted
+					});
+				}
+				outcomeData[e1] = newOutcome[e1];
+			});
+			
+			// where updating happens
+			for (let i = 0; i < Object.keys(outcomeData).length; i++)
+				await db.updateRows("mmchddb.CASE_DATA", {
+					caseID: caseID,
+					fieldName: Object.keys(outcomeData)[i]
+				}, { value: newOutcome[Object.keys(outcomeData)[i]] });
+			
+			// null check before audit log insertion, esp on Object.keys
+			if (auditArr.length > 0) {
+				await db.insertRows("mmchddb.AUDIT_LOG", Object.keys(auditArr[0]), auditArr.map(Object.values));
+			}
+			*/
+			res.status(200).send("");
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error.");
+		}
+	},
+	
 	postSubmitCRF: async function(req, res) {
 		try {
 			let { CRFID, diseaseID, userID } = req.body;

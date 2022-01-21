@@ -2717,7 +2717,7 @@ export default {
       }
       else this.editOutcomeValidate = false;
     },
-    editPatientOutcome(change) {
+    async editPatientOutcome(change) {
       if (change==='save') {
         this.validateOutcome();
         if (this.editOutcomeValidate) {
@@ -2725,29 +2725,21 @@ export default {
           this.formData.caseData.dateDied = this.newOutcome.dateDied;
           this.formData.caseData.finalDiagnosis = this.newOutcome.finalDiagnosis;
           
-        /*
-        const serve = (await axios.post("http://localhost:8080/api/editCIFLab", {
-        caseID: this.formData.cases.caseID,
-        newLabData: this.newLabData,
-        submitted: this.$auth.user.userID
-        })).data;
+          const serve = await axios.post("http://localhost:8080/api/editPatientOutcome", {
+            caseID: this.formData.cases.caseID,
+            newOutcome: this.newOutcome,
+            submitted: this.$auth.user.userID
+          });
 
           if (serve.status === 200) {
-          // alert('Case submitted!');
             this.$toast.success('Case updated!', {duration: 4000, icon: 'check_circle'});
-            // window.location.href = '/allCases';
-
-            // TODO: add notif/alert checking here 
           } else {
             // eslint-disable-next-line no-console
             console.log(serve);
             this.$toast.error('Something went wrong!', {duration: 4000, icon: 'error'});
           }
-        */
-
-         this.editOutcome = false;
+          this.editOutcome = false;
         }
-
         else {
           alert('Please fill up the required fields');
           this.$forceUpdate();
