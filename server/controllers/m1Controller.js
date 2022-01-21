@@ -373,7 +373,7 @@ const indexFunctions = {
 									INNER JOIN mmchddb.ADDRESSES a ON p.caddressID = a.addressID
 									LEFT JOIN mmchddb.AUDIT_LOG al ON c.caseID = al.editedID
 									GROUP BY c.caseID
-									ORDER BY updatedDate DESC;`);
+									ORDER BY reportDate DESC;`);
 			// label the cases now as CIF or CRF
 			for (let i = 0; i < match.length; i++) match[i].type = match[i].CRFID ? "CRF" : "CIF";
 			res.status(200).send(match);
