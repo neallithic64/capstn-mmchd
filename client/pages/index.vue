@@ -26,7 +26,7 @@
           <div id="latest-case-container">
             <span class="dboard-right-titles" style="background-color: #346083;"> Latest Case </span>
             <div class="dboard-right-content" style="border-left-color: #346083;">
-              <span style="padding-top: 5px; font-weight: 900"> Measles, Suspected </span>
+              <span style="padding-top: 5px; font-weight: 900"> Measles, <span :class="caseStatusClass(status)"> {{ status }} </span> </span>
               <span> Pasay City, BARANGAY 171 </span>
             </div>
           </div>
@@ -67,10 +67,7 @@ export default {
   middleware: 'is-auth',
   data() {
     return {
-      date: '',
-      time: '',
-      days: ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],
-      months: ['January','February','March','April','May','June','July','August','September','October','November','December']
+      status: 'Suspected'
     }
   },
   head() {
@@ -82,26 +79,13 @@ export default {
     setInterval(this.getToday, 1000);
   },
   methods: {
-    getToday() {
-      const today = new Date();
-      const date = this.months[today.getMonth()]+' '+today.getDate()+', '+today.getFullYear()+', '+this.days[today.getDay()];
-      let hours = today.getHours();
-      let minutes = today.getMinutes().toString();
-      let seconds = today.getSeconds().toString();
-
-      const ampm = today.getHours() >= 12 ? ' PM' : ' AM';
-      hours = hours % 12;
-      // eslint-disable-next-line no-unneeded-ternary
-      hours = hours ? hours : 12;
-      hours = hours.toString().length === 1 ? 0+hours.toString() : hours;
-
-      minutes = minutes.length===1 ? 0+minutes : minutes;
-      seconds = seconds.length===1 ? 0+seconds : seconds;
-
-      const time = hours + ":"  + minutes + ":" + seconds + " " + ampm;
-      
-      this.date = date;
-      this.time = time;
+    caseStatusClass(c) {
+      if (c.toString().includes('Suspect')) return 'caseStatus suspectedCase';
+      else if (c.toString().includes('Suspected')) return 'caseStatus suspectedCase';
+      else if (c.toString().includes('Probable')) return 'caseStatus probableCase';
+      else if (c.toString().includes('Confirmed')) return 'caseStatus confirmedCase';
+      else if (c.toString().includes('Compatible')) return 'caseStatus confirmedCase';
+      else if (c.toString().includes('Discarded')) return 'caseStatus discardedCase';
     }
   }
 }
@@ -222,4 +206,24 @@ body {
 #outbreak-countdown {
   padding-left: 20px;
 }
+
+.caseStatus {
+  color: white;
+  padding: 2px 10px;
+  border-radius: 10px;
+  font-weight: 500;
+}
+.confirmedCase {
+  background: red;
+}
+.suspectedCase {
+  background: #FC8F00;
+}
+.probableCase {
+  background: #FDCE00;
+}
+.discardedCase {
+  background: gray;
+}
+
 </style>
