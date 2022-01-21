@@ -772,10 +772,10 @@ const indexFunctions = {
 	
 	getAllOutbreaks: async function(req, res) {
 		try {
-			let outbreaks = await db.exec(`SELECT o.*, d.diseaseName, COUNT(c.caseID) AS numCases
+			let outbreaks = await db.exec(`SELECT o.*, d.diseaseName, COUNT(c.caseID) + IFNULL(d.epiThreshold, 0) AS numCases
 					FROM mmchddb.OUTBREAKS o
 					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = o.diseaseID
-					LEFT JOIN mmchddb.CASES c ON o.diseaseID = c.diseaseID AND c.reportDate < o.startDate
+					LEFT JOIN mmchddb.CASES c ON o.diseaseID = c.diseaseID AND c.reportDate > o.startDate
 					GROUP BY o.outbreakID
 					ORDER BY (CASE WHEN o.type = 'Ongoing' THEN '1' ELSE '2' END) ASC, o.startDate DESC;`);
 			console.log(outbreaks);
