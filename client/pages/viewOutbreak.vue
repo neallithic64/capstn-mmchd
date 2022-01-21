@@ -127,7 +127,7 @@
 
     <div v-show="editStatus" class="overlay">
       <div class="overlay-form">
-        <button class="close" @click="status('cancel')">x</button>
+        <button class="close" @click="statusAction('cancel')">x</button>
         <div class="field-row" style="display: inline-flex; margin-bottom: -1 px">
           <div class="field">
             <h2 id="form-header" class="required">
@@ -176,10 +176,10 @@
               </div>
             </div>
             <div style="margin: -10px 10 5px; float: right; margin-left: auto;">
-              <button class="back-button" type="button" @click="status('cancel')">
+              <button class="back-button" type="button" @click="statusAction('cancel')">
                 Cancel
               </button>
-              <button class="next-button" type="button" @click="status('save')">
+              <button class="next-button" type="button" @click="statusAction('save')">
                 Save
               </button>
             </div>
@@ -485,7 +485,7 @@ export default {
     popup() {
       this.editStatus = !this.editStatus
     },
-    // async status(change) {
+    // async statusAction(change) {
     //   if (change==='save') {
     //     this.formData.caseData.finalClassification = this.newStatus;
     //     this.formData.cases.caseLevel = this.newStatus;
