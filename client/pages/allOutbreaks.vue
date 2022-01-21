@@ -95,13 +95,13 @@ export default {
             source: 'events'
           },
           {
-            title: 'Two-week Growth Rate',
+            title: 'Growth Rate',
             key: 'growthRate',
             type: 'text',
             source: 'events'
           },
           {
-            title: 'Attack Rate per 100k',
+            title: 'Attack Rate',
             key: 'attackRate',
             type: 'text',
             source: 'events'
