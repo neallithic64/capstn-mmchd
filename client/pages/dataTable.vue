@@ -179,7 +179,7 @@
       </thead>
       <tbody>
         <template v-if="dataSets.length > 0">
-          <tr v-for="(data, dataIndex) in dataSets" v-show="dataIndex >= showstart && dataIndex <= showend" :key="dataIndex">
+          <tr v-for="(data, dataIndex) in dataSets" v-show="dataIndex >= showstart && dataIndex <= showend" :key="dataIndex" :class="obStatusRowClass(data['outbreakStatus'])" >
             <td v-for="(column, columnIndex) in options.columns" :key="columnIndex" style="text-align: center">
               <span v-if="column.type === 'component'">
                 <component :is="column.name" :row="data"></component>
@@ -259,7 +259,7 @@
                   >{{ data[column.key] }}
                 </a> -->
               </span>
-              <span v-else-if="column.title==='Case Status' || column.title==='Type'" :class="caseStatusClass(data[column.key])">
+              <span v-else-if="column.title==='Case Status' || column.title==='Status' || column.title==='Risk Classification' || column.title==='Submit Status' || column.title==='Report Status'" :class="caseStatusClass(data[column.key])">
                 {{ data[column.key] }}
               </span>
               <span v-else>
@@ -411,9 +411,28 @@ export default {
     caseStatusClass(c) {
       if (c) {
         if (c.toString().includes('Suspect')) return 'caseStatus suspectedCase';
+        else if (c.toString().includes('Suspected')) return 'caseStatus suspectedCase';
         else if (c.toString().includes('Probable')) return 'caseStatus probableCase';
         else if (c.toString().includes('Confirmed')) return 'caseStatus confirmedCase';
-		else if (c.toString().includes('Ongoing')) return 'caseStatus ongoingOutbreak';
+        else if (c.toString().includes('Compatible')) return 'caseStatus confirmedCase';
+        else if (c.toString().includes('Discarded')) return 'caseStatus discardedCase';
+        else if (c.toString().includes('Ongoing')) return 'caseStatus ongoingOutbreak';
+        else if (c.toString().includes('Controlled')) return 'caseStatus suspectedCase';
+        else if (c.toString().includes('Closed')) return 'caseStatus lowRisk';
+        else if (c.toString().includes('High')) return 'caseStatus confirmedCase';
+        else if (c.toString().includes('Moderate')) return 'caseStatus suspectedCase';
+        else if (c.toString().includes('Low')) return 'caseStatus lowRisk';
+        else if (c.toString().includes('Submitted')) return 'caseStatus lowRisk';
+        else if (c.toString().includes('Pushed')) return 'caseStatus suspectedCase';
+        else if (c.toString().includes('Zero Report')) return 'caseStatus confirmedCase';
+        return 'none';
+      }
+    },
+    obStatusRowClass(c) {
+      if (c) {
+        if (c.toString().includes('Ongoing')) return 'ongoingOBRow';
+        // else if (c.toString().includes('Controlled')) return 'caseStatus suspectedCase';
+        // else if (c.toString().includes('Closed')) return 'caseStatus lowRisk';
         return 'none';
       }
     },
@@ -635,6 +654,15 @@ export default {
 }
 .probableCase {
   background: #FDCE00;
+}
+.lowRisk {
+  background: #008d41;
+}
+.ongoingOBRow {
+  background: #ebb9b9;
+}
+.discardedCase {
+  background: gray;
 }
 
 .filterButton {

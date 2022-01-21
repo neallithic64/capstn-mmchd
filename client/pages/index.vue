@@ -7,41 +7,50 @@
           PowerBI here
         </div>
         <div id="dashboard-right">
-          <div id="latest-case-container">
-            <p> Latest Case (Title) </p>
-            <p> Disease, Status </p>
-            <p> City, Barangay </p>
-          </div>
           <div id="outbreak-container">
-            <p> Ongoing Outbreak (Title) </p>
-            <div id="outbreak-content">
-              <div id="outbreak-text">
-                <p> Disease </p>
-                <p> Active Cases </p>
+            <span class="dboard-right-titles" style="background-color: #c70000;"> Ongoing Outbreak </span>
+            <a :href="'/viewOutbreak?outbreakID='">
+              <div id="outbreak-content" class="dboard-right-content" style="border-left-color: #c70000;">
+                <div id="outbreak-text">
+                  <span style="padding-top: 5px; font-weight: 900"> Measles </span>
+                  <span> <span style="color: red; font-size: 16px; font-weight: 600"> 1826 </span> Active Cases </span>
+                </div>
+                <div id="outbreak-countdown" style="color: red;">
+                  <client-only>
+                    <Countdown deadline="January 22, 2022 23:39:00"></Countdown>
+                  </client-only>
+                </div>
               </div>
-              <div id="outbreak-countdown">
-                <p> Countdown here </p>
-              </div>
+            </a>
+          </div>
+          <div id="latest-case-container">
+            <span class="dboard-right-titles" style="background-color: #346083;"> Latest Case </span>
+            <div class="dboard-right-content" style="border-left-color: #346083;">
+              <span style="padding-top: 5px; font-weight: 900"> Measles, <span :class="caseStatusClass(status)"> {{ status }} </span> </span>
+              <span> Pasay City, BARANGAY 171 </span>
             </div>
           </div>
           <div id="tracker-container">
-            <p> Reporting Status (Title) </p>
-            <p> Caloocan </p>
-            <p> Las Piñas </p>
-            <p> Makati </p>
-            <p> Malabon </p>
-            <p> Mandaluyong </p>
-            <p> Manila </p>
-            <p> Marikina </p>
-            <p> Muntinlupa </p>
-            <p> Navotas </p>
-            <p> Parañaque </p>
-            <p> Pasay </p>
-            <p> Pasig </p>
-            <p> Quezon City </p>
-            <p> San Juan </p>
-            <p> Taguig </p>
-            <p> Valenzuela </p>
+            <span class="dboard-right-titles" style="background-color: #008d41;"> Reporting Status Week 3 </span>
+            <div class="dboard-right-content" style="border-left-color: #008d41;">
+              <p> City </p>
+              <p> Caloocan </p>
+              <p> Las Piñas </p>
+              <p> Makati </p>
+              <p> Malabon </p>
+              <p> Mandaluyong </p>
+              <p> Manila </p>
+              <p> Marikina </p>
+              <p> Muntinlupa </p>
+              <p> Navotas </p>
+              <p> Parañaque </p>
+              <p> Pasay </p>
+              <p> Pasig </p>
+              <p> Quezon City </p>
+              <p> San Juan </p>
+              <p> Taguig </p>
+              <p> Valenzuela </p>
+            </div>
           </div>
         </div>
       </div>
@@ -50,14 +59,15 @@
 </template>
 
 <script>
+import Countdown from 'vuejs-countdown'
 export default {
+  components: { 
+    Countdown
+  },
   middleware: 'is-auth',
   data() {
     return {
-      date: '',
-      time: '',
-      days: ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],
-      months: ['January','February','March','April','May','June','July','August','September','October','November','December']
+      status: 'Suspected'
     }
   },
   head() {
@@ -69,26 +79,13 @@ export default {
     setInterval(this.getToday, 1000);
   },
   methods: {
-    getToday() {
-      const today = new Date();
-      const date = this.months[today.getMonth()]+' '+today.getDate()+', '+today.getFullYear()+', '+this.days[today.getDay()];
-      let hours = today.getHours();
-      let minutes = today.getMinutes().toString();
-      let seconds = today.getSeconds().toString();
-
-      const ampm = today.getHours() >= 12 ? ' PM' : ' AM';
-      hours = hours % 12;
-      // eslint-disable-next-line no-unneeded-ternary
-      hours = hours ? hours : 12;
-      hours = hours.toString().length === 1 ? 0+hours.toString() : hours;
-
-      minutes = minutes.length===1 ? 0+minutes : minutes;
-      seconds = seconds.length===1 ? 0+seconds : seconds;
-
-      const time = hours + ":"  + minutes + ":" + seconds + " " + ampm;
-      
-      this.date = date;
-      this.time = time;
+    caseStatusClass(c) {
+      if (c.toString().includes('Suspect')) return 'caseStatus suspectedCase';
+      else if (c.toString().includes('Suspected')) return 'caseStatus suspectedCase';
+      else if (c.toString().includes('Probable')) return 'caseStatus probableCase';
+      else if (c.toString().includes('Confirmed')) return 'caseStatus confirmedCase';
+      else if (c.toString().includes('Compatible')) return 'caseStatus confirmedCase';
+      else if (c.toString().includes('Discarded')) return 'caseStatus discardedCase';
     }
   }
 }
@@ -145,28 +142,29 @@ body {
   margin-right: 5px;
   margin-left: 5px;
   margin-top: 5px;
+  font-weight: 500;
+  font-size: 13px;
 }
 
 #latest-case-container {
-  width: 300px;
-  background-color: gray;
+  width: 350px;
   display: flex;
   flex-direction: column;
-  padding: 5px;
+  padding: 5px 5px 5px 5px;
 }
 
 #outbreak-container {
-  width: 300px;
-  background-color: gray;
+  width: 350px;
   display: flex;
   flex-direction: column;
   margin-top: 5px;
-  padding: 5px;
+  padding: 5px 5px 5px 5px;
 }
 
 #outbreak-content {
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
 }
 
 #outbreak-text {
@@ -179,11 +177,53 @@ body {
 }
 
 #tracker-container {
-  width: 300px;
-  background-color: gray;
+  width: 350px;
   display: flex;
   flex-direction: column;
   margin-top: 5px;
-  padding: 5px;
+  padding: 5px 5px 5px 5px;
 }
+
+.dboard-right-titles {
+  color: white;
+  padding: 3px 3px 3px 5px;
+  font-weight: 600;
+}
+
+.dboard-right-content {
+  border-left-style: solid;
+  border-left-width: 2px;
+  padding-left: 5px;
+  padding-bottom: 5px;
+  display: flex;
+  flex-direction: column;
+}
+
+.dboard-right-content:hover {
+  background:rgba(245, 245, 245, 0.904);
+}
+
+#outbreak-countdown {
+  padding-left: 20px;
+}
+
+.caseStatus {
+  color: white;
+  padding: 2px 10px;
+  border-radius: 10px;
+  font-weight: 500;
+}
+.confirmedCase {
+  background: red;
+}
+.suspectedCase {
+  background: #FC8F00;
+}
+.probableCase {
+  background: #FDCE00;
+}
+.discardedCase {
+  background: gray;
+}
+
 </style>
