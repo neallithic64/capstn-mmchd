@@ -115,6 +115,8 @@
         </div>
       </div>
 
+      
+
       <div class="OB-statusHistory">
         <h2 style="border-bottom: gray solid; width: fit-content; padding: 0 7px 0 5px;">Outbreak Status History</h2>
         <dataTable
@@ -195,7 +197,6 @@
 
 <script>
 const axios = require('axios');
-
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
 import dataTable from './dataTable.vue'
@@ -452,6 +453,7 @@ export default {
       },
       eventLevels: {
         'Ongoing': 'Other information is still on verification; Specimens are to be collected and pending laboratory results; The concerned team is currently monitoring the event; The concerned team is currently monitoring the event; There are continuous additional cases or deaths',
+        'Ongoing with Initial Response': 'Initial response is given to the areas and people involved in the form of a report, feedback, or relief',
         'Controlled': 'Gradual or abrupt decrease of cases; Cases showed good prognosis or event has already been managed but other information is still on verification such as description of cases, laboratory findings, etc.; No cases or deaths had been added',
         'Closed': 'Laboratory results have no significant findings that are potential for endangering health; Cases were already discharged and in good condition; Follow-up reports indicate no further monitoring, assistance and investigation needed'
       }

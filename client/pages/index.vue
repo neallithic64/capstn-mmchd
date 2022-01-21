@@ -7,41 +7,48 @@
           PowerBI here
         </div>
         <div id="dashboard-right">
-          <div id="latest-case-container">
-            <p> Latest Case (Title) </p>
-            <p> Disease, Status </p>
-            <p> City, Barangay </p>
-          </div>
           <div id="outbreak-container">
-            <p> Ongoing Outbreak (Title) </p>
-            <div id="outbreak-content">
-              <div id="outbreak-text">
-                <p> Disease </p>
-                <p> Active Cases </p>
+            <span class="dboard-right-titles" style="background-color: #c70000;"> Ongoing Outbreak </span>
+            <a :href="'/viewOutbreak?outbreakID='">
+              <div id="outbreak-content" class="dboard-right-content" style="border-left-color: #c70000;">
+                <div id="outbreak-text">
+                  <p> Disease </p>
+                  <p> Active Cases </p>
+                </div>
+                <div id="outbreak-countdown">
+                  <p> Countdown here </p>
+                </div>
               </div>
-              <div id="outbreak-countdown">
-                <p> Countdown here </p>
-              </div>
+            </a>
+          </div>
+          <div id="latest-case-container">
+            <span class="dboard-right-titles" style="background-color: #346083;"> Latest Case </span>
+            <div class="dboard-right-content" style="border-left-color: #346083;">
+              <p> Disease, Status </p>
+              <p> City, Barangay </p>
             </div>
           </div>
           <div id="tracker-container">
-            <p> Reporting Status (Title) </p>
-            <p> Caloocan </p>
-            <p> Las Piñas </p>
-            <p> Makati </p>
-            <p> Malabon </p>
-            <p> Mandaluyong </p>
-            <p> Manila </p>
-            <p> Marikina </p>
-            <p> Muntinlupa </p>
-            <p> Navotas </p>
-            <p> Parañaque </p>
-            <p> Pasay </p>
-            <p> Pasig </p>
-            <p> Quezon City </p>
-            <p> San Juan </p>
-            <p> Taguig </p>
-            <p> Valenzuela </p>
+            <span class="dboard-right-titles" style="background-color: #008d41;"> Reporting Status Week 3 </span>
+            <div class="dboard-right-content" style="border-left-color: #008d41;">
+              <p> City </p>
+              <p> Caloocan </p>
+              <p> Las Piñas </p>
+              <p> Makati </p>
+              <p> Malabon </p>
+              <p> Mandaluyong </p>
+              <p> Manila </p>
+              <p> Marikina </p>
+              <p> Muntinlupa </p>
+              <p> Navotas </p>
+              <p> Parañaque </p>
+              <p> Pasay </p>
+              <p> Pasig </p>
+              <p> Quezon City </p>
+              <p> San Juan </p>
+              <p> Taguig </p>
+              <p> Valenzuela </p>
+            </div>
           </div>
         </div>
       </div>
@@ -50,6 +57,7 @@
 </template>
 
 <script>
+
 export default {
   middleware: 'is-auth',
   data() {
@@ -145,23 +153,23 @@ body {
   margin-right: 5px;
   margin-left: 5px;
   margin-top: 5px;
+  font-weight: 400;
+  font-size: 12.5px;
 }
 
 #latest-case-container {
   width: 300px;
-  background-color: gray;
   display: flex;
   flex-direction: column;
-  padding: 5px;
+  padding: 5px 5px 5px 5px;
 }
 
 #outbreak-container {
   width: 300px;
-  background-color: gray;
   display: flex;
   flex-direction: column;
   margin-top: 5px;
-  padding: 5px;
+  padding: 5px 5px 5px 5px;
 }
 
 #outbreak-content {
@@ -180,10 +188,25 @@ body {
 
 #tracker-container {
   width: 300px;
-  background-color: gray;
   display: flex;
   flex-direction: column;
   margin-top: 5px;
-  padding: 5px;
+  padding: 5px 5px 5px 5px;
+}
+
+.dboard-right-titles {
+  color: white;
+  padding: 3px 3px 3px 5px;
+  font-weight: 600;
+}
+
+.dboard-right-content {
+  border-left-style: solid;
+  border-left-width: 2px;
+  padding-left: 5px;
+}
+
+.dboard-right-content:hover {
+  background:rgba(245, 245, 245, 0.904);
 }
 </style>
