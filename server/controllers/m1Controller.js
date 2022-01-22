@@ -929,15 +929,15 @@ const indexFunctions = {
 			delete user.userCity;
 			delete user.userRePassword;
 			
-			// inserting user, user settings, and address rows
+			// inserting address, user, and user settings rows
+			if (!addrID.exists) {
+				let resultAddr = await db.insertOne("mmchddb.ADDRESSES", addrObj);
+			}
 			let resultReg = await db.insertOne("mmchddb.USERS", user);
 			let resultSettings = await db.insertOne("mmchddb.USER_SETTINGS", {
 				userID: user.userID,
 				pushDataAccept: false
 			});
-			if (!addrID.exists) {
-				let resultAddr = await db.insertOne("mmchddb.ADDRESSES", addrObj);
-			}
 			// result checking/validations
 			if (resultReg && resultSet && resultAddr) res.status(200).send("Register success");
 			else res.status(500).send("Register failed");
