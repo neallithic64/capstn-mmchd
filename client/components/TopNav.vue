@@ -40,8 +40,9 @@
         <i class="fa fa-caret-down"></i>
       </button>
       <div class="dropdown-content">
-        <nuxt-link to="/addProgReport"> Add Program Report </nuxt-link>
-        <nuxt-link to="/allProgReports"> View Program Reports </nuxt-link>
+        <nuxt-link to="/immunizationProg"> Immunization Program </nuxt-link>
+        <nuxt-link to="/progAccomplish"> Accomplishment Reports </nuxt-link>
+        <nuxt-link to="/progTargets"> Program Targets </nuxt-link>
       </div>
     </div>
     <div 
@@ -70,6 +71,8 @@
       to="/reports"> 
       Reports
     </nuxt-link>
+    <nuxt-link v-if="$auth.user.userType === 'idpcChief' || $auth.user.userType === 'eohStaff' || $auth.user.userType === 'hemStaff'" to="/allCases"> Case Reports </nuxt-link>
+    <nuxt-link v-if="$auth.user.userType === 'idpcChief' || $auth.user.userType === 'eohStaff' || $auth.user.userType === 'hemStaff'" to="/allOutbreaks"> Outbreaks </nuxt-link>
     <nuxt-link to="/bulletin"> Feedback Bulletin </nuxt-link>
     <nuxt-link to="/evaluation"> Evaluation </nuxt-link>
     <nuxt-link v-if="$auth.user.userType === 'lhsdChief' || $auth.user.userType === 'resuHead' || $auth.user.userType === 'chdDirector'" to="/caseDefs"> Case Definitions </nuxt-link>
@@ -84,6 +87,7 @@
         <nuxt-link to="/allUsers"> All Users </nuxt-link>
       </div>
     </div>
+    
 
     <div class="topnav-right-inside">
       <nuxt-link to="/notifications"> Notification </nuxt-link>

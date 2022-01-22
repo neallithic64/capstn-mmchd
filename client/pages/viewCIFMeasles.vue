@@ -7,7 +7,7 @@
         <div class="CIFnumbers">
           <h1 style="margin: -10px 0">Case No. {{ formData.cases.caseID }}</h1>
           <h2 style="margin-top: -1px">
-            Patient No. <a :href="'/patient?patientID=' + formData.patient.patientID" class="patientlink"> {{ formData.patient.patientID }} </a>
+            Patient No. <a :href="'/viewPatient?patientID=' + formData.patient.patientID" class="patientlink"> {{ formData.patient.patientID }} </a>
           </h2>
         </div>
         <div class="CIFstatus" style="align-text: right">
@@ -1916,8 +1916,15 @@
 
         <form v-if="pageNum == 8 || isPrint" id="measles8" type="submit">
           <div id="case-investigation-form" class="center">
-            <h2 id="form-header">
+            <h2 id="form-header" style="display: inline-flex;">
               {{ Object.values(disease.formNames)[8] }}
+              <ul
+                v-show="!isPrint && !editLab && !editOutcome"
+                class="CIFEdit"
+                @click="editOutcome=true"
+              >
+                <img src="~/assets/img/pen.png" />
+              </ul>
             </h2>
 
             <div class="field-row">
@@ -1939,12 +1946,14 @@
                   >
                     <input
                       id="Alive"
-                      v-model="formData.caseData.outcome"
+                      v-model="newOutcome.outcome"
                       value="Alive"
                       class="input-radio"
                       name="outcome"
                       type="radio"
                       :disabled="inputEdit()"
+                      :class="isRequired()"
+                      required
                     />
                     <label for="Alive"> Alive </label>
                   </div>
@@ -1958,30 +1967,34 @@
                   >
                     <input
                       id="Dead"
-                      v-model="formData.caseData.outcome"
+                      v-model="newOutcome.outcome"
                       value="Dead"
                       class="input-radio"
                       name="outcome"
                       type="radio"
                       :disabled="inputEdit()"
+                      :class="isRequired()"
+                      required
                     />
                     <label for="Dead"> Dead </label>
                   </div>
                 </div>
 
                 <div
-                  v-if="formData.caseData.outcome == 'Dead'"
+                  v-if="newOutcome.outcome == 'Dead'"
                   class="field-row-straight"
                 >
                   <div class="field" style="margin-left: 95px">
                     <label for="dateDied" class="required"> Date died </label>
                     <input
                       id="dateDied"
-                      v-model="formData.cases.dateDied"
+                      v-model="newOutcome.dateDied"
                       class="input-form-field"
                       style="width: 175px"
                       type="date"
                       :disabled="inputEdit()"
+                      :class="isRequired()"
+                      required
                     />
                   </div>
                 </div>
@@ -1995,13 +2008,22 @@
                 </label>
                 <input
                   id="finalDiagnosis"
-                  v-model="formData.cases.finalDiagnosis"
+                  v-model="newOutcome.finalDiagnosis"
                   class="input-form-field"
                   style="width: 50%"
                   type="text"
                   :disabled="inputEdit()"
+                  :class="isRequired()"
+                  required
                 />
               </div>
+            </div>
+
+            <div v-show="editOutcome" style="margin: -10px 10 5px; margin-left: auto;text-align: -webkit-right;">
+              <button class="back-button" type="button" @click="editPatientOutcome('cancel')">
+                Cancel </button>
+              <button class="next-button" type="button" @click="editPatientOutcome('save')">
+                Save </button>
             </div>
           </div>
         </form>
@@ -2013,7 +2035,7 @@
               <!-- ADD this in ul v-show below: 
                 && $auth.user.userID === formData.cases.investigatorLab -->
               <ul
-                v-show="!isPrint && !editLab"
+                v-show="!isPrint && !editLab && !editOutcome"
                 class="CIFEdit"
                 @click="editLab=true"
               >
@@ -2086,7 +2108,7 @@
               </div>
             </div>
 
-            <div v-show="newLabData.hasLabTest==='Yes'">
+            <div v-show="hasLabTest==='Yes' || newLabData.hasLabTest==='Yes'">
               <div
                 class="field"
                 style="display: inline-flex; flex-direction: row"
@@ -2284,20 +2306,7 @@
               <th style="width: 25%;">To</th>
               <th style="width: 25%;">By</th>
             </thead>
-            <tbody>
-              <tr>
-                <td>Nov 11, 2021</td>
-                <td>Probable</td>
-                <td>Suspected</td>
-                <td>me</td>
-              </tr>
-              <tr>
-                <td>Nov 11, 2021</td>
-                <td>Probable</td>
-                <td>Suspected</td>
-                <td>me</td>
-              </tr>
-            </tbody>
+            <tbody></tbody>
           </table>
         </div> -->
         <dataTable
@@ -2379,6 +2388,9 @@ export default {
   compute: {},
   data() {
     return {
+      editOutcome: false,
+      editOutcomeValidate: true,
+      newOutcome: {},
       editLab: false,
       editLabValidate:true,
       editStatus:false,
@@ -2657,12 +2669,18 @@ export default {
     this.caseHistory = data.caseHistory;
     this.dateLastUpdated = data.dateLastUpdated;
     this.editLabResult('cancel')
-    // fixing dates
+    this.hasLabTest = this.formData.caseData.labDateSent ? "Yes" : "No";
+    this.editPatientOutcome('cancel')
 
     let rows = (await axios.get('http://localhost:8080/api/getLabUsers')).data;
     this.labList = rows;
 
     // console.log(data);
+    this.newOutcome = {
+      outcome: this.formData.caseData.outcome,
+      dateDied: this.formData.cases.dateDied,
+      finalDiagnosis: this.formData.cases.finalDiagnosis,
+    }
   }, 
   methods: {
     formListClass(index) {
@@ -2674,10 +2692,12 @@ export default {
     },
     inputEdit() {
       if (this.pageNum === 9 && this.editLab) return false;
+      else if (this.pageNum === 8 && this.editOutcome) return false;
       else return true;
     },
     isRequired() {
       if (!this.editLabValidate) return "input-required"
+      else if (!this.editOutcomeValidate) return "input-required"
     },
     statusInputEdit(value) {
       if (this.editStatus & value!==this.formData.cases.caseLevel ) return false
@@ -2685,6 +2705,53 @@ export default {
     },
     popup() {
       this.editStatus = !this.editStatus
+    },
+    validateOutcome() {
+      this.editOutcomeValidate = false;
+      if (this.newOutcome.outcome!=='' && this.newOutcome.finalDiagnosis!=='' && this.newOutcome.finalDiagnosis!==null) {
+        if (this.newOutcome.outcome==='Alive' ||
+            (this.newOutcome.outcome==='Dead' &&
+            this.newOutcome.dateDied!=='' && this.newOutcome.dateDied!==undefined))
+          this.editOutcomeValidate = true;
+        else this.editOutcomeValidate = false;
+      }
+      else this.editOutcomeValidate = false;
+    },
+    async editPatientOutcome(change) {
+      if (change==='save') {
+        this.validateOutcome();
+        if (this.editOutcomeValidate) {
+          this.formData.caseData.outcome = this.newOutcome.outcome;
+          this.formData.caseData.dateDied = this.newOutcome.dateDied;
+          this.formData.caseData.finalDiagnosis = this.newOutcome.finalDiagnosis;
+          
+          const serve = await axios.post("http://localhost:8080/api/editPatientOutcome", {
+            caseID: this.formData.cases.caseID,
+            newOutcome: this.newOutcome,
+            submitted: this.$auth.user.userID
+          });
+
+          if (serve.status === 200) {
+            this.$toast.success('Case updated!', {duration: 4000, icon: 'check_circle'});
+          } else {
+            // eslint-disable-next-line no-console
+            console.log(serve);
+            this.$toast.error('Something went wrong!', {duration: 4000, icon: 'error'});
+          }
+          this.editOutcome = false;
+        }
+        else {
+          alert('Please fill up the required fields');
+          this.$forceUpdate();
+        }
+      }
+      if (change==='cancel') {
+        this.newOutcome.outcome = this.formData.caseData.outcome;
+        this.newOutcome.dateDied = this.formData.caseData.dateDied;
+        this.newOutcome.finalDiagnosis = this.formData.caseData.finalDiagnosis;
+        
+        this.editOutcome = false;
+      }
     },
     validateLab() {
       this.editLabValidate = false;
@@ -2735,11 +2802,10 @@ export default {
             caseID: this.formData.cases.caseID,
             newLabData: this.newLabData,
             submitted: this.$auth.user.userID
-          })).data;
+          }));
           
           if (serve.status === 200) {
             this.$toast.success('Case updated!', {duration: 4000, icon: 'check_circle'});
-            window.location.href = '/allCases';
           } else {
             // eslint-disable-next-line no-console
             console.log(serve);

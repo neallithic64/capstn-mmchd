@@ -1,18 +1,74 @@
 <template>
   <div>
     <TopNav/>
-    <div class="dashboard-container">
-      
+    <div id="dashboard-container">
+      <div id="dashboard-bottom">
+        <div id="dashboard-powerbi">
+          PowerBI here
+        </div>
+        <div id="dashboard-right">
+          <div id="outbreak-container">
+            <span class="dboard-right-titles" style="background-image: linear-gradient(to bottom right, #b02e0c, #eb4511);"> Ongoing Outbreak </span>
+            <a :href="'/viewOutbreak?outbreakID='">
+              <div id="outbreak-content" class="dboard-right-content" style="border-left-color: #c70000;">
+                <div id="outbreak-text">
+                  <span style="padding-top: 5px; font-weight: 900"> Measles </span>
+                  <span> <span style="color: red; font-size: 16px; font-weight: 600"> 1826 </span> Active Cases </span>
+                </div>
+                <div id="outbreak-countdown" style="color: red;">
+                  <client-only>
+                    <Countdown deadline="January 22, 2022 23:39:00"></Countdown>
+                  </client-only>
+                </div>
+              </div>
+            </a>
+          </div>
+          <div id="latest-case-container">
+            <span class="dboard-right-titles" style="background-image: linear-gradient(to bottom right, #1e3b70, #29539b);"> Latest Case </span>
+            <div class="dboard-right-content" style="border-left-color: #346083;">
+              <span style="padding-top: 5px; font-weight: 900"> Measles, <span :class="caseStatusClass(status)"> {{ status }} </span> </span>
+              <span> Pasay City, BARANGAY 171 </span>
+            </div>
+          </div>
+          <div id="tracker-container">
+            <span class="dboard-right-titles" style="background-image: linear-gradient(to bottom right, #008d41, #74d680);"> Reporting Status Week {{ weekNo }} </span>
+            <div class="dboard-right-content" style="border-left-color: #008d41;">
+              <p> City </p>
+              <p> Caloocan </p>
+              <p> Las Piñas </p>
+              <p> Makati </p>
+              <p> Malabon </p>
+              <p> Mandaluyong </p>
+              <p> Manila </p>
+              <p> Marikina </p>
+              <p> Muntinlupa </p>
+              <p> Navotas </p>
+              <p> Parañaque </p>
+              <p> Pasay </p>
+              <p> Pasig </p>
+              <p> Quezon City </p>
+              <p> San Juan </p>
+              <p> Taguig </p>
+              <p> Valenzuela </p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import Countdown from 'vuejs-countdown'
 export default {
+  components: { 
+    Countdown
+  },
   middleware: 'is-auth',
   data() {
     return {
-
+      status: 'Suspected',
+      weekNo: '3'
     }
   },
   head() {
@@ -20,6 +76,19 @@ export default {
       title: 'Dashboard'
     }
   },
+  mounted() {
+    setInterval(this.getToday, 1000);
+  },
+  methods: {
+    caseStatusClass(c) {
+      if (c.toString().includes('Suspect')) return 'caseStatus suspectedCase';
+      else if (c.toString().includes('Suspected')) return 'caseStatus suspectedCase';
+      else if (c.toString().includes('Probable')) return 'caseStatus probableCase';
+      else if (c.toString().includes('Confirmed')) return 'caseStatus confirmedCase';
+      else if (c.toString().includes('Compatible')) return 'caseStatus confirmedCase';
+      else if (c.toString().includes('Discarded')) return 'caseStatus discardedCase';
+    }
+  }
 }
 </script>
 
@@ -27,5 +96,135 @@ export default {
 body {
   background-image: none;
   background-color: white;
+  font-family: 'Work Sans', sans-serif;
 }
+
+#dashboard-container {
+  display: flex;
+  flex-direction: column;
+}
+
+#dashboard-bottom {
+  margin-top: 65px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+#dashboard-datetime {
+  display: flex;
+  flex-direction: column;
+  font-weight: 700;
+  font-size: 12px;
+  padding-left: 20px;
+  border-left-style: solid;
+  border-left-width: 2px;
+  border-left-color: white;
+}
+
+#main-title {
+  padding-right: 20px;
+  font-size: 25px;
+  font-weight: 700;
+}
+
+#dashboard-powerbi {
+  height: 100vh;
+  background-color: gray;
+  width: 100%;
+  border-radius: 10px;
+  margin-left: 5px;
+  margin-top: 5px;
+}
+
+#dashboard-right {
+  display: flex;
+  flex-direction: column;
+  margin-right: 5px;
+  margin-left: 5px;
+  margin-top: 5px;
+  font-weight: 500;
+  font-size: 13px;
+}
+
+#latest-case-container {
+  width: 350px;
+  display: flex;
+  flex-direction: column;
+  padding: 5px 5px 5px 5px;
+}
+
+#outbreak-container {
+  width: 350px;
+  display: flex;
+  flex-direction: column;
+  margin-top: 5px;
+  padding: 5px 5px 5px 5px;
+}
+
+#outbreak-content {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+#outbreak-text {
+  display: flex;
+  flex-direction: column;
+}
+
+#outbreak-countdown {
+  margin-left: 20px;
+}
+
+#tracker-container {
+  width: 350px;
+  display: flex;
+  flex-direction: column;
+  margin-top: 5px;
+  padding: 5px 5px 5px 5px;
+}
+
+.dboard-right-titles {
+  color: white;
+  padding: 3px 3px 3px 5px;
+  font-weight: 600;
+}
+
+.dboard-right-content {
+  border-left-style: solid;
+  border-left-width: 2px;
+  padding-left: 5px;
+  padding-bottom: 5px;
+  display: flex;
+  flex-direction: column;
+}
+
+.dboard-right-content:hover {
+  background:rgba(245, 245, 245, 0.904);
+}
+
+#outbreak-countdown {
+  padding-left: 20px;
+}
+
+.caseStatus {
+  color: white;
+  padding: 2px 10px;
+  border-radius: 10px;
+  font-weight: 500;
+}
+.confirmedCase {
+  background: red;
+}
+.suspectedCase {
+  background: #FC8F00;
+}
+.probableCase {
+  background: #FDCE00;
+}
+.discardedCase {
+  background: gray;
+}
+
 </style>
