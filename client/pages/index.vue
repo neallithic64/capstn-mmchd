@@ -8,7 +8,7 @@
         </div>
         <div id="dashboard-right">
           <div id="outbreak-container">
-            <span class="dboard-right-titles" style="background-color: #c70000;"> Ongoing Outbreak </span>
+            <span class="dboard-right-titles" style="background-image: linear-gradient(to bottom right, #b02e0c, #eb4511);"> Ongoing Outbreak </span>
             <a :href="'/viewOutbreak?outbreakID='">
               <div id="outbreak-content" class="dboard-right-content" style="border-left-color: #c70000;">
                 <div id="outbreak-text">
@@ -24,32 +24,39 @@
             </a>
           </div>
           <div id="latest-case-container">
-            <span class="dboard-right-titles" style="background-color: #346083;"> Latest Case </span>
+            <span class="dboard-right-titles" style="background-image: linear-gradient(to bottom right, #1e3b70, #29539b);"> Latest Case </span>
             <div class="dboard-right-content" style="border-left-color: #346083;">
               <span style="padding-top: 5px; font-weight: 900"> Measles, <span :class="caseStatusClass(status)"> {{ status }} </span> </span>
               <span> Pasay City, BARANGAY 171 </span>
             </div>
           </div>
           <div id="tracker-container">
-            <span class="dboard-right-titles" style="background-color: #008d41;"> Reporting Status Week 3 </span>
-            <div class="dboard-right-content" style="border-left-color: #008d41;">
-              <p> City </p>
-              <p> Caloocan </p>
-              <p> Las Piñas </p>
-              <p> Makati </p>
-              <p> Malabon </p>
-              <p> Mandaluyong </p>
-              <p> Manila </p>
-              <p> Marikina </p>
-              <p> Muntinlupa </p>
-              <p> Navotas </p>
-              <p> Parañaque </p>
-              <p> Pasay </p>
-              <p> Pasig </p>
-              <p> Quezon City </p>
-              <p> San Juan </p>
-              <p> Taguig </p>
-              <p> Valenzuela </p>
+            <span class="dboard-right-titles" style="background-image: linear-gradient(to bottom right, #008d41, #74d680);"> Reporting Status Week {{ weekNo }} </span>
+            <div class="dboard-right-content" style="border-left-color: #008d41; padding-left: 0px;">
+              <div id="tracker-headers">
+               <span> City </span>
+               <span> CIF </span>
+               <span> CRF </span>
+              </div>
+
+              <div id="tracker-content">
+                <p> Caloocan </p>
+                <p> Las Piñas </p>
+                <p> Makati </p>
+                <p> Malabon </p>
+                <p> Mandaluyong </p>
+                <p> Manila </p>
+                <p> Marikina </p>
+                <p> Muntinlupa </p>
+                <p> Navotas </p>
+                <p> Parañaque </p>
+                <p> Pasay </p>
+                <p> Pasig </p>
+                <p> Quezon City </p>
+                <p> San Juan </p>
+                <p> Taguig </p>
+                <p> Valenzuela </p>
+              </div>
             </div>
           </div>
         </div>
@@ -67,7 +74,8 @@ export default {
   middleware: 'is-auth',
   data() {
     return {
-      status: 'Suspected'
+      status: 'Suspected',
+      weekNo: '3'
     }
   },
   head() {
@@ -226,4 +234,17 @@ body {
   background: gray;
 }
 
+#tracker-headers {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  background-image: linear-gradient(to bottom right, #bbdbbe, #deebdd);
+  padding-left: 5px;
+  padding-right: 80px;
+  font-weight: 900;
+}
+
+#tracker-content {
+  padding-left: 5px;
+}
 </style>

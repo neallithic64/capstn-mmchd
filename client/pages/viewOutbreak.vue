@@ -1196,9 +1196,9 @@ img:hover + .info-desc {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: red;
+  background-image: linear-gradient(to bottom right, #b02e0c, #eb4511);;
   color: white;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
   padding-bottom: 5px;
 }
 
