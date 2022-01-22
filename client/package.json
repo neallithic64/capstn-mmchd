@@ -24,6 +24,7 @@
     "nuxt-tailvue": "^1.0.95",
     "vue-data-tables": "^3.4.5",
     "vue-html2pdf": "^1.8.0",
+    "vuejs-countdown": "^0.2.1",
     "vuejs-datatable": "^2.0.0-alpha.7",
     "vuejs-simple-datatable": "^1.0.2"
   },

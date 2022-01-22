@@ -907,6 +907,7 @@ const indexFunctions = {
 	
 	postRegUser: async function(req, res) {
 		let { user } = req.body;
+		let resultAddr = false;
 		try {
 			user.userID = (await generateID("mmchddb.USERS")).id;
 			// extracting address into an object
@@ -931,7 +932,7 @@ const indexFunctions = {
 			
 			// inserting address, user, and user settings rows
 			if (!addrID.exists) {
-				let resultAddr = await db.insertOne("mmchddb.ADDRESSES", addrObj);
+				resultAddr = await db.insertOne("mmchddb.ADDRESSES", addrObj);
 			}
 			let resultReg = await db.insertOne("mmchddb.USERS", user);
 			let resultSettings = await db.insertOne("mmchddb.USER_SETTINGS", {
@@ -1327,42 +1328,41 @@ const indexFunctions = {
 	
 	postEditPatientOutcome: async function(req, res) {
 		let { caseID, newOutcome, submitted } = req.body;
-		let auditArr = [], dateNow = new Date();
+		let auditArr = [], dateNow = new Date(), rows, updateObj = {};
 		try {
 			console.log(newOutcome);
 			// update every attr in the object for the input information
 			// key basis is newLabData to account for cases with no initial info
-			Object.keys(newOutcome).forEach(async function (e) {
+			for (let i = 0; i < Object.keys(newOutcome).length; i++) {
 				// getting rows
-				// let rows = await db.exec(`SELECT * FROM mmchddb.CASE_DATA WHERE caseID = '${caseID}' AND fieldName = '${}';`);
+				rows = await db.exec(`SELECT * FROM mmchddb.CASE_DATA WHERE caseID = '${caseID}' AND fieldName = '${Object.keys(newOutcome)[i]}';`);
+				console.log(rows[0]);
 				
-				// constructing audit array
-				if (outcomeData[e] !== newOutcome[e]) {
+				// constructing audit array and update object
+				if (rows.length > 0 && rows[0].value !== newOutcome[Object.keys(newOutcome)[i]]) {
 					auditArr.push({
 						editedID: caseID,
 						dateModified: dateNow,
-						fieldName: e,
-						prevValue: outcomeData[e],
+						fieldName: Object.keys(newOutcome)[i],
+						prevValue: rows[0].value,
 						modifiedBy: submitted
 					});
+					updateObj[Object.keys(newOutcome)[i]] = newOutcome[Object.keys(newOutcome)[i]];
 				}
-				outcomeData[e1] = newOutcome[e];
-			});
+			}
 			
-			/*
 			// where updating happens
-			for (let i = 0; i < Object.keys(outcomeData).length; i++)
+			for (let i = 0; i < Object.keys(updateObj).length; i++)
 				await db.updateRows("mmchddb.CASE_DATA", {
 					caseID: caseID,
-					fieldName: Object.keys(outcomeData)[i]
-				}, { value: newOutcome[Object.keys(outcomeData)[i]] });
+					fieldName: Object.keys(updateObj)[i]
+				}, { value: newOutcome[Object.keys(updateObj)[i]] });
 			
 			// null check before audit log insertion, esp on Object.keys
 			if (auditArr.length > 0) {
 				await db.insertRows("mmchddb.AUDIT_LOG", Object.keys(auditArr[0]), auditArr.map(Object.values));
 			}
-			*/
-			res.status(200).send("");
+			res.status(200).send("Outcome updated!");
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error.");
