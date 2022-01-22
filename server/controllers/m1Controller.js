@@ -1334,7 +1334,7 @@ const indexFunctions = {
 			// key basis is newLabData to account for cases with no initial info
 			Object.keys(newOutcome).forEach(async function (e) {
 				// getting rows
-				let rows = await db.exec(`SELECT * FROM mmchddb.CASE_DATA WHERE caseID = '${caseID}' AND fieldName = '${}';`);
+				// let rows = await db.exec(`SELECT * FROM mmchddb.CASE_DATA WHERE caseID = '${caseID}' AND fieldName = '${}';`);
 				
 				// constructing audit array
 				if (outcomeData[e] !== newOutcome[e]) {
