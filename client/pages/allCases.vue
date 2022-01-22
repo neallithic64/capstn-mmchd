@@ -369,18 +369,6 @@ export default {
       cifData: [],
       crfDRUData: [],
       crfCHDData: [],
-      diseases: {
-        cif: {
-          Measles: '/addCIFMeasles',
-          Diphtheria: '/addCIFDiphtheria',
-          'Neonatal Tetanus': '/addCIFNeonatalTetanus',
-          Pertussis: '/addCIFPertussis',
-          'Meningococcal Disease': '/addCIFMeningococcal',
-        },
-        crf: {
-          Dengue: '/addCRFDengue',
-        },
-      },
     }
   },
   async mounted() {

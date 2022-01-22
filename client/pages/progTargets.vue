@@ -11,10 +11,10 @@
           </button>
 
           <div v-if="isOpen" class="form-contents">
-            <div v-for="(value, name, i) in formSection.diseaseNames" :key="i">
+            <div v-for="(value, i) in formSection" :key="i">
               <!-- <div v-if="i > 1" :id="name" :class="formColor(i - 1)"> -->
-              <button :id="name" :class="formColor(i)" @click="move(i, value)">
-                {{ i+1 }}. {{ value }}
+              <button :class="formColor(i)" @click="move(i)">
+                {{ i+1 }}. {{ value.disease }}
               </button>
             </div>
           </div>
@@ -24,11 +24,11 @@
       <!--Everything in the right-->
       <div class="form-section-container">
         <div class="form-component" style="margin-top: 8px;">
-          <!-- Instructions -->
+          <!-- Form for CaseDefs -->
           <form v-if="pageNum === -1" id="instructEdit" type="submit">
             <div id="new-user-form" class="center">
                 <h2 id="form-header"> Instructions </h2>
-              <div v-if="$auth.user.userType === 'lhsdChief' || $auth.user.userType === 'resuHead' || $auth.user.userType === 'chdDirector'">
+              <div v-if="$auth.user.userType === 'techStaff' || $auth.user.userType === 'BHS'">
                 <ul v-for="(value, name, i) in instructions" :key="i" style="displayLinline-flex">
                     <li>
                       <label :for="name" class="defsLabel">
@@ -42,11 +42,11 @@
                      </ul>
                 </ul>
               </div>
-              <div v-if="$auth.user.userType !== 'lhsdChief' || $auth.user.userType !== 'resuHead' || $auth.user.userType !== 'chdDirector'">
+              <div v-if="$auth.user.userType === 'techStaff'">
                 <ul style="displayLinline-flex">
                     <li>
                       <label class="defsLabel">
-                        To see case definitions:
+                        To see disease program targets:
                       </label>
                     </li>
                      <ul>
@@ -62,36 +62,33 @@
           <form v-if="pageNum >= 0" id="editCaseDefs" type="submit">
             <div id="edit-casedefs-form" class="center">
               <div style="display: flex; flex-direction: row; justify-content:space-between;">
-                <h2 id="form-header"> {{ Object.values(formSection.diseaseNames)[pageNum] }} </h2>
-                <div v-show="!isEdit" v-if="$auth.user.userType === 'lhsdChief' || $auth.user.userType === 'resuHead'
-				  || $auth.user.userType === 'chdDirector' || $auth.user.userType === 'techStaff'"> 
+                <h2 id="form-header"> {{formSection[pageNum].disease}} </h2>
+                <div v-show="!isEdit" v-if="$auth.user.userType === 'techStaff' || $auth.user.userType === 'BHS'"> 
                   <button id="instructButton" class="instruct-button" type="button" @click="instruct()">
                     Instructions
                   </button>
-                  <button id="editButton" class="defsButton" type="button" @click="editable()">
+                  <button id="editButton" class="defsButton" type="button" @click="edit()">
                     Edit
                   </button>
                 </div>
               </div>
               <div>
                 <div>
-                  <ul v-for="(value, name, i) in diseaseDefs" :key="i" style="displayLinline-flex">
+                  <ul v-for="(value, i) in newIndicators" :key="i" style="displayLinline-flex">
                     <li>
-                      <label :for="name" class="defsLabel">
-                        {{ name }}
+                      <label class="defsLabel">
+                        {{ value.targetName }}
                       </label>
                       <ul>
                         <li>
-                          <textarea
-                          :id="name"
-                          v-model="diseaseDefs[name]"
-                          class="defsTextArea"
-                          name="newDefs"
-                          type="text"
-                          rows="4" cols="200"
-                          wrap="soft"
-                          :disabled="!isEdit">
-                          </textarea>
+                          <div style="color:gray; margin-bottom:5px">{{value.targetDesc}} <br/></div>
+                          <div class="defsTextArea" style="text-align: center;">
+                            <input v-model="value.numerValue" class="target-form-field" type="number" min="0" :disabled="!isEdit"/> 
+                            {{value.numerName}}
+                            &nbsp; &nbsp; per &nbsp; &nbsp;
+                            <input  v-model="value.denomValue" class="target-form-field" type="number" min="0" :disabled="!isEdit"/> 
+                            {{value.denomName}}
+                          </div>
                         </li>
                       </ul>
                     </li>
@@ -122,50 +119,25 @@ export default {
   data() {
     return {
       isOpen: true,
-      isEdit: false,
       pageNum: -1,
-      formSection: {
-        diseaseNames: {},
-		diseaseIDs: {}
-      },
-      allCaseDefs: {},
-      diseaseDefs: {},
-      OldDiseaseDefs: [],
+      isEdit: false,
+      newIndicators:[],
+      formSection: [],
       instructions: {
         'Step 1': 'Click on a disease in the list on the left side to see its case definitions.',
         'Step 2': 'Click on the "Edit" button if you wish to edit the case definitions of the disease.',
-        'Step 3': 'Click on a case definition to start editing it.',
+        'Step 3': 'Select and edit the target values.',
         'Step 4': 'Lastly, click "Save" to save your changes.',
         'Step 5': 'In case there are issues, please contact the IT Staff.'
       }
     }
   },
   async fetch() {
-    // getting all diseases to print in left side
-    const diseases = (await axios.get('http://localhost:8080/api/getAllDiseases')).data;
-    
-    // setting diseaseNames
-    const tempA = {};
-	  const tempB = {};
-    for (let i = 0; i < diseases.length; i++) {
-      tempA[i] = diseases[i].diseaseName;
-	  tempB[i] = diseases[i].diseaseID;
-    }
-    this.formSection.diseaseNames = tempA;
-    this.formSection.diseaseIDs = tempB;
-
-    // putting all caseDefs in one object
-    let defs;
-    for (let i = 0; i < diseases.length; i++) {
-      defs = (await axios.get('http://localhost:8080/api/getCaseDefs?diseaseID=' + diseases[i].diseaseID)).data;
-      this.allCaseDefs[this.formSection.diseaseNames[i]] = defs;
-    }
-
-    // setting initial disease (first disease)
-    for (let i = 0; i < this.allCaseDefs[this.formSection.diseaseNames[0]].length; i++) {
-      this.diseaseDefs[this.allCaseDefs[this.formSection.diseaseNames[0]][i].class] = this.allCaseDefs[this.formSection.diseaseNames[0]][i].definition;
-    }
-
+    // getting all diseases with targets to print in left side
+    const diseases = (await axios.get('http://localhost:8080/api/getProgTargets', {
+      params: { userID: this.$auth.user.userID }
+    })).data;
+    this.formSection = diseases;
   },
   methods: {
     formColor(index) {
@@ -174,83 +146,32 @@ export default {
         else return 'formnum';
       }
     },
-    move(page, value) {
+    move(page) {
       if (!this.isEdit) {
         this.pageNum = page;
-
-        // getting the caseDefs of clicked disease
-        const tempo = this.allCaseDefs[value];
-        
-        // deleting values of initial diseaseDefs
-        for (const m in this.diseaseDefs) delete this.diseaseDefs[m];
-        
-        // re-populating diseaseDefs with newly clicked disease
-        for (let j = 0; j < tempo.length; j++) {
-          this.diseaseDefs[tempo[j].class] = tempo[j].definition;
-        }
-
-        // eslint-disable-next-line no-console
-        // console.log(this.diseaseDefs);
-        // this.NewDiseaseDefs = this.diseaseDefs;
-        for (let i=0; i<Object.values(this.diseaseDefs).length ; i++) {
-          this.OldDiseaseDefs[i] = this.diseaseDefs[Object.keys(this.diseaseDefs)[i]];
-        }
+		this.newIndicators = this.formSection[this.pageNum].indicators;
       }
     },
-    editable() {
+    edit() {
       this.isEdit = true;
-      /*
-      const elements = document.getElementsByClassName('defsTextArea');
-      for (let i = 0; i < elements.length; i++) {
-        elements[i].readOnly = false;
-        elements[i].style.border = "3px solid #c4c4c4";
-      }
-      document.getElementById("editButton").style.visibility = "hidden";
-      document.getElementById("forSaveButton").style.visibility = "visible";
-      const leftButtons = document.getElementsByClassName('formnum');
-      for (let i = 0; i < leftButtons.length; i++) {
-        leftButtons[i].disabled = true;
-      }
-      */
     },
     update(action) {
-      if (action === 'Cancel') {
-        for (let i=0; i<Object.values(this.diseaseDefs).length ; i++) {
-          this.diseaseDefs[Object.keys(this.diseaseDefs)[i]] = this.OldDiseaseDefs[i];
-        }
+      if (action==='Cancel') {
+        this.newIndicators = this.formSection[this.pageNum].indicators;
         this.isEdit = false;
       }
       else if (action==='Save') {
-        for (let i=0; i<Object.values(this.diseaseDefs).length ; i++) {
-          this.OldDiseaseDefs[i] = this.diseaseDefs[Object.keys(this.diseaseDefs)[i]];
-        }
+        this.formSection[this.pageNum].indicators = this.newIndicators;
         this.save();
         this.isEdit = false;
       }
     },
     async save() {
-      /*
-      const elements = document.getElementsByClassName('defsTextArea');
-      for (let i = 0; i < elements.length; i++) {
-        elements[i].readOnly = true;
-        elements[i].style.border = "none";
-      }
-      document.getElementById("editButton").style.visibility = "visible";
-      document.getElementById("forSaveButton").style.visibility = "hidden";
-      const leftButtons = document.getElementsByClassName('formnum');
-      for (let i = 0; i < leftButtons.length; i++) {
-        leftButtons[i].disabled = false;
-      }
-      */
-
-      const result = await axios.post('http://localhost:8080/api/editDiseaseDef', {
-          diseaseDefs: this.diseaseDefs,
-          diseaseID: this.formSection.diseaseIDs[this.pageNum]
+      const result = await axios.post('http://localhost:8080/api/editProgTargets', {
+          userID: this.$auth.user.userID,
+          targets: this.formSection[this.pageNum].indicators
       });
       
-	    // eslint-disable-next-line no-console
-	    console.log(result);
-
       if (result.status === 200) {
         // alert('Health event submitted!');
         this.$toast.success('Edit successful!', {duration: 4000, icon: 'check_circle'});
@@ -259,14 +180,6 @@ export default {
         console.log(result);
         this.$toast.error('Something went wrong!', {duration: 4000, icon: 'error'});
       }
-
-
-      // TODO: add notif send to all drus that a case definition was edited
-      // notif message: The case definitions of <disease> have been updated.
-      // notif type: updateNotif
-      // receiver: all DRUs
-      // redirectTo: addCIF/CRF url of the disease that was updated
-
     },
     instruct() {
       this.pageNum = -1;
@@ -554,9 +467,10 @@ export default {
     }
   }
 
-  .input-form-field,
+  .target-form-field,
   select {
-    width: 100%;
+    width: 85px;
+    text-align-last: center;
     height: 30px;
     font-size: 16px;
     font-family: 'Work Sans', sans-serif;

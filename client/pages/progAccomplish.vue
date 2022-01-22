@@ -8,51 +8,35 @@
       <div class="cases-section-container">
         <!--Name of form-->
         <div class="page-name">
-          <h1 class="formHeader">Add a Case</h1>
+          <h1 class="formHeader">Program Accomplishment</h1>
           <p style="margin: -5px 5px 10px; font-size: 16px">
-            Select the disease of the reported case:
+            Select the disease of the program:
           </p>
         </div>
 
         <!--Form itself-->
         <div class="addcases-component">
           <div id="CIF" class="center formTypeDiv">
-            <!-- CASE DEFINITION -->
-            <h2 id="formTypeH">Case Investigation Form</h2>
-
             <div
               v-for="(value, name, i) in diseases.cif"
               :key="i"
               style="width: 100%; align-content: center"
             >
-              <!-- <div v-if="i > 1" :id="name" :class="formColor(i - 1)"> -->
-              <!-- <a :href="value" style="margin: auto"> -->
-              <a :href="'/addCIF'+value" style="margin: auto">
+              <!-- <a :href="'/progAccomplishDisease'+value" style="margin: auto"> -->
+              <a :href="'/progAccomplish' + value" style="margin: auto">
                 <div class="cases-disease-name">{{ name }}</div>
               </a>
             </div>
-
-            <!-- <a href="/"><div class="disease-name">Measles</div></a>
-            <div class="disease-name">Measles</div>
-            <a href="https://twitter.com/Dave_Conner" class="btn btn-1">
-              <svg>
-                <rect x="0" y="0" fill="none" width="100%" height="100%" />
-              </svg>
-              Measles
-            </a> -->
           </div>
 
           <div id="CRF" class="center formTypeDiv">
-            <!-- CASE DEFINITION -->
-            <h2 id="formTypeH">Case Report Form</h2>
-
             <div
               v-for="(value, name, i) in diseases.crf"
               :key="i"
               style="width: 100%; align-content: center"
             >
-              <!-- <div v-if="i > 1" :id="name" :class="formColor(i - 1)"> -->
-              <a :href="'/addCRF'+value" style="margin: auto">
+              <!-- <a :href="'/progAccomplishDisease' + value" style="margin: auto"> -->
+              <a :href="'/progAccomplish' + value" style="margin: auto">
                 <div class="cases-disease-name">{{ name }}</div>
               </a>
             </div>
@@ -67,7 +51,7 @@
 export default {
   middleware: 'is-auth',
   header: {
-    title: 'Add Case',
+    title: 'Choose Disease Program Accomplishment',
   },
   data() {
     return {
@@ -178,18 +162,6 @@ h3 {
   padding: 10px;
 }
 
-#formTypeH {
-  text-align: center;
-  font-weight: 600;
-  font-size: 28px;
-  background-color: #008d41;
-  color: transparent;
-  text-shadow: 1px 1px, -1px -1px rgba(0, 0, 0, 0.25);
-  -webkit-background-clip: text;
-  -moz-background-clip: text;
-  background-clip: text;
-}
-
 #CIF {
   border: none;
   border-right: #b8b7b7 0.5px solid;
@@ -253,71 +225,5 @@ h3 {
 hr {
   margin: 20px 0;
 }
-
-/* 
-a {
-  background: rgba(255, 255, 255, 0);
-  border-bottom: 1px solid;
-  color: pink;
-  line-height: 1.4;
-  padding: 0.25em;
-  text-decoration: none;
-}
-a:hover {
-  background: rgba(255, 255, 255, 1);
-  color: #346083;
-}
-
-.btn {
-  color: #346083;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: 400;
-  line-height: 45px;
-  margin: 0 0 2em;
-  max-width: 160px;
-  position: relative;
-  text-decoration: none;
-  width: 100%;
-}
-@media (min-width: 600px) {
-  .btn {
-    margin: 0 1em 2em;
-  }
-}
-.btn:hover {
-  text-decoration: none;
-  text-transform: uppercase;
-}
-
-.btn-1 {
-  background: transparent;
-  font-weight: 100;
-}
-.btn-1 svg {
-  height: 100%;
-  left: 0;
-  position: absolute;
-  top: 0;
-  width: 100%;
-}
-.btn-1 rect {
-  fill: none;
-  stroke: none;
-  stroke-width: 2;
-  stroke-dasharray: 422, 0;
-  transition: all 0.35s linear;
-}
-.btn-1:hover {
-  background: white;
-  font-weight: 900;
-  letter-spacing: 1px;
-}
-.btn-1:hover rect {
-  stroke-width: 5;
-  stroke-dasharray: 15, 310;
-  stroke-dashoffset: 48;
-  transition: all 1.35s cubic-bezier(0.19, 1, 0.22, 1);
-} */
 </style>
 

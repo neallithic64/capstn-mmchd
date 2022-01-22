@@ -179,7 +179,7 @@
       </thead>
       <tbody>
         <template v-if="dataSets.length > 0">
-          <tr v-for="(data, dataIndex) in dataSets" v-show="dataIndex >= showstart && dataIndex <= showend" :key="dataIndex">
+          <tr v-for="(data, dataIndex) in dataSets" v-show="dataIndex >= showstart && dataIndex <= showend" :key="dataIndex" :class="obStatusRowClass(data['outbreakStatus'])" >
             <td v-for="(column, columnIndex) in options.columns" :key="columnIndex" style="text-align: center">
               <span v-if="column.type === 'component'">
                 <component :is="column.name" :row="data"></component>
@@ -220,12 +220,12 @@
                 </a>
                 <a v-else-if="pageType === 'cif'"
                   style="color: #346083; text-decoration-line: underline"
-                  :href="'/view' + 'CIFMeasles?caseID=' + data[column.key] ">
+                  :href="'/view' + 'CIFMeasles?caseID=' + data[column.key]">
                   {{ data[column.key] }}
                 </a>
                 <a v-else-if="pageType === 'crfDRU' || pageType === 'crfCHD'"
                   style="color: #346083; text-decoration-line: underline"
-                  :href="'/view' + 'CRFDengue?caseID=' + data[column.key]">
+                  :href="'/view' + 'CRFDengue?CRFID=' + data[column.key]">
                   {{ data[column.key] }}
                 </a>
                 <a v-else-if="pageType === 'addcrfID'"
@@ -259,7 +259,7 @@
                   >{{ data[column.key] }}
                 </a> -->
               </span>
-              <span v-else-if="column.title==='Case Status'" :class="caseStatusClass(data[column.key])">
+              <span v-else-if="column.title==='Case Status' || column.title==='Status' || column.title==='Risk Classification' || column.title==='Submit Status' || column.title==='Report Status'" :class="caseStatusClass(data[column.key])">
                 {{ data[column.key] }}
               </span>
               <span v-else>
@@ -294,6 +294,10 @@
         &raquo;
       </a>
     </div>
+    <div v-show="casetype==='all' || casetype==='cif' || casetype==='crfDRU' || casetype==='crfCHD'"
+      style="margin-top:5px;">
+      Last updated: <b> {{dayTime}} </b>
+    </div>
   </div>
 </template>
 
@@ -305,6 +309,7 @@ export default {
   props: ['options', 'datavalues', 'casetype','print'],
   data() {
     return {
+      dayTime:'',
       pageType: '',
       diseaseOpen: false,
       cityOpen: false,
@@ -368,7 +373,7 @@ export default {
   },
   watch: {
     /*
-   print: {
+    print: {
       // the callback will be called immediately after the start of the observation
       // immediate: true,
       handler(val){
@@ -381,6 +386,11 @@ export default {
     */
   },
   mounted() {
+    const today = new Date();
+    const monthsList = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Aug', 'Oct', 'Nov', 'Dec'];
+    this.dayTime = monthsList[today.getMonth()] + ' ' + today.getDate() + ', ' + today.getFullYear()
+                     + ' ' + today.getHours() + ':' + today.getMinutes();
+
     this.pageType = this.casetype;
     // this.requestParams.sortedKey = this.options.columns[0].key;
     this.filterOff();
@@ -390,10 +400,9 @@ export default {
 	console.log(this.datavalues);
     this.sortedKeyValue(this.requestParams.sortedKey, this.requestParams.sortedType);
     this.totalCount = Object.keys(this.dataSets).length;
-  if (this.pageType === 'patient') this.requestParams.take = this.totalCount;
+    if (this.pageType === 'patient') this.requestParams.take = this.totalCount;
     this.getPages();
     this.getStartEnd();
-    // this.readData();
   },
   methods: {
     getTableDisplay() {
@@ -402,8 +411,28 @@ export default {
     caseStatusClass(c) {
       if (c) {
         if (c.toString().includes('Suspect')) return 'caseStatus suspectedCase';
+        else if (c.toString().includes('Suspected')) return 'caseStatus suspectedCase';
         else if (c.toString().includes('Probable')) return 'caseStatus probableCase';
         else if (c.toString().includes('Confirmed')) return 'caseStatus confirmedCase';
+        else if (c.toString().includes('Compatible')) return 'caseStatus confirmedCase';
+        else if (c.toString().includes('Discarded')) return 'caseStatus discardedCase';
+        else if (c.toString().includes('Ongoing')) return 'caseStatus ongoingOutbreak';
+        else if (c.toString().includes('Controlled')) return 'caseStatus suspectedCase';
+        else if (c.toString().includes('Closed')) return 'caseStatus lowRisk';
+        else if (c.toString().includes('High')) return 'caseStatus confirmedCase';
+        else if (c.toString().includes('Moderate')) return 'caseStatus suspectedCase';
+        else if (c.toString().includes('Low')) return 'caseStatus lowRisk';
+        else if (c.toString().includes('Submitted')) return 'caseStatus lowRisk';
+        else if (c.toString().includes('Pushed')) return 'caseStatus suspectedCase';
+        else if (c.toString().includes('Zero Report')) return 'caseStatus confirmedCase';
+        return 'none';
+      }
+    },
+    obStatusRowClass(c) {
+      if (c) {
+        if (c.toString().includes('Ongoing')) return 'ongoingOBRow';
+        // else if (c.toString().includes('Controlled')) return 'caseStatus suspectedCase';
+        // else if (c.toString().includes('Closed')) return 'caseStatus lowRisk';
         return 'none';
       }
     },
@@ -440,15 +469,7 @@ export default {
         })
       }
     },
-    readData() {
-	  // this.dataSets = response.data.data;
-	  // this.totalCount = response.data.count;
-	  // this.totalPage = Math.ceil(instance.totalCount / instance.requestParams.take);
-	  // this.pages = instance.pagination(instance.currentPage, instance.totalPage);
-      // axios.post(this.options.source, this.requestParams).then(function (response) {}).catch(function (err) {console.log(err);});
-    },
     search() {
-      // this.readData();
       this.dataSearched = [];
       // IF NO FILTERS
       for (let i = 0; i < Object.keys(this.datavalues).length; i++)
@@ -466,7 +487,6 @@ export default {
       this.getDataSet();
     },
     filter() {
-      // this.readData();
       this.dataFiltered = [];
 
       if (this.diseaseFilters.selected.length === 0 && this.cityFilters.selected.length === 0 && this.caseStatusFilters.selected.length === 0
@@ -546,26 +566,9 @@ export default {
     filterOff() {
       this.filters = [];
       for (let i = 0; i < this.options.columns.length; i++)
-        // if (this.options.columns[i].filter)
-        //   this.filters.push({
-        //     filterKey: this.options.columns[i].key,
-        //     filterOpen: false,
-        //     filterOptions: ['ABC', 'ABCD'],
-        //     filterSelected: [],
-        //   })
         if (this.options.columns[i].filter) this.filters[0] = false;
-      // console.log(this.filters)
-      // for (let j = 0; j < this.filters.length; j++) {
-      //   this.filters[j].filterOptions = ['Measles', 'Dengue']
-      // if (this.filterKey[j].key === 'disease') {
-      //   this.filterKey[j].filterOptions = ['Measles', 'Dengue']
-      // } else if (this.filterKey[j].key === 'city') {
-      //   this.filterKey[j].filterOptions = ['Manila', 'Makati']
-      // }
-      // }
     },
     selectedDataAmount() {
-      this.readData();
       this.currentPage = 1;
       this.getPages();
       this.getStartEnd();
@@ -574,7 +577,6 @@ export default {
       if (page !== 0 && page <= this.totalPage) {
         this.requestParams.skip = (page - 1) * this.requestParams.take;
         this.currentPage = page;
-        this.readData();
       }
       this.currentPage = page;
       this.getStartEnd();
@@ -636,10 +638,13 @@ export default {
 }
 
 .caseStatus {
-  color:white;
-  padding:2px 10px;
+  color: white;
+  padding: 2px 10px;
   border-radius: 10px;
   font-weight: 500;
+}
+.ongoingOutbreak {
+  background: red;
 }
 .confirmedCase {
   background: red;
@@ -649,6 +654,15 @@ export default {
 }
 .probableCase {
   background: #FDCE00;
+}
+.lowRisk {
+  background: #008d41;
+}
+.ongoingOBRow {
+  background: #ebb9b9;
+}
+.discardedCase {
+  background: gray;
 }
 
 .filterButton {

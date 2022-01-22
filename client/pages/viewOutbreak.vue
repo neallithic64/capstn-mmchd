@@ -3,6 +3,13 @@
     <!--Top Bar of the screen-->
     <TopNav/>
     <div ref="content" class="viewOB-container">
+      <!-- TODO: place v-if here to remove the timer after initial response -->
+      <div id="countdown-container">
+        <client-only>
+          <Countdown deadline="January 22, 2022 23:39:00"></Countdown>
+        </client-only>
+        <span style="font-weight: 600;"> TIME LEFT FOR INITIAL RESPONSE </span>
+      </div>
       <div class="viewOB-details" style="align-text: left">
         <div class="OBnumbers">
           <h1 style="margin: -10px 0">Outbreak No. {{ outbreak.outbreakID }}</h1>
@@ -94,6 +101,29 @@
       
       </div>
 
+      <div v-if="pageNum == 0 || isPrint" id="risk-legend">
+        <div id="risk-col">
+          <p style="font-weight: 600;"> Risk Classification Legend </p>
+          <p style="color: white; background: red; font-weight: 400; padding: 3px;"> High Risk </p>
+          <p style="color: white; background: #FC8F00; font-weight: 400; padding: 3px;"> Moderate Risk </p>
+          <p style="color: white; background: #008d41; font-weight: 400; padding: 3px;"> Low Risk</p>
+        </div>
+        <div id="risk-col" style="margin-left: 8px;">
+          <p style="font-weight: 600;"> Growth Rate </p>
+          <p style="font-weight: 400; padding: 3px;"> {{ grHighRisk }} </p>
+          <p style="font-weight: 400; padding: 3px;"> {{ grModRisk }} </p>
+          <p style="font-weight: 400; padding: 3px;"> {{ grLowRisk }} </p>
+        </div>
+        <div id="risk-col" style="margin-left: 5px;">
+          <p style="font-weight: 600;"> Attack Rate </p>
+          <p style="font-weight: 400; padding: 3px;"> {{ arHighRisk }} </p>
+          <p style="font-weight: 400; padding: 3px;"> {{ arModRisk }} </p>
+          <p style="font-weight: 400; padding: 3px;"> {{ arLowRisk }} </p>
+        </div>
+      </div>
+
+      
+
       <div class="OB-statusHistory">
         <h2 style="border-bottom: gray solid; width: fit-content; padding: 0 7px 0 5px;">Outbreak Status History</h2>
         <dataTable
@@ -106,7 +136,7 @@
 
     <div v-show="editStatus" class="overlay">
       <div class="overlay-form">
-        <button class="close" @click="status('cancel')">x</button>
+        <button class="close" @click="statusAction('cancel')">x</button>
         <div class="field-row" style="display: inline-flex; margin-bottom: -1 px">
           <div class="field">
             <h2 id="form-header" class="required">
@@ -155,10 +185,10 @@
               </div>
             </div>
             <div style="margin: -10px 10 5px; float: right; margin-left: auto;">
-              <button class="back-button" type="button" @click="status('cancel')">
+              <button class="back-button" type="button" @click="statusAction('cancel')">
                 Cancel
               </button>
-              <button class="next-button" type="button" @click="status('save')">
+              <button class="next-button" type="button" @click="statusAction('save')">
                 Save
               </button>
             </div>
@@ -174,13 +204,14 @@
 
 <script>
 const axios = require('axios');
-
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
 import dataTable from './dataTable.vue'
+import Countdown from 'vuejs-countdown'
 export default {
   components: {
     dataTable,
+    Countdown
   },
   middleware: 'is-auth',
   header: {
@@ -189,6 +220,12 @@ export default {
   compute: {},
   data() {
     return {
+      grLowRisk: '<=0%',
+      grModRisk: '>0% to <=200%',
+      grHighRisk: '>200%',
+      arLowRisk: '>1',
+      arModRisk: '>=1 to <=7',
+      arHighRisk: '>7',
       editStatus: false,
       auditLog: {
         newStatus: '',
@@ -425,27 +462,21 @@ export default {
       },
       eventLevels: {
         'Ongoing': 'Other information is still on verification; Specimens are to be collected and pending laboratory results; The concerned team is currently monitoring the event; The concerned team is currently monitoring the event; There are continuous additional cases or deaths',
+        'Ongoing with Initial Response': 'Initial response is given to the areas and people involved in the form of a report, feedback, or relief',
         'Controlled': 'Gradual or abrupt decrease of cases; Cases showed good prognosis or event has already been managed but other information is still on verification such as description of cases, laboratory findings, etc.; No cases or deaths had been added',
         'Closed': 'Laboratory results have no significant findings that are potential for endangering health; Cases were already discharged and in good condition; Follow-up reports indicate no further monitoring, assistance and investigation needed'
       }
     }
   },
-  // async fetch() {
-  //   const data = (await axios.get('http://localhost:8080/api/getCRF?caseID=' + this.$route.query.caseID)).data;
-  //   // const data = (await axios.get('http://localhost:8080/api/getCRF?caseID=' + 'CA-0000000000007')).data;
+  async fetch() {
+    const data = (await axios.get('http://localhost:8080/api/getOutbreak?outbreakID=' + this.$route.query.outbreakID)).data;
   //   this.formData.cases = data.cases;
-  //   this.formData.caseData = data.caseData;
-  //   this.formData.patient = data.patient;
-  //   this.formData.riskFactors = data.riskFactors; // working already
   //   this.DRUData = data.DRUData;
   //   this.CRFData = data.crfData;
   //   this.dateLastUpdated = data.dateLastUpdated;
   //   this.caseHistory = data.caseHistory;
-    
-  //   // fixing dates
-
   //   console.log(data);
-  // }, 
+  }, 
   methods: {
     formListClass(index) {
       if (index === this.pageNum) return 'formSummaryItems selected'
@@ -465,7 +496,7 @@ export default {
     popup() {
       this.editStatus = !this.editStatus
     },
-    // async status(change) {
+    // async statusAction(change) {
     //   if (change==='save') {
     //     this.formData.caseData.finalClassification = this.newStatus;
     //     this.formData.cases.caseLevel = this.newStatus;
@@ -877,6 +908,20 @@ ul ul li {
   align-items: baseline;
 }
 
+#risk-legend {
+  font-size: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+#risk-col {
+  font-size: 10px;
+  display: flex;
+  flex-direction: column;
+  /* justify-content: end; */
+}
+
 .halffield {
   width: 50%;
   padding: 0px 7px;
@@ -1144,6 +1189,17 @@ select {
 
 img:hover + .info-desc {
   display: block;
+}
+
+#countdown-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-image: linear-gradient(to bottom right, #b02e0c, #eb4511);;
+  color: white;
+  margin-bottom: 15px;
+  padding-bottom: 5px;
 }
 
 .info-desc {

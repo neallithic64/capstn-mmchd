@@ -163,7 +163,9 @@ export default {
   async fetch() {
     const rows = (await axios.get('http://localhost:8080/api/getCRFPage', {
       params: {
-        CRFID: this.$route.query.caseID
+        CRFID: this.$route.query.CRFID,
+		diseaseID: "DI-0000000000003",
+		userID: this.$auth.user.userID
       }
     })).data;
     console.log(rows);
@@ -173,7 +175,7 @@ export default {
     }
     this.crfData = rows.crfData;
     this.weekNo = rows.CRF.year + "-" + rows.CRF.week;
-    this.CRFID = this.$route.query.caseID;
+    this.CRFID = this.$route.query.CRFID;
   },
   methods: {
     downloadPDF() {
