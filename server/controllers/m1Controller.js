@@ -1330,32 +1330,26 @@ const indexFunctions = {
 		let auditArr = [], dateNow = new Date();
 		try {
 			console.log(newOutcome);
-			// reconstruct array as an object for easier update
-			
-			// newOutcome.reduce is not a function
-			let outcomeData = newOutcome.reduce(function(r, i) {
-				r[i.fieldName] = i.value;
-				return r;
-			}, {});
-			console.log(outcomeData);
-			
-			/*
 			// update every attr in the object for the input information
 			// key basis is newLabData to account for cases with no initial info
-			Object.keys(newOutcome).forEach(e1 => {
+			Object.keys(newOutcome).forEach(async function (e) {
+				// getting rows
+				let rows = await db.exec(`SELECT * FROM mmchddb.CASE_DATA WHERE caseID = '${caseID}' AND fieldName = '${}';`);
+				
 				// constructing audit array
-				if (outcomeData[e1] !== newOutcome[e1]) {
+				if (outcomeData[e] !== newOutcome[e]) {
 					auditArr.push({
 						editedID: caseID,
 						dateModified: dateNow,
-						fieldName: e1,
-						prevValue: outcomeData[e1],
+						fieldName: e,
+						prevValue: outcomeData[e],
 						modifiedBy: submitted
 					});
 				}
-				outcomeData[e1] = newOutcome[e1];
+				outcomeData[e1] = newOutcome[e];
 			});
 			
+			/*
 			// where updating happens
 			for (let i = 0; i < Object.keys(outcomeData).length; i++)
 				await db.updateRows("mmchddb.CASE_DATA", {
