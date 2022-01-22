@@ -772,10 +772,10 @@ const indexFunctions = {
 	
 	getAllOutbreaks: async function(req, res) {
 		try {
-			let outbreaks = await db.exec(`SELECT o.*, d.diseaseName, COUNT(c.caseID) AS numCases
+			let outbreaks = await db.exec(`SELECT o.*, d.diseaseName, COUNT(c.caseID) + IFNULL(d.epiThreshold, 0) AS numCases
 					FROM mmchddb.OUTBREAKS o
 					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = o.diseaseID
-					LEFT JOIN mmchddb.CASES c ON o.diseaseID = c.diseaseID AND c.reportDate < o.startDate
+					LEFT JOIN mmchddb.CASES c ON o.diseaseID = c.diseaseID AND c.reportDate > o.startDate
 					GROUP BY o.outbreakID
 					ORDER BY (CASE WHEN o.type = 'Ongoing' THEN '1' ELSE '2' END) ASC, o.startDate DESC;`);
 			console.log(outbreaks);
@@ -929,15 +929,15 @@ const indexFunctions = {
 			delete user.userCity;
 			delete user.userRePassword;
 			
-			// inserting user, user settings, and address rows
+			// inserting address, user, and user settings rows
+			if (!addrID.exists) {
+				let resultAddr = await db.insertOne("mmchddb.ADDRESSES", addrObj);
+			}
 			let resultReg = await db.insertOne("mmchddb.USERS", user);
 			let resultSettings = await db.insertOne("mmchddb.USER_SETTINGS", {
 				userID: user.userID,
 				pushDataAccept: false
 			});
-			if (!addrID.exists) {
-				let resultAddr = await db.insertOne("mmchddb.ADDRESSES", addrObj);
-			}
 			// result checking/validations
 			if (resultReg && resultSet && resultAddr) res.status(200).send("Register success");
 			else res.status(500).send("Register failed");
@@ -1319,6 +1319,50 @@ const indexFunctions = {
 			let investigat = Object.fromEntries(Object.entries(newLabData).filter(([key, value]) => key.includes("investigat")));
 			await db.updateRows("mmchddb.CASES", {caseID: caseID}, investigat);
 			res.status(200).send(labData);
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error.");
+		}
+	},
+	
+	postEditPatientOutcome: async function(req, res) {
+		let { caseID, newOutcome, submitted } = req.body;
+		let auditArr = [], dateNow = new Date();
+		try {
+			console.log(newOutcome);
+			// update every attr in the object for the input information
+			// key basis is newLabData to account for cases with no initial info
+			Object.keys(newOutcome).forEach(async function (e) {
+				// getting rows
+				// let rows = await db.exec(`SELECT * FROM mmchddb.CASE_DATA WHERE caseID = '${caseID}' AND fieldName = '${}';`);
+				
+				// constructing audit array
+				if (outcomeData[e] !== newOutcome[e]) {
+					auditArr.push({
+						editedID: caseID,
+						dateModified: dateNow,
+						fieldName: e,
+						prevValue: outcomeData[e],
+						modifiedBy: submitted
+					});
+				}
+				outcomeData[e1] = newOutcome[e];
+			});
+			
+			/*
+			// where updating happens
+			for (let i = 0; i < Object.keys(outcomeData).length; i++)
+				await db.updateRows("mmchddb.CASE_DATA", {
+					caseID: caseID,
+					fieldName: Object.keys(outcomeData)[i]
+				}, { value: newOutcome[Object.keys(outcomeData)[i]] });
+			
+			// null check before audit log insertion, esp on Object.keys
+			if (auditArr.length > 0) {
+				await db.insertRows("mmchddb.AUDIT_LOG", Object.keys(auditArr[0]), auditArr.map(Object.values));
+			}
+			*/
+			res.status(200).send("");
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error.");

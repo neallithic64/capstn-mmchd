@@ -83,10 +83,10 @@
                         <li>
                           <div style="color:gray; margin-bottom:5px">{{value.targetDesc}} <br/></div>
                           <div class="defsTextArea" style="text-align: center;">
-                            <input class="target-form-field" v-model="value.numerValue" type="number" min="0" :disabled="!isEdit"/> 
+                            <input v-model="value.numerValue" class="target-form-field" type="number" min="0" :disabled="!isEdit"/> 
                             {{value.numerName}}
                             &nbsp; &nbsp; per &nbsp; &nbsp;
-                            <input class="target-form-field" v-model="value.denomValue" type="number" min="0" :disabled="!isEdit"/> 
+                            <input  v-model="value.denomValue" class="target-form-field" type="number" min="0" :disabled="!isEdit"/> 
                             {{value.denomName}}
                           </div>
                         </li>
