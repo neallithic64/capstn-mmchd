@@ -8,7 +8,7 @@
         </div>
         <div id="dashboard-right">
           <div id="outbreak-container">
-            <span class="dboard-right-titles" style="background-color: #c70000;"> Ongoing Outbreak </span>
+            <span class="dboard-right-titles" style="background-image: linear-gradient(to bottom right, #b02e0c, #eb4511);"> Ongoing Outbreak </span>
             <a :href="'/viewOutbreak?outbreakID='">
               <div id="outbreak-content" class="dboard-right-content" style="border-left-color: #c70000;">
                 <div id="outbreak-text">
@@ -24,14 +24,14 @@
             </a>
           </div>
           <div id="latest-case-container">
-            <span class="dboard-right-titles" style="background-color: #346083;"> Latest Case </span>
+            <span class="dboard-right-titles" style="background-image: linear-gradient(to bottom right, #1e3b70, #29539b);"> Latest Case </span>
             <div class="dboard-right-content" style="border-left-color: #346083;">
               <span style="padding-top: 5px; font-weight: 900"> Measles, <span :class="caseStatusClass(status)"> {{ status }} </span> </span>
               <span> Pasay City, BARANGAY 171 </span>
             </div>
           </div>
           <div id="tracker-container">
-            <span class="dboard-right-titles" style="background-color: #008d41;"> Reporting Status Week 3 </span>
+            <span class="dboard-right-titles" style="background-image: linear-gradient(to bottom right, #008d41, #74d680);"> Reporting Status Week {{ weekNo }} </span>
             <div class="dboard-right-content" style="border-left-color: #008d41;">
               <p> City </p>
               <p> Caloocan </p>
@@ -67,7 +67,8 @@ export default {
   middleware: 'is-auth',
   data() {
     return {
-      status: 'Suspected'
+      status: 'Suspected',
+      weekNo: '3'
     }
   },
   head() {
