@@ -32,24 +32,31 @@
           </div>
           <div id="tracker-container">
             <span class="dboard-right-titles" style="background-image: linear-gradient(to bottom right, #008d41, #74d680);"> Reporting Status Week {{ weekNo }} </span>
-            <div class="dboard-right-content" style="border-left-color: #008d41;">
-              <p> City </p>
-              <p> Caloocan </p>
-              <p> Las Piñas </p>
-              <p> Makati </p>
-              <p> Malabon </p>
-              <p> Mandaluyong </p>
-              <p> Manila </p>
-              <p> Marikina </p>
-              <p> Muntinlupa </p>
-              <p> Navotas </p>
-              <p> Parañaque </p>
-              <p> Pasay </p>
-              <p> Pasig </p>
-              <p> Quezon City </p>
-              <p> San Juan </p>
-              <p> Taguig </p>
-              <p> Valenzuela </p>
+            <div class="dboard-right-content" style="border-left-color: #008d41; padding-left: 0px;">
+              <div id="tracker-headers">
+               <span> City </span>
+               <span> CIF </span>
+               <span> CRF </span>
+              </div>
+
+              <div id="tracker-content">
+                <p> Caloocan </p>
+                <p> Las Piñas </p>
+                <p> Makati </p>
+                <p> Malabon </p>
+                <p> Mandaluyong </p>
+                <p> Manila </p>
+                <p> Marikina </p>
+                <p> Muntinlupa </p>
+                <p> Navotas </p>
+                <p> Parañaque </p>
+                <p> Pasay </p>
+                <p> Pasig </p>
+                <p> Quezon City </p>
+                <p> San Juan </p>
+                <p> Taguig </p>
+                <p> Valenzuela </p>
+              </div>
             </div>
           </div>
         </div>
@@ -227,4 +234,17 @@ body {
   background: gray;
 }
 
+#tracker-headers {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  background-image: linear-gradient(to bottom right, #bbdbbe, #deebdd);
+  padding-left: 5px;
+  padding-right: 80px;
+  font-weight: 900;
+}
+
+#tracker-content {
+  padding-left: 5px;
+}
 </style>

@@ -940,7 +940,7 @@ const indexFunctions = {
 				pushDataAccept: false
 			});
 			// result checking/validations
-			if (resultReg && resultSet && resultAddr) res.status(200).send("Register success");
+			if (resultReg && resultSettings && resultAddr) res.status(200).send("Register success");
 			else res.status(500).send("Register failed");
 		} catch (e) {
 			console.log(e);
