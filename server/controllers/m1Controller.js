@@ -907,6 +907,7 @@ const indexFunctions = {
 	
 	postRegUser: async function(req, res) {
 		let { user } = req.body;
+		let resultAddr = false;
 		try {
 			user.userID = (await generateID("mmchddb.USERS")).id;
 			// extracting address into an object
@@ -931,7 +932,7 @@ const indexFunctions = {
 			
 			// inserting address, user, and user settings rows
 			if (!addrID.exists) {
-				let resultAddr = await db.insertOne("mmchddb.ADDRESSES", addrObj);
+				resultAddr = await db.insertOne("mmchddb.ADDRESSES", addrObj);
 			}
 			let resultReg = await db.insertOne("mmchddb.USERS", user);
 			let resultSettings = await db.insertOne("mmchddb.USER_SETTINGS", {
