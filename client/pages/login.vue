@@ -66,6 +66,9 @@ export default {
       title: 'IDSR Login'
     }
   },
+  mounted(){
+    window.clearInterval(window.interval);
+  },
   methods: {
     checkForm(e) {
       let error = false;

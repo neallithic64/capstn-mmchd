@@ -132,13 +132,17 @@ const axios = require('axios');
 export default {
    data() {
     return {
-      newNotifs: 0
+      newNotifs: 0,
     }
   },
   async fetch(){
     // get number of new notifications
     const count = (await axios.get('http://localhost:8080/api/getNewNotifs?userID=' + this.$auth.user.userID)).data;
     this.newNotifs = count.newNotifCount;
+  },
+  mounted(){
+    window.clearInterval(window.interval);
+    this.checkOutbreak();
   },
   methods: {
     responsive() {
@@ -151,6 +155,12 @@ export default {
     },
     goToNotifs() {
       window.location.href = 'http://localhost:3000/notifications';
+    },
+    checkOutbreak(){
+      window.interval = setInterval(() => {
+         this.$toast.success('Entered Interval' + this.newNotifs, {duration: 4000, icon: 'check_circle'});
+         this.newNotifs = this.newNotifs + 1;
+      }, 5000)
     }
   },
 }
