@@ -67,7 +67,8 @@ export default {
     }
   },
   mounted(){
-    window.clearInterval(window.interval);
+    if(typeof window !== "undefined")
+          window.clearInterval(window.interval);
   },
   methods: {
     checkForm(e) {
