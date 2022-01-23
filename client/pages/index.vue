@@ -3,9 +3,8 @@
     <TopNav/>
     <div id="dashboard-container">
       <div id="dashboard-bottom">
-        <div id="dashboard-powerbi">
-          PowerBI here
-        </div>
+          <iframe id="dashboard-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiODdiNTM2N2YtMTA3YS00NzA2LTg5YjItMDBlZDllMTQ2ZDY0IiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D&pageName=ReportSection">
+          </iframe>
         <div id="dashboard-right">
 
           <!-- Ongoing Outbreak -->
@@ -196,6 +195,7 @@
 
 <script>
 import Countdown from 'vuejs-countdown'
+// import * as pbi from "powerbi-client";
 export default {
   components: { 
     Countdown
@@ -350,6 +350,15 @@ body {
 }
 
 #dashboard-powerbi {
+  height: 100vh;
+  background-color: gray;
+  width: 100%;
+  border-radius: 10px;
+  margin-left: 5px;
+  margin-top: 5px;
+}
+
+#dashboard-powerbi-iframe {
   height: 100vh;
   background-color: gray;
   width: 100%;
