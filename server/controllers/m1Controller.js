@@ -806,6 +806,7 @@ const indexFunctions = {
 			console.log(match);
 			match.forEach(function(element){
 				element.dateCaptured = dateToString(element.dateCaptured);
+				element.dateReported = dateToString(element.dateReported);
 			});
 			res.status(200).send(match);
 		} catch (e) {
