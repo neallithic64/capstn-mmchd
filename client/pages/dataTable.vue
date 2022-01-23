@@ -179,7 +179,7 @@
       </thead>
       <tbody>
         <template v-if="dataSets.length > 0">
-          <tr v-for="(data, dataIndex) in dataSets" v-show="dataIndex >= showstart && dataIndex <= showend" :key="dataIndex" :class="obStatusRowClass(data['outbreakStatus'])" >
+          <tr v-for="(data, dataIndex) in dataSets" v-show="dataIndex >= showstart && dataIndex <= showend" :key="dataIndex" :class="obStatusRowClass(data['outbreakStatus'], data['reportDate'])" >
             <td v-for="(column, columnIndex) in options.columns" :key="columnIndex" style="text-align: center">
               <span v-if="column.type === 'component'">
                 <component :is="column.name" :row="data"></component>
@@ -428,14 +428,34 @@ export default {
         return 'none';
       }
     },
-    obStatusRowClass(c) {
+    obStatusRowClass(c, d) {
       if (c) {
         if (c.toString().includes('Ongoing')) return 'ongoingOBRow';
         // else if (c.toString().includes('Controlled')) return 'caseStatus suspectedCase';
         // else if (c.toString().includes('Closed')) return 'caseStatus lowRisk';
         return 'none';
       }
+      if (d) {
+        let today = new Date();
+        const offset = today.getTimezoneOffset()
+        today = new Date(today.getTime() - (offset*60*1000))
+        today = today.toISOString().split('T')[0];
+        if (d) {
+          if (d.localeCompare(today) === 0) return 'newCaseRow';
+          return 'none';
+        }
+      }
     },
+    // caseRowClass(c) {
+    //   let today = new Date();
+    //   const offset = today.getTimezoneOffset()
+    //   today = new Date(today.getTime() - (offset*60*1000))
+    //   today = today.toISOString().split('T')[0];
+    //   if (c) {
+    //     if (c.localeCompare('2021-12-16') === 0) return 'newCaseRow';
+    //     return 'none';
+    //   }
+    // },
     getStartEnd() {
       this.showstart = this.pages[this.currentPage][1];
       this.showend = this.pages[this.currentPage][2];
@@ -659,10 +679,13 @@ export default {
   background: #008d41;
 }
 .ongoingOBRow {
-  background: #ebb9b9;
+  background: #ffd2d2;
 }
 .discardedCase {
   background: gray;
+}
+.newCaseRow {
+  background: #c6ebd6;
 }
 
 .filterButton {
