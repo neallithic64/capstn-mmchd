@@ -17,7 +17,7 @@
                 </div>
                 <div id="outbreak-countdown" style="color: red;">
                   <client-only>
-                    <Countdown deadline="January 22, 2022 23:39:00"></Countdown>
+                    <Countdown deadline="January 22, 2022 22:41:00"></Countdown>
                   </client-only>
                 </div>
               </div>
@@ -25,32 +25,46 @@
           </div>
           <div id="latest-case-container">
             <span class="dboard-right-titles" style="background-image: linear-gradient(to bottom right, #1e3b70, #29539b);"> Latest Case </span>
-            <div class="dboard-right-content" style="border-left-color: #346083;">
-              <span style="padding-top: 5px; font-weight: 900"> Measles, <span :class="caseStatusClass(status)"> {{ status }} </span> </span>
-              <span> Pasay City, BARANGAY 171 </span>
-            </div>
+            <a :href="'/allCases'">
+              <div class="dboard-right-content" style="border-left-color: #346083;">
+                <span style="padding-top: 5px; font-weight: 900"> Measles, <span :class="caseStatusClass(status)"> {{ status }} </span> </span>
+                <span> Pasay City, BARANGAY 171 </span>
+              </div>
+            </a>
           </div>
           <div id="tracker-container">
             <span class="dboard-right-titles" style="background-image: linear-gradient(to bottom right, #008d41, #74d680);"> Reporting Status Week {{ weekNo }} </span>
-            <div class="dboard-right-content" style="border-left-color: #008d41;">
-              <p> City </p>
-              <p> Caloocan </p>
-              <p> Las Piñas </p>
-              <p> Makati </p>
-              <p> Malabon </p>
-              <p> Mandaluyong </p>
-              <p> Manila </p>
-              <p> Marikina </p>
-              <p> Muntinlupa </p>
-              <p> Navotas </p>
-              <p> Parañaque </p>
-              <p> Pasay </p>
-              <p> Pasig </p>
-              <p> Quezon City </p>
-              <p> San Juan </p>
-              <p> Taguig </p>
-              <p> Valenzuela </p>
-            </div>
+            <a :href="'/allCases'">
+              <div class="dboard-right-content" style="border-left-color: #008d41; padding-left: 0px;">
+                <div id="tracker-headers">
+                <span style="width: 33.33%;"> City </span>
+                <span style="width: 20%;"> CIF </span>
+                <span style="width: 40%;"> CRF </span>
+                </div>
+
+                <div id="tracker-content">
+                  <ul v-for="(value, name, i) in reportStatus" :key="i">
+                    <li>
+                      <div id="tracker-content-row">
+                      <div style="width: 33.33%;">
+                        {{ name }}
+                      </div>
+                      <div v-if="reportStatus[name][0] == 1" style="width: 20%;">
+                        <div class="cifYES"> </div>
+                      </div>
+                      <div v-if="reportStatus[name][0] == 0" style="width: 20%;">
+                        <div class="cifNO"> </div>
+                      </div>
+                      <div class="crfBar">
+                        <div :id="name" class="crfProgress">
+                        </div>
+                      </div>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </a>
           </div>
         </div>
       </div>
@@ -69,7 +83,26 @@ export default {
   data() {
     return {
       status: 'Suspected',
-      weekNo: '3'
+      weekNo: '3',
+      reportStatus: {
+        'Caloocan': [1, 4],
+        'Las Piñas': [0, 2],
+        'Makati': [1, 5],
+        'Malabon': [1, 2],
+        'Mandaluyong': [0, 3],
+        'Manila': [0, 1],
+        'Marikina': [0, 3],
+        'Muntinlupa': [0, 5],
+        'Navotas': [1, 0],
+        'Parañaque': [0, 2],
+        'Pasay': [1, 3],
+        'Pasig': [1, 2],
+        'Quezon City': [0, 1],
+        'San Juan': [0, 5],
+        'Taguig': [0, 0],
+        'Valenzuela': [1, 2],
+      },
+      cities: ['Caloocan', 'Las Piñas', 'Makati', 'Malabon', 'Mandaluyong', 'Manila', 'Marikina', 'Muntinlupa', 'Navotas', 'Parañaque', 'Pasay', 'Pasig', 'Quezon City', 'San Juan', 'Taguig', 'Valenzuela']
     }
   },
   head() {
@@ -79,6 +112,7 @@ export default {
   },
   mounted() {
     setInterval(this.getToday, 1000);
+    this.moveProgress();
     const permission = pbi.models.Permissions.Read
     const config = {
       
@@ -100,8 +134,7 @@ export default {
     dashboard.on("error", function () {
       this.dashboard.off("error");
    });
-  }
-  ,
+  },
   methods: {
     caseStatusClass(c) {
       if (c.toString().includes('Suspect')) return 'caseStatus suspectedCase';
@@ -110,6 +143,14 @@ export default {
       else if (c.toString().includes('Confirmed')) return 'caseStatus confirmedCase';
       else if (c.toString().includes('Compatible')) return 'caseStatus confirmedCase';
       else if (c.toString().includes('Discarded')) return 'caseStatus discardedCase';
+    },
+    moveProgress() {
+      for (let i = 0; i < this.cities.length; i++) {
+        const bar = document.getElementById(this.cities[i]);
+        bar.style.width = ((this.reportStatus[this.cities[i]][1]/5)*100) + "%";
+      }
+
+      
     }
   }
 }
@@ -250,4 +291,52 @@ body {
   background: gray;
 }
 
+#tracker-headers {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  background-image: linear-gradient(to bottom right, #bbdbbe, #deebdd);
+  padding-left: 5px;
+  /* padding-right: 80px; */
+  font-weight: 900;
+}
+
+#tracker-content {
+  padding-left: 5px;
+}
+
+#tracker-content-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.cifYES {
+  height: 10px;
+  width: 10px;
+  background-color: #0dad58;
+  border-radius: 50%;
+  margin-top: 5px;
+}
+
+.cifNO {
+  height: 10px;
+  width: 10px;
+  background-color: #bbb;
+  border-radius: 50%;
+  margin-top: 5px;
+}
+
+.crfBar {
+  background-color: #bbb;
+  width: 40%; 
+  margin-top: 5px; 
+  height: 10px;
+}
+
+.crfProgress {
+  background-color: #0dad58;
+  width: 20%;
+  height: 10px;
+}
 </style>
