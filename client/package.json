@@ -22,6 +22,7 @@
     "material-icons": "^1.10.4",
     "nuxt": "^2.15.7",
     "nuxt-tailvue": "^1.0.95",
+    "powerbi-client": "^2.19.1",
     "vue-data-tables": "^3.4.5",
     "vue-html2pdf": "^1.8.0",
     "vuejs-countdown": "^0.2.1",
