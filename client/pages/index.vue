@@ -36,42 +36,35 @@
 
           <!-- Report Status for FHSIS -->
           <!-- for FHSIS -->
-          <!-- <div v-if="$auth.user.userType === 'fhsisStaff' || $auth.user.userType === 'techStaff' || 
+          <div v-if="$auth.user.userType === 'fhsisStaff' || $auth.user.userType === 'techStaff' || 
                 $auth.user.userType === 'lhsdChief' || $auth.user.userType === 'aehmdChief' || $auth.user.userType === 'resuHead' || 
                 $auth.user.userType === 'chdDirector' || $auth.user.userType === 'idpcStaff' || $auth.user.userType === 'eohStaff' || $auth.user.userType === 'hemStaff'" id="tracker-container">
-            <span class="dboard-right-titles" style="background-image: linear-gradient(to bottom right, #008d41, #74d680);"> Reporting Status </span>
+            <span class="dboard-right-titles" style="background-image: linear-gradient(to bottom right, #008d41, #74d680);"> Accomplishment Reporting Status </span>
             <a :href="'/allCases'">
               <div class="dboard-right-content" style="border-left-color: #008d41; padding-left: 0px;">
                 <div id="tracker-headers">
-                  <span style="width: 33.33%;"> City </span>
-                  <span style="width: 20%;"> TCL </span>
-                  <span style="width: 40%;"> PAF </span>
+                  <span style="width: 30%;"> City </span>
+                  <span style="width: 70%;"> Accomplishment Forms </span>
                 </div>
 
                 <div id="tracker-content">
-                  <ul v-for="(value, name, i) in reportStatus" :key="i">
+                  <ul v-for="(value, name, i) in progStatus" :key="i">
                     <li>
                       <div id="tracker-content-row">
-                      <div style="width: 33.33%;">
-                        {{ name }}
-                      </div>
-                      <div v-if="reportStatus[name][0] == 1" style="width: 20%;">
-                        <div class="cifYES"> </div>
-                      </div>
-                      <div v-if="reportStatus[name][0] == 0" style="width: 20%;">
-                        <div class="cifNO"> </div>
-                      </div>
-                      <div class="crfBar">
-                        <div :id="name" class="crfProgress">
+                        <div style="width: 30%;">
+                          {{ name }}
                         </div>
-                      </div>
+                        <div class="crfBar" style="width: 70%">
+                          <div :id="name" class="crfProgress">
+                          </div>
+                        </div>
                       </div>
                     </li>
                   </ul>
                 </div>
               </div>
             </a>
-          </div> -->
+          </div>
 
           <!-- Latest Health Event -->
           <div id="latest-event-container">
@@ -122,7 +115,7 @@
                       <div v-if="reportStatus[name][0] == 0" style="width: 20%;">
                         <div class="cifNO"> </div>
                       </div>
-                      <div class="crfBar">
+                      <div class="crfBar" style="width: 40%;">
                         <div :id="name" class="crfProgress">
                         </div>
                       </div>
@@ -257,6 +250,25 @@ export default {
         'Leptospirosis': [2, 2],
         'Chikungunya': [1, 1],
         'Typhoid': [2, 1]
+      },
+      progStatus: {
+        // out of 12 TCLs, and 12 PAFs so total 24 per BHS
+        'Caloocan': 6,
+        'Las Piñas': 8,
+        'Makati': 7,
+        'Malabon': 2,
+        'Mandaluyong': 8,
+        'Manila': 4,
+        'Marikina': 7,
+        'Muntinlupa': 2,
+        'Navotas': 24,
+        'Parañaque': 8,
+        'Pasay': 9,
+        'Pasig': 4,
+        'Quezon City': 2,
+        'San Juan': 5,
+        'Taguig': 7,
+        'Valenzuela': 5
       }
     }
   },
@@ -267,7 +279,8 @@ export default {
   },
   mounted() {
     setInterval(this.getToday, 1000);
-    // this.moveProgress();
+    this.moveProgress();
+    this.moveTCLProgress();
   },
   methods: {
     caseStatusClass(c) {
@@ -287,6 +300,13 @@ export default {
         const bar = document.getElementById(this.cities[i]);
         // computation for % = total no of CRFs submitted in the city / (5 per DRU * number of DRUs in the city) * 100)
         bar.style.width = ((this.reportStatus[this.cities[i]][1]/5)*100) + "%";
+      }
+    },
+    moveTCLProgress() {
+      for (let i = 0; i < this.cities.length; i++) {
+        const bar = document.getElementById(this.cities[i]);
+        // computation for % = total no of CRFs submitted in the city / (24 per BHS * number of BHSs in the city) * 100)
+        bar.style.width = ((this.progStatus[this.cities[i]]/24)*100) + "%";
       }
     }
   }
@@ -389,7 +409,7 @@ body {
   width: 350px;
   display: flex;
   flex-direction: column;
-  margin-top: 5px;
+  margin-top: 0px;
   padding: 5px 5px 5px 5px;
 }
 
@@ -476,7 +496,6 @@ body {
 
 .crfBar {
   background-color: #bbb;
-  width: 40%; 
   margin-top: 5px; 
   height: 10px;
 }
