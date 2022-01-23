@@ -145,8 +145,8 @@ export default {
     this.newNotifs = count.newNotifCount;
   },
   mounted(){
-    window.clearInterval(window.interval);
-    this.checkOutbreak();
+    // window.clearInterval(window.interval);
+    // this.checkOutbreak();
   },
   methods: {
     responsive() {
