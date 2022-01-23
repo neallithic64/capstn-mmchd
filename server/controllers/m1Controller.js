@@ -771,13 +771,52 @@ const indexFunctions = {
 	},
 	
 	getAllOutbreaks: async function(req, res) {
+		let outbreaks = [], tempOutbreak = {};
 		try {
-			let outbreaks = await db.exec(`SELECT o.*, d.diseaseName, COUNT(c.caseID) + IFNULL(d.epiThreshold, 0) AS numCases
+			let caseCount = await db.exec(`SELECT o.*, d.diseaseName, COUNT(c.caseID) + IFNULL(d.epiThreshold, 0) AS numCases
 					FROM mmchddb.OUTBREAKS o
 					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = o.diseaseID
 					LEFT JOIN mmchddb.CASES c ON o.diseaseID = c.diseaseID AND c.reportDate > o.startDate
 					GROUP BY o.outbreakID
 					ORDER BY (CASE WHEN o.type = 'Ongoing' THEN '1' ELSE '2' END) ASC, o.startDate DESC;`);
+			
+			let deathCount = await db.exec(`SELECT o.outbreakID, COUNT(c.caseID) AS numDeaths
+					FROM mmchddb.OUTBREAKS o
+					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = o.diseaseID
+					LEFT JOIN mmchddb.CASES c ON o.diseaseID = c.diseaseID AND c.reportDate > o.startDate
+					LEFT JOIN mmchddb.CASE_DATA cd ON c.caseID = cd.caseID AND cd.fieldName = "outcome" AND cd.value = "Dead"
+					GROUP BY o.outbreakID
+					ORDER BY (CASE WHEN o.type = 'Ongoing' THEN '1' ELSE '2' END) ASC, o.startDate DESC;`);
+			
+			let growth = await db.exec(`SELECT o.outbreakID,
+					COUNT(CASE WHEN c.reportDate > o.startDate THEN 1 ELSE 0 END) AS growthRate
+					FROM mmchddb.OUTBREAKS o
+					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = o.diseaseID
+					LEFT JOIN mmchddb.CASES c ON o.diseaseID = c.diseaseID
+					GROUP BY o.outbreakID
+					ORDER BY (CASE WHEN o.type = 'Ongoing' THEN '1' ELSE '2' END) ASC, o.startDate DESC;`);
+			
+			/* attack rate: percentage of an at-risk population that contracts a disease
+			 */
+			let attack = await db.exec(`SELECT o.outbreakID,
+					COUNT(CASE WHEN c.caseLevel LIKE '%Confirm%' THEN 1 ELSE 0 END) /
+					COUNT(CASE WHEN c.caseLevel LIKE '%Suspect%' THEN 1 ELSE 0 END) AS attackRate
+					FROM mmchddb.OUTBREAKS o
+					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = o.diseaseID
+					LEFT JOIN mmchddb.CASES c ON o.diseaseID = c.diseaseID AND c.reportDate > o.startDate
+					GROUP BY o.outbreakID
+					ORDER BY (CASE WHEN o.type = 'Ongoing' THEN '1' ELSE '2' END) ASC, o.startDate DESC;`);
+			
+			/* merging everything, ASSUME that same number of rows in all four arrays.
+			 * admittedly hacky solution. consider: https://stackoverflow.com/a/64394834
+			 */
+			for (let i = 0; i < caseCount.length; i++) {
+				tempOutbreak = caseCount[i];
+				tempOutbreak.numDeaths = deathCount[i].numDeaths;
+				tempOutbreak.growthRate = growth[i].growthRate;
+				tempOutbreak.attackRate = attack[i].attackRate;
+				outbreaks.push(tempOutbreak);
+			}
 			console.log(outbreaks);
 			res.status(200).send(outbreaks);
 		} catch (e) {
