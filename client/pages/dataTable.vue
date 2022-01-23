@@ -179,7 +179,7 @@
       </thead>
       <tbody>
         <template v-if="dataSets.length > 0">
-          <tr v-for="(data, dataIndex) in dataSets" v-show="dataIndex >= showstart && dataIndex <= showend" :key="dataIndex" :class="obStatusRowClass(data['outbreakStatus'], data['reportDate'])" >
+          <tr v-for="(data, dataIndex) in dataSets" v-show="dataIndex >= showstart && dataIndex <= showend" :key="dataIndex" :class="obStatusRowClass(data['outbreakStatus'], data['reportDate'], data['dateReported'])" >
             <td v-for="(column, columnIndex) in options.columns" :key="columnIndex" style="text-align: center">
               <span v-if="column.type === 'component'">
                 <component :is="column.name" :row="data"></component>
@@ -416,6 +416,7 @@ export default {
         else if (c.toString().includes('Confirmed')) return 'caseStatus confirmedCase';
         else if (c.toString().includes('Compatible')) return 'caseStatus confirmedCase';
         else if (c.toString().includes('Discarded')) return 'caseStatus discardedCase';
+        else if (c.toString().includes('forVerification')) return 'caseStatus discardedCase';
         else if (c.toString().includes('Ongoing')) return 'caseStatus ongoingOutbreak';
         else if (c.toString().includes('Controlled')) return 'caseStatus suspectedCase';
         else if (c.toString().includes('Closed')) return 'caseStatus lowRisk';
@@ -428,7 +429,7 @@ export default {
         return 'none';
       }
     },
-    obStatusRowClass(c, d) {
+    obStatusRowClass(c, d, e) {
       if (c) {
         if (c.toString().includes('Ongoing')) return 'ongoingOBRow';
         // else if (c.toString().includes('Controlled')) return 'caseStatus suspectedCase';
@@ -445,17 +446,17 @@ export default {
           return 'none';
         }
       }
+      if (e) {
+        let today = new Date();
+        const offset = today.getTimezoneOffset()
+        today = new Date(today.getTime() - (offset*60*1000))
+        today = today.toISOString().split('T')[0];
+        if (e) {
+          if (e.localeCompare(today) === 0) return 'newCaseRow';
+          return 'none';
+        }
+      }
     },
-    // caseRowClass(c) {
-    //   let today = new Date();
-    //   const offset = today.getTimezoneOffset()
-    //   today = new Date(today.getTime() - (offset*60*1000))
-    //   today = today.toISOString().split('T')[0];
-    //   if (c) {
-    //     if (c.localeCompare('2021-12-16') === 0) return 'newCaseRow';
-    //     return 'none';
-    //   }
-    // },
     getStartEnd() {
       this.showstart = this.pages[this.currentPage][1];
       this.showend = this.pages[this.currentPage][2];

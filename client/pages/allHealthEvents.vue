@@ -77,6 +77,14 @@ export default {
             expectFormat: 'DD MMM YYYY',
           },
           {
+            title: 'Date Reported',
+            key: 'dateReported',
+            type: 'text',
+            dateFormat: true,
+            currentFormat: 'YYYY-MM-DD',
+            expectFormat: 'DD MMM YYYY',
+          },
+          {
             title: 'City',
             key: 'city',
             type: 'text',
