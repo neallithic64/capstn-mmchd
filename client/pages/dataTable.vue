@@ -206,7 +206,7 @@
       </thead>
       <tbody>
         <template v-if="dataSets.length > 0">
-          <tr v-for="(data, dataIndex) in dataSets" v-show="dataIndex >= showstart && dataIndex <= showend" :key="dataIndex" :class="obStatusRowClass(data['outbreakStatus'])" >
+          <tr v-for="(data, dataIndex) in dataSets" v-show="dataIndex >= showstart && dataIndex <= showend" :key="dataIndex" :class="obStatusRowClass(data['outbreakStatus'], data['reportDate'], data['dateReported'])" >
             <td v-for="(column, columnIndex) in options.columns" :key="columnIndex" style="text-align: center">
               <span v-if="column.type === 'component'">
                 <component :is="column.name" :row="data"></component>
@@ -475,6 +475,7 @@ export default {
         
         else if (c.toString().includes('Compatible')) return 'caseStatus red';
         else if (c.toString().includes('Discarded')) return 'caseStatus gray';
+        else if (c.toString().includes('forVerification')) return 'caseStatus gray';
         
         else if (c.toString().includes('Ongoing')) return 'caseStatus red';
         else if (c.toString().includes('Controlled')) return 'caseStatus orange';
@@ -491,12 +492,32 @@ export default {
         return 'none';
       }
     },
-    obStatusRowClass(c) {
+    obStatusRowClass(c, d, e) {
       if (c) {
         if (c.toString().includes('Ongoing')) return 'ongoingOBRow';
         // else if (c.toString().includes('Controlled')) return 'caseStatus orange';
         // else if (c.toString().includes('Closed')) return 'caseStatus green';
         return 'none';
+      }
+      if (d) {
+        let today = new Date();
+        const offset = today.getTimezoneOffset()
+        today = new Date(today.getTime() - (offset*60*1000))
+        today = today.toISOString().split('T')[0];
+        if (d) {
+          if (d.localeCompare(today) === 0) return 'newCaseRow';
+          return 'none';
+        }
+      }
+      if (e) {
+        let today = new Date();
+        const offset = today.getTimezoneOffset()
+        today = new Date(today.getTime() - (offset*60*1000))
+        today = today.toISOString().split('T')[0];
+        if (e) {
+          if (e.localeCompare(today) === 0) return 'newCaseRow';
+          return 'none';
+        }
       }
     },
     getStartEnd() {
@@ -725,7 +746,13 @@ export default {
   background: gray;
 }
 .ongoingOBRow {
-  background: #ebb9b9;
+  background: #ffd2d2;
+}
+.discardedCase {
+  background: gray;
+}
+.newCaseRow {
+  background: #c6ebd6;
 }
 
 .filterButton {

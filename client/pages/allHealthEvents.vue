@@ -77,6 +77,14 @@ export default {
             expectFormat: 'DD MMM YYYY',
           },
           {
+            title: 'Date Reported',
+            key: 'dateReported',
+            type: 'text',
+            dateFormat: true,
+            currentFormat: 'YYYY-MM-DD',
+            expectFormat: 'DD MMM YYYY',
+          },
+          {
             title: 'City',
             key: 'city',
             type: 'text',
@@ -117,7 +125,7 @@ export default {
     }
   },
   async mounted() {
-    const DRUUserTypes = ['BHS', 'RHU', 'CHO', 'govtHosp', 'privHosp', 'clinic', 'privLab', 'airseaPort'];
+    const DRUUserTypes = ['BHS', 'RHU', 'CHO', 'govtHosp', 'privHosp', 'clinic', 'govtLab', 'privLab', 'airseaPort', 'fhsis'];
     const rows = (await axios.get('http://localhost:8080/api/getAllEvents')).data;
     
     if (DRUUserTypes.includes(this.$auth.user.userType)) {

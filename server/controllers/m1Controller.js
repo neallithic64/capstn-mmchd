@@ -39,8 +39,8 @@ function Disease(diseaseID, diseaseName, notifiable, caseThreshold) {
 }
 
 function Patient(patientID, epiID, lastName, firstName, midName, caddressID, paddressID, sex,
-					birthDate, ageNo, ageType, admitStatus, civilStatus, occupation, 
-					occuLoc, occuAddrID, guardianName, guardianContact, 
+					birthDate, ageNo, ageType, admitStatus, civilStatus, occupation,
+					occuLoc, occuAddrID, guardianName, guardianContact,
 					indigeneous, indGroup,
 					pregnant, pregMonths, HCPN, ILHZ ) {
 	this.patientID = patientID;
@@ -261,6 +261,133 @@ async function checkIfOutbreak(diseaseID){
 
 }
 
+async function getOutbreakData(outbreakID) {
+	let outbreaks, tempOutbreak = {},
+			caseCount, deathCount, growth, attack;
+	try {
+		if (!!outbreakID) {
+			caseCount = await db.exec(`SELECT o.*, d.diseaseName, a.city,
+					COUNT(c.caseID) + IFNULL(d.epiThreshold, 0) AS numCases
+					FROM mmchddb.OUTBREAKS o
+					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = o.diseaseID
+					LEFT JOIN mmchddb.CASES c ON c.diseaseID = o.diseaseID AND c.reportDate > o.startDate
+					LEFT JOIN mmchddb.PATIENTS p ON p.patientID = c.patientID
+					LEFT JOIN mmchddb.ADDRESSES a ON a.addressID = p.caddressID
+					WHERE o.outbreakID = '${outbreakID}'
+					GROUP BY a.city
+					ORDER BY (CASE WHEN o.type = 'Ongoing' THEN '1' ELSE '2' END) ASC, o.startDate DESC;`);
+			
+			deathCount = await db.exec(`SELECT o.outbreakID, a.city, COUNT(c.caseID) AS numDeaths
+					FROM mmchddb.OUTBREAKS o
+					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = o.diseaseID
+					LEFT JOIN mmchddb.CASES c ON o.diseaseID = c.diseaseID AND c.reportDate > o.startDate
+					LEFT JOIN mmchddb.CASE_DATA cd ON c.caseID = cd.caseID AND cd.fieldName = "outcome" AND cd.value = "Dead"
+					LEFT JOIN mmchddb.PATIENTS p ON p.patientID = c.patientID
+					LEFT JOIN mmchddb.ADDRESSES a ON a.addressID = p.caddressID
+					WHERE o.outbreakID = '${outbreakID}'
+					GROUP BY a.city
+					ORDER BY (CASE WHEN o.type = 'Ongoing' THEN '1' ELSE '2' END) ASC, o.startDate DESC;`);
+			
+			/* growth rate: i have no clue how this will work... */
+			growth = await db.exec(`SELECT o.outbreakID, a.city,
+					COUNT(CASE WHEN c.reportDate > o.startDate THEN 1 ELSE 0 END) AS growthRate
+					FROM mmchddb.OUTBREAKS o
+					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = o.diseaseID
+					LEFT JOIN mmchddb.CASES c ON o.diseaseID = c.diseaseID
+					LEFT JOIN mmchddb.PATIENTS p ON p.patientID = c.patientID
+					LEFT JOIN mmchddb.ADDRESSES a ON a.addressID = p.caddressID
+					WHERE o.outbreakID = '${outbreakID}'
+					GROUP BY a.city
+					ORDER BY (CASE WHEN o.type = 'Ongoing' THEN '1' ELSE '2' END) ASC, o.startDate DESC;`);
+			
+			/* attack rate: percentage of an at-risk population that contracts a disease
+			 */
+			attack = await db.exec(`SELECT o.outbreakID, a.city,
+					CONCAT(FORMAT(COUNT(CASE WHEN c.caseLevel LIKE '%Confirm%' THEN 1 ELSE 0 END) /
+					COUNT(CASE WHEN c.caseLevel LIKE '%Suspect%' THEN 1 ELSE 0 END) * 100, 2), '%') AS attackRate
+					FROM mmchddb.OUTBREAKS o
+					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = o.diseaseID
+					LEFT JOIN mmchddb.CASES c ON o.diseaseID = c.diseaseID AND c.reportDate > o.startDate
+					LEFT JOIN mmchddb.PATIENTS p ON p.patientID = c.patientID
+					LEFT JOIN mmchddb.ADDRESSES a ON a.addressID = p.caddressID
+					WHERE o.outbreakID = '${outbreakID}'
+					GROUP BY a.city
+					ORDER BY (CASE WHEN o.type = 'Ongoing' THEN '1' ELSE '2' END) ASC, o.startDate DESC;`);
+			
+			outbreaks = {
+				outbreak: caseCount[0],
+				caseCount: caseCount,
+				deathCount: deathCount,
+				growth: growth,
+				attack: attack
+			};
+			outbreaks.outbreak.endDate = outbreaks.outbreak.endDate ? outbreaks.outbreak.endDate : "N/A";
+			if (!!outbreaks.outbreak.responseTime) {
+				let seconds = Math.floor(outbreaks.outbreak.responseTime / 1000);
+				outbreaks.outbreak.responseTime = Math.floor(seconds / 3600) + "h ";
+				seconds %= 3600;
+				outbreaks.outbreak.responseTime += Math.floor(seconds * 60) + "min ";
+				seconds %= 60;
+				outbreaks.outbreak.responseTime += Math.floor(seconds * 60) + "s";
+				console.log("response time: " + outbreaks.outbreak.responseTime);
+			}
+			else outbreaks.outbreak.responseTime = "N/A";
+		} else {
+			caseCount = await db.exec(`SELECT o.*, d.diseaseName, COUNT(c.caseID) + IFNULL(d.epiThreshold, 0) AS numCases
+					FROM mmchddb.OUTBREAKS o
+					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = o.diseaseID
+					LEFT JOIN mmchddb.CASES c ON o.diseaseID = c.diseaseID AND c.reportDate > o.startDate
+					GROUP BY o.outbreakID
+					ORDER BY (CASE WHEN o.type = 'Ongoing' THEN '1' ELSE '2' END) ASC, o.startDate DESC;`);
+			
+			deathCount = await db.exec(`SELECT o.outbreakID, COUNT(c.caseID) AS numDeaths
+					FROM mmchddb.OUTBREAKS o
+					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = o.diseaseID
+					LEFT JOIN mmchddb.CASES c ON o.diseaseID = c.diseaseID AND c.reportDate > o.startDate
+					LEFT JOIN mmchddb.CASE_DATA cd ON c.caseID = cd.caseID AND cd.fieldName = "outcome" AND cd.value = "Dead"
+					GROUP BY o.outbreakID
+					ORDER BY (CASE WHEN o.type = 'Ongoing' THEN '1' ELSE '2' END) ASC, o.startDate DESC;`);
+			
+			/* growth rate: i have no clue how this will work... */
+			growth = await db.exec(`SELECT o.outbreakID,
+					COUNT(CASE WHEN c.reportDate > o.startDate THEN 1 ELSE 0 END) AS growthRate
+					FROM mmchddb.OUTBREAKS o
+					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = o.diseaseID
+					LEFT JOIN mmchddb.CASES c ON o.diseaseID = c.diseaseID
+					GROUP BY o.outbreakID
+					ORDER BY (CASE WHEN o.type = 'Ongoing' THEN '1' ELSE '2' END) ASC, o.startDate DESC;`);
+			
+			/* attack rate: percentage of an at-risk population that contracts a disease
+			 */
+			attack = await db.exec(`SELECT o.outbreakID,
+					CONCAT(FORMAT(COUNT(CASE WHEN c.caseLevel LIKE '%Confirm%' THEN 1 ELSE 0 END) /
+					COUNT(CASE WHEN c.caseLevel LIKE '%Suspect%' THEN 1 ELSE 0 END) * 100, 2), '%') AS attackRate
+					FROM mmchddb.OUTBREAKS o
+					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = o.diseaseID
+					LEFT JOIN mmchddb.CASES c ON o.diseaseID = c.diseaseID AND c.reportDate > o.startDate
+					GROUP BY o.outbreakID
+					ORDER BY (CASE WHEN o.type = 'Ongoing' THEN '1' ELSE '2' END) ASC, o.startDate DESC;`);
+			
+			outbreaks = [];
+			/* merging everything, ASSUME that same number of rows in all four arrays.
+			 * admittedly hacky solution. consider: https://stackoverflow.com/a/64394834
+			 */
+			for (let i = 0; i < caseCount.length; i++) {
+				tempOutbreak = caseCount[i];
+				tempOutbreak.numDeaths = deathCount[i].numDeaths;
+				tempOutbreak.growthRate = growth[i].growthRate;
+				tempOutbreak.attackRate = attack[i].attackRate;
+				outbreaks.push(tempOutbreak);
+			}
+		}
+		console.log(outbreaks);
+		return outbreaks;
+	} catch (e) {
+		console.log(e);
+		return "Server error";
+	}
+}
+
 const indexFunctions = {
 	/*
 	 * GET METHODS
@@ -273,7 +400,7 @@ const indexFunctions = {
 	},
 	
 	mkData: async function(req, res) {
-		let r = await db.exec("SELECT * FROM mmchddb.USER_SETTINGS;");
+		let r/* = await getOutbreakData("OU-0000000000000")*/;
 		if (r) res.status(200).send(r);
 		else res.status(500).send("problems");
 	},
@@ -430,13 +557,13 @@ const indexFunctions = {
 					"WHERE p.patientID = '" + rows[0].patientID + "';");
 			let riskFactorsData = await db.findRows("mmchddb.RISK_FACTORS", {caseID: req.query.caseID});
 			let caseData = await db.findRows("mmchddb.CASE_DATA", {caseID: req.query.caseID});
-			let caseAudit = await db.exec("SELECT a.dateModified AS 'reportDate', a.prevValue AS 'from', "+ 
+			let caseAudit = await db.exec("SELECT a.dateModified AS 'reportDate', a.prevValue AS 'from', "+
 			 		"CONCAT(u.firstName,' ', u.midName, ' ', u.lastName, ', ' , u.druName) AS 'reportedBy' " +
 					"FROM mmchddb.AUDIT_LOG a JOIN mmchddb.USERS u ON a.modifiedBy = u.userID " +
 					"WHERE a.editedID = '" + req.query.caseID + "' " +
 					"ORDER BY a.dateModified;");
 			let DRUData = await db.exec("SELECT u.druName, userType AS 'druType', a.city AS 'druCity', CONCAT_WS(', ',a.houseStreet, a.brgy, a.city) AS 'druAddress' " +
-					"FROM mmchddb.USERS u INNER JOIN mmchddb.ADDRESSES a ON u.addressID = a.addressID " + 
+					"FROM mmchddb.USERS u INNER JOIN mmchddb.ADDRESSES a ON u.addressID = a.addressID " +
 					"WHERE u.userID='" + rows[0].reportedBy + "';");
 
 			// console.log(patientData);
@@ -466,7 +593,7 @@ const indexFunctions = {
 			
 				caseAudit[i] = {
 					reportDate: dateToString(rows[0].reportDate),
-					reportedBy: reporterData[0].firstName + ' ' + reporterData[0].midName + ' '+ reporterData[0].lastName + 
+					reportedBy: reporterData[0].firstName + ' ' + reporterData[0].midName + ' '+ reporterData[0].lastName +
 								', ' + reporterData[0].druName,
 					from: '',
 					to: caseAudit[i-1].from
@@ -476,7 +603,7 @@ const indexFunctions = {
 			} else{
 				caseAudit[i] = {
 					reportDate: dateToString(rows[0].reportDate),
-					reportedBy: reporterData[0].firstName + ' ' + reporterData[0].midName + ' '+ reporterData[0].lastName + 
+					reportedBy: reporterData[0].firstName + ' ' + reporterData[0].midName + ' '+ reporterData[0].lastName +
 								', ' + reporterData[0].druName,
 					from: '',
 					to: rows[0].caseLevel
@@ -519,10 +646,10 @@ const indexFunctions = {
 			let rows = await db.exec("SELECT 	c.caseID, c.reportDate, c.caseLevel, d.diseaseName AS 'disease', a.city AS 'city', " +
 					"u.druName AS 'reportedBy', IFNULL(MAX(al.dateModified), c.reportDate) AS 'updatedDate', " +
 					"c.reportedBy AS 'reportedByID', IF(ISNULL(c.CRFID), 'CIF', 'CRF') AS 'type' " +
-					"FROM mmchddb.CASES c 	INNER JOIN mmchddb.DISEASES d ON c.diseaseID = d.diseaseID " + 
-					"INNER JOIN mmchddb.USERS u ON c.reportedBy = u.userID " + 
+					"FROM mmchddb.CASES c 	INNER JOIN mmchddb.DISEASES d ON c.diseaseID = d.diseaseID " +
+					"INNER JOIN mmchddb.USERS u ON c.reportedBy = u.userID " +
 					"INNER JOIN mmchddb.ADDRESSES a ON u.addressID = a.addressID " +
-					"LEFT JOIN mmchddb.AUDIT_LOG al ON c.caseID = al.editedID " + 
+					"LEFT JOIN mmchddb.AUDIT_LOG al ON c.caseID = al.editedID " +
 					"WHERE c.patientID = '" + req.query.patientID + "' " +
 					"GROUP BY c.caseID ORDER BY IFNULL(MAX(al.dateModified), c.reportDate) desc;");
 			let patientData = await db.exec("SELECT p.*, "
@@ -530,11 +657,12 @@ const indexFunctions = {
 					+ "currCity, a2.houseStreet AS permHouseStreet, a2.brgy AS permBrgy, "
 					+ "a2.city AS permCity FROM mmchddb.PATIENTS p INNER JOIN "
 					+ "mmchddb.ADDRESSES a1 ON p.caddressID = a1.addressID "
-					+ "INNER JOIN mmchddb.ADDRESSES a2 ON p.paddressID = a2.addressID "+
+					+ "INNER JOIN mmchddb.ADDRESSES a2 ON p.paddressID = a2.addressID " +
 					"WHERE p.patientID = '" + req.query.patientID + "';");
 			let riskFactorsData = await db.findRows("mmchddb.RISK_FACTORS", {caseID: rows[rows.length - 1].caseID});
-			let DRUData = await db.exec("SELECT u.druName, userType AS 'druType', a.city AS 'druCity', CONCAT_WS(', ',a.houseStreet, a.brgy, a.city) AS 'druAddress' " +
-					"FROM mmchddb.USERS u INNER JOIN mmchddb.ADDRESSES a ON u.addressID = a.addressID " + 
+			let DRUData = await db.exec("SELECT u.druName, userType AS 'druType', a.city AS 'druCity', " +
+					"CONCAT_WS(', ',a.houseStreet, a.brgy, a.city) AS 'druAddress' " +
+					"FROM mmchddb.USERS u INNER JOIN mmchddb.ADDRESSES a ON u.addressID = a.addressID " +
 					"WHERE u.userID='" + rows[0].reportedByID + "';");
 
 			let data = {
@@ -568,18 +696,19 @@ const indexFunctions = {
 					+ "currCity, a2.houseStreet AS permHouseStreet, a2.brgy AS permBrgy, "
 					+ "a2.city AS permCity FROM mmchddb.PATIENTS p INNER JOIN "
 					+ "mmchddb.ADDRESSES a1 ON p.caddressID = a1.addressID "
-					+ "INNER JOIN mmchddb.ADDRESSES a2 ON p.paddressID = a2.addressID "+
+					+ "INNER JOIN mmchddb.ADDRESSES a2 ON p.paddressID = a2.addressID " +
 					"WHERE p.patientID = '" + rows[0].patientID + "';");
 			let riskFactorsData = await db.findRows("mmchddb.RISK_FACTORS", {caseID: req.query.caseID});
 			let caseData = await db.findRows("mmchddb.CASE_DATA", {caseID: req.query.caseID});
 			let crfData = await db.findRows("mmchddb.CRFS", {CRFID: rows[0].CRFID});
-			let caseAudit = await db.exec("SELECT a.dateModified AS 'reportDate', a.prevValue AS 'from', "+ 
+			let caseAudit = await db.exec("SELECT a.dateModified AS 'reportDate', a.prevValue AS 'from', " +
 			 		"CONCAT(u.firstName,' ', u.midName, ' ', u.lastName, ', ' , u.druName) AS 'reportedBy' " +
 					"FROM mmchddb.AUDIT_LOG a JOIN mmchddb.USERS u ON a.modifiedBy = u.userID " +
 					"WHERE a.editedID = '" + req.query.caseID + "' " +
 					"ORDER BY a.dateModified;");
-			let DRUData = await db.exec("SELECT u.druName, userType AS 'druType', a.city AS 'druCity', CONCAT_WS(', ',a.houseStreet, a.brgy, a.city) AS 'druAddress' " +
-					"FROM mmchddb.USERS u INNER JOIN mmchddb.ADDRESSES a ON u.addressID = a.addressID " + 
+			let DRUData = await db.exec("SELECT u.druName, userType AS 'druType', a.city AS 'druCity', " +
+					"CONCAT_WS(', ',a.houseStreet, a.brgy, a.city) AS 'druAddress' " +
+					"FROM mmchddb.USERS u INNER JOIN mmchddb.ADDRESSES a ON u.addressID = a.addressID " +
 					"WHERE u.userID='" + rows[0].reportedBy + "';");
 
 			let caseDataObj = {};
@@ -608,7 +737,7 @@ const indexFunctions = {
 			
 				caseAudit[i] = {
 					reportDate: dateToString(rows[0].reportDate),
-					reportedBy: reporterData[0].firstName + ' ' + reporterData[0].midName + ' '+ reporterData[0].lastName + 
+					reportedBy: reporterData[0].firstName + ' ' + reporterData[0].midName + ' '+ reporterData[0].lastName +
 								', ' + reporterData[0].druName,
 					from: '',
 					to: caseAudit[i-1].from
@@ -617,7 +746,7 @@ const indexFunctions = {
 			} else{
 				caseAudit[i] = {
 					reportDate: dateToString(rows[0].reportDate),
-					reportedBy: reporterData[0].firstName + ' ' + reporterData[0].midName + ' '+ reporterData[0].lastName + 
+					reportedBy: reporterData[0].firstName + ' ' + reporterData[0].midName + ' '+ reporterData[0].lastName +
 								', ' + reporterData[0].druName,
 					from: '',
 					to: rows[0].caseLevel
@@ -772,13 +901,7 @@ const indexFunctions = {
 	
 	getAllOutbreaks: async function(req, res) {
 		try {
-			let outbreaks = await db.exec(`SELECT o.*, d.diseaseName, COUNT(c.caseID) + IFNULL(d.epiThreshold, 0) AS numCases
-					FROM mmchddb.OUTBREAKS o
-					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = o.diseaseID
-					LEFT JOIN mmchddb.CASES c ON o.diseaseID = c.diseaseID AND c.reportDate > o.startDate
-					GROUP BY o.outbreakID
-					ORDER BY (CASE WHEN o.type = 'Ongoing' THEN '1' ELSE '2' END) ASC, o.startDate DESC;`);
-			console.log(outbreaks);
+			let outbreaks = await getOutbreakData();
 			res.status(200).send(outbreaks);
 		} catch (e) {
 			console.log(e);
@@ -788,11 +911,8 @@ const indexFunctions = {
 	
 	getOutbreak: async function(req, res) {
 		try {
-			let outbreaks = await db.exec(`SELECT o.*, d.diseaseName
-					FROM mmchddb.OUTBREAKS o
-					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = o.diseaseID;`);
-			console.log(outbreaks);
-			res.status(200).send(outbreaks);
+			let outbreak = await getOutbreakData(req.query.outbreakID);
+			res.status(200).send(outbreak);
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
@@ -806,6 +926,7 @@ const indexFunctions = {
 			console.log(match);
 			match.forEach(function(element){
 				element.dateCaptured = dateToString(element.dateCaptured);
+				element.dateReported = dateToString(element.dateReported);
 			});
 			res.status(200).send(match);
 		} catch (e) {
@@ -816,13 +937,13 @@ const indexFunctions = {
 
 	getEvent: async function(req, res) {
 		try {
-			let match = await db.exec("SELECT e.*, a.city AS 'locCity', a.houseStreet AS 'locHouseStreet', a.brgy AS 'locBrgy' " + 
-									"FROM mmchddb.EVENTS e " +  
+			let match = await db.exec("SELECT e.*, a.city AS 'locCity', a.houseStreet AS 'locHouseStreet', a.brgy AS 'locBrgy' " +
+									"FROM mmchddb.EVENTS e " +
 									"JOIN mmchddb.ADDRESSES a ON a.addressID = e.addressID " +
 									"WHERE e.eventID = '" + req.query.eventID + "';");						
 			if (match.length > 0){
 				let reporterData = await db.findRows("mmchddb.USERS", {userID: match[0].userID});
-				let eventAudit = await db.exec("SELECT a.dateModified AS 'reportDate', a.prevValue AS 'from', "+ 
+				let eventAudit = await db.exec("SELECT a.dateModified AS 'reportDate', a.prevValue AS 'from', " +
 										"CONCAT(u.firstName,' ', u.midName, ' ', u.lastName, ', ' , u.druName) AS 'reportedBy' " +
 										"FROM mmchddb.AUDIT_LOG a JOIN mmchddb.USERS u ON a.modifiedBy = u.userID " +
 										"WHERE a.editedID = '" + req.query.eventID + "' " +
@@ -840,12 +961,10 @@ const indexFunctions = {
 							eventAudit[i].to = eventAudit[i+1].from;
 						eventAudit[i].reportDate = dateToString(eventAudit[i].reportDate);
 					}
-	
 					eventAudit = eventAudit.reverse();
-				
 					eventAudit[i] = {
 						reportDate: dateToString(match[0].dateCaptured),
-						reportedBy: reporterData[0].firstName + ' ' + reporterData[0].midName + ' '+ reporterData[0].lastName + 
+						reportedBy: reporterData[0].firstName + ' ' + reporterData[0].midName + ' '+ reporterData[0].lastName +
 									', ' + reporterData[0].druName,
 						from: '',
 						to: eventAudit[i-1].from
@@ -854,7 +973,7 @@ const indexFunctions = {
 				} else{
 					eventAudit[i] = {
 						reportDate: dateToString(match[0].dateCaptured),
-						reportedBy: reporterData[0].firstName + ' ' + reporterData[0].midName + ' '+ reporterData[0].lastName + 
+						reportedBy: reporterData[0].firstName + ' ' + reporterData[0].midName + ' '+ reporterData[0].lastName +
 									', ' + reporterData[0].druName,
 						from: '',
 						to: match[0].eventStatus
@@ -972,7 +1091,7 @@ const indexFunctions = {
 			console.log(e);
 			res.status(500).send("Server error");
 		}
-	}, 
+	},
 
 	postAddPatient: async function(req, res) {
 		let { formData } = req.body, result;
@@ -1033,7 +1152,7 @@ const indexFunctions = {
 		}
 	},
 
-	/**	RiskFactors 
+	/**	RiskFactors
 			- L : LifeStyle
 			- C : Current Health Condition
 			- H : Historical Health Data
@@ -1114,11 +1233,11 @@ const indexFunctions = {
 								if (result) {
 									let user = await db.findRows("mmchddb.USERS",{userID : formData.cases.reportedBy});
 									let disease = await db.findRows("mmchddb.DISEASES", {diseaseID : formData.cases.diseaseID});
-									result = await sendBulkNotifs(['pidsrStaff', 'fhsisStaff'],'caseNotif', 
+									result = await sendBulkNotifs(['pidsrStaff', 'fhsisStaff'],'caseNotif',
 										'NEW CASE: '+ user[0].druName + ' submitted a ' + disease[0].diseaseName + ' case', formData.cases.caseID);
 									
 									if (result)
-										res.status(200).send("Add case success"); 
+										res.status(200).send("Add case success");
 									else res.status(500).send("Send Notifs Failed");
 
 								} else {
@@ -1167,7 +1286,7 @@ const indexFunctions = {
 			}
 			if (result) {
 				let disease = await db.findRows("mmchddb.DISEASES",{"diseaseID" : diseaseID});
-				result = await sendBulkNotifs(DRUUserTypes, 'updateNotif', 'The case definitions of ' + 
+				result = await sendBulkNotifs(DRUUserTypes, 'updateNotif', 'The case definitions of ' +
 								disease[0].diseaseName + ' have been updated', null);
 				if(result)
 					res.status(200).send("Update disease Successful");
@@ -1373,7 +1492,7 @@ const indexFunctions = {
 		try {
 			let { CRFID, diseaseID, userID } = req.body;
 			/* MORBIDITY (monthly and quarterly, 62) (after cases are done)
-					FK: LGU/userID 
+					FK: LGU/userID
 					FK: diseaseID
 					Month/Quarter
 					Year
@@ -1479,12 +1598,29 @@ const indexFunctions = {
 		}
 	},
 	
+	postUpdateOutbreakStatus: async function(req, res) {
+		try {
+			let { outbreakID, newStatus } = req.body, updateObj = { outbreakStatus: newStatus.newStatus }
+					dateNow = new Date();
+			let outbreak = await db.findRows("mmchddb.OUTBREAKS", { outbreakID: outbreakID });
+			// response time updating
+			if (newStatus === "Ongoing with Initial Response" && outbreak.length > 0) {
+				updateObj.responseTime = dateNow - new Date(outbreak[0].startDate);
+			}
+			await db.updateRows("mmchddb.OUTBREAKS", { outbreakID: outbreakID }, updateObj);
+			res.status(200).send("Updated outbreak status.");
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error.");
+		}
+	},
+	
 	/*
 	 * CRON METHODS
 	 */
 	cronCRFDeadlineNotif : async function() {
 		try {
-			let result = await sendBulkNotifs(DRUUserTypes,'deadlineNotif', 
+			let result = await sendBulkNotifs(DRUUserTypes,'deadlineNotif',
 										'REMINDER: Please submit your Case Report Forms by Friday. If not submitted, forms will be automatically collected by Friday at 5:00PM.', null);
 			if(result) {
 				result = await sendBulkNotifs(['pidsrStaff', 'fhsisStaff'],'deadlineNotif', 'REMINDER: Please start reminding DRUs to submit their Case Report Forms', null);
@@ -1509,7 +1645,7 @@ const indexFunctions = {
 							"WHERE c.userID IN(SELECT u.userID from mmchddb.USERS u JOIN mmchddb.USER_SETTINGS us ON us.userID = u.userID "+
 							"WHERE us.pushDataAccept = 1) AND c.isPushed = 0;");
 			if(pushData) {
-				let result = await sendBulkNotifs(DRUUserTypes,'pushDataNotif', 
+				let result = await sendBulkNotifs(DRUUserTypes,'pushDataNotif',
 										'SUBMISSION UPDATE: Your Case Report Forms for Week ' + week + ' has been automatically pushed to MMCHD-RESU', null);
 				if (result) console.log("Push Data Success");
 				else console.log("Adding Notification to DRU Failed");

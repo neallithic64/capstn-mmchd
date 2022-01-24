@@ -53,6 +53,7 @@ router.post("/updatePatientDetails", m1Cont.postUpdatePatient);
 
 router.post("/updateEventStatus", m1Cont.postUpdateEventStatus);
 router.post("/updatePushData", m1Cont.postUpdatePushData);
+router.post("/updateOutbreakStatus", m1Cont.postUpdateOutbreakStatus);
 
 router.post("/editProgTargets", m4Cont.postEditProgTargets);
 
