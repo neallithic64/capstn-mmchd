@@ -11,7 +11,27 @@
           <div id="outbreak-container">
             <span class="dboard-right-titles" style="padding: 3px 3px 3px 5px; background-image: linear-gradient(to bottom right, #b02e0c, #eb4511);"> Ongoing Outbreak </span>
             <!-- v-if w/ ongoing outbreak show this -->
-            <a :href="'/viewOutbreak?outbreakID='">
+            <!-- if from CHD, view the outbreak page when clicked -->
+            <a v-if="$auth.user.userType === 'pidsrStaff' || $auth.user.userType === 'lhsdChief' || $auth.user.userType === 'aehmdChief' || $auth.user.userType === 'resuHead' || 
+                $auth.user.userType === 'chdDirector' || $auth.user.userType === 'idpcStaff' || $auth.user.userType === 'eohStaff' || $auth.user.userType === 'hemStaff'" 
+                :href="'/viewOutbreak?outbreakID='"> 
+              <div id="outbreak-content" class="dboard-right-content" style="border-left-color: #c70000;">
+                <div id="outbreak-text">
+                  <span style="padding-top: 5px; font-weight: 900"> {{ ongoingOutbreak.obDisease }} </span>
+                  <span> <span style="color: red; font-size: 16px; font-weight: 600"> {{ ongoingOutbreak.obActive }} </span> Active Cases </span>
+                </div>
+                <div v-if="$auth.user.userType === 'pidsrStaff'" id="outbreak-countdown" style="color: red;">
+                  <client-only>
+                    <Countdown deadline="January 22, 2022 22:41:00"></Countdown>
+                  </client-only>
+                </div>
+              </div>
+            </a>
+
+            <!-- if not from CHD, view the all outbreaks page when clicked -->
+            <a v-if="!($auth.user.userType === 'pidsrStaff' || $auth.user.userType === 'lhsdChief' || $auth.user.userType === 'aehmdChief' || $auth.user.userType === 'resuHead' || 
+                $auth.user.userType === 'chdDirector' || $auth.user.userType === 'idpcStaff' || $auth.user.userType === 'eohStaff' || $auth.user.userType === 'hemStaff')"
+                :href="'/allOutbreaks'">
               <div id="outbreak-content" class="dboard-right-content" style="border-left-color: #c70000;">
                 <div id="outbreak-text">
                   <span style="padding-top: 5px; font-weight: 900"> {{ ongoingOutbreak.obDisease }} </span>
@@ -34,7 +54,7 @@
           </div>
 
           <!-- Latest Accomplishment Report -->
-          <div v-if="$auth.user.userType === 'fhsisStaff' || $auth.user.userType === 'BHS'" id="latest-case-container">
+          <div v-if="$auth.user.userType === 'fhsisStaff'" id="latest-case-container">
             <div style="padding: 3px 5px 3px 5px; background-image: linear-gradient(to bottom right, #1e3b70, #29539b); display: flex; flex-direction: row; justify-content: space-between;">
               <span class="dboard-right-titles"> Latest Accomplishment Report </span>
               <a class="new-button new-button-case" href="/progAccomplish" > + Add </a>
@@ -175,7 +195,7 @@
               <div class="dboard-right-content" style="border-left-color: #008d41; padding-left: 0px;">
                 <div id="tracker-headers">
                   <span style="width: 30%;"> Disease </span>
-                  <span style="width: 28%;"> Submit Status </span>
+                  <span style="width: 34%;"> Submit Status </span>
                   <span style="width: 32%;"> Report Status </span>
                 </div>
 
@@ -188,17 +208,17 @@
                         </div>
 
                         <!-- Submit Status -->
-                        <div v-if="crfStatus[name][0] == 0" style="width: 28%;">
+                        <div v-if="crfStatus[name][0] == 0" style="width: 34%;">
                           <div style="display: flex; flex-direction: row;">
                             <div class="crfOngoing"> </div> <span style="margin-left: 5px;"> Ongoing </span>
                           </div>
                         </div>
-                        <div v-if="crfStatus[name][0] == 1" style="width: 28%;">
+                        <div v-if="crfStatus[name][0] == 1" style="width: 34%;">
                           <div style="display: flex; flex-direction: row;">
                             <div class="crfSubmitted"> </div> <span style="margin-left: 5px;"> Submitted </span>
                           </div>
                         </div>
-                        <div v-if="crfStatus[name][0] == 2" style="width: 28%;">
+                        <div v-if="crfStatus[name][0] == 2" style="width: 34%;">
                           <div style="display: flex; flex-direction: row;">
                             <div class="crfPushed"> </div> <span style="margin-left: 5px;"> Pushed </span>
                           </div>
@@ -370,6 +390,7 @@ body {
 #dashboard-container {
   display: flex;
   flex-direction: column;
+  
 }
 
 #dashboard-bottom {
@@ -397,18 +418,18 @@ body {
 }
 
 #dashboard-powerbi {
-  height: 100vh;
+  max-height: 87vh;
   background-color: gray;
-  width: 100%;
-  border-radius: 10px;
+  width: 70%;
   margin-left: 5px;
   margin-top: 5px;
+  overflow: auto;
 }
 
 #dashboard-powerbi-iframe {
-  height: 100vh;
+  height: 87vh;
   background-color: gray;
-  width: 100%;
+  width: 70%;
   border-radius: 10px;
   margin-left: 5px;
   margin-top: 5px;
@@ -417,29 +438,32 @@ body {
 #dashboard-right {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   margin-right: 5px;
   margin-left: 5px;
   /* margin-top: 5px; */
   font-weight: 500;
-  font-size: 13px;
+  font-size: 15px;
+  width: 30%;
+  height: 85vh
 }
 
 #latest-event-container {
-  width: 350px;
+  /* width: 350px; */
   display: flex;
   flex-direction: column;
   padding: 5px 5px 5px 5px;
 }
 
 #latest-case-container {
-  width: 350px;
+  /* width: 350px; */
   display: flex;
   flex-direction: column;
   padding: 5px 5px 5px 5px;
 }
 
 #outbreak-container {
-  width: 350px;
+  /* width: 350px; */
   display: flex;
   flex-direction: column;
   /* margin-top: 5px; */
@@ -462,11 +486,12 @@ body {
 }
 
 #tracker-container {
-  width: 350px;
+  /* width: 350px; */
   display: flex;
   flex-direction: column;
   margin-top: 0px;
   padding: 5px 5px 5px 5px;
+  
 }
 
 .dboard-right-titles {
@@ -541,6 +566,8 @@ body {
 
 #tracker-content {
   padding-left: 5px;
+  max-height: 180px;
+  overflow: auto;
 }
 
 #tracker-content-row {
