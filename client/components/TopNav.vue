@@ -60,11 +60,18 @@
         <nuxt-link to="/allHealthEvents"> View Health Events </nuxt-link>
       </div>
     </div>
-    <nuxt-link 
-      v-if="$auth.user.userType === 'pidsrStaff' || $auth.user.userType === 'fhsisStaff' || $auth.user.userType === 'techStaff'"
-      to="/analytics"> 
-      Reports and Analytics 
-    </nuxt-link>
+
+    <div v-if="$auth.user.userType === 'pidsrStaff' || $auth.user.userType === 'fhsisStaff' || $auth.user.userType === 'techStaff'"
+      class="dropdown">
+      <button class="dropbtn">
+        Reports and Analytics
+        <i class="fa fa-caret-down"></i>
+      </button>
+      <div class="dropdown-content">
+        <nuxt-link to="/analytics"> View Analytics </nuxt-link>
+        <nuxt-link to="/allReports"> All Reports </nuxt-link>
+      </div>
+    </div>
     <nuxt-link
       v-if="$auth.user.userType === 'lhsdChief' || $auth.user.userType === 'aehmdChief' || 
       $auth.user.userType === 'resuHead' || $auth.user.userType === 'chdDirector'"
