@@ -238,9 +238,12 @@
                   :href="'/view' + 'CRF' + data['disease'] + 'Case?caseID=' + data[column.key] ">
                   {{ data[column.key] }}
                 </a>
-                <a v-else-if="column.key === 'outbreakID'"
+                <a v-else-if="column.key === 'outbreakID' && $auth.user.userType === 'pidsrStaff'"
                   style="color: #346083; text-decoration-line: underline"
                   :href="'/view' + 'Outbreak?outbreakID=' + data[column.key] ">
+                  {{ data[column.key] }}
+                </a>
+                <a v-else-if="column.key === 'outbreakID' && !($auth.user.userType === 'pidsrStaff')">
                   {{ data[column.key] }}
                 </a>
                 <a v-else-if="column.key === 'caseID'"
