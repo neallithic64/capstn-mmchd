@@ -44,8 +44,8 @@
       </div>
       <div class="viewOB-details" style="align-text: left">
         <div class="CIFnumbers">
-          <p>Date Started: <b> {{ outbreak.dateStarted }} </b></p>
-          <p>Date Closed: <b> {{ outbreak.dateClosed }} </b></p>
+          <p>Date Started: <b> {{ outbreak.startDate }} </b></p>
+          <p>Date Closed: <b> {{ outbreak.endDate }} </b></p>
         </div>
       </div>
       <div v-show="!isPrint" class="OB-SummaryContainer">
@@ -446,13 +446,13 @@ export default {
       outbreak: {
         outbreakID: '123',
         disease: 'Measles',
-        dateStarted: '2021-12-31',
+        startDate: '2021-12-31',
         numCases: '200',
         numDeaths: '0',
         growthRate: '813%',
         attackRate: '1.07%',
         outbreakStatus: 'Ongoing',
-        dateClosed: 'N/A'
+        endDate: 'N/A'
       },
       formSection: {
         formNames: {
@@ -470,12 +470,7 @@ export default {
   },
   async fetch() {
     const data = (await axios.get('http://localhost:8080/api/getOutbreak?outbreakID=' + this.$route.query.outbreakID)).data;
-  //   this.formData.cases = data.cases;
-  //   this.DRUData = data.DRUData;
-  //   this.CRFData = data.crfData;
-  //   this.dateLastUpdated = data.dateLastUpdated;
-  //   this.caseHistory = data.caseHistory;
-  //   console.log(data);
+	this.outbreak = data.outbreak;
   }, 
   methods: {
     formListClass(index) {
@@ -496,27 +491,25 @@ export default {
     popup() {
       this.editStatus = !this.editStatus
     },
-    // async statusAction(change) {
-    //   if (change==='save') {
-    //     this.formData.caseData.finalClassification = this.newStatus;
-    //     this.formData.cases.caseLevel = this.newStatus;
-    //     const updateCase = await axios.post('http://localhost:8080/api/updateCaseStatus', {
-    //       caseId: this.formData.cases.caseID,
-    //       newStatus: this.newStatus
-    //     });
-    //     if (updateCase.status === 200) {
-    //       alert('CRF case status updated!');
-    //       location.reload();
-    //     } else {
-    //       // eslint-disable-next-line no-console
-    //       console.log(result);
-    //     }
-    //   }
-    //   if (change==='cancel') {
-    //     this.newStatus = this.formData.cases.caseLevel;
-    //   }
-    //   this.popup()
-    // },
+    async statusAction(change) {
+      if (change==='save') {
+        const updateCase = await axios.post('http://localhost:8080/api/updateOutbreakStatus', {
+          outbreakID: this.outbreak.outbreakID,
+          newStatus: this.auditLog
+        });
+        if (updateCase.status === 200) {
+          alert('Outbreak status updated!');
+          location.reload();
+        } else {
+          // eslint-disable-next-line no-console
+          console.log(result);
+        }
+      }
+      if (change==='cancel') {
+        this.newStatus = this.formData.cases.caseLevel;
+      }
+      this.popup()
+    },
     downloadPDF() {
       this.isPrint = !this.isPrint
 

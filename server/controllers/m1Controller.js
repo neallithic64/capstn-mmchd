@@ -261,6 +261,124 @@ async function checkIfOutbreak(diseaseID){
 
 }
 
+async function getOutbreakData(outbreakID) {
+	let outbreaks, tempOutbreak = {},
+			caseCount, deathCount, growth, attack;
+	try {
+		if (!!outbreakID) {
+			caseCount = await db.exec(`SELECT o.*, d.diseaseName, a.city,
+					COUNT(c.caseID) + IFNULL(d.epiThreshold, 0) AS numCases
+					FROM mmchddb.OUTBREAKS o
+					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = o.diseaseID
+					LEFT JOIN mmchddb.CASES c ON c.diseaseID = o.diseaseID AND c.reportDate > o.startDate
+					LEFT JOIN mmchddb.PATIENTS p ON p.patientID = c.patientID
+					LEFT JOIN mmchddb.ADDRESSES a ON a.addressID = p.caddressID
+					WHERE o.outbreakID = '${outbreakID}'
+					GROUP BY a.city
+					ORDER BY (CASE WHEN o.type = 'Ongoing' THEN '1' ELSE '2' END) ASC, o.startDate DESC;`);
+			
+			deathCount = await db.exec(`SELECT o.outbreakID, a.city, COUNT(c.caseID) AS numDeaths
+					FROM mmchddb.OUTBREAKS o
+					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = o.diseaseID
+					LEFT JOIN mmchddb.CASES c ON o.diseaseID = c.diseaseID AND c.reportDate > o.startDate
+					LEFT JOIN mmchddb.CASE_DATA cd ON c.caseID = cd.caseID AND cd.fieldName = "outcome" AND cd.value = "Dead"
+					LEFT JOIN mmchddb.PATIENTS p ON p.patientID = c.patientID
+					LEFT JOIN mmchddb.ADDRESSES a ON a.addressID = p.caddressID
+					WHERE o.outbreakID = '${outbreakID}'
+					GROUP BY a.city
+					ORDER BY (CASE WHEN o.type = 'Ongoing' THEN '1' ELSE '2' END) ASC, o.startDate DESC;`);
+			
+			/* growth rate: i have no clue how this will work... */
+			growth = await db.exec(`SELECT o.outbreakID, a.city,
+					COUNT(CASE WHEN c.reportDate > o.startDate THEN 1 ELSE 0 END) AS growthRate
+					FROM mmchddb.OUTBREAKS o
+					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = o.diseaseID
+					LEFT JOIN mmchddb.CASES c ON o.diseaseID = c.diseaseID
+					LEFT JOIN mmchddb.PATIENTS p ON p.patientID = c.patientID
+					LEFT JOIN mmchddb.ADDRESSES a ON a.addressID = p.caddressID
+					WHERE o.outbreakID = '${outbreakID}'
+					GROUP BY a.city
+					ORDER BY (CASE WHEN o.type = 'Ongoing' THEN '1' ELSE '2' END) ASC, o.startDate DESC;`);
+			
+			/* attack rate: percentage of an at-risk population that contracts a disease
+			 */
+			attack = await db.exec(`SELECT o.outbreakID, a.city,
+					CONCAT(FORMAT(COUNT(CASE WHEN c.caseLevel LIKE '%Confirm%' THEN 1 ELSE 0 END) /
+					COUNT(CASE WHEN c.caseLevel LIKE '%Suspect%' THEN 1 ELSE 0 END) * 100, 2), '%') AS attackRate
+					FROM mmchddb.OUTBREAKS o
+					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = o.diseaseID
+					LEFT JOIN mmchddb.CASES c ON o.diseaseID = c.diseaseID AND c.reportDate > o.startDate
+					LEFT JOIN mmchddb.PATIENTS p ON p.patientID = c.patientID
+					LEFT JOIN mmchddb.ADDRESSES a ON a.addressID = p.caddressID
+					WHERE o.outbreakID = '${outbreakID}'
+					GROUP BY a.city
+					ORDER BY (CASE WHEN o.type = 'Ongoing' THEN '1' ELSE '2' END) ASC, o.startDate DESC;`);
+			
+			outbreaks = {
+				outbreak: caseCount[0],
+				caseCount: caseCount,
+				deathCount: deathCount,
+				growth: growth,
+				attack: attack
+			};
+			outbreaks.outbreak.endDate = outbreaks.outbreak.endDate ? outbreaks.outbreak.endDate : "N/A";
+			outbreaks.outbreak.responseTime = outbreaks.outbreak.responseTime ? outbreaks.outbreak.responseTime : "N/A";
+		} else {
+			caseCount = await db.exec(`SELECT o.*, d.diseaseName, COUNT(c.caseID) + IFNULL(d.epiThreshold, 0) AS numCases
+					FROM mmchddb.OUTBREAKS o
+					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = o.diseaseID
+					LEFT JOIN mmchddb.CASES c ON o.diseaseID = c.diseaseID AND c.reportDate > o.startDate
+					GROUP BY o.outbreakID
+					ORDER BY (CASE WHEN o.type = 'Ongoing' THEN '1' ELSE '2' END) ASC, o.startDate DESC;`);
+			
+			deathCount = await db.exec(`SELECT o.outbreakID, COUNT(c.caseID) AS numDeaths
+					FROM mmchddb.OUTBREAKS o
+					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = o.diseaseID
+					LEFT JOIN mmchddb.CASES c ON o.diseaseID = c.diseaseID AND c.reportDate > o.startDate
+					LEFT JOIN mmchddb.CASE_DATA cd ON c.caseID = cd.caseID AND cd.fieldName = "outcome" AND cd.value = "Dead"
+					GROUP BY o.outbreakID
+					ORDER BY (CASE WHEN o.type = 'Ongoing' THEN '1' ELSE '2' END) ASC, o.startDate DESC;`);
+			
+			/* growth rate: i have no clue how this will work... */
+			growth = await db.exec(`SELECT o.outbreakID,
+					COUNT(CASE WHEN c.reportDate > o.startDate THEN 1 ELSE 0 END) AS growthRate
+					FROM mmchddb.OUTBREAKS o
+					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = o.diseaseID
+					LEFT JOIN mmchddb.CASES c ON o.diseaseID = c.diseaseID
+					GROUP BY o.outbreakID
+					ORDER BY (CASE WHEN o.type = 'Ongoing' THEN '1' ELSE '2' END) ASC, o.startDate DESC;`);
+			
+			/* attack rate: percentage of an at-risk population that contracts a disease
+			 */
+			attack = await db.exec(`SELECT o.outbreakID,
+					CONCAT(FORMAT(COUNT(CASE WHEN c.caseLevel LIKE '%Confirm%' THEN 1 ELSE 0 END) /
+					COUNT(CASE WHEN c.caseLevel LIKE '%Suspect%' THEN 1 ELSE 0 END) * 100, 2), '%') AS attackRate
+					FROM mmchddb.OUTBREAKS o
+					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = o.diseaseID
+					LEFT JOIN mmchddb.CASES c ON o.diseaseID = c.diseaseID AND c.reportDate > o.startDate
+					GROUP BY o.outbreakID
+					ORDER BY (CASE WHEN o.type = 'Ongoing' THEN '1' ELSE '2' END) ASC, o.startDate DESC;`);
+			
+			outbreaks = [];
+			/* merging everything, ASSUME that same number of rows in all four arrays.
+			 * admittedly hacky solution. consider: https://stackoverflow.com/a/64394834
+			 */
+			for (let i = 0; i < caseCount.length; i++) {
+				tempOutbreak = caseCount[i];
+				tempOutbreak.numDeaths = deathCount[i].numDeaths;
+				tempOutbreak.growthRate = growth[i].growthRate;
+				tempOutbreak.attackRate = attack[i].attackRate;
+				outbreaks.push(tempOutbreak);
+			}
+		}
+		console.log(outbreaks);
+		return outbreaks;
+	} catch (e) {
+		console.log(e);
+		return "Server error";
+	}
+}
+
 const indexFunctions = {
 	/*
 	 * GET METHODS
@@ -273,7 +391,7 @@ const indexFunctions = {
 	},
 	
 	mkData: async function(req, res) {
-		let r = await db.exec("SELECT * FROM mmchddb.USER_SETTINGS;");
+		let r/* = await getOutbreakData("OU-0000000000000")*/;
 		if (r) res.status(200).send(r);
 		else res.status(500).send("problems");
 	},
@@ -771,53 +889,8 @@ const indexFunctions = {
 	},
 	
 	getAllOutbreaks: async function(req, res) {
-		let outbreaks = [], tempOutbreak = {};
 		try {
-			let caseCount = await db.exec(`SELECT o.*, d.diseaseName, COUNT(c.caseID) + IFNULL(d.epiThreshold, 0) AS numCases
-					FROM mmchddb.OUTBREAKS o
-					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = o.diseaseID
-					LEFT JOIN mmchddb.CASES c ON o.diseaseID = c.diseaseID AND c.reportDate > o.startDate
-					GROUP BY o.outbreakID
-					ORDER BY (CASE WHEN o.type = 'Ongoing' THEN '1' ELSE '2' END) ASC, o.startDate DESC;`);
-			
-			let deathCount = await db.exec(`SELECT o.outbreakID, COUNT(c.caseID) AS numDeaths
-					FROM mmchddb.OUTBREAKS o
-					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = o.diseaseID
-					LEFT JOIN mmchddb.CASES c ON o.diseaseID = c.diseaseID AND c.reportDate > o.startDate
-					LEFT JOIN mmchddb.CASE_DATA cd ON c.caseID = cd.caseID AND cd.fieldName = "outcome" AND cd.value = "Dead"
-					GROUP BY o.outbreakID
-					ORDER BY (CASE WHEN o.type = 'Ongoing' THEN '1' ELSE '2' END) ASC, o.startDate DESC;`);
-			
-			let growth = await db.exec(`SELECT o.outbreakID,
-					COUNT(CASE WHEN c.reportDate > o.startDate THEN 1 ELSE 0 END) AS growthRate
-					FROM mmchddb.OUTBREAKS o
-					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = o.diseaseID
-					LEFT JOIN mmchddb.CASES c ON o.diseaseID = c.diseaseID
-					GROUP BY o.outbreakID
-					ORDER BY (CASE WHEN o.type = 'Ongoing' THEN '1' ELSE '2' END) ASC, o.startDate DESC;`);
-			
-			/* attack rate: percentage of an at-risk population that contracts a disease
-			 */
-			let attack = await db.exec(`SELECT o.outbreakID,
-					COUNT(CASE WHEN c.caseLevel LIKE '%Confirm%' THEN 1 ELSE 0 END) /
-					COUNT(CASE WHEN c.caseLevel LIKE '%Suspect%' THEN 1 ELSE 0 END) AS attackRate
-					FROM mmchddb.OUTBREAKS o
-					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = o.diseaseID
-					LEFT JOIN mmchddb.CASES c ON o.diseaseID = c.diseaseID AND c.reportDate > o.startDate
-					GROUP BY o.outbreakID
-					ORDER BY (CASE WHEN o.type = 'Ongoing' THEN '1' ELSE '2' END) ASC, o.startDate DESC;`);
-			
-			/* merging everything, ASSUME that same number of rows in all four arrays.
-			 * admittedly hacky solution. consider: https://stackoverflow.com/a/64394834
-			 */
-			for (let i = 0; i < caseCount.length; i++) {
-				tempOutbreak = caseCount[i];
-				tempOutbreak.numDeaths = deathCount[i].numDeaths;
-				tempOutbreak.growthRate = growth[i].growthRate;
-				tempOutbreak.attackRate = attack[i].attackRate;
-				outbreaks.push(tempOutbreak);
-			}
-			console.log(outbreaks);
+			let outbreaks = await getOutbreakData();
 			res.status(200).send(outbreaks);
 		} catch (e) {
 			console.log(e);
@@ -827,11 +900,8 @@ const indexFunctions = {
 	
 	getOutbreak: async function(req, res) {
 		try {
-			let outbreaks = await db.exec(`SELECT o.*, d.diseaseName
-					FROM mmchddb.OUTBREAKS o
-					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = o.diseaseID;`);
-			console.log(outbreaks);
-			res.status(200).send(outbreaks);
+			let outbreak = await getOutbreakData(req.query.outbreakID);
+			res.status(200).send(outbreak);
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
@@ -1512,6 +1582,24 @@ const indexFunctions = {
 				res.status(200).send();
 			else
 				res.status(500).send();
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error.");
+		}
+	},
+	
+	postUpdateOutbreakStatus: async function(req, res) {
+		try {
+			let { outbreakID, newStatus } = req.body, updateObj = { outbreakStatus: newStatus.newStatus }
+					dateNow = new Date();
+			let outbreak = await db.findRows("mmchddb.OUTBREAKS", { outbreakID: outbreakID });
+			// response time updating
+			if (newStatus === "Ongoing with Initial Response" && outbreak.length > 0) {
+				/* responseTime / 1000 / 60 min */
+				updateObj.responseTime = dateNow - new Date(outbreak[0].startDate);
+			}
+			await db.updateRows("mmchddb.OUTBREAKS", { outbreakID: outbreakID }, updateObj);
+			res.status(200).send("Updated outbreak status.");
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error.");
