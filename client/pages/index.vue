@@ -278,13 +278,13 @@ export default {
     }
   },
   mounted() {
-	const userTypes = ["fhsisStaff", "techStaff", "lhsdChief", "aehmdChief",
-			"resuHead", "chdDirector", "idpcStaff", "eohStaff", "hemStaff"];
+    const userTypes = ["fhsisStaff", "techStaff", "lhsdChief", "aehmdChief",
+            "resuHead", "chdDirector", "idpcStaff", "eohStaff", "hemStaff"];
     setInterval(this.getToday, 1000);
-	if (userTypes.includes(this.$auth.user.userType)) {
-	  this.moveProgress();
-	  this.moveTCLProgress();
-	}
+    if (userTypes.includes(this.$auth.user.userType)) {
+      this.moveProgress();
+      this.moveTCLProgress();
+    }
   },
   methods: {
     caseStatusClass(c) {

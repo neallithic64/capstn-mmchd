@@ -397,7 +397,7 @@ export default {
     this.dataFiltered = this.datavalues;
     this.dataSearched = this.datavalues;
     this.dataSets = this.datavalues;
-	console.log(this.datavalues);
+    console.log(this.datavalues);
     this.sortedKeyValue(this.requestParams.sortedKey, this.requestParams.sortedType);
     this.totalCount = Object.keys(this.dataSets).length;
     if (this.pageType === 'patient') this.requestParams.take = this.totalCount;

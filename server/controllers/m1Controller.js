@@ -1489,8 +1489,8 @@ const indexFunctions = {
 	},
 	
 	postSubmitCRF: async function(req, res) {
+		let { CRFID, diseaseID, userID } = req.body;
 		try {
-			let { CRFID, diseaseID, userID } = req.body;
 			/* MORBIDITY (monthly and quarterly, 62) (after cases are done)
 					FK: LGU/userID
 					FK: diseaseID
@@ -1503,20 +1503,24 @@ const indexFunctions = {
 					dateCreated
 			*/
 			// let morbid = await db.insertOne("mmchddb.MORBIDITY", );
-			await db.updateRows({
+			await db.updateRows("mmchddb.CRFS", {
 				CRFID: CRFID,
 				diseaseID: diseaseID,
 				userID: userID
 			}, { isPushed: true });
+			
+			let oldCRF = (await db.findRows("mmchddb.CRFS", { CRFID: CRFID }))[0];
+			let nextWeek = new Date(oldCRF.getFullYear(), oldCRF.getMonth(), oldCRF.getDate() + 7);
+			
 			// generate new CRF
-			/* await db.insertOne("mmchddb.CRFS", {
+			await db.insertOne("mmchddb.CRFS", {
 				CRFID: CRFID,
 				diseaseID: diseaseID,
 				userID: userID,
-				week: ,
-				year:,
+				week: nextWeek.getWeek(),
+				year: nextWeek.getFullYear(),
 				isPushed: false
-			}); */
+			});
 			res.status(200).send("done");
 		} catch (e) {
 			console.log(e);
