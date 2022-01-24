@@ -62,8 +62,8 @@
     </div>
     <nuxt-link 
       v-if="$auth.user.userType === 'pidsrStaff' || $auth.user.userType === 'fhsisStaff' || $auth.user.userType === 'techStaff'"
-      to="/analysis"> 
-      Analysis and Visualization 
+      to="/analytics"> 
+      Reports and Analytics 
     </nuxt-link>
     <nuxt-link
       v-if="$auth.user.userType === 'lhsdChief' || $auth.user.userType === 'aehmdChief' || 
