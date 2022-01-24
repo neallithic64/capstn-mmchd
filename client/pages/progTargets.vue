@@ -63,7 +63,7 @@
             <div id="edit-casedefs-form" class="center">
               <div style="display: flex; flex-direction: row; justify-content:space-between;">
                 <h2 id="form-header"> {{formSection[pageNum].disease}} </h2>
-                <div v-show="!isEdit" v-if="$auth.user.userType === 'techStaff' || $auth.user.userType === 'BHS'"> 
+                <div v-show="!isEdit" v-if="$auth.user.userType === 'techStaff' || $auth.user.userType === 'BHS' || $auth.user.userType === 'fhsisStaff'"> 
                   <button id="instructButton" class="instruct-button" type="button" @click="instruct()">
                     Instructions
                   </button>
