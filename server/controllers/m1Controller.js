@@ -961,9 +961,7 @@ const indexFunctions = {
 							eventAudit[i].to = eventAudit[i+1].from;
 						eventAudit[i].reportDate = dateToString(eventAudit[i].reportDate);
 					}
-	
 					eventAudit = eventAudit.reverse();
-				
 					eventAudit[i] = {
 						reportDate: dateToString(match[0].dateCaptured),
 						reportedBy: reporterData[0].firstName + ' ' + reporterData[0].midName + ' '+ reporterData[0].lastName +
