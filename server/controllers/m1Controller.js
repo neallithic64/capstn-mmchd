@@ -322,7 +322,16 @@ async function getOutbreakData(outbreakID) {
 				attack: attack
 			};
 			outbreaks.outbreak.endDate = outbreaks.outbreak.endDate ? outbreaks.outbreak.endDate : "N/A";
-			outbreaks.outbreak.responseTime = outbreaks.outbreak.responseTime ? outbreaks.outbreak.responseTime : "N/A";
+			if (!!outbreaks.outbreak.responseTime) {
+				let seconds = Math.floor(outbreaks.outbreak.responseTime / 1000);
+				outbreaks.outbreak.responseTime = Math.floor(seconds / 3600) + "h ";
+				seconds %= 3600;
+				outbreaks.outbreak.responseTime += Math.floor(seconds * 60) + "min ";
+				seconds %= 60;
+				outbreaks.outbreak.responseTime += Math.floor(seconds * 60) + "s";
+				console.log("response time: " + outbreaks.outbreak.responseTime);
+			}
+			else outbreaks.outbreak.responseTime = "N/A";
 		} else {
 			caseCount = await db.exec(`SELECT o.*, d.diseaseName, COUNT(c.caseID) + IFNULL(d.epiThreshold, 0) AS numCases
 					FROM mmchddb.OUTBREAKS o
@@ -1596,7 +1605,6 @@ const indexFunctions = {
 			let outbreak = await db.findRows("mmchddb.OUTBREAKS", { outbreakID: outbreakID });
 			// response time updating
 			if (newStatus === "Ongoing with Initial Response" && outbreak.length > 0) {
-				/* responseTime / 1000 / 60 min */
 				updateObj.responseTime = dateNow - new Date(outbreak[0].startDate);
 			}
 			await db.updateRows("mmchddb.OUTBREAKS", { outbreakID: outbreakID }, updateObj);
