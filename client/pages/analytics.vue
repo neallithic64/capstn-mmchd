@@ -4,7 +4,7 @@
     <div id="analytics-main-container">
       <div style="display: flex; flex-direction: row; justify-content: space-between;">
         <h2 id="page-title"> Reports and Analytics </h2>
-        <button class="make-report-button"> + New Report </button>
+        <a href="/addReport"> <button class="make-report-button"> + New Report </button> </a>
       </div>
 
       <!-- Tabs -->
