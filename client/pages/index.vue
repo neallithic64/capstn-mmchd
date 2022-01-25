@@ -60,7 +60,7 @@
               <a class="new-button new-button-case" href="/progAccomplish" > + Add </a>
             </div>
 
-            <!-- v-if w/ latest disease case show this -->
+            <!-- v-if w/ latest accomplish rep show this -->
             <a :href="'/allProgAccomplish'">
               <div class="dboard-right-content" style="border-left-color: #346083;">
                 <span style="padding-top: 5px; font-weight: 900"> {{ latestAccomplish.laDisease }} </span>
@@ -68,17 +68,15 @@
               </div>
             </a>
 
-            <!-- v-if no latest disease case show this -->
+            <!-- v-if no latest accomplish rep show this -->
             <!-- <div class="dboard-right-content" style="border-left-color: #346083;">
-              <span style="padding-top: 5px; font-weight: 900"> No disease cases yet. </span>
+              <span style="padding-top: 5px; font-weight: 900"> No accomplishments report yet. </span>
             </div> -->
           </div>
 
           <!-- Report Status for FHSIS -->
           <!-- for FHSIS -->
-          <div v-if="$auth.user.userType === 'fhsisStaff' || $auth.user.userType === 'techStaff' || 
-                $auth.user.userType === 'lhsdChief' || $auth.user.userType === 'aehmdChief' || $auth.user.userType === 'resuHead' || 
-                $auth.user.userType === 'chdDirector' || $auth.user.userType === 'idpcStaff' || $auth.user.userType === 'eohStaff' || $auth.user.userType === 'hemStaff'" id="tracker-container">
+          <div v-if="$auth.user.userType === 'fhsisStaff' || $auth.user.userType === 'techStaff'" id="tracker-container">
             <span class="dboard-right-titles" style="padding: 3px 3px 3px 5px; background-image: linear-gradient(to bottom right, #008d41, #74d680);"> Accomplishment Reporting Status </span>
             <a :href="'/allProgAccomplish'">
               <div class="dboard-right-content" style="border-left-color: #008d41; padding-left: 0px;">
@@ -149,9 +147,10 @@
 
           <!-- Report Status for CHD and DRU -->
           <!-- for CHD -->
-          <div v-if="$auth.user.userType === 'pidsrStaff' || $auth.user.userType === 'techStaff' || 
-                $auth.user.userType === 'lhsdChief' || $auth.user.userType === 'aehmdChief' || $auth.user.userType === 'resuHead' || 
-                $auth.user.userType === 'chdDirector' || $auth.user.userType === 'idpcStaff' || $auth.user.userType === 'eohStaff' || $auth.user.userType === 'hemStaff'" id="tracker-container">
+          <div v-if="$auth.user.userType === 'pidsrStaff' || $auth.user.userType === 'techStaff' || $auth.user.userType === 'lhsdChief' || 
+              $auth.user.userType === 'aehmdChief' || $auth.user.userType === 'resuHead' || $auth.user.userType === 'chdDirector' || 
+              $auth.user.userType === 'idpcStaff' || $auth.user.userType === 'eohStaff' || $auth.user.userType === 'hemStaff'" 
+              id="tracker-container">
             <span class="dboard-right-titles" style="padding: 3px 3px 3px 5px; background-image: linear-gradient(to bottom right, #008d41, #74d680);"> Reporting Status Week {{ weekNo }} </span>
             <a :href="'/allCases'">
               <div class="dboard-right-content" style="border-left-color: #008d41; padding-left: 0px;">
@@ -347,9 +346,12 @@ export default {
     const userTypes = ["fhsisStaff", "techStaff", "lhsdChief", "aehmdChief",
             "resuHead", "chdDirector", "idpcStaff", "eohStaff", "hemStaff"];
     setInterval(this.getToday, 1000);
-    if (this.$auth.user.userType === 'pidsrStaff')
+    
+    if (this.$auth.user.userType === 'pidsrStaff' || this.$auth.user.userType === 'techStaff' || this.$auth.user.userType === 'lhsdChief' || 
+        this.$auth.user.userType === 'aehmdChief' || this.$auth.user.userType === 'resuHead' || this.$auth.user.userType === 'chdDirector' || 
+        this.$auth.user.userType === 'idpcStaff' || this.$auth.user.userType === 'eohStaff' || this.$auth.user.userType === 'hemStaff')
       this.moveProgress();
-    if (this.$auth.user.userType === 'fhsisStaff')
+    if (this.$auth.user.userType === 'fhsisStaff' || this.$auth.user.userType === 'techStaff')
       this.moveTCLProgress();
   },
   methods: {
