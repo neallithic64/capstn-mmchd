@@ -122,8 +122,6 @@
         </div>
       </div>
 
-      
-
       <div class="OB-statusHistory">
         <h2 style="border-bottom: gray solid; width: fit-content; padding: 0 7px 0 5px;">Outbreak Status History</h2>
         <dataTable
@@ -333,7 +331,7 @@ export default {
         columns: [
           {
             title: 'Date',
-            key: 'reportDate',
+            key: 'dateModified',
             type: 'text',
             dateFormat: true,
             currentFormat: 'YYYY-MM-DD',
@@ -342,7 +340,7 @@ export default {
           },
           {
             title: 'From',
-            key: 'from',
+            key: 'prevValue',
             type: 'text',
             source: 'cases',
             uniqueField: 'id',
@@ -362,7 +360,7 @@ export default {
           },
           {
             title: 'Reported By',
-            key: 'reportedBy',
+            key: 'druName',
             type: 'text',
             source: 'cases',
             uniqueField: 'id',
@@ -371,22 +369,7 @@ export default {
         // source: 'http://demo.datatable/api/users',
         search: true,
       },
-      eventHistory: [
-        {
-          reportDate: '2020-12-10',
-          from: 'Ongoing',
-          to: 'Controlled',
-          remarks: 'Visited by coordinator and provided feedback to the representative',
-          reportedBy: 'a',
-        },
-        {
-          reportDate: '2020-10-10',
-          from: '',
-          to: 'Ongoing',
-          remarks: '',
-          reportedBy: 'b',
-        }
-      ],
+      eventHistory: [],
       obSummary: [
         {
           city: 'Metro Manila',
@@ -471,6 +454,8 @@ export default {
   async fetch() {
     const data = (await axios.get('http://localhost:8080/api/getOutbreak?outbreakID=' + this.$route.query.outbreakID)).data;
 	this.outbreak = data.outbreak;
+	this.eventHistory = data.outbreakAudit;
+	
   }, 
   methods: {
     formListClass(index) {

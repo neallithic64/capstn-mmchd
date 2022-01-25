@@ -912,6 +912,10 @@ const indexFunctions = {
 	getOutbreak: async function(req, res) {
 		try {
 			let outbreak = await getOutbreakData(req.query.outbreakID);
+			outbreak.outbreakAudit = await db.exec(`SELECT oa.*, u.druName
+					FROM mmchddb.OUTBREAK_AUDIT oa
+					LEFT JOIN mmchddb.USERS u ON u.userID = oa.modifiedBy
+					WHERE oa.outbreakID = '${req.query.outbreakID}';`);
 			res.status(200).send(outbreak);
 		} catch (e) {
 			console.log(e);
@@ -1489,8 +1493,8 @@ const indexFunctions = {
 	},
 	
 	postSubmitCRF: async function(req, res) {
+		let { CRFID, diseaseID, userID } = req.body;
 		try {
-			let { CRFID, diseaseID, userID } = req.body;
 			/* MORBIDITY (monthly and quarterly, 62) (after cases are done)
 					FK: LGU/userID
 					FK: diseaseID
@@ -1503,20 +1507,24 @@ const indexFunctions = {
 					dateCreated
 			*/
 			// let morbid = await db.insertOne("mmchddb.MORBIDITY", );
-			await db.updateRows({
+			await db.updateRows("mmchddb.CRFS", {
 				CRFID: CRFID,
 				diseaseID: diseaseID,
 				userID: userID
 			}, { isPushed: true });
+			
+			let oldCRF = (await db.findRows("mmchddb.CRFS", { CRFID: CRFID }))[0];
+			let nextWeek = new Date(oldCRF.getFullYear(), oldCRF.getMonth(), oldCRF.getDate() + 7);
+			
 			// generate new CRF
-			/* await db.insertOne("mmchddb.CRFS", {
+			await db.insertOne("mmchddb.CRFS", {
 				CRFID: CRFID,
 				diseaseID: diseaseID,
 				userID: userID,
-				week: ,
-				year:,
+				week: nextWeek.getWeek(),
+				year: nextWeek.getFullYear(),
 				isPushed: false
-			}); */
+			});
 			res.status(200).send("done");
 		} catch (e) {
 			console.log(e);
@@ -1600,7 +1608,7 @@ const indexFunctions = {
 	
 	postUpdateOutbreakStatus: async function(req, res) {
 		try {
-			let { outbreakID, newStatus } = req.body, updateObj = { outbreakStatus: newStatus.newStatus }
+			let { outbreakID, newStatus, userID } = req.body, updateObj = { outbreakStatus: newStatus.newStatus }
 					dateNow = new Date();
 			let outbreak = await db.findRows("mmchddb.OUTBREAKS", { outbreakID: outbreakID });
 			// response time updating
@@ -1608,6 +1616,16 @@ const indexFunctions = {
 				updateObj.responseTime = dateNow - new Date(outbreak[0].startDate);
 			}
 			await db.updateRows("mmchddb.OUTBREAKS", { outbreakID: outbreakID }, updateObj);
+			
+			// outbreak audit
+			let audit = {
+				outbreakID: outbreakID,
+				modifiedBy: userID,
+				dateModified: dateNow,
+				prevValue: outbreak[0].status,
+				remarks: newStatus.remarks
+			};
+			await db.insertOne("mmchddb.OUTBREAKS_AUDIT", audit);
 			res.status(200).send("Updated outbreak status.");
 		} catch (e) {
 			console.log(e);
