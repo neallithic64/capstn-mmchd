@@ -266,7 +266,7 @@ async function getOutbreakData(outbreakID) {
 			caseCount, deathCount, growth, attack;
 	try {
 		if (!!outbreakID) {
-			caseCount = await db.exec(`SELECT o.*, d.diseaseName, a.city,
+			caseCount = await db.exec(`SELECT o.*, d.diseaseName, IFNULL(a.city, 'NCR') AS city,
 					COUNT(c.caseID) + IFNULL(d.epiThreshold, 0) AS numCases
 					FROM mmchddb.OUTBREAKS o
 					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = o.diseaseID
@@ -277,7 +277,8 @@ async function getOutbreakData(outbreakID) {
 					GROUP BY a.city
 					ORDER BY (CASE WHEN o.type = 'Ongoing' THEN '1' ELSE '2' END) ASC, o.startDate DESC;`);
 			
-			deathCount = await db.exec(`SELECT o.outbreakID, a.city, COUNT(c.caseID) AS numDeaths
+			deathCount = await db.exec(`SELECT o.outbreakID, IFNULL(a.city, 'NCR') AS city,
+					COUNT(c.caseID) AS numDeaths
 					FROM mmchddb.OUTBREAKS o
 					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = o.diseaseID
 					LEFT JOIN mmchddb.CASES c ON o.diseaseID = c.diseaseID AND c.reportDate > o.startDate
@@ -289,7 +290,7 @@ async function getOutbreakData(outbreakID) {
 					ORDER BY (CASE WHEN o.type = 'Ongoing' THEN '1' ELSE '2' END) ASC, o.startDate DESC;`);
 			
 			/* growth rate: i have no clue how this will work... */
-			growth = await db.exec(`SELECT o.outbreakID, a.city,
+			growth = await db.exec(`SELECT o.outbreakID, IFNULL(a.city, 'NCR') AS city,
 					COUNT(CASE WHEN c.reportDate > o.startDate THEN 1 ELSE 0 END) AS growthRate
 					FROM mmchddb.OUTBREAKS o
 					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = o.diseaseID
@@ -302,7 +303,7 @@ async function getOutbreakData(outbreakID) {
 			
 			/* attack rate: percentage of an at-risk population that contracts a disease
 			 */
-			attack = await db.exec(`SELECT o.outbreakID, a.city,
+			attack = await db.exec(`SELECT o.outbreakID, IFNULL(a.city, 'NCR') AS city,
 					CONCAT(FORMAT(COUNT(CASE WHEN c.caseLevel LIKE '%Confirm%' THEN 1 ELSE 0 END) /
 					COUNT(CASE WHEN c.caseLevel LIKE '%Suspect%' THEN 1 ELSE 0 END) * 100, 2), '%') AS attackRate
 					FROM mmchddb.OUTBREAKS o
@@ -912,7 +913,27 @@ const indexFunctions = {
 	getOutbreak: async function(req, res) {
 		try {
 			let outbreak = await getOutbreakData(req.query.outbreakID);
-			// outbreak.outbreakSumm;
+			// get all cities across all arrays
+			let lookup = [...new Set([
+					...outbreak.caseCount.map(e => e.city),
+					...outbreak.deathCount.map(e => e.city),
+					...outbreak.growth.map(e => e.city),
+					...outbreak.attack.map(e => e.city)
+			])];
+			outbreak.outbreakSumm = [];
+			lookup.forEach(e1 => {
+				outbreak.outbreakSumm.push({
+					city: e1,
+					...outbreak.caseCount.find(e2 => e2.city === e1),
+					...outbreak.deathCount.find(e2 => e2.city === e1),
+					...outbreak.growth.find(e2 => e2.city === e1),
+					...outbreak.attack.find(e2 => e2.city === e1)
+				});
+			});
+			delete outbreak.caseCount;
+			delete outbreak.deathCount;
+			delete outbreak.growth;
+			delete outbreak.attack;
 			
 			outbreak.outbreakAudit = await db.exec(`SELECT oa.*, u.druName
 					FROM mmchddb.OUTBREAK_AUDIT oa
