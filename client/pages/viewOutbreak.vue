@@ -283,7 +283,7 @@ export default {
           },
           {
             title: 'DRU ID',
-            key: 'reportedBy',
+            key: 'druName',
             type: 'text',
             source: 'cases',
             uniqueField: 'id',
@@ -400,32 +400,7 @@ export default {
           risk: 'Moderate'
         },
       ],
-      obCases: [
-        {
-          caseID: '123',
-          reportedBy: 'SG Diagnostics',
-          city: 'Caloocan',
-          reportDate: '2021-12-14',
-          updatedDate: '2021-12-14',
-          caseLevel: 'Confirmed'
-        },
-        {
-          caseID: '124',
-          reportedBy: 'SG Diagnostics',
-          city: 'Caloocan',
-          reportDate: '2021-12-14',
-          updatedDate: '2021-12-14',
-          caseLevel: 'Confirmed'
-        },
-        {
-          caseID: '125',
-          reportedBy: 'SG Diagnostics',
-          city: 'Caloocan',
-          reportDate: '2021-12-14',
-          updatedDate: '2021-12-14',
-          caseLevel: 'Confirmed'
-        },
-      ],
+      obCases: [],
       outbreak: {
         outbreakID: '123',
         disease: 'Measles',
@@ -455,7 +430,8 @@ export default {
     const data = (await axios.get('http://localhost:8080/api/getOutbreak?outbreakID=' + this.$route.query.outbreakID)).data;
 	this.outbreak = data.outbreak;
 	this.eventHistory = data.outbreakAudit;
-	
+	this.obCases = data.outbreakCases;
+	this.obSummary = data.outbreakSumm;
   }, 
   methods: {
     formListClass(index) {

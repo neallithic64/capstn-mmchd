@@ -912,10 +912,32 @@ const indexFunctions = {
 	getOutbreak: async function(req, res) {
 		try {
 			let outbreak = await getOutbreakData(req.query.outbreakID);
+			// outbreak.outbreakSumm;
+			
 			outbreak.outbreakAudit = await db.exec(`SELECT oa.*, u.druName
 					FROM mmchddb.OUTBREAK_AUDIT oa
 					LEFT JOIN mmchddb.USERS u ON u.userID = oa.modifiedBy
 					WHERE oa.outbreakID = '${req.query.outbreakID}';`);
+			for (let i = 0; i < outbreak.outbreakAudit.length; i++) {
+				// if array empty
+				if (outbreak.outbreakAudit.length > 0) {
+					// if at end of array
+					if (i === outbreak.outbreakAudit.length - 1)
+						outbreak.outbreakAudit[i].to = outbreak.outbreak.outbreakStatus;
+					else outbreak.outbreakAudit[i].to = outbreak.outbreakAudit[i+1].prevValue;
+				}
+			}
+			
+			outbreak.outbreakCases = await db.exec(`SELECT c.*, a.city, u.druName,
+					MAX(al.dateModified) AS updatedDate
+					FROM mmchddb.CASES c
+					LEFT JOIN mmchddb.PATIENTS p ON p.patientID = c.patientID
+					LEFT JOIN mmchddb.ADDRESSES a ON a.addressID = p.caddressID
+					LEFT JOIN mmchddb.USERS u ON u.userID = c.reportedBy
+					LEFT JOIN mmchddb.AUDIT_LOG al ON c.caseID = al.editedID
+					GROUP BY c.caseID
+					HAVING c.diseaseID = '${outbreak.outbreak.diseaseID}' AND
+					c.reportDate > '${outbreak.outbreak.startDate.toISOString().substr(0, 10)}';`);
 			res.status(200).send(outbreak);
 		} catch (e) {
 			console.log(e);
