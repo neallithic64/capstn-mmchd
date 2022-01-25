@@ -883,7 +883,7 @@
               Immunization Program Status
             </h2>
             <div>
-              <table>
+              <table id='datatable'>
                 <thead>
                   <th> BCG </th>
                   <th> HEPA </th>
@@ -920,8 +920,8 @@
                   </td>
                   
                   <td>
-                    <span v-if="immunization.status==='Complete'" > COMPLETE </span>
-                    <span v-else> ONGOING </span>
+                    <span v-if="immunization.status==='Complete'" class="immunStatus" style="background-color:#008d41"> COMPLETE </span>
+                    <span v-else class="immunStatus" style="background-color:#346083"> ONGOING </span>
                   </td>
                 </tr>
               </table>
@@ -1487,6 +1487,20 @@ export default {
 </script>
 
 <style>
+
+#datatable td, #datatable th {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: -webkit-center;
+}
+
+.immunStatus {
+    color: white;
+    padding: 5px 10px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 20px;
+}
 
 .input-required:invalid, textarea:invalid { 
     box-shadow: 0 0 5px #d45252;
