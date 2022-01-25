@@ -312,6 +312,11 @@
                   v-bind:href="column.source + '/' + data[column.key]"
                   >{{ data[column.key] }}
                 </a> -->
+                <a v-else-if="column.key === 'reportID'"
+                  style="color: #346083; text-decoration-line: underline"
+                  :href="'/viewReport'">
+                  {{ data[column.key] }}
+                </a>
               </span>
               <span v-else-if="column.title==='Case Status' || column.title==='Status' || column.title==='Risk Classification' || column.title==='Submit Status' || column.title==='Report Status' || column.title==='Immunization Status'" :class="caseStatusClass(data[column.key])">
                 {{ data[column.key] }}
@@ -348,7 +353,7 @@
         &raquo;
       </a>
     </div>
-    <div v-show="casetype==='all' || casetype==='cif' || casetype==='crfDRU' || casetype==='crfCHD'"
+    <div v-show="casetype==='all' || casetype==='cif' || casetype==='crfDRU' || casetype==='crfCHD' || casetype==='events' || casetype==='reports'"
       style="margin-top:5px;">
       Last updated: <b> {{dayTime}} </b>
     </div>
@@ -491,6 +496,10 @@ export default {
         else if (c.toString().includes('Submitted')) return 'caseStatus green';
         else if (c.toString().includes('Pushed')) return 'caseStatus orange';
         else if (c.toString().includes('Zero Report')) return 'caseStatus red';
+
+        else if (c.toString().includes('For Approval')) return 'caseStatus orange';
+        else if (c.toString().includes('For Revision')) return 'caseStatus red';
+        else if (c.toString().includes('Approved')) return 'caseStatus green';
         
         return 'none';
       }
