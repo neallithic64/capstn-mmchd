@@ -9,15 +9,35 @@
 
           <!-- Ongoing Outbreak -->
           <div id="outbreak-container">
-            <span class="dboard-right-titles" style="background-image: linear-gradient(to bottom right, #b02e0c, #eb4511);"> Ongoing Outbreak </span>
+            <span class="dboard-right-titles" style="padding: 3px 3px 3px 5px; background-image: linear-gradient(to bottom right, #b02e0c, #eb4511);"> Ongoing Outbreak </span>
             <!-- v-if w/ ongoing outbreak show this -->
-            <a :href="'/viewOutbreak?outbreakID='">
+            <!-- if from CHD, view the outbreak page when clicked -->
+            <a v-if="$auth.user.userType === 'pidsrStaff' || $auth.user.userType === 'lhsdChief' || $auth.user.userType === 'aehmdChief' || $auth.user.userType === 'resuHead' || 
+                $auth.user.userType === 'chdDirector' || $auth.user.userType === 'idpcStaff' || $auth.user.userType === 'eohStaff' || $auth.user.userType === 'hemStaff'" 
+                :href="'/viewOutbreak?outbreakID='"> 
               <div id="outbreak-content" class="dboard-right-content" style="border-left-color: #c70000;">
                 <div id="outbreak-text">
                   <span style="padding-top: 5px; font-weight: 900"> {{ ongoingOutbreak.obDisease }} </span>
                   <span> <span style="color: red; font-size: 16px; font-weight: 600"> {{ ongoingOutbreak.obActive }} </span> Active Cases </span>
                 </div>
-                <div id="outbreak-countdown" style="color: red;">
+                <div v-if="$auth.user.userType === 'pidsrStaff'" id="outbreak-countdown" style="color: red;">
+                  <client-only>
+                    <Countdown deadline="January 22, 2022 22:41:00"></Countdown>
+                  </client-only>
+                </div>
+              </div>
+            </a>
+
+            <!-- if not from CHD, view the all outbreaks page when clicked -->
+            <a v-if="!($auth.user.userType === 'pidsrStaff' || $auth.user.userType === 'lhsdChief' || $auth.user.userType === 'aehmdChief' || $auth.user.userType === 'resuHead' || 
+                $auth.user.userType === 'chdDirector' || $auth.user.userType === 'idpcStaff' || $auth.user.userType === 'eohStaff' || $auth.user.userType === 'hemStaff')"
+                :href="'/allOutbreaks'">
+              <div id="outbreak-content" class="dboard-right-content" style="border-left-color: #c70000;">
+                <div id="outbreak-text">
+                  <span style="padding-top: 5px; font-weight: 900"> {{ ongoingOutbreak.obDisease }} </span>
+                  <span> <span style="color: red; font-size: 16px; font-weight: 600"> {{ ongoingOutbreak.obActive }} </span> Active Cases </span>
+                </div>
+                <div v-if="$auth.user.userType === 'pidsrStaff'" id="outbreak-countdown" style="color: red;">
                   <client-only>
                     <Countdown deadline="January 22, 2022 22:41:00"></Countdown>
                   </client-only>
@@ -33,13 +53,34 @@
             </div> -->
           </div>
 
+          <!-- Latest Accomplishment Report -->
+          <div v-if="$auth.user.userType === 'fhsisStaff'" id="latest-case-container">
+            <div style="padding: 3px 5px 3px 5px; background-image: linear-gradient(to bottom right, #1e3b70, #29539b); display: flex; flex-direction: row; justify-content: space-between;">
+              <span class="dboard-right-titles"> Latest Accomplishment Report </span>
+              <a class="new-button new-button-case" href="/progAccomplish" > + Add </a>
+            </div>
+
+            <!-- v-if w/ latest disease case show this -->
+            <a :href="'/allProgAccomplish'">
+              <div class="dboard-right-content" style="border-left-color: #346083;">
+                <span style="padding-top: 5px; font-weight: 900"> {{ latestAccomplish.laDisease }} </span>
+                <span> {{ latestAccomplish.laCity }}, {{ latestAccomplish.laBrgy }} </span>
+              </div>
+            </a>
+
+            <!-- v-if no latest disease case show this -->
+            <!-- <div class="dboard-right-content" style="border-left-color: #346083;">
+              <span style="padding-top: 5px; font-weight: 900"> No disease cases yet. </span>
+            </div> -->
+          </div>
+
           <!-- Report Status for FHSIS -->
           <!-- for FHSIS -->
           <div v-if="$auth.user.userType === 'fhsisStaff' || $auth.user.userType === 'techStaff' || 
                 $auth.user.userType === 'lhsdChief' || $auth.user.userType === 'aehmdChief' || $auth.user.userType === 'resuHead' || 
                 $auth.user.userType === 'chdDirector' || $auth.user.userType === 'idpcStaff' || $auth.user.userType === 'eohStaff' || $auth.user.userType === 'hemStaff'" id="tracker-container">
-            <span class="dboard-right-titles" style="background-image: linear-gradient(to bottom right, #008d41, #74d680);"> Accomplishment Reporting Status </span>
-            <a :href="'/allCases'">
+            <span class="dboard-right-titles" style="padding: 3px 3px 3px 5px; background-image: linear-gradient(to bottom right, #008d41, #74d680);"> Accomplishment Reporting Status </span>
+            <a :href="'/allProgAccomplish'">
               <div class="dboard-right-content" style="border-left-color: #008d41; padding-left: 0px;">
                 <div id="tracker-headers">
                   <span style="width: 30%;"> City </span>
@@ -67,24 +108,43 @@
 
           <!-- Latest Health Event -->
           <div id="latest-event-container">
-            <span class="dboard-right-titles" style="background-image: linear-gradient(to bottom right, #e09922, #edbb24);"> Latest Health Event </span>
-            <a :href="'/allCases'">
+            <div style="padding: 3px 5px 3px 5px; background-image: linear-gradient(to bottom right, #e09922, #edbb24); display: flex; flex-direction: row; justify-content: space-between;">
+              <span class="dboard-right-titles"> Latest Health Event </span>
+              <a class="new-button new-button-event" href="/addHealthEvent" > + Add </a>
+            </div>
+            <!-- v-if w/ latest health event show this -->
+            <a :href="'/allHealthEvents'">
               <div class="dboard-right-content" style="border-left-color: #e09922;">
                 <span style="padding-top: 5px; font-weight: 900"> {{ latestEvent.leCity }}, {{ latestEvent.leSource }} Source, <span :class="caseStatusClass(latestEvent.leStatus)"> {{ latestEvent.leStatus }} </span> </span>
                 <span style="color: red; font-size: 16px; font-weight: 600"> {{ latestEvent.leNoCases }} cases, {{ latestEvent.leNoDeaths }} deaths </span>
               </div>
             </a>
+
+            <!-- v-if no latest health event show this -->
+            <!-- <div class="dboard-right-content" style="border-left-color: #e09922;">
+              <span style="padding-top: 5px; font-weight: 900"> No health events yet. </span>
+            </div> -->
           </div>
 
           <!-- Latest Disease Case -->
-          <div id="latest-case-container">
-            <span class="dboard-right-titles" style="background-image: linear-gradient(to bottom right, #1e3b70, #29539b);"> Latest Disease Case </span>
+          <div v-if="!($auth.user.userType === 'fhsisStaff')" id="latest-case-container">
+            <div style="padding: 3px 5px 3px 5px; background-image: linear-gradient(to bottom right, #1e3b70, #29539b); display: flex; flex-direction: row; justify-content: space-between;">
+              <span class="dboard-right-titles"> Latest Disease Case </span>
+              <a class="new-button new-button-case" href="/addCase" > + Add </a>
+            </div>
+
+            <!-- v-if w/ latest disease case show this -->
             <a :href="'/allCases'">
               <div class="dboard-right-content" style="border-left-color: #346083;">
                 <span style="padding-top: 5px; font-weight: 900"> {{ latestCase.lcDisease }}, <span :class="caseStatusClass(latestCase.lcStatus)"> {{ latestCase.lcStatus }} </span> </span>
                 <span> {{ latestCase.lcCity }}, {{ latestCase.lcBrgy }} </span>
               </div>
             </a>
+
+            <!-- v-if no latest disease case show this -->
+            <!-- <div class="dboard-right-content" style="border-left-color: #346083;">
+              <span style="padding-top: 5px; font-weight: 900"> No disease cases yet. </span>
+            </div> -->
           </div>
 
           <!-- Report Status for CHD and DRU -->
@@ -92,7 +152,7 @@
           <div v-if="$auth.user.userType === 'pidsrStaff' || $auth.user.userType === 'techStaff' || 
                 $auth.user.userType === 'lhsdChief' || $auth.user.userType === 'aehmdChief' || $auth.user.userType === 'resuHead' || 
                 $auth.user.userType === 'chdDirector' || $auth.user.userType === 'idpcStaff' || $auth.user.userType === 'eohStaff' || $auth.user.userType === 'hemStaff'" id="tracker-container">
-            <span class="dboard-right-titles" style="background-image: linear-gradient(to bottom right, #008d41, #74d680);"> Reporting Status Week {{ weekNo }} </span>
+            <span class="dboard-right-titles" style="padding: 3px 3px 3px 5px; background-image: linear-gradient(to bottom right, #008d41, #74d680);"> Reporting Status Week {{ weekNo }} </span>
             <a :href="'/allCases'">
               <div class="dboard-right-content" style="border-left-color: #008d41; padding-left: 0px;">
                 <div id="tracker-headers">
@@ -130,12 +190,12 @@
           <div v-if="$auth.user.userType === 'BHS' || $auth.user.userType === 'RHU' || $auth.user.userType === 'CHO' ||
               $auth.user.userType === 'govtHosp' || $auth.user.userType === 'privHosp' || $auth.user.userType === 'clinic' ||
               $auth.user.userType === 'govtLab' || $auth.user.userType === 'privLab' || $auth.user.userType === 'airseaPort'" id="tracker-container">
-            <span class="dboard-right-titles" style="background-image: linear-gradient(to bottom right, #008d41, #74d680);"> Case Report Forms Week {{ weekNo }} </span>
+            <span class="dboard-right-titles" style="padding: 3px 3px 3px 5px; background-image: linear-gradient(to bottom right, #008d41, #74d680);"> Case Report Forms Week {{ weekNo }} </span>
             <a :href="'/allCases'">
               <div class="dboard-right-content" style="border-left-color: #008d41; padding-left: 0px;">
                 <div id="tracker-headers">
                   <span style="width: 30%;"> Disease </span>
-                  <span style="width: 28%;"> Submit Status </span>
+                  <span style="width: 34%;"> Submit Status </span>
                   <span style="width: 32%;"> Report Status </span>
                 </div>
 
@@ -148,17 +208,17 @@
                         </div>
 
                         <!-- Submit Status -->
-                        <div v-if="crfStatus[name][0] == 0" style="width: 28%;">
+                        <div v-if="crfStatus[name][0] == 0" style="width: 34%;">
                           <div style="display: flex; flex-direction: row;">
                             <div class="crfOngoing"> </div> <span style="margin-left: 5px;"> Ongoing </span>
                           </div>
                         </div>
-                        <div v-if="crfStatus[name][0] == 1" style="width: 28%;">
+                        <div v-if="crfStatus[name][0] == 1" style="width: 34%;">
                           <div style="display: flex; flex-direction: row;">
                             <div class="crfSubmitted"> </div> <span style="margin-left: 5px;"> Submitted </span>
                           </div>
                         </div>
-                        <div v-if="crfStatus[name][0] == 2" style="width: 28%;">
+                        <div v-if="crfStatus[name][0] == 2" style="width: 34%;">
                           <div style="display: flex; flex-direction: row;">
                             <div class="crfPushed"> </div> <span style="margin-left: 5px;"> Pushed </span>
                           </div>
@@ -220,6 +280,11 @@ export default {
         lcCity: 'Pasay',
         lcBrgy: 'BARANGAY 171'
       },
+      latestAccomplish: {
+        laDisease: 'Malaria',
+        laCity: 'Makati',
+        laBrgy: 'WEST REMBO'
+      },
       weekNo: '3',
       reportStatus: {
         // CIF only 1 or 0 (1 if submitted at least 1 CIF, 0 if no CIF at all)
@@ -278,13 +343,14 @@ export default {
     }
   },
   mounted() {
+    // eslint-disable-next-line no-unused-vars
     const userTypes = ["fhsisStaff", "techStaff", "lhsdChief", "aehmdChief",
             "resuHead", "chdDirector", "idpcStaff", "eohStaff", "hemStaff"];
     setInterval(this.getToday, 1000);
-    if (userTypes.includes(this.$auth.user.userType)) {
+    if (this.$auth.user.userType === 'pidsrStaff')
       this.moveProgress();
+    if (this.$auth.user.userType === 'fhsisStaff')
       this.moveTCLProgress();
-    }
   },
   methods: {
     caseStatusClass(c) {
@@ -327,6 +393,7 @@ body {
 #dashboard-container {
   display: flex;
   flex-direction: column;
+  
 }
 
 #dashboard-bottom {
@@ -354,18 +421,18 @@ body {
 }
 
 #dashboard-powerbi {
-  height: 100vh;
+  max-height: 87vh;
   background-color: gray;
-  width: 100%;
-  border-radius: 10px;
+  width: 70%;
   margin-left: 5px;
   margin-top: 5px;
+  overflow: auto;
 }
 
 #dashboard-powerbi-iframe {
-  height: 100vh;
+  height: 87vh;
   background-color: gray;
-  width: 100%;
+  width: 70%;
   border-radius: 10px;
   margin-left: 5px;
   margin-top: 5px;
@@ -374,32 +441,35 @@ body {
 #dashboard-right {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   margin-right: 5px;
   margin-left: 5px;
-  margin-top: 5px;
+  /* margin-top: 5px; */
   font-weight: 500;
-  font-size: 13px;
+  font-size: 15px;
+  width: 30%;
+  height: 85vh
 }
 
 #latest-event-container {
-  width: 350px;
+  /* width: 350px; */
   display: flex;
   flex-direction: column;
   padding: 5px 5px 5px 5px;
 }
 
 #latest-case-container {
-  width: 350px;
+  /* width: 350px; */
   display: flex;
   flex-direction: column;
   padding: 5px 5px 5px 5px;
 }
 
 #outbreak-container {
-  width: 350px;
+  /* width: 350px; */
   display: flex;
   flex-direction: column;
-  margin-top: 5px;
+  /* margin-top: 5px; */
   padding: 5px 5px 5px 5px;
 }
 
@@ -419,17 +489,33 @@ body {
 }
 
 #tracker-container {
-  width: 350px;
+  /* width: 350px; */
   display: flex;
   flex-direction: column;
   margin-top: 0px;
   padding: 5px 5px 5px 5px;
+  
 }
 
 .dboard-right-titles {
   color: white;
-  padding: 3px 3px 3px 5px;
+  /* padding: 3px 3px 3px 5px; */
   font-weight: 600;
+}
+
+.new-button {
+  color: white;
+  font-weight: 600;
+}
+
+.new-button-event:hover {
+  background-color: white;
+  color: #e09922;
+}
+
+.new-button-case:hover {
+  background-color: white;
+  color: #1e3b70;
 }
 
 .dboard-right-content {
@@ -483,6 +569,8 @@ body {
 
 #tracker-content {
   padding-left: 5px;
+  max-height: 180px;
+  overflow: auto;
 }
 
 #tracker-content-row {
