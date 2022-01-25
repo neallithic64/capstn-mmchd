@@ -4,10 +4,10 @@
     <TopNav />
 
     <!--Everything below = main screen-->
-    <div class="case-container">
+    <div class="AIPE-case-container">
       <!--SUMMARY: left side-->
-      <div class="form-summary-container">
-        <div class="form-summary">
+      <div class="AIPE-form-summary-container">
+        <div class="AIPE-form-summary">
           <button id="login-submit" type="submit" style="width: 210px; text-align: left" @click="isOpen = !isOpen">
             <h2 style="font-weight: 600"> Form Summary </h2>
           </button>
@@ -15,7 +15,7 @@
           <div v-if="isOpen" class="form-contents">
             <div v-for="(value, name, i) in disease.formNames" :key="i">
               <!-- <div v-if="i > 1" :id="name" :class="formColor(i - 1)"> -->
-              <button v-if="action!='add' && i!=0" :id="name" :class="formColor(i)" @click="move(i)">
+              <button :id="name" :class="formColor(i)" @click="move(i)">
                 {{ i }}.{{ value }}
               </button>
             </div>
@@ -27,28 +27,59 @@
       <!--Everything in the right-->
       <div class="form-section-container">
         <!--Name of form-->
-        <div class="disease-name" style="display: flex; flex-direction:row;justify-content: space-between;">
-          <div>
-            <h1 style="margin: 0; font-weight: 600; font-size: 24px">
-              Immunization Program Form
-            </h1>
-            <p style="margin: 0 5px 5px 5px; font-size: 16px">
-              Please fill up the form with complete and correct information
-            </p>
-          </div>
-          <div v-if="status==='Complete'" class="immunComplete">
-            COMPLETE
-          </div>
-          <div v-else-if="status==='Ongoing'" class="immunOngoing">
-            ONGOING
-          </div>
+        <div class="AIPE-name">
+          <h1 style="margin: 0; font-weight: 600; font-size: 24px">
+            Immunization Program Form
+          </h1>
+          <p style="margin: 0 5px 5px 5px; font-size: 16px">
+            Please fill up the form with complete and correct information
+          </p>
         </div>
 
         <!--Form itself-->
-        <div class="form-component">
+        <div class="AIPE-form-component">
+
+          <form v-if="pageNum == 0" id="dengue0" type="submit">
+            <div id="AIPE-case-form" class="center">
+              <h2 id="form-header">
+                {{ Object.values(disease.formNames)[0] }}
+              </h2>
+
+              <!-- <p style="margin-bottom: -20px">Search for Patient:</p> -->
+
+              <div class="container">
+                <div class="bar">
+                  <input
+                    id="input"
+                    class="searchbar"
+                    type="search"
+                    autocomplete="off"
+                    spellcheck="false"
+                    role="combobox"
+                    aria-live="off"
+                    placeholder="Search Patient"
+                    @keyup="searchPatient"
+                  />
+                  <div v-if="patientResult.length" class="searchPatientValues">
+                    <div v-for="(patient, i) in patientResult" :key="i" class="searchResult">
+                      <!-- <img class="searchPersonIcon" /> -->
+                      <div class="searchResultInfo" @click="autoFillPatient(patient)">
+                        <div class="searchPerson">
+                          {{ patient.firstName + ' ' + patient.midName + ' ' + patient.lastName }}
+                        </div>
+                        <div class="searchAddress">
+                          {{ patient.currHouseStreet + ', ' + patient.currBrgy + ', ' + patient.currCity }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
 
           <form v-if="pageNum == 1 || pageNum == Object.keys(disease.formNames).length" id="dengue1" type="submit">
-            <div id="case-report-form" class="center">
+            <div id="AIPE-case-form" class="center">
               <div style="display:flex; flex-direction:row; justify-content: space-between;">
                 <h2 id="form-header">
                   {{ Object.values(disease.formNames)[1] }}
@@ -472,7 +503,7 @@
           <hr v-if="pageNum == Object.keys(disease.formNames).length" />
 
           <form v-if="pageNum == 2 || pageNum == Object.keys(disease.formNames).length" id="dengue2" type="submit">
-            <div id="case-report-form" class="center">
+            <div id="AIPE-case-form" class="center">
               <h2 id="form-header"> {{ Object.values(disease.formNames)[2] }} </h2>
 
               <div class="risk-flex">
@@ -933,7 +964,7 @@
           <hr v-if="pageNum == Object.keys(disease.formNames).length" />
 
           <form v-if="pageNum == 3 || pageNum == Object.keys(disease.formNames).length" id="dengue3" type="submit">
-            <div id="case-report-form" class="center">
+            <div id="AIPE-case-form" class="center">
               <h2 id="form-header"> {{ Object.values(disease.formNames)[3] }} </h2>
               <div class="viewcases-component">
                 <div id="vue-root">
@@ -1035,27 +1066,18 @@
 
         <!-- Bottom 2 buttons -->
         <div style="margin: -10px 0 5px; float: right">
-          <!-- <button v-if="pageNum==1 && action==='update'" class="back-button" type="button">
+          <button v-if="pageNum==0" class="back-button" type="button" @click="cancel()">
             <nuxt-link to="/addImmunizationProg"> Cancel </nuxt-link>
-          </button> -->
-          <button v-if="pageNum==1 && action ==='update'" class="back-button" type="button" onclick="history.back()">
-            Cancel
           </button>
-          <button v-else-if="pageNum==1 && action ==='view'" class="back-button" type="button" onclick="history.back()">
-            Back
-          </button>
-          <button v-else-if="pageNum!=1" class="back-button" type="button" @click="move(pageNum - 1)">
+          <button v-else class="back-button" type="button" @click="move(pageNum - 1)">
             Back
           </button>
           <button v-if="pageNum != 3" class="next-button" type="button" @click="move(pageNum + 1)">
             Next
           </button>
-          <button v-else-if="action!='view'" class="next-button" type="button" @click="save()">
+          <button v-else class="next-button" type="button" @click="move(4)">
             Save
           </button>
-          <!-- <button v-else-if="action!='update'" class="next-button" type="button" @click="save()">
-            Complete
-          </button> -->
         </div>
       </div>
     </div>
@@ -1073,18 +1095,15 @@ export default {
   },
   data() {
     return {
-      action:'update', // update, view
-      status: 'Ongoing',
+      action:'add',
       patientExist: false,
-      patientHasImmunRecord: false,
       sameAddress:'',
       today:'',
       isOpen: true,
-      isDisabled: false,
-      pageNum: 3,
-      formPart: 'Dengue3',
-      pageDone: [true,true,true,true],
-      pageColor: [true,true,true,false,],
+      pageNum: 0,
+      formPart: 'Dengue0',
+      pageDone: [true,true,true,false,],
+      pageColor: [true,false,false,false,],
       formData: {
         patient: {
           patientID: '',
@@ -1182,6 +1201,64 @@ export default {
         'Valenzuela',
       ],
 
+      columns: [
+        {
+          title: 'BCG',
+          key: 'bcg',
+        },
+        {
+          title: 'HEPA B1-1',
+          key: 'hepa1',
+        },
+        {
+          title: 'HEPA B1-2',
+          key: 'hepa2',
+        },
+        {
+          title: 'OPV 1',
+          key: 'opv1',
+        },
+        {
+          title: 'OPV 2',
+          key: 'opv2',
+        },
+        {
+          title: 'OPV 3',
+          key: 'opv3',
+        },
+        {
+          title: 'PENTA 1',
+          key: 'penta1',
+        },
+        {
+          title: 'PENTA 2',
+          key: 'penta2',
+        },
+        {
+          title: 'PENTA 3',
+          key: 'penta3',
+        },
+        {
+          title: 'PCV 1',
+          key: 'pcv1',
+        },
+        {
+          title: 'PCV 2',
+          key: 'pcv2',
+        },
+        {
+          title: 'PCV 3',
+          key: 'pcv3',
+        },
+        {
+          title: 'MCV 1',
+          key: 'mcv1',
+        },
+        {
+          title: 'MCV 2',
+          key: 'mcv2',
+        },
+      ],
       loadedData: [
         {
           bcg: '2020-02-03',
@@ -1224,7 +1301,20 @@ export default {
           dengue3: '',
         },
       ],
+
+      patientResult:[],
+      patients:[],
     }
+  },
+  async fetch() {
+    let rows = (await axios.get('http://localhost:8080/api/getCaseDefs?diseaseID=' + this.diseaseID)).data;
+    for (let i = 0; i < rows.length; i++) {
+      this.classification[rows[i].class] = rows[i].definition;
+    }
+    rows = (await axios.get('http://localhost:8080/api/getPatients')).data;
+    this.patients = rows;
+    rows = (await axios.get('http://localhost:8080/api/getLabUsers')).data;
+    this.labList = rows;
   },
   computed: {},
   mounted() {
@@ -1255,7 +1345,7 @@ export default {
     this.dataSets[0].penta3 = this.loadedData[0].penta3;
     this.dataSets[0].pcv1 = this.loadedData[0].pcv1;
     this.dataSets[0].pcv2 = this.loadedData[0].pcv2;
-    this.dataSets[0].pcv3 = this.loadedData[0].pcv3;
+    this.dataSets[0].cv3 = this.loadedData[0].pcv3;
     this.dataSets[0].mcv1 = this.loadedData[0].mcv1;
     this.dataSets[0].mcv2 = this.loadedData[0].mcv2;
     this.dataSets[0].dengue1 = this.loadedData[0].dengue1;
@@ -1263,7 +1353,7 @@ export default {
     this.dataSets[0].dengue3 = this.loadedData[0].dengue3;
 
     console.log(this.dataSets[0]);
-    this.$forceUpdate();
+    // this.$forceUpdate();
   },
   methods: {
     formpart(disease, pageNum) {
@@ -1272,9 +1362,16 @@ export default {
     },
     formColor(index) {
       if (this.isOpen) {
-        if (index === 3) return 'formnum formnumcurr';
-        else if (index === this.pageNum) return 'formnum formgray';
-        else return 'formnum';
+        if (this.patientExist) {
+          if (index === 3) return 'formnum formnumcurr';
+          else if (index === this.pageNum) return 'formnum formgray';
+          else return 'formnum';
+        }
+        else if (!this.patientExist) {
+          if (index === this.pageNum) return 'formnum formnumcurr';
+          else if (this.pageColor[index]) return 'formnum formnumdone';
+          else return 'formnum';
+        }
       }
     },
     getAge() {
@@ -1292,17 +1389,7 @@ export default {
       else this.formData.patient.ageNo = age-1;
       if (this.formData.patient.ageNo<0) this.formData.patient.ageNo = 0;
     },
-    save() {
-      this.saveData();
-      if (this.validate()) {
-        // submit();
-        // IF SUBMIT SUCCESSFUL
-        console.log('VALIDATED dates');
-        this.status = 'Complete';
-        this.action = 'view';
-      }
-    },
-    async submit() {
+    async save() {
       // TODO: this submit is the "save" type, the cases should only be visible to the DRU, not yet submitted to MMCHD
       const now = new Date();
       this.formData.cases.diseaseID = this.diseaseID;
@@ -1318,60 +1405,6 @@ export default {
         console.log(result);
         this.$toast.error('Something went wrong!', {duration: 4000, icon: 'error'});
       }
-    },
-    move(page) {
-      this.pageNum = page;
-
-      this.$nextTick(() => {
-        if ((page === 1) && this.formData.patient.occuBrgy != null) {
-          const dropdown = document.getElementById('occuBrgy');
-          while (dropdown.firstChild) dropdown.removeChild(dropdown.firstChild);
-          const defaultOption = document.createElement('option');
-          defaultOption.text = this.formData.patient.occuBrgy;
-          dropdown.add(defaultOption);
-          dropdown.selectedIndex = 0;
-        }
-
-        if ((page === 1) && this.formData.patient.currBrgy != null) {
-          const dropdown = document.getElementById('currBarangay');
-          while (dropdown.firstChild) dropdown.removeChild(dropdown.firstChild);
-          const defaultOption = document.createElement('option');
-          defaultOption.text = this.formData.patient.currBrgy;
-          dropdown.add(defaultOption);
-          dropdown.selectedIndex = 0;
-        }
-
-        if ((page === 1) && this.formData.patient.permBrgy != null) {
-          const dropdown = document.getElementById('permBarangay');
-          while (dropdown.firstChild) dropdown.removeChild(dropdown.firstChild);
-          const defaultOption = document.createElement('option');
-          defaultOption.text = this.formData.patient.permBrgy;
-          dropdown.add(defaultOption);
-          dropdown.selectedIndex = 0;
-        }
-      })
-    },
-    validate() {
-      if ((this.loadedData[0].bcg !=='' && this.loadedData[0].bcg !== null) &&
-          (this.loadedData[0].hepa1 !=='' &&  this.loadedData[0].hepa1 !== null) && 
-          (this.loadedData[0].hepa2 !=='' &&  this.loadedData[0].hepa2 !== null) && 
-          (this.loadedData[0].opv1 !=='' &&  this.loadedData[0].opv1 !== null) && 
-          (this.loadedData[0].opv2 !=='' &&  this.loadedData[0].opv2 !== null) && 
-          (this.loadedData[0].opv3 !=='' &&  this.loadedData[0].opv3 !== null) && 
-          (this.loadedData[0].penta1 !=='' &&  this.loadedData[0].penta1 !== null) && 
-          (this.loadedData[0].penta2 !=='' &&  this.loadedData[0].penta2 !== null) && 
-          (this.loadedData[0].penta3 !=='' &&  this.loadedData[0].penta3 !== null) && 
-          (this.loadedData[0].pcv1 !=='' &&  this.loadedData[0].pcv1 !== null) && 
-          (this.loadedData[0].pcv2 !=='' &&  this.loadedData[0].pcv2 !== null) && 
-          (this.loadedData[0].pcv3 !=='' &&  this.loadedData[0].pcv3 !== null) && 
-          (this.loadedData[0].mcv1 !=='' &&  this.loadedData[0].mcv1 !== null) && 
-          (this.loadedData[0].mcv2 !=='' && this.loadedData[0].mcv2 !== null) &&
-          (this.loadedData[0].dengue1 !=='' &&  this.loadedData[0].dengue1 !== null) && 
-          (this.loadedData[0].dengue2 !=='' &&  this.loadedData[0].dengue2 !== null) && 
-          (this.loadedData[0].dengue3 !=='' &&  this.loadedData[0].dengue3 !== null)
-        )
-      return true;
-      else return false;
     },
     saveData() {
       this.loadedData[0].bcg = this.dataSets[0].bcg;
@@ -1391,20 +1424,156 @@ export default {
       this.loadedData[0].dengue1 = this.dataSets[0].dengue1;
       this.loadedData[0].dengue2 = this.dataSets[0].dengue2;
       this.loadedData[0].dengue3 = this.dataSets[0].dengue3;
+    },
+    move(page) {
+      this.validateForm(this.pageNum);
+      this.pageColor[this.pageNum] = this.pageDone[this.pageNum];
+      this.validateForm(page);
+      this.pageColor[page] = this.pageDone[page];
       
+      if ((this.patientExist ||this.pageDone[this.pageNum] || this.pageDone[page] || page===0 || this.pageNum ===0) && page!==4) {
+        if (page < Object.keys(this.disease.formNames).length && this.pageNum < Object.keys(this.disease.formNames).length) {
+          if (page!==3) this.pageDone[page] = true;
+          if (this.pageNum!==3) this.pageDone[this.pageNum] = true;
+          
+          this.pageNum = page;
+        }
+      }
+
+      else if (page===4) {
+        if (this.patientExist || (this.pageDone[1] && this.pageDone[2] && this.pageColor[1] && this.Color[2])) {
+          this.saveData();
+          // this.save();
+          // redirect to view page with update action
+          window.location.href = "/viewImmunizationProgEntry";
+        }
+        else {
+          // alert('Please fill up the required fields');
+          this.$toast.error('Please fill up the required fields.', {position: 'top-right', duration: 4000, icon: 'error'});
+          // document.getElementsByClassName('input-form-field').className = 'input-form-field input-required';
+          this.$forceUpdate();
+        }
+      }
+
+      else {
+        // alert('Please fill up the required fields');
+        this.$toast.error('Please fill up the required fields.', {position: 'top-right', duration: 4000, icon: 'error'});
+        // document.getElementsByClassName('input-form-field').className = 'input-form-field input-required';
+        this.$forceUpdate();
+      }
+      // console.log(this.pageDone)
+
+      this.$nextTick(() => {
+        if ((this.pageNum === 1 ) && this.formData.patient.occuBrgy != null) {
+          const dropdown = document.getElementById('occuBrgy');
+          while (dropdown.firstChild) dropdown.removeChild(dropdown.firstChild);
+          const defaultOption = document.createElement('option');
+          defaultOption.text = this.formData.patient.occuBrgy;
+          dropdown.add(defaultOption);
+          dropdown.selectedIndex = 0;
+        }
+
+        if ((this.pageNum === 1) && this.formData.patient.currBrgy != null) {
+          const dropdown = document.getElementById('currBarangay');
+          while (dropdown.firstChild) dropdown.removeChild(dropdown.firstChild);
+          const defaultOption = document.createElement('option');
+          defaultOption.text = this.formData.patient.currBrgy;
+          dropdown.add(defaultOption);
+          dropdown.selectedIndex = 0;
+        }
+
+        if ((this.pageNum === 1) && this.formData.patient.permBrgy != null) {
+          const dropdown = document.getElementById('permBarangay');
+          while (dropdown.firstChild) dropdown.removeChild(dropdown.firstChild);
+          const defaultOption = document.createElement('option');
+          defaultOption.text = this.formData.patient.permBrgy;
+          dropdown.add(defaultOption);
+          dropdown.selectedIndex = 0;
+        }
+      })
+    },
+    validateForm(page) {
+      switch (page) {
+        case 1:
+          if (this.patientExist) this.pageDone[page] = true;
+          else if (this.formData.patient.lastName!=='' &&
+          this.formData.patient.firstName!=='' &&
+          this.formData.patient.midName!=='' &&
+          this.formData.patient.birthDate!=='' &&
+          this.formData.patient.ageNo!=='' &&
+          this.formData.patient.sex!=='' &&
+          this.formData.patient.pregWeeks!=='' &&
+          this.formData.patient.civilStatus!=='' &&
+          this.formData.patient.currHouseStreet!=='' &&
+          this.formData.patient.currCity!=='' &&
+          this.formData.patient.currBrgy!=='' &&
+          this.formData.patient.occupation!=='' &&
+          this.formData.patient.occuLoc!=='' &&
+          this.formData.patient.occuStreet!=='' &&
+          this.formData.patient.occuCity!=='' &&
+          this.formData.patient.occuBrgy!=='' &&
+          this.formData.patient.guardianName!=='' &&
+          this.formData.patient.guardianContact!=='' &&
+          this.formData.patient.lastName!== null &&
+          this.formData.patient.firstName!== null &&
+          this.formData.patient.midName!== null &&
+          this.formData.patient.birthDate!== null &&
+          this.formData.patient.ageNo!== null &&
+          this.formData.patient.sex!== null &&
+          this.formData.patient.pregWeeks!== null &&
+          this.formData.patient.civilStatus!== null &&
+          this.formData.patient.currHouseStreet!== null &&
+          this.formData.patient.currCity!== null &&
+          this.formData.patient.currBrgy!== null &&
+          this.formData.patient.occupation!== null &&
+          this.formData.patient.occuLoc!== null &&
+          this.formData.patient.occuStreet!== null &&
+          this.formData.patient.occuCity!== null &&
+          this.formData.patient.occuBrgy!== null &&
+          this.formData.patient.guardianName!== null &&
+          this.formData.patient.guardianContact!== null &&
+          this.formData.patient.occuLoc!== 'Choose Barangay' &&
+          this.formData.patient.occuBrgy!== 'Choose Barangay'
+          ) this.pageDone[page] = true;
+          else this.pageDone[page] = false;
+          if (this.formData.patient.ageNo<0) {this.formData.patient.ageNo = ''; this.pageDone[page] = false;}
+          if (this.formData.patient.pregWeeks!=='Not Pregnant' && this.formData.patient.pregWeeks<0)
+            {this.formData.patient.pregWeeks = ''; this.pageDone[page] = false;}
+          if (this.formData.patient.guardianContact<0) {this.formData.patient.guardianContact = ''; this.pageDone[page] = false;}
+          break;
+        case 2:
+          if ((this.riskFactors.Lifestyle || this.formData.riskFactors.LSmoking || 
+            this.formData.riskFactors.LAlcoholism || this.formData.riskFactors.LDrugUse || 
+            this.formData.riskFactors.LPhysicalInactivity || this.formData.riskFactors.LOthers) && 
+          (this.riskFactors.CurrentCondition || this.formData.riskFactors.CAsthma || 
+            this.formData.riskFactors.CHereditary || this.formData.riskFactors.COthers) && 
+          (this.riskFactors.Historical || this.formData.riskFactors.HDiabetes || 
+            this.formData.riskFactors.HHeartDisease || this.formData.riskFactors.HHypertension || 
+            this.formData.riskFactors.HObesity || this.formData.riskFactors.HOthers) && 
+          (this.riskFactors.Other || this.formData.riskFactors.OAirPollution || 
+            this.formData.riskFactors.OCleanWater || this.formData.riskFactors.OFlooding || 
+            this.formData.riskFactors.OHealthEdu || this.formData.riskFactors.OHealthFacility || 
+            this.formData.riskFactors.OPoverty || this.formData.riskFactors.OShelter || 
+            this.formData.riskFactors.OWasteMgmt || this.formData.riskFactors.OVacCoverage || 
+            this.formData.riskFactors.OOthers)
+          ) this.pageDone[page] = true;
+          else this.pageDone[page] = false;
+          break;
+        case 3:
+          if(this.pageColor[1] && this.pageColor[2] && this.pageColor[3]) {
+              //  this.pageColor[3] = true;
+              //  this.pageDone[3] = true;
+             }
+          break;
+      }
+      if (this.pageDone[page]) this.pageColor[page] = true;
     },
     isRequired() {
       if (!this.pageDone[this.pageNum]) return "input-required";
     },
     inputEdit() {
-      if (this.action==='update' && this.pageNum===3) return false;
-      else return true;
-
-      // if ((this.pageNum===1 || this.pageNum===2) && this.action==='add') return false;
-      // else if ((this.pageNum===1 || this.pageNum===2) && this.patientExist) return true;
-      // else if ((this.pageNum===1 || this.pageNum===2) && this.action==='edit') return true;
-      // else if (this.action==='view') return true;
-      // else if (this.action==='edit') return false;
+      if ((this.pageNum===1 || this.pageNum===2) && this.patientExist) return true;
+      else return false;
     },
     clearPatientInfo() {
       this.formData.patient.patientID = '';
@@ -1426,6 +1595,29 @@ export default {
       this.formData.patient.guardianContact = '';
 
       this.patientExist = false;
+    },
+    autoFillPatient(patient) {
+      // console.log(patient);
+      this.formData.patient.patientID = patient.patientID;
+      this.formData.patient.lastName = patient.lastName;
+      this.formData.patient.firstName = patient.firstName;
+      this.formData.patient.midName = patient.midName;
+      this.formData.patient.birthDate = patient.birthDate.substr(0, 10);
+      this.formData.patient.ageNo = patient.ageNo;
+      this.formData.patient.sex = patient.sex;
+      this.formData.patient.civilStatus = patient.civilStatus;
+      this.formData.patient.pregWeeks = patient.pregWeeks;
+      this.formData.patient.currHouseStreet = patient.currHouseStreet;
+      this.formData.patient.currBrgy = patient.currBrgy;
+      this.formData.patient.currCity = patient.currCity;
+      this.formData.patient.permHouseStreet = patient.permHouseStreet;
+      this.formData.patient.permBrgy = patient.permBrgy;
+      this.formData.patient.permCity = patient.permCity;
+      this.formData.patient.guardianName = patient.guardianName;
+      this.formData.patient.guardianContact = patient.guardianContact;
+
+      this.patientExist = true;
+      this.pageNum = 3;
     },
     searchPatient(event) {
       this.patientResult = [];
@@ -1504,32 +1696,6 @@ export default {
 </script>
 
 <style>
-/* .form-summary:active {
-  height: 64px;
-  transition: transform 1000ms;
-  transition-delay: 5000ms;
-  transition-timing-function: linear;
-} */
-
-.immunComplete {
-  border: #53a262;
-  background: #53a262;
-  padding: 8px;
-  margin: 10px;
-  color: white;
-  font-weight: 900;
-  font-size: 20px;
-}
-
-.immunOngoing {
-  border: #346083;
-  background: #346083;
-  padding: 8px;
-  margin: 10px;
-  color: white;
-  font-weight: 900;
-  font-size: 20px;
-}
 
 .complete {
   width: 20px;
@@ -1555,7 +1721,7 @@ body {
   background-image: none;
 }
 
-.case-container {
+.AIPE-case-container {
   margin: 70px 20px 5px 20px;
   display: flex;
   flex-direction: row;
@@ -1564,7 +1730,7 @@ body {
 }
 
 @media only screen and (max-width: 800px) {
-  .case-container {
+  .AIPE-case-container {
     width: 100%;
     flex-direction: column;
     align-items: center;
@@ -1573,7 +1739,7 @@ body {
   }
 }
 
-.form-summary {
+.AIPE-form-summary {
   width: fit-content;
   height: fit-content;
   left: 23px;
@@ -1586,7 +1752,7 @@ body {
   border-radius: 10px;
 }
 @media only screen and (max-width: 800px) {
-  .form-summary {
+  .AIPE-form-summary {
     width: 100%;
     position: unset;
     height: fit-content;
@@ -1594,7 +1760,7 @@ body {
   }
 }
 
-.form-summary-container {
+.AIPE-form-summary-container {
   position: fixed;
   width: fit-content;
   margin: 5px;
@@ -1602,7 +1768,7 @@ body {
 }
 
 @media only screen and (max-width: 800px) {
-  .form-summary-container {
+  .AIPE-form-summary-container {
     width: 95%;
     position: sticky;
     margin: 0px;
@@ -1681,19 +1847,19 @@ body {
   }
 }
 
-.disease-name {
+.AIPE-name {
   position: relative;
   top: -3px;
   z-index: 2;
 }
 @media only screen and (max-width: 800px) {
-  .disease-name {
+  .AIPE-name {
     position: relative;
     top: 0px;
   }
 }
 
-.form-component {
+.AIPE-form-component {
   position: relative;
   height: fit-content;
   width: 100%;
@@ -1707,14 +1873,14 @@ body {
   min-height: calc(100vh - 220px);
 }
 @media only screen and (max-width: 800px) {
-  .form-component {
+  .AIPE-form-component {
     position: relative;
     top: 0px;
     min-height: fit-content;
   }
 }
 
-.case-report-form {
+.AIPE-case-form {
   margin-top: 5px;
   width: 100%;
 }
@@ -2068,4 +2234,104 @@ hr {
   display: none;
 }
 
+/* SEARCH BAR ALL BELOW */
+
+.searchbar {
+  background: #ffffff;
+  border: 1px solid #a3a3a3;
+  box-sizing: border-box;
+  border-radius: 40px;
+  width: 100%;
+  height: 40px;
+  padding: 10px 20px 10px 40px;
+
+  height: 45px;
+  border: none;
+  font-size: 16px;
+  outline: none;
+  margin-top: -1px;
+
+  /* background-image: url(../assets/img/search.svg); */
+  background-image: url(https://cdn1.iconfinder.com/data/icons/hawcons/32/698956-icon-111-search-512.png);
+  background-size: 20px;
+  background-repeat: no-repeat;
+  background-position: 15px 12.5px;
+}
+
+.bar {
+  margin: 0 auto;
+  width: 100%;
+  height: 45px;
+  border-radius: 40px;
+  /* border: 1px solid #dcdcdc; */
+
+  position: relative;
+}
+.bar:hover {
+  box-shadow: 1px 1px 8px 1px #dcdcdc;
+}
+.bar:focus-within {
+  box-shadow: 1px 1px 8px 1px #dcdcdc;
+  outline: none;
+}
+
+.container {
+  background: white;
+  border-radius: 40px;
+  width: 60%;
+  margin: 0 auto;
+}
+
+#input_img {
+  position: absolute;
+  bottom: 8px;
+  left: 10px;
+  width: 30px;
+  height: 30px;
+}
+
+.searchPatientValues {
+  background: white;
+  height: fit-content;
+  border-radius: 0 0 25px 25px;
+  margin-top: -15px;
+  padding: 10px;
+  display: grid;
+  width: 100%;
+  position: absolute;
+}
+
+.searchResult {
+  padding: 5px 10px;
+  border-top: 1px solid lightgray;
+  display: inline-flex;
+  flex-direction: row;
+}
+
+.searchResult:hover {
+  background: #eeeeee;
+}
+
+.searchResultInfo {
+  display: inline-flex;
+  flex-direction: column;
+}
+
+.searchPerson {
+  font-size: 16px;
+  margin-bottom: -5px;
+  font-weight: 400;
+}
+
+.searchAddress {
+  font-size: 12px;
+  font-weight: 200;
+}
+
+.searchPersonIcon {
+  content: url('~/assets/img/personIcon.png');
+  height: 25px;
+  width: 25px;
+  margin: auto 5px auto 0;
+}
 </style>
