@@ -40,8 +40,10 @@
         <i class="fa fa-caret-down"></i>
       </button>
       <div class="dropdown-content">
-        <nuxt-link to="/immunizationProg"> Immunization Program </nuxt-link>
-        <nuxt-link to="/progAccomplish"> Accomplishment Reports </nuxt-link>
+        <nuxt-link to="/addImmunizationProg"> Add Immunization Program </nuxt-link>
+        <nuxt-link to="/allImmunizationProg"> Immunization Program Reports </nuxt-link>
+        <nuxt-link to="/addProgAccomplish"> Add Accomplishment Report </nuxt-link>
+        <nuxt-link to="/allProgAccomplish"> Accomplishment Reports </nuxt-link>
         <nuxt-link to="/progTargets"> Program Targets </nuxt-link>
       </div>
     </div>

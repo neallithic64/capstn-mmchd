@@ -343,6 +343,9 @@ export default {
     }
   },
   mounted() {
+    // eslint-disable-next-line no-unused-vars
+    const userTypes = ["fhsisStaff", "techStaff", "lhsdChief", "aehmdChief",
+            "resuHead", "chdDirector", "idpcStaff", "eohStaff", "hemStaff"];
     setInterval(this.getToday, 1000);
     if (this.$auth.user.userType === 'pidsrStaff')
       this.moveProgress();

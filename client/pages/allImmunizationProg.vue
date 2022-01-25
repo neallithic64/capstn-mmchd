@@ -4,7 +4,7 @@
     <TopNav />
     <div ref="content" class="viewcases-container">
       <div class="exportButtons">
-        <h1 class="pageHeader"> Immunization Program </h1>
+        <h1 class="pageHeader"> Immunization Program Reports </h1>
         <div v-show="!isPrint" class="actionButtons" style="display: flex;margin-top: 5px;">
           <ul v-show="year==='2022' || year===2022" class="actionButton">
           <img
@@ -29,105 +29,11 @@
         </div>
       </div>
       <div class="viewcases-component">
-      <div class="datatable">
-        <!-- <div class="search">
-          Show
-          <select id="rows" v-model="showDataAmount" class="form-control" @change="selectedDataAmount">
-            <option value="10">10</option>
-            <option value="20">20</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
-            <option value="500">500</option>
-          </select>
-          rows
-          <input
-            id="search"
-            v-model="requestParams.search"
-            type="text"
-            style="float: right"
-            placeholder="Search here"
-            @keyup="search()"
-          />
-        </div> -->
-        <table id="datatable">
-          <thead>
-            <th v-for="(column, columnIndex) in columns" :key="columnIndex" :style="{ 'text-align': column.textAlign }">
-              <span v-if="column.filter" style="float: left">
-                <!-- <div v-if="column.key === 'city'">
-                  <a class="filterButton">
-                    <img
-                      src="~/assets/img/filter.png"
-                      alt="filter.png"
-                      style="width: 16px; height: 16px"
-                      @click="cityOpen = !cityOpen"
-                    />
-                  </a>
-                  <div v-if="cityOpen" style="position: absolute">
-                    <div class="arrow-up"></div>
-                    <div class="filterDropdown">
-                      <b>Select City:</b>
-                      <div v-for="(value, i) in cityFilters.options" :key="i" style="padding-left: 7px">
-                        <input
-                          :id="value"
-                          v-model="cityFilters.selected"
-                          :value="value"
-                          name="filter"
-                          type="checkbox"
-                          @change="filter()"
-                        />
-                        <label :for="value">{{ value }}</label>
-                      </div>
-                    </div>
-                  </div>
-                </div> -->
-              </span>
-              <span>{{ column.title }}</span>
-            </th>
-          </thead>
-          <tbody>
-            <template v-if="dataSets.length > 0">
-              <tr v-for="(data, dataIndex) in dataSets" :key="dataIndex">
-              <!-- <tr v-for="(data, dataIndex) in dataSets" v-show="dataIndex >= showstart && dataIndex <= showend" :key="dataIndex"> -->
-                <td v-for="(column, columnIndex) in columns" :key="columnIndex" style="text-align: center">
-                  <span v-if="column.key==='button'">
-                    pen icon
-                  </span>
-                  <span>
-                    {{ data[column.key] }}
-                  </span>
-                </td>
-              </tr>
-            </template>
-            <template v-else>
-              <div style="text-align: center">No data found.</div>
-            </template>
-          </tbody>
-        </table>
-
-        <!-- <div v-if="totalCount > requestParams.take" class="pagination">
-          <a href="javascript:"
-            :class="{ isDisabled: currentPage == 1 }"
-            @click="newPage(currentPage - 1)">
-            &laquo;
-          </a>
-          <a v-for="(page, pageIndex) in pages"
-            v-show="pageIndex > 0"
-            :key="pageIndex"
-            href="javascript:"
-            :class="[{ active: currentPage === pageIndex }, { isDisabled: currentPage === pageIndex || page === '...', },]"
-            @click="newPage(pageIndex)">
-            {{ pageIndex }}
-          </a>
-          <a :class="{ isDisabled: currentPage == totalPage }"
-            href="javascript:"
-            @click="newPage(currentPage + 1)">
-            &raquo;
-          </a>
-        </div> -->
-        <div style="margin-top:5px;">
-          Last updated: <b> {{dayTime}} </b>
-        </div>
-      </div>
+        <dataTable
+          :options="tableOptions"
+          :datavalues="dataSets"
+          :casetype="'immunProgs'"
+        />
       </div>
     </div>
   </div>
@@ -139,9 +45,13 @@
 <script>
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
+import dataTable from './dataTable.vue'
 const axios = require('axios');
 
 export default {
+  components: {
+    dataTable,
+  },
   middleware: 'is-auth',
   header: {
     title: 'Immunization Program',
@@ -151,43 +61,85 @@ export default {
     return {
       isPrint: false,
       dayTime: '',
-      columns: [
-        {
-          title: 'Patient',
-          key: 'patient',
-        },
-        {
-          title: 'City',
-          key: 'city',
-        },
-        {
-          title: 'Date Added',
-          key: 'dateAdded',
-        },
-        {
-          title: 'Status',
-          key: 'status',
-        },
-        {
-          title: 'TCLPatient',
-          key: 'link',
-        },
-      ],
+      tableOptions: {
+        tableName: 'cases',
+        columns: [
+          {
+            title: 'Immunization Program ID',
+            key: 'immunizationProgNo',
+            sortable: true,
+            type: 'clickable',
+          },
+          {
+            title: 'City',
+            key: 'city',
+            sortable: true,
+            filter:true,
+          },
+          {
+            title: 'Barangay',
+            key: 'barangay',
+            sortable: true,
+          },
+          {
+            title: 'Year',
+            key: 'year',
+            sortable: true,
+          },
+          {
+            title: 'Month',
+            key: 'month',
+            sortable: true,
+          },
+          {
+            title: 'Immunized Patients',
+            key: 'immunizedPatients',
+            sortable: true,
+          },
+          {
+            title: 'Total Patients',
+            key: 'totalPatients',
+            sortable: true,
+          },
+          {
+            title: 'Last Updated',
+            key: 'updateDate',
+            sortable: true,
+          },
+        ],
+        // source: 'http://demo.datatable/api/users',
+        search: true,
+      },
       dataSets: [
         {
-          patient: 'ad',
-          dateAdded: '',
-          status: 'done',
+          immunizationProgNo: '124',
+          city: 'ad',
+          barangay: '',
+          year: '2020',
+          month: 'Feb',
+          immunizedPatients: '10',
+          totalPatients: '30',
+          updateDate: '',
         },
         {
-          patient: 'swlnjw',
-          dateAdded: '',
-          status: 'ongoing',
+          immunizationProgNo: '124',
+          city: 'ad',
+          barangay: '',
+          year: '2020',
+          month: 'Feb',
+          immunizedPatients: '10',
+          totalPatients: '30',
+          updateDate: '',
         },
         {
-          patient: 'ad',
-          dateAdded: '',
-          status: '',
+          immunizationProgNo: '124',
+          city: 'ad',
+          barangay: '',
+          year: '2020',
+          month: 'Feb',
+          immunizedPatients: '10',
+          totalPatients: '30',
+          updateDate: '',
         },
       ],
     }

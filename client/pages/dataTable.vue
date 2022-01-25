@@ -158,6 +158,33 @@
                 </div>
               </div>
             </div>
+            <div v-if="column.title==='Immunization Status'">
+              <a class="filterButton">
+                <img
+                  src="~/assets/img/filter.png"
+                  alt="filter.png"
+                  style="width: 16px; height: 16px"
+                  @click="immunStatusOpen = !immunStatusOpen"
+                />
+              </a>
+              <div v-if="immunStatusOpen" style="position: absolute">
+                <div class="arrow-up"></div>
+                <div class="filterDropdown">
+                  <b>Select Status:</b>
+                  <div v-for="(value, i) in immunStatusFilters.options" :key="i" style="padding-left: 7px">
+                    <input
+                      :id="value"
+                      v-model="immunStatusFilters.selected"
+                      :value="value"
+                      name="filter"
+                      type="checkbox"
+                      @change="filter()"
+                    />
+                    <label :for="value">{{ value }}</label>
+                  </div>
+                </div>
+              </div>
+            </div>
           </span>
           <span>{{ column.title }}</span>
           <span v-if="requestParams.sortedKey === column.key && requestParams.sortedType === 'asc'" style="float: right">
@@ -185,7 +212,19 @@
                 <component :is="column.name" :row="data"></component>
               </span>
               <span v-else-if="column.key === 'action'">
-                <div class="actionButtons">
+                <div v-if="pageType==='immunProg'" class="actionButtons">
+                  <ul>
+                    <a :href="'/viewImmunizationProgEntry'" class="CRFActionButton" style="color: #346083; text-decoration-line: underline">
+                      <span v-if="data[column.key]==='update'"> Update </span>
+                      <span v-if="data[column.key]==='view'"> View </span>
+                    
+                      <!-- <img v-if="data[column.key]==='add'" src="~/assets/img/add.png" class="button" />
+                      <img v-if="data[column.key]==='edit'" src="~/assets/img/pen.png" class="button"/>
+                      <img v-if="data[column.key]==='view'" src="~/assets/img/eye.png" class="button"/> -->
+                    </a>
+                  </ul>
+                </div>
+                <div v-else class="actionButtons">
                   <ul v-if="data[column.key]==='add submit' || data[column.key]==='add'" class="CRFActionButton">
                     <a :href="'/add' + 'CRF' + data['disease'] + 'Case'"> Add Case
                       <!-- <img src="~/assets/img/add.png" class="button"/> -->
@@ -203,7 +242,7 @@
                   :href="'/view' + 'CIFMeasles?caseID=' + data[column.key] ">
                   {{ data[column.key] }}
                 </a>
-                <a v-else-if="(pageType === 'patients')"
+                <a v-else-if="(pageType === 'patients' || column.key === 'patientID')"
                   style="color: #346083; text-decoration-line: underline"
                   :href="'/viewPatient?patientID=' + data[column.key]">
                   {{ data[column.key] }}
@@ -256,13 +295,25 @@
                   :href="'/viewHealthEvent' + '?eventID=' + data[column.key]">
                   {{ data[column.key] }}
                 </a>
+                <a v-else-if="column.key === 'immunizationProgNo'"
+                  style="color: #346083; text-decoration-line: underline"
+                  :href="'/viewImmunizationProg'">
+                  {{ data[column.key] }}
+                </a>
+                <a v-else-if="(column.key === 'progAccomplishID')"
+                  style="color: #346083; text-decoration-line: underline"
+                  :href="'/viewProgAccomplishMalaria'">
+                  <!-- :href="'/addProgAccomplish' + DISEASE + YEAR + data[column.key]"> -->
+                  <!-- ALSO NEED TO INCLUDE DISEASE AND YEAR IN LINK TO REDIRECT TO THAT PAGE -->
+                  {{ data[column.key] }}
+                </a>
                 <!-- <a
                   style="text-decoration: none"
                   v-bind:href="column.source + '/' + data[column.key]"
                   >{{ data[column.key] }}
                 </a> -->
               </span>
-              <span v-else-if="column.title==='Case Status' || column.title==='Status' || column.title==='Risk Classification' || column.title==='Submit Status' || column.title==='Report Status'" :class="caseStatusClass(data[column.key])">
+              <span v-else-if="column.title==='Case Status' || column.title==='Status' || column.title==='Risk Classification' || column.title==='Submit Status' || column.title==='Report Status' || column.title==='Immunization Status'" :class="caseStatusClass(data[column.key])">
                 {{ data[column.key] }}
               </span>
               <span v-else>
@@ -319,6 +370,7 @@ export default {
       caseStatusOpen: false,
       submitStatusOpen: false,
       reportStatusOpen: false,
+      immunStatusOpen: false,
       diseaseFilters: {
         options: ['Measles/Rubella','Malaria','Pertussis','Dengue','Leptospirosis','Acute Viral Hepatitis',
         ],
@@ -353,6 +405,10 @@ export default {
       },
       reportStatusFilters: {
         options: ['None', 'Zero Report', 'Case Submitted'],
+        selected: [],
+      },
+      immunStatusFilters: {
+        options: ['N/A', 'Ongoing', 'Completed'],
         selected: [],
       },
       dataFiltered: [],
@@ -396,11 +452,10 @@ export default {
 
     this.pageType = this.casetype;
     // this.requestParams.sortedKey = this.options.columns[0].key;
-    this.filterOff();
     this.dataFiltered = this.datavalues;
     this.dataSearched = this.datavalues;
     this.dataSets = this.datavalues;
-	console.log(this.datavalues);
+    console.log(this.datavalues);
     this.sortedKeyValue(this.requestParams.sortedKey, this.requestParams.sortedType);
     this.totalCount = Object.keys(this.dataSets).length;
     if (this.pageType === 'patient') this.requestParams.take = this.totalCount;
@@ -409,34 +464,42 @@ export default {
   },
   methods: {
     getTableDisplay() {
-      if (this.pageType === 'all') return 'allDisplay';
+      if (this.pageType === 'all' || this.pageType === 'cif') return 'allDisplay';
     },
     caseStatusClass(c) {
       if (c) {
-        if (c.toString().includes('Suspect')) return 'caseStatus suspectedCase';
-        else if (c.toString().includes('Suspected')) return 'caseStatus suspectedCase';
-        else if (c.toString().includes('Probable')) return 'caseStatus probableCase';
-        else if (c.toString().includes('Confirmed')) return 'caseStatus confirmedCase';
-        else if (c.toString().includes('Compatible')) return 'caseStatus confirmedCase';
-        else if (c.toString().includes('Discarded')) return 'caseStatus discardedCase';
-        else if (c.toString().includes('forVerification')) return 'caseStatus discardedCase';
-        else if (c.toString().includes('Ongoing')) return 'caseStatus ongoingOutbreak';
-        else if (c.toString().includes('Controlled')) return 'caseStatus suspectedCase';
-        else if (c.toString().includes('Closed')) return 'caseStatus lowRisk';
-        else if (c.toString().includes('High')) return 'caseStatus confirmedCase';
-        else if (c.toString().includes('Moderate')) return 'caseStatus suspectedCase';
-        else if (c.toString().includes('Low')) return 'caseStatus lowRisk';
-        else if (c.toString().includes('Submitted')) return 'caseStatus lowRisk';
-        else if (c.toString().includes('Pushed')) return 'caseStatus suspectedCase';
-        else if (c.toString().includes('Zero Report')) return 'caseStatus confirmedCase';
+        if (c.toString().includes('Suspect')) return 'caseStatus orange';
+        else if (c.toString().includes('Suspected')) return 'caseStatus orange';
+        else if (c.toString().includes('Probable')) return 'caseStatus yellow';
+        else if (c.toString().includes('Confirmed')) return 'caseStatus red';
+        
+        else if (c.toString().includes('Complete')) return 'caseStatus green';
+        else if (this.pageType==='immunProg' && c.toString().includes('Ongoing')) return 'caseStatus gray';
+        
+        else if (c.toString().includes('Compatible')) return 'caseStatus red';
+        else if (c.toString().includes('Discarded')) return 'caseStatus gray';
+        else if (c.toString().includes('forVerification')) return 'caseStatus gray';
+        
+        else if (c.toString().includes('Ongoing')) return 'caseStatus red';
+        else if (c.toString().includes('Controlled')) return 'caseStatus orange';
+        else if (c.toString().includes('Closed')) return 'caseStatus green';
+        
+        else if (c.toString().includes('High')) return 'caseStatus red';
+        else if (c.toString().includes('Moderate')) return 'caseStatus orange';
+        else if (c.toString().includes('Low')) return 'caseStatus green';
+        
+        else if (c.toString().includes('Submitted')) return 'caseStatus green';
+        else if (c.toString().includes('Pushed')) return 'caseStatus orange';
+        else if (c.toString().includes('Zero Report')) return 'caseStatus red';
+        
         return 'none';
       }
     },
     obStatusRowClass(c, d, e) {
       if (c) {
         if (c.toString().includes('Ongoing')) return 'ongoingOBRow';
-        // else if (c.toString().includes('Controlled')) return 'caseStatus suspectedCase';
-        // else if (c.toString().includes('Closed')) return 'caseStatus lowRisk';
+        // else if (c.toString().includes('Controlled')) return 'caseStatus orange';
+        // else if (c.toString().includes('Closed')) return 'caseStatus green';
         return 'none';
       }
       if (d) {
@@ -514,7 +577,7 @@ export default {
       this.dataFiltered = [];
 
       if (this.diseaseFilters.selected.length === 0 && this.cityFilters.selected.length === 0 && this.caseStatusFilters.selected.length === 0
-        && this.submitStatusFilters.selected.length === 0 && this.reportStatusFilters.selected.length === 0)
+        && this.submitStatusFilters.selected.length === 0 && this.reportStatusFilters.selected.length === 0 && this.immunStatusFilters.selected.length === 0)
         this.dataFiltered = this.datavalues;
 
       else if (this.pageType === 'crfCase' || this.pageType === 'addcrfID') {
@@ -540,6 +603,14 @@ export default {
             (this.cityFilters.selected.length === 0 || this.cityFilters.selected.includes(this.datavalues[i].city)) &&
             (this.submitStatusFilters.selected.length === 0 || this.submitStatusFilters.selected.includes(this.datavalues[i].submitStatus)) &&
             (this.reportStatusFilters.selected.length === 0 || this.reportStatusFilters.selected.includes(this.datavalues[i].reportStatus))) {
+            this.dataFiltered.push(this.datavalues[i]);
+          }
+      }
+
+      else if (this.pageType === 'immunProg') {
+        for (let i = 0; i < Object.keys(this.datavalues).length; i++)
+          if ((this.cityFilters.selected.length === 0 || this.cityFilters.selected.includes(this.datavalues[i].city)) &&
+            (this.immunStatusFilters.selected.length === 0 || this.immunStatusFilters.selected.includes(this.datavalues[i].immunStatus))) {
             this.dataFiltered.push(this.datavalues[i]);
           }
       }
@@ -586,11 +657,6 @@ export default {
       this.currentPage = 1;
       this.totalCount = Object.keys(this.dataSets).length;
       console.log('DATA:' + this.dataSets)
-    },
-    filterOff() {
-      this.filters = [];
-      for (let i = 0; i < this.options.columns.length; i++)
-        if (this.options.columns[i].filter) this.filters[0] = false;
     },
     selectedDataAmount() {
       this.currentPage = 1;
@@ -667,20 +733,20 @@ export default {
   border-radius: 10px;
   font-weight: 500;
 }
-.ongoingOutbreak {
+.red {
   background: red;
 }
-.confirmedCase {
-  background: red;
-}
-.suspectedCase {
+.orange {
   background: #FC8F00;
 }
-.probableCase {
+.yellow {
   background: #FDCE00;
 }
-.lowRisk {
+.green {
   background: #008d41;
+}
+.gray {
+  background: gray;
 }
 .ongoingOBRow {
   background: #ffd2d2;

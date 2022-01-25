@@ -877,6 +877,60 @@
         </form>
         <hr />
 
+        <form v-if="immunization.status!=='N/A'" id="patient3" type="submit">
+          <div id="case-investigation-form" class="center">
+            <h2 id="form-header">
+              Immunization Program Status
+            </h2>
+            <div>
+              <table>
+                <thead>
+                  <th> BCG </th>
+                  <th> HEPA </th>
+                  <th> OPV </th>
+                  <th> PENTA </th>
+                  <th> PCV </th>
+                  <th> MCV </th>
+                  <th> IMMUNIZATION STATUS </th>
+                </thead>
+                <tr>
+                  <td>
+                    <img v-if="immunization.bcg" src="~/assets/img/check.png" style="width:30px"/>
+                    <img v-else src="~/assets/img/x.png" style="width:30px"/>
+                  </td>
+                  <td>
+                    <img v-if="immunization.hepa2" src="~/assets/img/check.png" style="width:30px"/>
+                    <img v-else src="~/assets/img/x.png" style="width:30px"/>
+                  </td>
+                  <td>
+                    <img v-if="immunization.opv3" src="~/assets/img/check.png" style="width:30px"/>
+                    <img v-else src="~/assets/img/x.png" style="width:30px"/>
+                  </td>
+                  <td>
+                    <img v-if="immunization.penta3" src="~/assets/img/check.png" style="width:30px"/>
+                    <img v-else src="~/assets/img/x.png" style="width:30px"/>
+                  </td>
+                  <td>
+                    <img v-if="immunization.pcv3" src="~/assets/img/check.png" style="width:30px"/>
+                    <img v-else src="~/assets/img/x.png" style="width:30px"/>
+                  </td>
+                  <td>
+                    <img v-if="immunization.mcv2" src="~/assets/img/check.png" style="width:30px"/>
+                    <img v-else src="~/assets/img/x.png" style="width:30px"/>
+                  </td>
+                  
+                  <td>
+                    <span v-if="immunization.status==='Complete'" > COMPLETE </span>
+                    <span v-else> ONGOING </span>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </form>
+
+        <hr/>
+
         <form id="patient3" type="submit">
           <div id="case-investigation-form" class="center">
             <h2 id="form-header">
@@ -1162,6 +1216,16 @@ export default {
         'Taguig City',
         'Valenzuela City',
       ],
+      immunization: 
+        {
+          status: 'Complete', // n/a ongoing complete
+          bcg: true,
+          hepa2: false,
+          opv3: true,
+          penta3: true,
+          pcv3: false,
+          mcv2: false,
+        },
     }
   },
   mounted() {
