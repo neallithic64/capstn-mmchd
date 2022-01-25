@@ -2,18 +2,18 @@
   <div id="viewevents">
     <!--Top Bar of the screen-->
     <TopNav/>
-    <div ref="content" class="allevents-container">
+    <div ref="content" class="all-reports-container">
       <div class="exportButtons">
         <h1 class="pageHeader">All Reports</h1>
         <div v-show="!isPrint" class="actionButtons">
-          <ul class="HEActionButton" @click="downloadPDF">
+          <ul class="rep-action-button" @click="downloadPDF">
           <img
             src="~/assets/img/pdf.png"
             class="printButton"
             @click="downloadPDF()"
           />
           </ul>
-          <ul class="HEActionButton">
+          <ul class="rep-action-button">
             <img src="~/assets/img/csv.png" 
             class="printButton"
             @click="csvExport(getTable())"
@@ -21,12 +21,12 @@
           </ul>
         </div>
       </div>
-      <div class="allevents-component">
-        <div v-if="allEvents.length > 0" id="vue-root">
+      <div class="all-reports-component">
+        <div v-if="allReports.length > 0" id="vue-root">
           <dataTable
             :options="tableOptions"
-            :datavalues="allEvents"
-            :casetype="'events'"
+            :datavalues="allReports"
+            :casetype="'reports'"
           />
         </div>
       </div>
@@ -53,84 +53,103 @@ export default {
     return {
       isPrint: false,
       tableOptions: {
-        tableName: 'events',
+        tableName: 'reports',
         columns: [
           {
-            title: 'Event ID',
-            key: 'eventID',
+            title: 'Report ID',
+            key: 'reportID',
             type: 'clickable',
-            source: 'events',
+            source: 'reports',
             uniqueField: 'id',
           },
           {
-            title: 'Source',
-            key: 'source',
+            title: 'Disease',
+            key: 'reportDisease',
             type: 'text',
-            source: 'events',
+            source: 'reports',
           },
           {
-            title: 'Date Captured',
-            key: 'dateCaptured',
+            // Monthly Feedback, Annual Feedback, Adhoc Feedback, Outbreak Feedback
+            title: 'Type',
+            key: 'reportType',
+            type: 'text',
+            source: 'reports',
+          },
+          {
+            title: 'Date Submitted',
+            key: 'reportDateSub',
             type: 'text',
             dateFormat: true,
             currentFormat: 'YYYY-MM-DD',
             expectFormat: 'DD MMM YYYY',
-          },
-          {
-            title: 'Date Reported',
-            key: 'dateReported',
-            type: 'text',
-            dateFormat: true,
-            currentFormat: 'YYYY-MM-DD',
-            expectFormat: 'DD MMM YYYY',
-          },
-          {
-            title: 'City',
-            key: 'city',
-            type: 'text',
-            source: 'events',
-            uniqueField: 'id',
-            sortable: true,
-            filter: true,
-          },
-          {
-            title: 'No. of Cases',
-            key: 'numCases',
-            type: 'text',
-            source: 'events'
-          },
-          {
-            title: 'No. of Deaths',
-            key: 'numDeaths',
-            type: 'text',
-            source: 'events'
           },
           {
             title: 'Status',
-            key: 'eventStatus',
+            key: 'reportStatus',
             type: 'text',
-            source: 'events',
+            source: 'reports',
             sortable: true,
+          },
+          {
+            title: 'Date Approved',
+            key: 'reportDateApp',
+            type: 'text',
+            dateFormat: true,
+            currentFormat: 'YYYY-MM-DD',
+            expectFormat: 'DD MMM YYYY',
           },
         ],
         // source: 'http://demo.datatable/api/users',
         search: true,
       },
-      allEvents: [],
+      allReports: [
+        {
+          reportID: '123',
+          reportDisease: 'Measles',
+          reportType: 'Monthly Feedback',
+          reportDateSub: '2021-12-13',
+          reportStatus: 'For Approval',
+          reportDateApp: ''
+        },
+        {
+          reportID: '124',
+          reportDisease: 'Measles',
+          reportType: 'Annual Feedback',
+          reportDateSub: '2021-12-13',
+          reportStatus: 'For Approval',
+          reportDateApp: ''
+        },
+        {
+          reportID: '125',
+          reportDisease: 'Measles',
+          reportType: 'Adhoc Feedback',
+          reportDateSub: '2021-12-13',
+          reportStatus: 'For Revision',
+          reportDateApp: ''
+        },
+        {
+          reportID: '126',
+          reportDisease: 'Measles',
+          reportType: 'Outbreak Feedback',
+          reportDateSub: '2021-12-13',
+          reportStatus: 'Approved',
+          reportDateApp: '2021-12-25'
+        }
+      ],
     }
   },
   head() {
     return {
-      title: 'Health Events'
+      title: 'Reports'
     }
   },
   async mounted() {
-    const DRUUserTypes = ['BHS', 'RHU', 'CHO', 'govtHosp', 'privHosp', 'clinic', 'govtLab', 'privLab', 'airseaPort', 'fhsis'];
-    const rows = (await axios.get('http://localhost:8080/api/getAllEvents')).data;
+    // const DRUUserTypes = ['BHS', 'RHU', 'CHO', 'govtHosp', 'privHosp', 'clinic', 'govtLab', 'privLab', 'airseaPort', 'fhsis'];
+    // const rows = (await axios.get('http://localhost:8080/api/getAllEvents')).data;
     
-    if (DRUUserTypes.includes(this.$auth.user.userType)) {
-      this.allEvents = rows.filter(e => e.userID === this.$auth.user.userID);
-    } else this.allEvents = rows;
+    // if (DRUUserTypes.includes(this.$auth.user.userType)) {
+    //   this.allEvents = rows.filter(e => e.userID === this.$auth.user.userID);
+    // } else this.allEvents = rows;
   },
   methods: {
     downloadPDF() {
@@ -195,7 +214,7 @@ body {
   color: #346083;
 }
 
-.allevents-container {
+.all-reports-container {
   padding: 80px 20px 5px 20px;
   width: 100%;
 }
@@ -224,7 +243,7 @@ body {
   }
 }
 
-.allevents-component {
+.all-reports-component {
   /* position: relative;
   display: inline-flex;
   flex-direction: row; */
@@ -239,7 +258,7 @@ body {
   margin-bottom: 40px;
 }
 @media only screen and (max-width: 800px) {
-  .allevents-component {
+  .all-reports-component {
     position: relative;
     top: 0px;
     min-height: fit-content;

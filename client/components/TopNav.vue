@@ -63,7 +63,7 @@
       </div>
     </div>
 
-    <div v-if="$auth.user.userType === 'pidsrStaff' || $auth.user.userType === 'fhsisStaff' || $auth.user.userType === 'techStaff'"
+    <div v-if="$auth.user.userType === 'pidsrStaff' || $auth.user.userType === 'techStaff'"
       class="dropdown">
       <button class="dropbtn">
         Reports and Analytics
@@ -77,7 +77,7 @@
     <nuxt-link
       v-if="$auth.user.userType === 'lhsdChief' || $auth.user.userType === 'aehmdChief' || 
       $auth.user.userType === 'resuHead' || $auth.user.userType === 'chdDirector'"
-      to="/reports"> 
+      to="/allReports"> 
       Reports
     </nuxt-link>
     <nuxt-link v-if="$auth.user.userType === 'idpcStaff' || $auth.user.userType === 'eohStaff' || $auth.user.userType === 'hemStaff'" to="/allCases"> Case Reports </nuxt-link>
