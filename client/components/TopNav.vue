@@ -71,6 +71,7 @@
       </button>
       <div class="dropdown-content">
         <nuxt-link to="/analytics"> View Analytics </nuxt-link>
+        <nuxt-link to="/addReport"> Add New Report </nuxt-link>
         <nuxt-link to="/allReports"> All Reports </nuxt-link>
       </div>
     </div>
