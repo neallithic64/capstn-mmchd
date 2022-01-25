@@ -1038,6 +1038,20 @@
                               <th> MCV 2 (MMR)</th>
                               <td> <input v-if="loadedData[0].mcv2 != '' || action!='view'" v-model="dataSets[0].mcv2" type="date" max="today" :disabled="loadedData[0].mcv2 != '' || inputEdit()"/> </td>
                             </tr>
+                            <tr>
+                              <th rowspan="3"> Dengue </th>
+                              <th> 1 </th>
+                              <td> <input v-if="loadedData[0].dengue1 != '' || action!='view'" v-model="dataSets[0].dengue1" type="date" max="today" :disabled="loadedData[0].dengue1 != '' || inputEdit()"/> </td>
+                              <td rowspan="3"> <span v-if="loadedData[0].dengue1 != '' && loadedData[0].dengue2 != '' && loadedData[0].dengue3 != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="complete"/> COMPLETE </span> </td>
+                            </tr>
+                            <tr>
+                              <th> 2 </th>
+                              <td> <input v-if="loadedData[0].dengue2 != '' || action!='view'" v-model="dataSets[0].dengue2" type="date" max="today" :disabled="loadedData[0].dengue2 != '' || inputEdit()"/> </td>
+                            </tr>
+                            <tr>
+                              <th> 3 </th>
+                              <td> <input v-if="loadedData[0].dengue3 != '' || action!='view'" v-model="dataSets[0].dengue3" type="date" max="today" :disabled="loadedData[0].dengue3 != '' || inputEdit()"/> </td>
+                            </tr>
                       </template>
                     </tbody>
                   </table>
@@ -1261,6 +1275,9 @@ export default {
           pcv3: '',
           mcv1: '2020-02-03',
           mcv2: '2020-02-03',
+          dengue1: '',
+          dengue2: '',
+          dengue3: '',
         },
       ],
       dataSets: [
@@ -1279,6 +1296,9 @@ export default {
           pcv3: '',
           mcv1: '',
           mcv2: '',
+          dengue1: '',
+          dengue2: '',
+          dengue3: '',
         },
       ],
 
@@ -1328,6 +1348,9 @@ export default {
     this.dataSets[0].cv3 = this.loadedData[0].pcv3;
     this.dataSets[0].mcv1 = this.loadedData[0].mcv1;
     this.dataSets[0].mcv2 = this.loadedData[0].mcv2;
+    this.dataSets[0].dengue1 = this.loadedData[0].dengue1;
+    this.dataSets[0].dengue2 = this.loadedData[0].dengue2;
+    this.dataSets[0].dengue3 = this.loadedData[0].dengue3;
 
     console.log(this.dataSets[0]);
     // this.$forceUpdate();
@@ -1383,13 +1406,32 @@ export default {
         this.$toast.error('Something went wrong!', {duration: 4000, icon: 'error'});
       }
     },
+    saveData() {
+      this.loadedData[0].bcg = this.dataSets[0].bcg;
+      this.loadedData[0].hepa1 = this.dataSets[0].hepa1;
+      this.loadedData[0].hepa2 = this.dataSets[0].hepa2;
+      this.loadedData[0].opv1 = this.dataSets[0].opv1;
+      this.loadedData[0].opv2 = this.dataSets[0].opv2;
+      this.loadedData[0].opv3 = this.dataSets[0].opv3;
+      this.loadedData[0].penta1 = this.dataSets[0].penta1;
+      this.loadedData[0].penta2 = this.dataSets[0].penta2;
+      this.loadedData[0].penta3 = this.dataSets[0].penta3;
+      this.loadedData[0].pcv1 = this.dataSets[0].pcv1;
+      this.loadedData[0].pcv2 = this.dataSets[0].pcv2;
+      this.loadedData[0].pcv3 = this.dataSets[0].pcv3;
+      this.loadedData[0].mcv1 = this.dataSets[0].mcv1;
+      this.loadedData[0].mcv2 = this.dataSets[0].mcv2;
+      this.loadedData[0].dengue1 = this.dataSets[0].dengue1;
+      this.loadedData[0].dengue2 = this.dataSets[0].dengue2;
+      this.loadedData[0].dengue3 = this.dataSets[0].dengue3;
+    },
     move(page) {
       this.validateForm(this.pageNum);
       this.pageColor[this.pageNum] = this.pageDone[this.pageNum];
       this.validateForm(page);
       this.pageColor[page] = this.pageDone[page];
       
-      if (this.patientExist ||this.pageDone[this.pageNum] || this.pageDone[page] || page===0 || this.pageNum ===0) {
+      if ((this.patientExist ||this.pageDone[this.pageNum] || this.pageDone[page] || page===0 || this.pageNum ===0) && page!==4) {
         if (page < Object.keys(this.disease.formNames).length && this.pageNum < Object.keys(this.disease.formNames).length) {
           if (page!==3) this.pageDone[page] = true;
           if (this.pageNum!==3) this.pageDone[this.pageNum] = true;
@@ -1400,7 +1442,8 @@ export default {
 
       else if (page===4) {
         if (this.patientExist || (this.pageDone[1] && this.pageDone[2] && this.pageColor[1] && this.Color[2])) {
-          this.save();
+          this.saveData();
+          // this.save();
           // redirect to view page with update action
           window.location.href = "/viewImmunizationProgEntry";
         }

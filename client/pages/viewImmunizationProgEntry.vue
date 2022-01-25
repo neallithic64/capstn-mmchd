@@ -36,11 +36,11 @@
               Please fill up the form with complete and correct information
             </p>
           </div>
-          <div v-if="status='Complete'" class="immunComplete">
+          <div v-if="status==='Complete'" class="immunComplete">
             COMPLETE
           </div>
-          <div v-else-if="status='Ongoing'" class="immunOngoing">
-            Ongoing
+          <div v-else-if="status==='Ongoing'" class="immunOngoing">
+            ONGOING
           </div>
         </div>
 
@@ -1007,6 +1007,20 @@
                               <th> MCV 2 (MMR)</th>
                               <td> <input v-if="loadedData[0].mcv2 != '' || action!='view'" v-model="dataSets[0].mcv2" type="date" max="today" :disabled="loadedData[0].mcv2 != '' || inputEdit()"/> </td>
                             </tr>
+                            <tr>
+                              <th rowspan="3"> Dengue </th>
+                              <th> 1 </th>
+                              <td> <input v-if="loadedData[0].dengue1 != '' || action!='view'" v-model="dataSets[0].dengue1" type="date" max="today" :disabled="loadedData[0].dengue1 != '' || inputEdit()"/> </td>
+                              <td rowspan="3"> <span v-if="loadedData[0].dengue1 != '' && loadedData[0].dengue2 != '' && loadedData[0].dengue3 != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="complete"/> COMPLETE </span> </td>
+                            </tr>
+                            <tr>
+                              <th> 2 </th>
+                              <td> <input v-if="loadedData[0].dengue2 != '' || action!='view'" v-model="dataSets[0].dengue2" type="date" max="today" :disabled="loadedData[0].dengue2 != '' || inputEdit()"/> </td>
+                            </tr>
+                            <tr>
+                              <th> 3 </th>
+                              <td> <input v-if="loadedData[0].dengue3 != '' || action!='view'" v-model="dataSets[0].dengue3" type="date" max="today" :disabled="loadedData[0].dengue3 != '' || inputEdit()"/> </td>
+                            </tr>
                       </template>
                     </tbody>
                   </table>
@@ -1060,7 +1074,7 @@ export default {
   data() {
     return {
       action:'update', // update, view
-      status: 'Complete',
+      status: 'Ongoing',
       patientExist: false,
       patientHasImmunRecord: false,
       sameAddress:'',
@@ -1168,64 +1182,6 @@ export default {
         'Valenzuela',
       ],
 
-      columns: [
-        {
-          title: 'BCG',
-          key: 'bcg',
-        },
-        {
-          title: 'HEPA B1-1',
-          key: 'hepa1',
-        },
-        {
-          title: 'HEPA B1-2',
-          key: 'hepa2',
-        },
-        {
-          title: 'OPV 1',
-          key: 'opv1',
-        },
-        {
-          title: 'OPV 2',
-          key: 'opv2',
-        },
-        {
-          title: 'OPV 3',
-          key: 'opv3',
-        },
-        {
-          title: 'PENTA 1',
-          key: 'penta1',
-        },
-        {
-          title: 'PENTA 2',
-          key: 'penta2',
-        },
-        {
-          title: 'PENTA 3',
-          key: 'penta3',
-        },
-        {
-          title: 'PCV 1',
-          key: 'pcv1',
-        },
-        {
-          title: 'PCV 2',
-          key: 'pcv2',
-        },
-        {
-          title: 'PCV 3',
-          key: 'pcv3',
-        },
-        {
-          title: 'MCV 1',
-          key: 'mcv1',
-        },
-        {
-          title: 'MCV 2',
-          key: 'mcv2',
-        },
-      ],
       loadedData: [
         {
           bcg: '2020-02-03',
@@ -1242,6 +1198,9 @@ export default {
           pcv3: '',
           mcv1: '2020-02-03',
           mcv2: '2020-02-03',
+          dengue1: '',
+          dengue2: '',
+          dengue3: '',
         },
       ],
       dataSets: [
@@ -1260,6 +1219,9 @@ export default {
           pcv3: '',
           mcv1: '',
           mcv2: '',
+          dengue1: '',
+          dengue2: '',
+          dengue3: '',
         },
       ],
     }
@@ -1296,6 +1258,9 @@ export default {
     this.dataSets[0].pcv3 = this.loadedData[0].pcv3;
     this.dataSets[0].mcv1 = this.loadedData[0].mcv1;
     this.dataSets[0].mcv2 = this.loadedData[0].mcv2;
+    this.dataSets[0].dengue1 = this.loadedData[0].dengue1;
+    this.dataSets[0].dengue2 = this.loadedData[0].dengue2;
+    this.dataSets[0].dengue3 = this.loadedData[0].dengue3;
 
     console.log(this.dataSets[0]);
     this.$forceUpdate();
@@ -1326,6 +1291,16 @@ export default {
       }
       else this.formData.patient.ageNo = age-1;
       if (this.formData.patient.ageNo<0) this.formData.patient.ageNo = 0;
+    },
+    save() {
+      this.saveData();
+      if (this.validate()) {
+        // submit();
+        // IF SUBMIT SUCCESSFUL
+        console.log('VALIDATED dates');
+        this.status = 'Complete';
+        this.action = 'view';
+      }
     },
     async submit() {
       // TODO: this submit is the "save" type, the cases should only be visible to the DRU, not yet submitted to MMCHD
@@ -1377,22 +1352,46 @@ export default {
       })
     },
     validate() {
-      if (this.dataSets[0].bcg !=='' || this.dataSets[0].bcg !== null ||
-          this.dataSets[0].hepa1 !=='' || this.dataSets[0].hepa1 !== null ||
-          this.dataSets[0].hepa2 !=='' || this.dataSets[0].hepa2 !== null ||
-          this.dataSets[0].opv1 !=='' || this.dataSets[0].opv1 !== null ||
-          this.dataSets[0].opv2 !=='' || this.dataSets[0].opv2 !== null ||
-          this.dataSets[0].opv3 !=='' || this.dataSets[0].opv3 !== null ||
-          this.dataSets[0].penta1 !=='' || this.dataSets[0].penta1 !== null ||
-          this.dataSets[0].penta2 !=='' || this.dataSets[0].penta2 !== null ||
-          this.dataSets[0].penta3 !=='' || this.dataSets[0].penta3 !== null ||
-          this.dataSets[0].pcv1 !=='' || this.dataSets[0].pcv1 !== null ||
-          this.dataSets[0].pcv2 !=='' || this.dataSets[0].pcv2 !== null ||
-          this.dataSets[0].pcv3 !=='' || this.dataSets[0].pcv3 !== null ||
-          this.dataSets[0].mcv1 !=='' || this.dataSets[0].mcv1 !== null ||
-          this.dataSets[0].mcv2 !=='' || this.dataSets[0].mcv2 !== null)
-        this.status='Complete';
-        return 'Complete';
+      if ((this.loadedData[0].bcg !=='' && this.loadedData[0].bcg !== null) &&
+          (this.loadedData[0].hepa1 !=='' &&  this.loadedData[0].hepa1 !== null) && 
+          (this.loadedData[0].hepa2 !=='' &&  this.loadedData[0].hepa2 !== null) && 
+          (this.loadedData[0].opv1 !=='' &&  this.loadedData[0].opv1 !== null) && 
+          (this.loadedData[0].opv2 !=='' &&  this.loadedData[0].opv2 !== null) && 
+          (this.loadedData[0].opv3 !=='' &&  this.loadedData[0].opv3 !== null) && 
+          (this.loadedData[0].penta1 !=='' &&  this.loadedData[0].penta1 !== null) && 
+          (this.loadedData[0].penta2 !=='' &&  this.loadedData[0].penta2 !== null) && 
+          (this.loadedData[0].penta3 !=='' &&  this.loadedData[0].penta3 !== null) && 
+          (this.loadedData[0].pcv1 !=='' &&  this.loadedData[0].pcv1 !== null) && 
+          (this.loadedData[0].pcv2 !=='' &&  this.loadedData[0].pcv2 !== null) && 
+          (this.loadedData[0].pcv3 !=='' &&  this.loadedData[0].pcv3 !== null) && 
+          (this.loadedData[0].mcv1 !=='' &&  this.loadedData[0].mcv1 !== null) && 
+          (this.loadedData[0].mcv2 !=='' && this.loadedData[0].mcv2 !== null) &&
+          (this.loadedData[0].dengue1 !=='' &&  this.loadedData[0].dengue1 !== null) && 
+          (this.loadedData[0].dengue2 !=='' &&  this.loadedData[0].dengue2 !== null) && 
+          (this.loadedData[0].dengue3 !=='' &&  this.loadedData[0].dengue3 !== null)
+        )
+      return true;
+      else return false;
+    },
+    saveData() {
+      this.loadedData[0].bcg = this.dataSets[0].bcg;
+      this.loadedData[0].hepa1 = this.dataSets[0].hepa1;
+      this.loadedData[0].hepa2 = this.dataSets[0].hepa2;
+      this.loadedData[0].opv1 = this.dataSets[0].opv1;
+      this.loadedData[0].opv2 = this.dataSets[0].opv2;
+      this.loadedData[0].opv3 = this.dataSets[0].opv3;
+      this.loadedData[0].penta1 = this.dataSets[0].penta1;
+      this.loadedData[0].penta2 = this.dataSets[0].penta2;
+      this.loadedData[0].penta3 = this.dataSets[0].penta3;
+      this.loadedData[0].pcv1 = this.dataSets[0].pcv1;
+      this.loadedData[0].pcv2 = this.dataSets[0].pcv2;
+      this.loadedData[0].pcv3 = this.dataSets[0].pcv3;
+      this.loadedData[0].mcv1 = this.dataSets[0].mcv1;
+      this.loadedData[0].mcv2 = this.dataSets[0].mcv2;
+      this.loadedData[0].dengue1 = this.dataSets[0].dengue1;
+      this.loadedData[0].dengue2 = this.dataSets[0].dengue2;
+      this.loadedData[0].dengue3 = this.dataSets[0].dengue3;
+      
     },
     isRequired() {
       if (!this.pageDone[this.pageNum]) return "input-required";
