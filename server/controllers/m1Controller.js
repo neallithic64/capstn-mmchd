@@ -1679,39 +1679,57 @@ const indexFunctions = {
 	/*
 	 * CRON METHODS
 	 */
-	cronCRFDeadlineNotif : async function() {
+	cronCRFDeadlineNotif: async function() {
 		try {
-			let result = await sendBulkNotifs(DRUUserTypes,'deadlineNotif',
-										'REMINDER: Please submit your Case Report Forms by Friday. If not submitted, forms will be automatically collected by Friday at 5:00PM.', null);
-			if(result) {
-				result = await sendBulkNotifs(['pidsrStaff', 'fhsisStaff'],'deadlineNotif', 'REMINDER: Please start reminding DRUs to submit their Case Report Forms', null);
+			let result = await sendBulkNotifs(DRUUserTypes, 'deadlineNotif',
+					`REMINDER: Please submit your Case Report Forms by Friday.
+					If not submitted, forms will be automatically collected by Friday at 5:00PM.`, null);
+			if (result) {
+				result = await sendBulkNotifs(['pidsrStaff', 'fhsisStaff'], 'deadlineNotif',
+						'REMINDER: Please start reminding DRUs to submit their Case Report Forms', null);
 				if(result) {
 					console.log("Adding notification success");
-				}else console.log("Adding Notification to Staff Failed");
+				} else console.log("Adding Notification to Staff Failed");
 			} else console.log("Adding Notification to DRU Failed");
 		} catch (e) {
 			console.log(e);
 			console.log("Server Error");
 		}
 	},
-	cronCRFPushData : async function() {
+	
+	cronCRFPushData: async function() {
+		let currWeek, nextWeek;
 		try {
-			// TODO: Implement Automatic Push Data Approach
-
-			let date = new Date();
-			let JanOne = new Date(date.getFullYear(), 0, 1);
-			let numDay = Math.floor((date - JanOne) / (24 * 60 * 60 * 1000));
-			let week = Math.ceil((1 + numDay) / 7);
-			let pushData = await db.exec("UPDATE mmchddb.CRFS c SET c.isPushed = 1 " +
-							"WHERE c.userID IN(SELECT u.userID from mmchddb.USERS u JOIN mmchddb.USER_SETTINGS us ON us.userID = u.userID "+
-							"WHERE us.pushDataAccept = 1) AND c.isPushed = 0;");
-			if(pushData) {
-				let result = await sendBulkNotifs(DRUUserTypes,'pushDataNotif',
-										'SUBMISSION UPDATE: Your Case Report Forms for Week ' + week + ' has been automatically pushed to MMCHD-RESU', null);
+			let crfs = await db.exec(`SELECT * FROM mmchddb.CRFS c
+					WHERE c.userID IN(SELECT u.userID FROM mmchddb.USERS u
+					JOIN mmchddb.USER_SETTINGS us ON us.userID = u.userID
+					WHERE us.pushDataAccept = 1) AND c.isPushed = 0;`);
+			let pushData = await db.exec(`UPDATE mmchddb.CRFS c SET c.isPushed = 1
+					WHERE c.userID IN(SELECT u.userID FROM mmchddb.USERS u
+					JOIN mmchddb.USER_SETTINGS us ON us.userID = u.userID
+					WHERE us.pushDataAccept = 1) AND c.isPushed = 0;`);
+			if (pushData) {
+				// generate new CRFs
+				for (let i = 0; i < crfs.length; i++) {
+					currWeek = new Date(crfs[i].year, 0, (1 + (crfs[i].week - 1) * 7));
+					nextWeek = new Date(currWeek.getFullYear(), currWeek.getMonth(), currWeek.getDate() + 7);
+					await db.insertOne("mmchddb.CRFS", {
+						CRFID: crfs[i].CRFID,
+						diseaseID: crfs[i].diseaseID,
+						userID: crfs[i].userID,
+						week: nextWeek.getWeek(),
+						year: nextWeek.getFullYear(),
+						isPushed: false
+					});
+				}
+				let result = await sendBulkNotifs(DRUUserTypes, 'pushDataNotif',
+						'SUBMISSION UPDATE: Your Case Report Forms for Week ' +
+						week.getWeek() + ' has been automatically pushed to MMCHD-RESU', null);
 				if (result) console.log("Push Data Success");
 				else console.log("Adding Notification to DRU Failed");
-			} else console.log("Update CRF Push failed");
-			
+			} else {
+				console.log("Update CRF Push failed");
+			}
 		} catch (e) {
 			console.log(e);
 			console.log("Server Error");
