@@ -76,7 +76,7 @@
 
           <!-- Report Status for FHSIS -->
           <!-- for FHSIS -->
-          <div v-if="$auth.user.userType === 'fhsisStaff' || $auth.user.userType === 'techStaff'" id="tracker-container">
+          <div v-if="$auth.user.userType === 'fhsisStaff'" id="tracker-container">
             <span class="dboard-right-titles" style="padding: 3px 3px 3px 5px; background-image: linear-gradient(to bottom right, #008d41, #74d680);"> Accomplishment Reporting Status </span>
             <a :href="'/allProgAccomplish'">
               <div class="dboard-right-content" style="border-left-color: #008d41; padding-left: 0px;">
