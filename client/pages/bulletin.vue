@@ -170,8 +170,8 @@ export default {
         dateString: '5h',
         dateApproved: 'January 26, 2022 8:58 PM',
       },
-      diseases: ['Malaria', 'Measles', 'Tetanus', 'Pertussis', 'Meningococcal', 'Dengue', 'Cholera', 'Leptospirosis', 'Chikungunya', 'Typhoid'],
-      reportTypes: ['Weekly', 'Monthly', 'Annual', 'Adhoc', 'Outbreak']
+      diseases: ['Disease','Malaria', 'Measles', 'Tetanus', 'Pertussis', 'Meningococcal', 'Dengue', 'Cholera', 'Leptospirosis', 'Chikungunya', 'Typhoid'],
+      reportTypes: ['Report Type', 'Weekly', 'Monthly', 'Annual', 'Adhoc', 'Outbreak']
     }
   },
   head() {
