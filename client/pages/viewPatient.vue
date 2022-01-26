@@ -879,11 +879,16 @@
 
         <form v-if="immunization.status!=='N/A'" id="patient3" type="submit">
           <div id="case-investigation-form" class="center">
-            <h2 id="form-header">
-              Immunization Program Status
-            </h2>
+            <div style="display: flex; flex-direction: width; justify-content: space-between;">
+              <h2 id="form-header">
+                Immunization Program Status
+              </h2>
+              <a v-if="immunization.status!=''" href="/viewImmunizationProgEntry" class="immunLink">
+                View Immunization Program Record >
+              </a>
+            </div>
             <div>
-              <table>
+              <table id='datatable'>
                 <thead>
                   <th> BCG </th>
                   <th> HEPA </th>
@@ -891,6 +896,7 @@
                   <th> PENTA </th>
                   <th> PCV </th>
                   <th> MCV </th>
+                  <th> DENGUE </th>
                   <th> IMMUNIZATION STATUS </th>
                 </thead>
                 <tr>
@@ -918,10 +924,14 @@
                     <img v-if="immunization.mcv2" src="~/assets/img/check.png" style="width:30px"/>
                     <img v-else src="~/assets/img/x.png" style="width:30px"/>
                   </td>
+                  <td>
+                    <img v-if="immunization.dengue3" src="~/assets/img/check.png" style="width:30px"/>
+                    <img v-else src="~/assets/img/x.png" style="width:30px"/>
+                  </td>
                   
                   <td>
-                    <span v-if="immunization.status==='Complete'" > COMPLETE </span>
-                    <span v-else> ONGOING </span>
+                    <span v-if="immunization.status==='Complete'" class="immunStatus" style="background-color:#008d41"> COMPLETE </span>
+                    <span v-else class="immunStatus" style="background-color:#346083"> ONGOING </span>
                   </td>
                 </tr>
               </table>
@@ -1225,6 +1235,7 @@ export default {
           penta3: true,
           pcv3: false,
           mcv2: false,
+          dengue3: true,
         },
     }
   },
@@ -1487,6 +1498,33 @@ export default {
 </script>
 
 <style>
+
+.immunLink {
+    color: #346083;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 400;
+    align-self: self-end;
+    margin-bottom: 3px;
+}
+
+.immunLink:hover {
+  text-decoration: underline;
+}
+
+#datatable td, #datatable th {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: -webkit-center;
+}
+
+.immunStatus {
+    color: white;
+    padding: 5px 10px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 20px;
+}
 
 .input-required:invalid, textarea:invalid { 
     box-shadow: 0 0 5px #d45252;
