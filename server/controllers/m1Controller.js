@@ -291,7 +291,7 @@ async function getOutbreakData(outbreakID) {
 			
 			/* growth rate: i have no clue how this will work... */
 			growth = await db.exec(`SELECT o.outbreakID, IFNULL(a.city, 'NCR') AS city,
-					COUNT(CASE WHEN c.reportDate > o.startDate THEN 1 ELSE 0 END) AS growthRate
+					SUM(CASE WHEN c.reportDate > o.startDate THEN 1 ELSE 0 END) AS growthRate
 					FROM mmchddb.OUTBREAKS o
 					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = o.diseaseID
 					LEFT JOIN mmchddb.CASES c ON o.diseaseID = c.diseaseID
@@ -304,8 +304,8 @@ async function getOutbreakData(outbreakID) {
 			/* attack rate: percentage of an at-risk population that contracts a disease
 			 */
 			attack = await db.exec(`SELECT o.outbreakID, IFNULL(a.city, 'NCR') AS city,
-					CONCAT(FORMAT(COUNT(CASE WHEN c.caseLevel LIKE '%Confirm%' THEN 1 ELSE 0 END) /
-					COUNT(CASE WHEN c.caseLevel LIKE '%Suspect%' THEN 1 ELSE 0 END) * 100, 2), '%') AS attackRate
+					CONCAT(FORMAT(SUM(CASE WHEN c.caseLevel LIKE '%Confirm%' THEN 1 ELSE 0 END) /
+					SUM(CASE WHEN c.caseLevel LIKE '%Suspect%' THEN 1 ELSE 0 END) * 100, 2), '%') AS attackRate
 					FROM mmchddb.OUTBREAKS o
 					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = o.diseaseID
 					LEFT JOIN mmchddb.CASES c ON o.diseaseID = c.diseaseID AND c.reportDate > o.startDate
@@ -351,7 +351,8 @@ async function getOutbreakData(outbreakID) {
 			
 			/* growth rate: i have no clue how this will work... */
 			growth = await db.exec(`SELECT o.outbreakID,
-					COUNT(CASE WHEN c.reportDate > o.startDate THEN 1 ELSE 0 END) AS growthRate
+					SUM(CASE WHEN c.reportDate > o.startDate THEN 1 ELSE -1 END) /
+					SUM(CASE WHEN c.reportDate < o.startDate THEN 1 ELSE 0 END) AS growthRate
 					FROM mmchddb.OUTBREAKS o
 					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = o.diseaseID
 					LEFT JOIN mmchddb.CASES c ON o.diseaseID = c.diseaseID
@@ -361,8 +362,8 @@ async function getOutbreakData(outbreakID) {
 			/* attack rate: percentage of an at-risk population that contracts a disease
 			 */
 			attack = await db.exec(`SELECT o.outbreakID,
-					CONCAT(FORMAT(COUNT(CASE WHEN c.caseLevel LIKE '%Confirm%' THEN 1 ELSE 0 END) /
-					COUNT(CASE WHEN c.caseLevel LIKE '%Suspect%' THEN 1 ELSE 0 END) * 100, 2), '%') AS attackRate
+					CONCAT(FORMAT(SUM(CASE WHEN c.caseLevel LIKE '%Confirm%' THEN 1 ELSE 0 END) /
+					SUM(CASE WHEN c.caseLevel LIKE '%Suspect%' THEN 1 ELSE 0 END) * 100, 2), '%') AS attackRate
 					FROM mmchddb.OUTBREAKS o
 					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = o.diseaseID
 					LEFT JOIN mmchddb.CASES c ON o.diseaseID = c.diseaseID AND c.reportDate > o.startDate
