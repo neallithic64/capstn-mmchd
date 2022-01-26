@@ -53,8 +53,10 @@ export default {
     dataTable,
   },
   middleware: 'is-auth',
-  header: {
-    title: 'Immunization Program',
+  head() {
+    return {
+      title: 'All Accomplishment Reports'
+    }
   },
   compute: {},
   data() {
@@ -63,6 +65,7 @@ export default {
       dayTime: '',
       tableOptions: {
         tableName: 'cases',
+        sortKey: 'updateDate',
         columns: [
           {
             title: 'Program Accomplish ID',

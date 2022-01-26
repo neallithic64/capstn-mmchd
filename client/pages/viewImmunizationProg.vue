@@ -64,6 +64,11 @@ export default {
     title: 'View CRF',
   },
   compute: {},
+  head() {
+    return {
+      title: 'Immunization Report ' + this.immunProgNo
+    }
+  },
   data() {
     return {
       isPrint: false,
@@ -77,6 +82,7 @@ export default {
       year: '2021',
 
       tableOptions: {
+        sortKey: 'updatedDate',
         columns: [
           {
             title: 'Patient',

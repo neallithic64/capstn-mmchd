@@ -48,19 +48,23 @@
           <p>Date Closed: <b> {{ outbreak.endDate }} </b></p>
         </div>
       </div>
-      <div v-show="!isPrint" class="OB-SummaryContainer">
-        <ul
-          v-for="(value, name, i) in formSection.formNames"
-          :key="i"
-          :class="formListClass(i)"
-          @click="move(i)"
-        >
-          {{
-            i+1
-          }}.{{
-            value
-          }}
-        </ul>
+
+      <div style="display: flex; flex-direction: row; justify-content: space-between;">
+        <div v-show="!isPrint" class="OB-SummaryContainer">
+          <ul
+            v-for="(value, name, i) in formSection.formNames"
+            :key="i"
+            :class="formListClass(i)"
+            @click="move(i)"
+          >
+            {{
+              i+1
+            }}.{{
+              value
+            }}
+          </ul>
+        </div>
+        <a href="/addReport"> <button class="make-report-button2" > + Make a Feedback Report </button> </a>
       </div>
 
       <div class="viewOBform-component">
@@ -251,7 +255,7 @@ export default {
             source: 'outbreak'
           },
           {
-            title: 'Two-week Growth Rate',
+            title: 'Growth Rate',
             key: 'growthRate',
             type: 'text',
             source: 'outbreak'
@@ -433,6 +437,11 @@ export default {
 	this.obCases = data.outbreakCases;
 	this.obSummary = data.outbreakSumm;
   }, 
+  head() {
+    return {
+      title: 'Outbreak ' + this.outbreak.outbreakID
+    }
+  },
   methods: {
     formListClass(index) {
       if (index === this.pageNum) return 'formSummaryItems selected'
@@ -547,7 +556,7 @@ h3 {
 .OB-SummaryContainer {
   display: flex;
   flex-direction: row;
-  overflow-x: auto;
+  overflow-x: hidden;
   overflow-y: hidden;
   z-index: 1;
 }
@@ -1250,6 +1259,20 @@ hr {
 
 .hide {
   display: none;
+}
+
+.make-report-button2 {
+  width: 220px;
+  height: 30px;
+  font-size: 14px;
+  font-family: 'Work Sans', sans-serif;
+  font-weight: 600;
+  background-color: #008d41;
+  color: white;
+}
+
+.make-report-button2:hover {
+  background-color: #346083;
 }
 </style>
 

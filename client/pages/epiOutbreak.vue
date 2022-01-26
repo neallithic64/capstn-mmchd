@@ -26,6 +26,11 @@ export default {
       }
     }
   },
+  head() {
+    return {
+      title: '!!! Epidemic Alert !!!'
+    }
+  },
   methods: {
     
   }

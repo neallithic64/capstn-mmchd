@@ -91,6 +91,11 @@ export default {
     title: 'Add Case',
   },
   compute: {},
+  head() {
+    return {
+      title: 'All Case Reports'
+    }
+  },
   data() {
     return {
       isPrint: false,
@@ -100,6 +105,7 @@ export default {
         columns: [],
         // source: 'http://demo.datatable/api/users',
         search: true,
+        sortKey: 'caseID',
       },
       allColumns: [
         {

@@ -417,6 +417,11 @@ export default {
       }
     }
   },
+  head() {
+    return {
+      title: 'New Health Event'
+    }
+  },
   mounted() {
     let today = new Date();
     let dd = today.getDate();

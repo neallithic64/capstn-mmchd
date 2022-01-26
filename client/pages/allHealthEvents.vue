@@ -48,12 +48,18 @@ export default {
     dataTable,
   },
   middleware: 'is-auth',
+  head() {
+    return {
+      title: 'All Health Events'
+    }
+  },
   compute: {},
   data() {
     return {
       isPrint: false,
       tableOptions: {
         tableName: 'events',
+        sortKey: 'dateReported',
         columns: [
           {
             title: 'Event ID',

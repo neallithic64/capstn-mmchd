@@ -1792,6 +1792,11 @@ export default {
       finalDiagnosis: this.formData.cases.finalDiagnosis,
     }
   },
+  head() {
+    return {
+      title: 'Dengue ' + this.formData.cases.caseID
+    }
+  },
   methods: {
     formListClass(index) {
       if (index === this.pageNum) return 'formSummaryItems selected'

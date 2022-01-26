@@ -48,12 +48,18 @@ export default {
     dataTable,
   },
   middleware: 'is-auth',
+  head() {
+    return {
+      title: 'All Feedback Reports'
+    }
+  },
   compute: {},
   data() {
     return {
       isPrint: false,
       tableOptions: {
         tableName: 'reports',
+        sortKey: 'reportDateSub',
         columns: [
           {
             title: 'Report ID',
@@ -82,6 +88,7 @@ export default {
             dateFormat: true,
             currentFormat: 'YYYY-MM-DD',
             expectFormat: 'DD MMM YYYY',
+            sortable: true,
           },
           {
             title: 'Status',

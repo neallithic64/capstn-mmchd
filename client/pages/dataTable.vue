@@ -456,11 +456,13 @@ export default {
                      + ' ' + today.getHours() + ':' + today.getMinutes();
 
     this.pageType = this.casetype;
-    // this.requestParams.sortedKey = this.options.columns[0].key;
     this.dataFiltered = this.datavalues;
     this.dataSearched = this.datavalues;
     this.dataSets = this.datavalues;
     console.log(this.datavalues);
+    
+    this.requestParams.sortedKey = this.options.sortKey;
+
     this.sortedKeyValue(this.requestParams.sortedKey, this.requestParams.sortedType);
     this.totalCount = Object.keys(this.dataSets).length;
     if (this.pageType === 'patient') this.requestParams.take = this.totalCount;

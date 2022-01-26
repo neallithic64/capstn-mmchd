@@ -1265,6 +1265,11 @@ export default {
     // console.log(data);
     this.update('cancel')
   }, 
+  head() {
+    return {
+      title: 'Patient ' + this.formData.patient.patientID
+    }
+  },
   methods: {
     inputEdit() {
       // not sure about the "this.cases"

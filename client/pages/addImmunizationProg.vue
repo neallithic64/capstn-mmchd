@@ -100,8 +100,10 @@ export default {
     dataTable,
   },
   middleware: 'is-auth',
-  header: {
-    title: 'View CRF',
+  head() {
+    return {
+      title: 'Immunization Program'
+    }
   },
   compute: {},
   data() {
@@ -119,6 +121,7 @@ export default {
       year: '2022',
 
       tableOptions: {
+        sortKey: 'updatedDate',
         columns: [
           {
             title: 'Patient',
