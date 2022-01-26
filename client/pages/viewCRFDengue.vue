@@ -177,6 +177,11 @@ export default {
     this.weekNo = rows.CRF.year + "-" + rows.CRF.week;
     this.CRFID = this.$route.query.CRFID;
   },
+  head() {
+    return {
+      title: 'Dengue ' + this.CRFID
+    }
+  },
   methods: {
     downloadPDF() {
       this.isPrint = !this.isPrint

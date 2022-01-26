@@ -1226,6 +1226,21 @@ export default {
       ],
     }
   },
+  async fetch() {
+    let rows = (await axios.get('http://localhost:8080/api/getCaseDefs?diseaseID=' + this.diseaseID)).data;
+    for (let i = 0; i < rows.length; i++) {
+      this.classification[rows[i].class] = rows[i].definition;
+    }
+    rows = (await axios.get('http://localhost:8080/api/getPatients')).data;
+    this.patients = rows;
+    rows = (await axios.get('http://localhost:8080/api/getLabUsers')).data;
+    this.labList = rows;
+  },
+  head() {
+    return {
+      title: 'Immunization Form '
+    }
+  },
   computed: {},
   mounted() {
     const today = new Date();

@@ -215,6 +215,11 @@ export default {
   else this.popupOpen = false;
   },
   compute: {},
+  head() {
+    return {
+      title: 'New Dengue Form'
+    }
+  },
   mounted() {},
   methods: {
     async popup(change) {

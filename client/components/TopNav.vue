@@ -16,13 +16,13 @@
       </button>
       <div class="dropdown-content">
         <nuxt-link to="/addCase"> Add Case </nuxt-link>
-        <nuxt-link to="/allCases"> Case Reports </nuxt-link>
-        <nuxt-link to="/allOutbreaks"> Outbreaks </nuxt-link>
+        <nuxt-link to="/allCases"> All Case Reports </nuxt-link>
+        <nuxt-link to="/allOutbreaks"> All Outbreaks </nuxt-link>
         <nuxt-link v-if="$auth.user.userType === 'BHS' || $auth.user.userType === 'RHU' || $auth.user.userType === 'CHO' ||
         $auth.user.userType === 'govtHosp' || $auth.user.userType === 'privHosp' || $auth.user.userType === 'clinic' ||
         $auth.user.userType === 'govtLab' || $auth.user.userType === 'privLab' || $auth.user.userType === 'airseaPort' ||
         $auth.user.userType === 'techStaff'"
-        to="/allPatients"> Patients </nuxt-link>
+        to="/allPatients"> All Patients </nuxt-link>
         <nuxt-link v-if="$auth.user.userType === 'pidsrStaff' || $auth.user.userType === 'techStaff' ||
         $auth.user.userType === 'BHS' || $auth.user.userType === 'RHU' || $auth.user.userType === 'CHO' ||
         $auth.user.userType === 'govtHosp' || $auth.user.userType === 'privHosp' || $auth.user.userType === 'clinic' ||
@@ -70,8 +70,9 @@
         <i class="fa fa-caret-down"></i>
       </button>
       <div class="dropdown-content">
+        <nuxt-link to="/addReport"> Add Feedback Report </nuxt-link>
         <nuxt-link to="/analytics"> View Analytics </nuxt-link>
-        <nuxt-link to="/allReports"> All Reports </nuxt-link>
+        <nuxt-link to="/allReports"> All Feedback Reports </nuxt-link>
       </div>
     </div>
     <nuxt-link

@@ -49,6 +49,11 @@ export default {
   },
   middleware: 'is-auth',
   compute: {},
+  head() {
+    return {
+      title: 'All Outbreaks'
+    }
+  },
   data() {
     return {
       isPrint: false,

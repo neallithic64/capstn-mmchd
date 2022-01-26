@@ -1303,6 +1303,11 @@ export default {
       },
     }
   },
+  head() {
+    return {
+      title: 'Malaria Accomplishment Report'
+    }
+  },
   mounted() {
     const today = new Date();
     const monthsList = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Aug', 'Oct', 'Nov', 'Dec'];

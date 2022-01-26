@@ -479,6 +479,11 @@ export default {
 
     // console.log(data);
   }, 
+  head() {
+    return {
+      title: 'Health Event ' + this.healthEvent.eventID
+    }
+  },
   methods: {
     formListClass(index) {
       if (index === this.pageNum) return 'formSummaryItems selected'
