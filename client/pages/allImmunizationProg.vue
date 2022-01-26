@@ -56,6 +56,11 @@ export default {
   header: {
     title: 'Immunization Program',
   },
+  head() {
+    return {
+      title: 'All Program Reports'
+    }
+  },
   compute: {},
   data() {
     return {

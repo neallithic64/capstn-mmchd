@@ -26,6 +26,11 @@ export default {
       }
     }
   },
+  head() {
+    return {
+      title: '!!! Potential Outbreak Alert !!!'
+    }
+  },
   methods: {
     
   }

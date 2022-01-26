@@ -100,8 +100,10 @@ export default {
     dataTable,
   },
   middleware: 'is-auth',
-  header: {
-    title: 'View CRF',
+  head() {
+    return {
+      title: 'Immunization Program'
+    }
   },
   compute: {},
   data() {

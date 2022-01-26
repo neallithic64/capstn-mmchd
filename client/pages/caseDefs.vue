@@ -167,6 +167,11 @@ export default {
     }
 
   },
+  head() {
+    return {
+      title: 'Case Definitions'
+    }
+  },
   methods: {
     formColor(index) {
       if (this.isOpen) {

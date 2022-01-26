@@ -52,6 +52,11 @@ export default {
     title: 'Add Case',
   },
   compute: {},
+  head() {
+    return {
+      title: 'All Patients'
+    }
+  },
   data() {
     return {
       isPrint: false,

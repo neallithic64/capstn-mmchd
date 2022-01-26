@@ -2688,6 +2688,11 @@ export default {
     rows = (await axios.get('http://localhost:8080/api/getLabUsers')).data;
     this.labList = rows;
   },
+  head() {
+    return {
+      title: 'New Measles Case'
+    }
+  },
   mounted() {
     const today = new Date();
     let dd = today.getDate();

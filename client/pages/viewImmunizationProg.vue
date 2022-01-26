@@ -64,6 +64,11 @@ export default {
     title: 'View CRF',
   },
   compute: {},
+  head() {
+    return {
+      title: 'Immunization Report ' + this.immunProgNo
+    }
+  },
   data() {
     return {
       isPrint: false,
