@@ -57,6 +57,7 @@ export default {
       isPrint: false,
       tableOptions: {
         tableName: 'patients',
+        sortKey: 'patientID',
         columns: [
           {
             title: 'Patient ID',

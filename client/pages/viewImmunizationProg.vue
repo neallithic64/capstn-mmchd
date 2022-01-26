@@ -77,6 +77,7 @@ export default {
       year: '2021',
 
       tableOptions: {
+        sortKey: 'updatedDate',
         columns: [
           {
             title: 'Patient',

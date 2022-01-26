@@ -54,6 +54,7 @@ export default {
       isPrint: false,
       tableOptions: {
         tableName: 'outbreaks',
+        sortKey: 'dateStarted',
         columns: [
           {
             title: 'Outbreak ID',
@@ -81,6 +82,7 @@ export default {
             dateFormat: true,
             currentFormat: 'YYYY-MM-DD',
             expectFormat: 'DD MMM YYYY',
+            sortable: true,
           },
           {
             title: 'Active Cases',

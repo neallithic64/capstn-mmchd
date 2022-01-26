@@ -54,6 +54,7 @@ export default {
       isPrint: false,
       tableOptions: {
         tableName: 'events',
+        sortKey: 'dateReported',
         columns: [
           {
             title: 'Event ID',
