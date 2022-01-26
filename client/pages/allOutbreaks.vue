@@ -65,7 +65,7 @@ export default {
             title: 'Outbreak ID',
             key: 'outbreakID',
             type: 'clickable',
-            source: 'ourbreaks',
+            source: 'outbreaks',
             uniqueField: 'id',
           },
           {
@@ -155,12 +155,8 @@ export default {
 	  rows[i].dateStarted = rows[i].startDate.substr(0, 10);
 	  rows[i].dateClosed = rows[i].endDate ? rows[i].endDate.substr(0, 10) : "N/A";
 	  rows[i].responseTime = rows[i].responseTime ? rows[i].responseTime : "N/A";
-	  /* columns left:
-	      numCases: 200,
-          numDeaths: 0,
-          growthRate: '813%',
-          attackRate: '1.07%',
-	  */
+	  rows[i].attackRate = rows[i].attackRate ? rows[i].attackRate : "0.00%";
+	  rows[i].growthRate = rows[i].growthRate ? (parseFloat(rows[i].growthRate) * 100).toFixed(2) + "%" : "0.00%";
     }
     this.allOutbreaks = rows;
   },
