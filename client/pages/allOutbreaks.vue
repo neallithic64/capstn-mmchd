@@ -155,7 +155,7 @@ export default {
 	  rows[i].dateStarted = rows[i].startDate.substr(0, 10);
 	  rows[i].dateClosed = rows[i].endDate ? rows[i].endDate.substr(0, 10) : "N/A";
 	  rows[i].responseTime = rows[i].responseTime ? rows[i].responseTime : "N/A";
-	  rows[i].attackRate = rows[i].attackRate ? rows[i].attackRate : "0.00%";
+	  rows[i].attackRate = rows[i].attackRate ? rows[i].attackRate : "0.0";
 	  rows[i].growthRate = rows[i].growthRate ? (parseFloat(rows[i].growthRate) * 100).toFixed(2) + "%" : "0.00%";
     }
     this.allOutbreaks = rows;

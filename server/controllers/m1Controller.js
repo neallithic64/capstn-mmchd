@@ -289,7 +289,8 @@ async function getOutbreakData(outbreakID) {
 					GROUP BY a.city
 					ORDER BY (CASE WHEN o.type = 'Ongoing' THEN '1' ELSE '2' END) ASC, o.startDate DESC;`);
 			
-			/* growth rate: i have no clue how this will work... */
+			/* growth rate: rate of the difference of outbreak and non-outbreak cases and non-outbreak cases
+			 */
 			growth = await db.exec(`SELECT o.outbreakID, IFNULL(a.city, 'NCR') AS city,
 					SUM(CASE WHEN c.reportDate > o.startDate THEN 1 ELSE 0 END) AS growthRate
 					FROM mmchddb.OUTBREAKS o
@@ -349,7 +350,8 @@ async function getOutbreakData(outbreakID) {
 					GROUP BY o.outbreakID
 					ORDER BY (CASE WHEN o.type = 'Ongoing' THEN '1' ELSE '2' END) ASC, o.startDate DESC;`);
 			
-			/* growth rate: i have no clue how this will work... */
+			/* growth rate: rate of the difference of outbreak and non-outbreak cases and non-outbreak cases
+			 */
 			growth = await db.exec(`SELECT o.outbreakID,
 					SUM(CASE WHEN c.reportDate > o.startDate THEN 1 ELSE -1 END) /
 					SUM(CASE WHEN c.reportDate < o.startDate THEN 1 ELSE 0 END) AS growthRate
@@ -382,7 +384,6 @@ async function getOutbreakData(outbreakID) {
 				outbreaks.push(tempOutbreak);
 			}
 		}
-		console.log(outbreaks);
 		return outbreaks;
 	} catch (e) {
 		console.log(e);
@@ -1516,7 +1517,7 @@ const indexFunctions = {
 						editedID: caseID,
 						dateModified: dateNow,
 						fieldName: Object.keys(newOutcome)[i],
-						prevValue: rows[0].value,
+						prevValue: rows[0].value ? rows[0].value : "N/A",
 						modifiedBy: submitted
 					});
 					updateObj[Object.keys(newOutcome)[i]] = newOutcome[Object.keys(newOutcome)[i]];
@@ -1660,9 +1661,10 @@ const indexFunctions = {
 			let { outbreakID, newStatus, userID } = req.body, updateObj = { outbreakStatus: newStatus.newStatus }
 					dateNow = new Date();
 			let outbreak = await db.findRows("mmchddb.OUTBREAKS", { outbreakID: outbreakID });
+			
 			// response time updating
-			if (newStatus === "Ongoing with Initial Response" && outbreak.length > 0) {
-				updateObj.responseTime = dateNow - new Date(outbreak[0].startDate);
+			if (newStatus.newStatus === "Ongoing with Initial Response" && outbreak.length > 0) {
+				updateObj.responseTime = Math.floor((dateNow - new Date(outbreak[0].startDate)) / 1000);
 			}
 			await db.updateRows("mmchddb.OUTBREAKS", { outbreakID: outbreakID }, updateObj);
 			
@@ -1671,10 +1673,10 @@ const indexFunctions = {
 				outbreakID: outbreakID,
 				modifiedBy: userID,
 				dateModified: dateNow,
-				prevValue: outbreak[0].status,
+				prevValue: outbreak[0].outbreakStatus,
 				remarks: newStatus.remarks
 			};
-			await db.insertOne("mmchddb.OUTBREAKS_AUDIT", audit);
+			await db.insertOne("mmchddb.OUTBREAK_AUDIT", audit);
 			res.status(200).send("Updated outbreak status.");
 		} catch (e) {
 			console.log(e);
