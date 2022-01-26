@@ -49,7 +49,7 @@
           :casetype="'immunProg'"
         />
         <div v-if="year+'' === new Date().getFullYear()+'' && month+'' === new Date().getMonth()+''" class="additionalButtons">
-          <button class="addText"><a href="/viewImmunizationProgEntry">+ add an entry</a></button></div>
+          <button class="addText"><a href="/addImmunizationProgEntry">+ add an entry</a></button></div>
       </div>
         <div v-if="year+'' === new Date().getFullYear()+'' && month+'' === new Date().getMonth()+''" class="CRFendButton">
           <button class="back-button" type="button" @click="save()">
@@ -63,7 +63,7 @@
     <div v-show="popupOpen" class="overlay">
       <div class="overlay-form">
         <button class="close" @click="popupOpen=false">x</button>
-        <!-- <h2 style="color:red; text-align:center"> PUSH DATA APPROACH CONSENT </h2>
+        <h2 style="color:red; text-align:center"> PUSH DATA APPROACH CONSENT </h2>
         <hr style="border-color: inherit;"/>
         <div style="padding:10px; text-align:justify;">
           <p style="margin:10px 5px; font-size:16px"> If you agree, all details will be pushed to MMCHD-RESU.
@@ -72,7 +72,7 @@
           <p style="margin:10px 5px; font-size:16px"> Only data that is necessary for 
             time, place, and person analysis will be pushed.</p>
           <p style="margin:10px 5px; font-size:12px"> You can update this in your settings anytime.</p>
-          <div class="popupButtons">
+          <div class="popupButtons" style="text-align: center;">
             <button class="back-button" type="button" @click="popup(false)">
               Disagree
             </button>
@@ -80,7 +80,7 @@
               Agree
             </button>
           </div>
-        </div> -->
+        </div>
       </div>
     </div>
   </div>
@@ -108,9 +108,9 @@ export default {
   compute: {},
   data() {
     return {
+      popupOpen:true,
       monthsList : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
       maxMonth:'',
-      popupOpen: false,
       today:'',
       isPrint: false,
       immunProgNo: '123',
@@ -221,6 +221,27 @@ export default {
     this.countMonth();
   },
   methods: {
+    popup(change) {this.popupOpen = !this.popupOpen},
+    /* async popup(change) {
+      try {
+        this.popupOpen = !this.popupOpen
+        const result = await axios.post('http://localhost:8080/api/updatePushData', {userID: this.$auth.user.userID, pushDataAccept: change});
+        if (result.status === 200) {
+          // alert('Health event submitted!');
+          this.$toast.success('User Settings Updated!', {duration: 4000, icon: 'check_circle'});
+          window.location.href = '/allHealthEvents';
+        } else {
+          // eslint-disable-next-line no-console
+          console.log(result);
+          this.$toast.error('Something went wrong!', {duration: 4000, icon: 'error'});
+        }
+        location.reload()
+      } catch(e) {
+        // eslint-disable-next-line no-console
+        console.log(e);
+        this.$toast.error('Something went wrong!', {duration: 4000, icon: 'error'});
+      }
+    }, */
     countMonth() {
       if (this.year=== 2022 || this.year=== '2022') this.maxMonth = new Date().getMonth()+1;
       else this.maxMonth = 12;

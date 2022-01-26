@@ -28,7 +28,7 @@
           <form v-if="pageNum === -1" id="instructEdit" type="submit">
             <div id="new-user-form" class="center">
                 <h2 id="form-header"> Instructions </h2>
-              <div v-if="$auth.user.userType === 'techStaff' || $auth.user.userType === 'BHS'">
+              <div v-if="$auth.user.userType === 'techStaff' || $auth.user.userType === 'BHS' || $auth.user.userType === 'fhsisStaff'">
                 <ul v-for="(value, name, i) in instructions" :key="i" style="displayLinline-flex">
                     <li>
                       <label :for="name" class="defsLabel">
@@ -42,7 +42,7 @@
                      </ul>
                 </ul>
               </div>
-              <div v-if="$auth.user.userType === 'techStaff'">
+              <div v-if="$auth.user.userType === 'techStaff' || $auth.user.userType === 'BHS' || $auth.user.userType === 'fhsisStaff'">
                 <ul style="displayLinline-flex">
                     <li>
                       <label class="defsLabel">
