@@ -105,6 +105,7 @@ export default {
         columns: [],
         // source: 'http://demo.datatable/api/users',
         search: true,
+        sortKey: 'caseID',
       },
       allColumns: [
         {

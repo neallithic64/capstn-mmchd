@@ -65,6 +65,7 @@ export default {
       dayTime: '',
       tableOptions: {
         tableName: 'cases',
+        sortKey: 'updateDate',
         columns: [
           {
             title: 'Program Accomplish ID',

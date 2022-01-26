@@ -121,6 +121,7 @@ export default {
       year: '2022',
 
       tableOptions: {
+        sortKey: 'updatedDate',
         columns: [
           {
             title: 'Patient',
