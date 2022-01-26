@@ -44,6 +44,11 @@ export default {
       } 
     }
   },
+  head() {
+    return {
+      title: 'Analytics'
+    }
+  },
   methods: {
     formListClass(index) {
       if (index === this.pageNum) return 'tabs-items selected'

@@ -53,8 +53,10 @@ export default {
     dataTable,
   },
   middleware: 'is-auth',
-  header: {
-    title: 'Immunization Program',
+  head() {
+    return {
+      title: 'All Accomplishment Reports'
+    }
   },
   compute: {},
   data() {

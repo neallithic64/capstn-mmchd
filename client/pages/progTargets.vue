@@ -139,6 +139,11 @@ export default {
     })).data;
     this.formSection = diseases;
   },
+  head() {
+    return {
+      title: 'Program Targets'
+    }
+  },
   methods: {
     formColor(index) {
       if (this.isOpen) {

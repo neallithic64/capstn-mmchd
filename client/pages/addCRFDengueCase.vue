@@ -1822,6 +1822,11 @@ export default {
     rows = (await axios.get('http://localhost:8080/api/getLabUsers')).data;
     this.labList = rows;
   },
+  head() {
+    return {
+      title: 'New Dengue Case'
+    }
+  },
   computed: {},
   mounted() {
     const today = new Date();

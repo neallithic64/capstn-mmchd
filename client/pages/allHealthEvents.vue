@@ -48,6 +48,11 @@ export default {
     dataTable,
   },
   middleware: 'is-auth',
+  head() {
+    return {
+      title: 'All Health Events'
+    }
+  },
   compute: {},
   data() {
     return {

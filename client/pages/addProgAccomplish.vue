@@ -50,9 +50,6 @@
 <script>
 export default {
   middleware: 'is-auth',
-  header: {
-    title: 'Choose Disease Program Accomplishment',
-  },
   data() {
     return {
       diseases: {
@@ -71,6 +68,11 @@ export default {
           Typhoid: 'Typhoid',
         },
       },
+    }
+  },
+  head() {
+    return {
+      title: 'Choose Disease'
     }
   },
   methods: {},

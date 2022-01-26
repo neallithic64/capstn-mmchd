@@ -63,7 +63,7 @@ export default {
   },
   head() {
     return {
-      title: 'IDSR Login'
+      title: 'Login'
     }
   },
   mounted(){

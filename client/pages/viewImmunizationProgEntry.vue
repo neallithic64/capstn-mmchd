@@ -1298,7 +1298,11 @@ export default {
     rows = (await axios.get('http://localhost:8080/api/getLabUsers')).data;
     this.labList = rows;
   },
-  computed: {},
+  head() {
+    return {
+      title: 'Immunization Form '
+    }
+  },
   mounted() {
     if (this.action!=='add') this.move(1);
 

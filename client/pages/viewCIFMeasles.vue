@@ -2682,6 +2682,11 @@ export default {
       finalDiagnosis: this.formData.cases.finalDiagnosis,
     }
   }, 
+  head() {
+    return {
+      title: 'Measles ' + this.formData.cases.caseID
+    }
+  },
   methods: {
     formListClass(index) {
       if (index === this.pageNum) return 'formSummaryItems selected'

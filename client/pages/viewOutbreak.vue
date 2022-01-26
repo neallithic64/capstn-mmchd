@@ -476,6 +476,11 @@ export default {
     const data = (await axios.get('http://localhost:8080/api/getOutbreak?outbreakID=' + this.$route.query.outbreakID)).data;
 	this.outbreak = data.outbreak;
   }, 
+  head() {
+    return {
+      title: 'Outbreak ' + this.outbreak.outbreakID
+    }
+  },
   methods: {
     formListClass(index) {
       if (index === this.pageNum) return 'formSummaryItems selected'
