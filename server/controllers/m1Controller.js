@@ -402,9 +402,14 @@ const indexFunctions = {
 	},
 	
 	mkData: async function(req, res) {
-		let r/* = await getOutbreakData("OU-0000000000000")*/;
-		if (r) res.status(200).send(r);
-		else res.status(500).send("problems");
+		try {
+			let rows = await db.exec(`SELECT userID FROM mmchddb.USERS ORDER BY userID;`);
+			if (rows) rows = rows.map(e => e.userID);
+			res.status(200).send(rows);
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
 	},
 	
 	getAllDiseases: async function(req, res) {
