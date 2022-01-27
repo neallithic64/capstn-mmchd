@@ -173,7 +173,7 @@ export default {
             sortable: true,
           },
           {
-            title: 'Status',
+            title: 'Immunization Status',
             key: 'immunStatus',
             type: 'text',
             source: 'cases',
