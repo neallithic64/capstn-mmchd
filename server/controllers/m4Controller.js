@@ -45,6 +45,8 @@ function getPrefix(table) {
 			return "SE-";
 		case "mmchddb.PROGRAM_EVAL":
 			return "PE-";
+		case "mmchddb.PROGRAM_ACCOMPS":
+			return "PC-";
 	}
 }
 
@@ -121,6 +123,17 @@ const indexFunctions = {
 				return acc;
 			}, []);
 			res.status(200).send(adjMatch);
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
+	
+	getAllProgAccomps: async function(req, res) {
+		try {
+			let match = await db.exec(`SELECT pa.*, d.diseaseName FROM mmchddb.PROGRAM_ACCOMPS pa
+					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = pa.diseaseID;`);
+			res.status(200).send(match);
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
