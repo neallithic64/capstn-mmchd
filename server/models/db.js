@@ -291,7 +291,7 @@ const database = {
 	 */
 	 insertNotificationData: async function(object) {
 		try {
-			console.log(object);
+			// console.log(object);
 			let statement = "INSERT INTO mmchddb.NOTIFICATIONS (notificationID, receiverID, type, message, caseID, dateCreated, redirectTo, viewed) VALUES ?";
 			let [rows, fields] = await pool.query(statement, [object]);
 			console.log("Inserted " + rows.affectedRows + " rows");
