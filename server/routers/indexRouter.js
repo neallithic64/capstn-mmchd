@@ -61,10 +61,10 @@ router.post("/editProgTargets", m4Cont.postEditProgTargets);
 cron.schedule("00 14 * * 3", m1Cont.cronCRFDeadlineNotif);
 cron.schedule("00 17 * * 5", m1Cont.cronCRFPushData);
 
-/* 404 PAGE
+// 404 PAGE
 router.get("*", function(req, res) {
-	res.send("page not found!");
+	res.status(404).send("page not found!");
 });
-*/
+
 
 module.exports = router;
