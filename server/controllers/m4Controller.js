@@ -131,8 +131,11 @@ const indexFunctions = {
 	
 	getAllProgAccomps: async function(req, res) {
 		try {
-			let match = await db.exec(`SELECT pa.*, d.diseaseName FROM mmchddb.PROGRAM_ACCOMPS pa
-					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = pa.diseaseID;`);
+			let match = await db.exec(`SELECT pa.*, d.diseaseName, u.druName, a.*
+					FROM mmchddb.PROGRAM_ACCOMPS pa
+					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = pa.diseaseID
+					LEFT JOIN mmchddb.USERS u ON u.userID = pa.userID
+					LEFT JOIN mmchddb.ADDRESSES a ON a.addressID = u.addressID;`);
 			res.status(200).send(match);
 		} catch (e) {
 			console.log(e);

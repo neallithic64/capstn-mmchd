@@ -86,7 +86,7 @@ export default {
           },
           {
             title: 'Barangay',
-            key: 'barangay',
+            key: 'brgy',
             sortable: true,
           },
           {
