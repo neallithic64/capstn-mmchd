@@ -3,6 +3,14 @@ const saltRounds = 10;
 
 const db = require("../models/db");
 
+Date.prototype.getWeek = function() {
+	let d = new Date(Date.UTC(this.getFullYear(), this.getMonth(), this.getDate()));
+	let dayNum = d.getUTCDay() || 7;
+	d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+	let yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+	return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+}
+
 const DRUUserTypes = ['BHS','RHU','CHO', 'govtHosp', 'privHosp', 'clinic', 'privLab', 'airseaPort'];
 /** OBJECT CONSTRUCTORS
 */
@@ -241,10 +249,8 @@ async function sendBulkNotifs(userTypes, notificationType, message, caseID) {
 			element.push(message);
 			element.push(caseID);
 			element.push(dateCreated);
-			if(notificationType == 'updateNotif')
-				element.push('http://localhost:3000/caseDefs');
-			else
-				element.push('http://localhost:3000/allCases');
+			if (notificationType == 'updateNotif') element.push('http://localhost:3000/caseDefs');
+			else element.push('http://localhost:3000/allCases');
 			element.push(false);
 			element.shift();
 		});
@@ -257,7 +263,7 @@ async function sendBulkNotifs(userTypes, notificationType, message, caseID) {
 	}
 }
 
-async function checkIfOutbreak(diseaseID){
+async function checkIfOutbreak(diseaseID) {
 
 }
 
@@ -844,13 +850,6 @@ const indexFunctions = {
 						pushDataAccept: userSettings[0].pushDataAccept
 					});
 				} else {
-					Date.prototype.getWeek = function() {
-						let d = new Date(Date.UTC(this.getFullYear(), this.getMonth(), this.getDate()));
-						let dayNum = d.getUTCDay() || 7;
-						d.setUTCDate(d.getUTCDate() + 4 - dayNum);
-						let yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-						return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
-					}
 					let thisDate = new Date(), firstCRF = {
 						CRFID: (await generateID("mmchddb.CRFS")).id,
 						diseaseID: req.query.diseaseID,
@@ -1719,10 +1718,11 @@ const indexFunctions = {
 			if (pushData) {
 				// generate new CRFs
 				for (let i = 0; i < crfs.length; i++) {
-					currWeek = new Date(crfs[i].year, 0, (1 + (crfs[i].week - 1) * 7));
+					let newCRFID = (await generateID("mmchddb.CRFS")).id;
+					currWeek = new Date(crfs[i].year, 0, (1 + crfs[i].week * 7));
 					nextWeek = new Date(currWeek.getFullYear(), currWeek.getMonth(), currWeek.getDate() + 7);
 					await db.insertOne("mmchddb.CRFS", {
-						CRFID: crfs[i].CRFID,
+						CRFID: newCRFID,
 						diseaseID: crfs[i].diseaseID,
 						userID: crfs[i].userID,
 						week: nextWeek.getWeek(),
@@ -1732,7 +1732,7 @@ const indexFunctions = {
 				}
 				let result = await sendBulkNotifs(DRUUserTypes, 'pushDataNotif',
 						'SUBMISSION UPDATE: Your Case Report Forms for Week ' +
-						week.getWeek() + ' has been automatically pushed to MMCHD-RESU', null);
+						currWeek.getWeek() + ' has been automatically pushed to MMCHD-RESU', null);
 				if (result) console.log("Push Data Success");
 				else console.log("Adding Notification to DRU Failed");
 			} else {
