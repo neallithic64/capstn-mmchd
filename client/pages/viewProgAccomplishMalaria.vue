@@ -39,11 +39,7 @@
         <div style="display: flex; justify-content: space-between; margin-top:-5px;">
           <h3 id="form-header" style="padding: 10px 0;">DRU: {{ druName }}</h3>
           <select v-model="year" class="input-year" style="float: right;" @change="countMonth()">
-            <option value=2022>2022</option>
-            <option value=2021>2021</option>
-            <option value=2020>2020</option>
-            <option value=2019>2019</option>
-            <option value=2018>2018</option>
+            <option v-for="yearO in years" :key="yearO" :value="yearO">{{ yearO }}</option>
           </select>
         </div>
         <table id="datatable">
@@ -212,6 +208,7 @@ export default {
           space: false,
         },
       ],
+	  years: [],
       yearData: [],
       dataSets: {},
     }
@@ -232,14 +229,18 @@ export default {
 	this.druName = data.druName;
 	this.dataSets = data.dataSets;
     this.dayTime = (new Date()).toString().split(":").slice(0, 2).join(":");
+	Object.keys(this.dataSets).forEach(e => {
+	  if (e.includes("y")) this.years.push(parseInt(e.substr(1)));
+	});
+	this.year = data.year;
     this.countMonth();
-	this.totalPop = this.dataSets.y2022[this.month][this.rows[0].key];
-    this.totalPopRisk = this.dataSets.y2022[this.month][this.rows[1].key];
+	this.totalPop = this.dataSets['y' + this.year][this.month][this.rows[0].key];
+    this.totalPopRisk = this.dataSets['y' + this.year][this.month][this.rows[1].key];
   },
   methods: {
     countMonth() {
       this.month = this.year == 2022 ? (new Date()).getMonth() : 11;
-      this.yearData = this.dataSets['y' + this.year.toString()];
+      this.yearData = this.dataSets['y' + this.year];
     },
     borderSide(val) {
       if (val) return 'border-right: none;';
@@ -250,13 +251,13 @@ export default {
     },
     async edit(action) {
       if (action==='Cancel') {
-        this.totalPop = this.dataSets.y2022[this.month][this.rows[0].key];
-        this.totalPopRisk = this.dataSets.y2022[this.month][this.rows[1].key];
+        this.totalPop = this.dataSets['y' + this.year][this.month][this.rows[0].key];
+        this.totalPopRisk = this.dataSets['y' + this.year][this.month][this.rows[1].key];
         this.isEdit = false;
       }
       if (action === 'Save') {
-        this.dataSets.y2022[this.month][this.rows[0].key] = this.totalPop;
-        this.dataSets.y2022[this.month][this.rows[1].key] = this.totalPopRisk;
+        this.dataSets['y' + this.year][this.month][this.rows[0].key] = this.totalPop;
+        this.dataSets['y' + this.year][this.month][this.rows[1].key] = this.totalPopRisk;
         this.isEdit = false;
 		const res = (await axios.post('http://localhost:8080/api/editProgAccomp', {
 		  progAccompID: this.$route.query.paID,

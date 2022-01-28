@@ -133,7 +133,8 @@ const indexFunctions = {
 		let match = [],
 				cols = ["conf", "LabConf", "total", "population", "month"],
 				returnBody = {},
-				druName = "N/A";
+				druName = "N/A",
+				year = 2022;
 		try {
 			if (req.query.progAccompID) {
 				match = await db.exec(`SELECT pa.*, d.diseaseName, u.druName, a.*, pad.*
@@ -153,6 +154,7 @@ const indexFunctions = {
 						WHERE pa.userID = '${req.query.userID}' AND pa.diseaseID = '${req.query.diseaseID}';`);
 			}
 			druName = match[0].druName;
+			year = match[0].year;
 			match.forEach(e1 => {
 				e1["y" + e1.year] = {};
 				Object.keys(e1).forEach(e2 => {
@@ -173,7 +175,8 @@ const indexFunctions = {
 			});
 			res.status(200).send({
 				dataSets: returnBody,
-				druName: druName
+				druName: druName,
+				year: year
 			});
 		} catch (e) {
 			console.log(e);
@@ -211,16 +214,22 @@ const indexFunctions = {
 	},
 	
 	postEditProgAccomp: async function(req, res) {
-		let { userID, targets } = req.body;
+		let { progAccompID, userID, diseaseID, data } = req.body,
+				cols = ["conf", "LabConf", "total"];
 		try {
-			console.log(targets);
-			for (let i = 0; i < targets.length; i++) {
-				await db.updateRows("mmchddb.TARGETS", {
-					targetID: targets[i].targetID, userID: userID
-				}, {
-					numerValue: targets[i].numerValue, denomValue: targets[i].denomValue
-				});
-			}
+			let month = data.month;
+			delete data.month;
+			Object.keys(data).forEach(e1 => {
+				if (cols.some(e2 => e1.includes(e2))) {
+					data[e1] = data[e1].join(", ");
+				}
+			});
+			await db.updateRows("mmchddb.PROGRAM_ACCOMP_DATA", {
+				progAccompID: progAccompID,
+				userID: userID,
+				diseaseID: diseaseID,
+				month: month
+			}, data);
 			res.status(200).send("Update targets successful!");
 		} catch (e) {
 			console.log(e);
