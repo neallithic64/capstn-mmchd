@@ -62,6 +62,7 @@ router.post("/updatePushData", m1Cont.postUpdatePushData);
 router.post("/updateOutbreakStatus", m1Cont.postUpdateOutbreakStatus);
 
 router.post("/editProgTargets", m4Cont.postEditProgTargets);
+router.post("/editProgAccomp", m4Cont.postEditProgAccomp);
 
 
 // CRON Routes

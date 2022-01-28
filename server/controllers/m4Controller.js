@@ -200,6 +200,17 @@ const indexFunctions = {
 	 */
 	
 	postEditProgTargets: async function(req, res) {
+		let { progAccompID, userID, diseaseID, data } = req.body;
+		try {
+			
+			res.status(200).send("Update targets successful!");
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
+	
+	postEditProgAccomp: async function(req, res) {
 		let { userID, targets } = req.body;
 		try {
 			console.log(targets);

@@ -121,7 +121,7 @@ export default {
   compute: {},
   data() {
     return {
-      month: '',
+      month: 0,
 	  druName: '',
       totalPop: '',
       totalPopRisk: '',
@@ -242,23 +242,29 @@ export default {
       this.yearData = this.dataSets['y' + this.year.toString()];
     },
     borderSide(val) {
-      if(val) return 'border-right: none;';
+      if (val) return 'border-right: none;';
       else return 'border-left: none;';
     },
     editInput() {
       if (this.isEdit) return 'editable';
     },
-    edit(action) {
+    async edit(action) {
       if (action==='Cancel') {
         this.totalPop = this.dataSets.y2022[this.month][this.rows[0].key];
         this.totalPopRisk = this.dataSets.y2022[this.month][this.rows[1].key];
         this.isEdit = false;
       }
       if (action === 'Save') {
-        //
         this.dataSets.y2022[this.month][this.rows[0].key] = this.totalPop;
         this.dataSets.y2022[this.month][this.rows[1].key] = this.totalPopRisk;
         this.isEdit = false;
+		const res = (await axios.post('http://localhost:8080/api/editProgAccomp', {
+		  progAccompID: this.$route.query.paID,
+	      userID: this.$auth.user.userID,
+		  diseaseID: 'DI-0000000000002',
+		  data: this.dataSets.y2022[this.month]
+		}));
+		console.log(res);
       }
     },
     downloadPDF() {
