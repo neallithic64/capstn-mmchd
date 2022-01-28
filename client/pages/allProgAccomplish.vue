@@ -27,7 +27,7 @@
         </div>
       </div>
       <div class="viewcases-component">
-	    <div id="vue-root">
+	    <div v-if="dataSets.length > 0" id="vue-root">
           <dataTable
             :options="tableOptions"
             :datavalues="dataSets"
@@ -108,7 +108,7 @@ export default {
   },
   async mounted() {
     const data = (await axios.get('http://localhost:8080/api/getProgAccomps')).data;
-	data.forEach(e => e.updateDate.substr(0, 10));
+	data.forEach(e => e.dateUpdated = (new Date(e.dateUpdated)).toISOString().substr(0, 10));
 	this.dataSets = data;
   },
   methods: {

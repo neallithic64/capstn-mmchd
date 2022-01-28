@@ -37,6 +37,7 @@ router.get("/getEvent", m1Cont.getEvent);
 
 router.get("/getProgTargets", m4Cont.getAllProgTargets);
 router.get("/getProgAccomps", m4Cont.getAllProgAccomps);
+router.get("/getViewProgAccomp", m4Cont.getProgAccomps);
 
 
 // POST Routes

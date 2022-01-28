@@ -300,11 +300,9 @@
                   :href="'/viewImmunizationProg'">
                   {{ data[column.key] }}
                 </a>
-                <a v-else-if="(column.key === 'progAccomplishID')"
+                <a v-else-if="(column.key === 'progAccompID')"
                   style="color: #346083; text-decoration-line: underline"
-                  :href="'/viewProgAccomplishMalaria'">
-                  <!-- :href="'/addProgAccomplish' + DISEASE + YEAR + data[column.key]"> -->
-                  <!-- ALSO NEED TO INCLUDE DISEASE AND YEAR IN LINK TO REDIRECT TO THAT PAGE -->
+                  :href="'/viewProgAccomplishMalaria?paID=' + data[column.key]">
                   {{ data[column.key] }}
                 </a>
                 <!-- <a

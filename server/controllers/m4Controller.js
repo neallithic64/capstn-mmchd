@@ -129,6 +129,58 @@ const indexFunctions = {
 		}
 	},
 	
+	getProgAccomps: async function(req, res) {
+		let match = [],
+				cols = ["conf", "LabConf", "total", "population", "month"],
+				returnBody = {},
+				druName = "N/A";
+		try {
+			if (req.query.progAccompID) {
+				match = await db.exec(`SELECT pa.*, d.diseaseName, u.druName, a.*, pad.*
+						FROM mmchddb.PROGRAM_ACCOMPS pa
+						LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = pa.diseaseID
+						LEFT JOIN mmchddb.USERS u ON u.userID = pa.userID
+						LEFT JOIN mmchddb.ADDRESSES a ON a.addressID = u.addressID
+						LEFT JOIN mmchddb.PROGRAM_ACCOMP_DATA pad ON pad.progAccompID = pa.progAccompID
+						WHERE pa.progAccompID = '${req.query.progAccompID}';`);
+			} else {
+				match = await db.exec(`SELECT pa.*, d.diseaseName, u.druName, a.*, pad.*
+						FROM mmchddb.PROGRAM_ACCOMPS pa
+						LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = pa.diseaseID
+						LEFT JOIN mmchddb.USERS u ON u.userID = pa.userID
+						LEFT JOIN mmchddb.ADDRESSES a ON a.addressID = u.addressID
+						LEFT JOIN mmchddb.PROGRAM_ACCOMP_DATA pad ON pad.progAccompID = pa.progAccompID
+						WHERE pa.userID = '${req.query.userID}' AND pa.diseaseID = '${req.query.diseaseID}';`);
+			}
+			druName = match[0].druName;
+			match.forEach(e1 => {
+				e1["y" + e1.year] = {};
+				Object.keys(e1).forEach(e2 => {
+					if (cols.slice(0, 3).some(e3 => e2.includes(e3))) {
+						e1[e2] = e1[e2].split(", ");
+						e1[e2].map(e3 => parseInt(e3));
+					}
+					if (cols.some(e3 => e2.includes(e3))) {
+						e1["y" + e1.year][e2] = e1[e2];
+						delete e1[e2];
+					}
+				});
+			});
+			match.forEach(e1 => {
+				let yearCode = Object.keys(e1).find(e2 => e2.match(/y\d{4}/g));
+				if (!returnBody[yearCode]) returnBody[yearCode] = [];
+				returnBody[yearCode].push(e1[yearCode]);
+			});
+			res.status(200).send({
+				dataSets: returnBody,
+				druName: druName
+			});
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
+	
 	getAllProgAccomps: async function(req, res) {
 		try {
 			let match = await db.exec(`SELECT pa.*, d.diseaseName, u.druName, a.*
