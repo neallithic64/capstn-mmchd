@@ -7,24 +7,24 @@
         <h1 class="pageHeader">MALARIA Program Accomplishment Report</h1>
         <div v-show="!isPrint & !isEdit" class="actionButtons" style="display: flex;margin-top: 5px;">
           <ul v-show="year == 2022" class="actionButton">
-          <img
-            src="~/assets/img/pen.png"
-            class="printButton"
-            @click="isEdit=true"
-          />
+            <img
+              src="~/assets/img/pen.png"
+              class="printButton"
+              @click="isEdit=true"
+            />
           </ul>
           <ul class="actionButton">
-          <img
-            src="~/assets/img/pdf.png"
-            class="printButton"
-            @click="downloadPDF"
-          />
+            <img
+              src="~/assets/img/pdf.png"
+              class="printButton"
+              @click="downloadPDF"
+            />
           </ul>
           <ul class="actionButton">
             <img src="~/assets/img/csv.png" 
-            class="printButton"
-            @click="csvExport(yearData)"
-          />
+              class="printButton"
+              @click="csvExport(yearData)"
+            />
           </ul>
         </div>
         <div v-show="isEdit" style="margin: -10px 10 5px; margin-left: auto;text-align: -webkit-right;">
@@ -78,11 +78,11 @@
                   </span>
                   <tr v-else-if="month >= colIndex" style="border: none;">
                     <td v-for="(val, index) in yearData[colIndex][rows[rowIndex].key]"
-					  :key="index"
+                      :key="index"
                       style="border-bottom: none; border-top: none;"
-					  :style="borderSide(index)">
-					  {{val}}
-					</td>
+                      :style="borderSide(index)">
+                      {{val}}
+                    </td>
                   </tr>
                 </td>
               </tr>
@@ -118,7 +118,7 @@ export default {
   data() {
     return {
       month: 0,
-	  druName: '',
+      druName: '',
       totalPop: '',
       totalPopRisk: '',
       isEdit: false,
@@ -208,7 +208,7 @@ export default {
           space: false,
         },
       ],
-	  years: [],
+      years: [],
       yearData: [],
       dataSets: {},
     }
@@ -219,22 +219,32 @@ export default {
     }
   },
   async mounted() {
-    const data = (await axios.get('http://localhost:8080/api/getViewProgAccomp', {
-	  params: {
-	    progAccompID: this.$route.query.paID,
-		userID: this.$auth.user.userID,
-		diseaseID: 'DI-0000000000002'
-	  }
-	})).data;
-	this.druName = data.druName;
-	this.dataSets = data.dataSets;
+    let data;
+    if (Object.keys(this.$route.query).length > 0) {
+      data = (await axios.get('http://localhost:8080/api/getViewProgAccomp', {
+        params: {
+          progAccompID: this.$route.query.paID,
+          userID: this.$auth.user.userID,
+          diseaseID: 'DI-0000000000002'
+        }
+      })).data;
+    } else {
+	  data = (await axios.get('http://localhost:8080/api/getViewProgAccomp', {
+        params: {
+          userID: this.$auth.user.userID,
+          diseaseID: 'DI-0000000000002'
+        }
+      })).data;
+	}
+    this.druName = data.druName;
+    this.dataSets = data.dataSets;
     this.dayTime = (new Date()).toString().split(":").slice(0, 2).join(":");
-	Object.keys(this.dataSets).forEach(e => {
-	  if (e.includes("y")) this.years.push(parseInt(e.substr(1)));
-	});
-	this.year = data.year;
+    Object.keys(this.dataSets).forEach(e => {
+      if (e.includes("y")) this.years.push(parseInt(e.substr(1)));
+    });
+    this.year = data.year;
     this.countMonth();
-	this.totalPop = this.dataSets['y' + this.year][this.month][this.rows[0].key];
+    this.totalPop = this.dataSets['y' + this.year][this.month][this.rows[0].key];
     this.totalPopRisk = this.dataSets['y' + this.year][this.month][this.rows[1].key];
   },
   methods: {
@@ -259,13 +269,13 @@ export default {
         this.dataSets['y' + this.year][this.month][this.rows[0].key] = this.totalPop;
         this.dataSets['y' + this.year][this.month][this.rows[1].key] = this.totalPopRisk;
         this.isEdit = false;
-		const res = (await axios.post('http://localhost:8080/api/editProgAccomp', {
-		  progAccompID: this.$route.query.paID,
-	      userID: this.$auth.user.userID,
-		  diseaseID: 'DI-0000000000002',
-		  data: this.dataSets.y2022[this.month]
-		}));
-		console.log(res);
+        const res = (await axios.post('http://localhost:8080/api/editProgAccomp', {
+          progAccompID: this.$route.query.paID,
+          userID: this.$auth.user.userID,
+          diseaseID: 'DI-0000000000002',
+          data: this.dataSets.y2022[this.month]
+        }));
+        console.log(res);
       }
     },
     downloadPDF() {

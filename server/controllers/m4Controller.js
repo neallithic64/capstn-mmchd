@@ -134,16 +134,56 @@ const indexFunctions = {
 				cols = ["conf", "LabConf", "total", "population", "month"],
 				returnBody = {},
 				druName = "N/A",
-				year = 2022;
+				year = 2022, month = (new Date()).getMonth(),
+				existCheck, existProgAccoID;
 		try {
-			if (req.query.progAccompID) {
+			// check first if the progAccompID exists
+			existCheck = await db.findRows("mmchddb.PROGRAM_ACCOMPS", {
+				diseaseID: req.query.diseaseID,
+				userID: req.query.userID,
+				year: (new Date()).getFullYear()
+			});
+			if (existCheck.length === 0) {
+				// generate prog accomp
+				existProgAccoID = (await generateID("mmchddb.PROGRAM_ACCOMPS")).id
+				await db.insertOne("mmchddb.PROGRAM_ACCOMPS", {
+					progAccompID: existProgAccoID,
+					diseaseID: req.query.diseaseID,
+					userID: req.query.userID,
+					year: (new Date()).getFullYear(),
+					dateUpdated: new Date()
+				});
+			} else existProgAccoID = existCheck[0].progAccompID;
+			
+			// check if month exists too
+			existCheck = await db.findRows("mmchddb.PROGRAM_ACCOMP_DATA", {
+				progAccompID: existProgAccoID,
+				month: month
+			});
+			if (existCheck.length === 0) {
+				// generate prog accomp data
+				await db.insertOne("mmchddb.PROGRAM_ACCOMP_DATA", {
+					progAccompID: existProgAccoID, month: month,
+					populationTotal: 0, populationRisk: 0,
+					confCasesTotal: "0, 0", confCases5above: "0, 0",
+					confCases5below: "0, 0", confCasesPreg: "0, 0",
+					malariaLabConf: "0, 0", malariaLabConfFalci: "0, 0",
+					malariaLabConfVivax: "0, 0", malariaLabConfOvale: "0, 0",
+					malariaLabConfMalar: "0, 0", confCasesMethod: "0, 0",
+					confCasesMethodSlide: "0, 0", confCasesMethodRDT: "0, 0",
+					totalLLIN: "0, 0", totalMalariaDeaths: "0, 0"
+				});
+			}
+			
+			// regular viewing of paccomp
+			if (req.query.progAccompID || existProgAccoID) {
 				match = await db.exec(`SELECT pa.*, d.diseaseName, u.druName, a.*, pad.*
 						FROM mmchddb.PROGRAM_ACCOMPS pa
 						LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = pa.diseaseID
 						LEFT JOIN mmchddb.USERS u ON u.userID = pa.userID
 						LEFT JOIN mmchddb.ADDRESSES a ON a.addressID = u.addressID
 						LEFT JOIN mmchddb.PROGRAM_ACCOMP_DATA pad ON pad.progAccompID = pa.progAccompID
-						WHERE pa.progAccompID = '${req.query.progAccompID}';`);
+						WHERE pa.progAccompID = '${req.query.progAccompID || existProgAccoID}';`);
 			} else {
 				match = await db.exec(`SELECT pa.*, d.diseaseName, u.druName, a.*, pad.*
 						FROM mmchddb.PROGRAM_ACCOMPS pa
@@ -155,22 +195,30 @@ const indexFunctions = {
 			}
 			druName = match[0].druName;
 			year = match[0].year;
+			
+			// converting db resultset to a different format
 			match.forEach(e1 => {
+				// year object initialisation
 				e1["y" + e1.year] = {};
 				Object.keys(e1).forEach(e2 => {
+					// if the key name is part of the rows of the prodAccom
 					if (cols.slice(0, 3).some(e3 => e2.includes(e3))) {
+						// split the string into array of two ints for M and F
 						e1[e2] = e1[e2].split(", ");
 						e1[e2].map(e3 => parseInt(e3));
 					}
+					// if part of the progAccompData, insert into year object as entry
 					if (cols.some(e3 => e2.includes(e3))) {
 						e1["y" + e1.year][e2] = e1[e2];
 						delete e1[e2];
 					}
 				});
 			});
+			// grouping all year objects together into one array per year
 			match.forEach(e1 => {
 				let yearCode = Object.keys(e1).find(e2 => e2.match(/y\d{4}/g));
 				if (!returnBody[yearCode]) returnBody[yearCode] = [];
+				// assuming the array is sorted by month
 				returnBody[yearCode].push(e1[yearCode]);
 			});
 			res.status(200).send({
@@ -226,8 +274,6 @@ const indexFunctions = {
 			});
 			await db.updateRows("mmchddb.PROGRAM_ACCOMP_DATA", {
 				progAccompID: progAccompID,
-				userID: userID,
-				diseaseID: diseaseID,
 				month: month
 			}, data);
 			res.status(200).send("Update targets successful!");
