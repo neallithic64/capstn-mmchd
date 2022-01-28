@@ -11,6 +11,7 @@ Date.prototype.getWeek = function() {
 	return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
 }
 
+const math = require('mathjs');
 const DRUUserTypes = ['BHS','RHU','CHO', 'govtHosp', 'privHosp', 'clinic', 'privLab', 'airseaPort'];
 /** OBJECT CONSTRUCTORS
 */
@@ -47,10 +48,10 @@ function Disease(diseaseID, diseaseName, notifiable, caseThreshold) {
 }
 
 function Patient(patientID, epiID, lastName, firstName, midName, caddressID, paddressID, sex,
-					birthDate, ageNo, ageType, admitStatus, civilStatus, occupation,
-					occuLoc, occuAddrID, guardianName, guardianContact,
-					indigeneous, indGroup,
-					pregnant, pregMonths, HCPN, ILHZ ) {
+					birthDate, ageNo, ageType, admitStatus, civilStatus, occupation, 
+					occuLoc, occuAddrID, guardianName, guardianContact, 
+					indigeneous,
+					pregWeeks, HCPN, ILHZ ) {
 	this.patientID = patientID;
 	this.epiID = epiID;
 	this.lastName = lastName;
@@ -69,9 +70,8 @@ function Patient(patientID, epiID, lastName, firstName, midName, caddressID, pad
 	this.occuAddrID = occuAddrID;
 	this.guardianName = guardianName;
 	this.guardianContact = guardianContact;
-	this.indGroup = indGroup;
-	this.pregnant = pregnant;
-	this.pregMonths = pregMonths;
+	this.indigeneous = indigeneous;
+	this.pregWeeks = pregWeeks;
 	this.HCPN = HCPN;
 	this.ILHZ = ILHZ;
 }
@@ -126,6 +126,14 @@ function Notification(notificationID, receiverID, type, message, caseID, dateCre
 	this.viewed = viewed;
 }
 
+function Outbreak(outbreakID, diseaseID, outbreakStatus, startDate, endDate, responseTime) {
+	this.outbreakID = outbreakID;
+	this.diseaseID = diseaseID;
+	this.outbreakStatus = outbreakStatus;
+	this.startDate = startDate;
+	this.endDate = endDate;
+	this.responseTime = responseTime;
+}
 /** ON ID CREATION
 */
 function getPrefix(table) {
@@ -263,8 +271,69 @@ async function sendBulkNotifs(userTypes, notificationType, message, caseID) {
 	}
 }
 
-async function checkIfOutbreak(diseaseID) {
+async function createOutbreak(diseaseID, outbreakStatus){
+	try {
+		let match = await db.exec("SELECT * FROM mmchddb.OUTBREAKS WHERE diseaseID='" + diseaseID +
+								"' AND NOT outbreakStatus='Closed';");
+		if(match.length > 0) {
+			if(match[0] == outbreakStatus)
+				return match[0];
+			else if(outbreakStatus == 'Epidemic') {
+				let result = await db.updateRows("mmchddb.OUTBREAKS", {outbreakID:match[0].outbreakID}, {outbreakStatus:outbreakStatus});
+				if(result)
+					return match[0];
+				else
+					return false;
+			}	
+		} else {
+			let newOutbreak = new Outbreak(await generateID("mmchddb.OUTBREAKS"), diseaseID, 'Ongoing', new Date(), null, null);
+			let result = await db.insertOne("mmchddb.OUTBREAKS", newOutbreak);
+			return result;
+		}
+	} catch (error) {
+		console.log(error);
+		return false;
+	}
+}
 
+async function checkIfOutbreak(diseaseID, caseObj){
+	try {
+		// check if disease case is measles (suspected case for alert, confirmed case for epidemic)
+		if(diseaseID == "DI-0000000000000") {
+			if(caseObj.caseStatus == "Suspected Case") {
+				return await createOutbreak("DI-0000000000000", "Alert");
+			}
+			else if (caseObj.caseStatus == "Discarded Case")
+				return false;
+			else
+				return await createOutbreak("DI-0000000000000", "Epidemic");
+		} else {
+			// general formula (1 standard deviation above the norm for alert, 2 standard deviation for epidemic)
+			let cases = await db.exec("SELECT * FROM mmchddb.CASES WHERE YEARWEEK(reportDate, 1) = YEARWEEK(CURDATE(), 1)");
+			let disease = await db.findRows("mmchddb.DISEASES", {diseaseID:diseaseID});
+			
+			if(cases.length >= disease[0].alertThreshold) {
+				return await createOutbreak(diseaseID, "Alert");
+			} else if(cases.length >= disease[0].epiThreshold) {
+				return await createOutbreak(diseaseID, "Epidemic");
+			} else
+				return false;
+		}
+	} catch (error) {
+		console.log(error);
+		return false;
+	}
+	
+}
+
+function computeThreshold(numCases){
+	while(numCases.length < 156)
+		numCases.push(0);
+	let thresholds = {
+		alertThreshold : Math.floor(math.mean(numCases) + math.std(numCases,"uncorrected")),
+		epiThreshold : Math.floor(math.mean(numCases) + math.std(numCases,"uncorrected") * 2),
+	}
+	return thresholds;
 }
 
 async function getOutbreakData(outbreakID) {
@@ -395,6 +464,24 @@ async function getOutbreakData(outbreakID) {
 		console.log(e);
 		return "Server error";
 	}
+}
+
+async function updateDiseaseThreshold(diseaseID){
+	try {
+		let numCases = await db.exec("SELECT yearweek(reportDate) AS 'yearweek', COUNT(caseID) AS 'numCases' from mmchddb.CASES " +
+								"WHERE yearweek(reportDate) >= yearweek(DATE_SUB(CURDATE(), INTERVAL 3 YEAR)) " +
+								"AND diseaseID='" + diseaseID + "' " +
+								"GROUP BY yearweek(reportDate);");
+		if(numCases.length > 0) {
+			let thresholds = computeThreshold(numCases.numCases);
+			return await db.updateRows("mmchddb.DISEASES", {diseaseID : diseaseID}, {alertThreshold : thresholds.alertThreshold, epiThreshold : thresholds.epiThreshold});
+		} else 
+			return false;
+	} catch (error) {
+		console.log(error);
+		return false;
+	}
+	
 }
 
 const indexFunctions = {
@@ -966,6 +1053,18 @@ const indexFunctions = {
 					HAVING c.diseaseID = '${outbreak.outbreak.diseaseID}' AND
 					c.reportDate > '${outbreak.outbreak.startDate.toISOString().substr(0, 10)}';`);
 			res.status(200).send(outbreak);
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
+
+	getOngoingOutbreaks: async function(req, res){
+		try {
+			let outbreaks = await db.exec("SELECT * FROM mmchddb.OUTBREAKS WHERE NOT outbreakStatus='Closed'");
+			if(outbreaks.length > 0)
+				res.status(200).send(outbreaks);
+			else res.status(400).send("No outbreaks");
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
@@ -1743,6 +1842,20 @@ const indexFunctions = {
 			console.log("Server Error");
 		}
 	},
+	cronUpdateThresholds : async function() {
+		try {
+			let diseases = await db.findAll("mmchddb.DISEASES");
+			for(let i = 0; i < diseases.length; i++) {
+				let result = await updateDiseaseThreshold(diseases[i].diseaseID);
+				if(result) {
+					console.log(diseases[i].diseaseName + " thresholds updated successfully");
+				} else console.log(diseases[i].diseaseName + " thresholds were not updated");
+			}
+		} catch (e) {
+			console.log(e);
+			console.log("Server Error");
+		}
+	}
 };
 
 module.exports = indexFunctions;

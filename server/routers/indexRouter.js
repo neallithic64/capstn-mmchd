@@ -32,6 +32,7 @@ router.get("/getPatientData", m1Cont.getPatientData);
 
 router.get("/getAllOutbreaks", m1Cont.getAllOutbreaks);
 router.get("/getOutbreak", m1Cont.getOutbreak);
+router.get("/getOngoingOutbreaks", m1Cont.getOngoingOutbreaks);
 router.get("/getAllEvents", m1Cont.getAllEvents);
 router.get("/getEvent", m1Cont.getEvent);
 
@@ -66,6 +67,7 @@ router.post("/editProgTargets", m4Cont.postEditProgTargets);
 // CRON Routes
 cron.schedule("00 14 * * 3", m1Cont.cronCRFDeadlineNotif);
 cron.schedule("00 17 * * 5", m1Cont.cronCRFPushData);
+// cron.schedule("00 17 * * 6", m1Cont.cronUpdateThresholds);
 
 
 // 404 PAGE
