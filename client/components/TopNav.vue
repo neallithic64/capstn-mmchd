@@ -63,7 +63,7 @@
       </div>
     </div>
 
-    <div v-if="$auth.user.userType === 'pidsrStaff' || $auth.user.userType === 'techStaff'"
+    <div v-if="$auth.user.userType === 'pidsrStaff' || $auth.user.userType === 'fhsisStaff' || $auth.user.userType === 'techStaff'"
       class="dropdown">
       <button class="dropbtn">
         Reports and Analytics
