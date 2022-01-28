@@ -6,34 +6,34 @@
       <div class="exportButtons">
         <h1 class="pageHeader"> All Program Accomplishment Report </h1>
         <div v-show="!isPrint" class="actionButtons" style="display: flex;margin-top: 5px;">
-          <ul v-show="year==='2022' || year===2022" class="actionButton">
-          <img
-            src="~/assets/img/pen.png"
-            class="printButton"
-            @click="isEdit=true"
-          />
+          <ul class="actionButton">
+            <img src="~/assets/img/pen.png"
+              class="printButton"
+              @click="isEdit=true"
+            />
           </ul>
           <ul class="actionButton">
-          <img
-            src="~/assets/img/pdf.png"
-            class="printButton"
-            @click="downloadPDF"
-          />
+            <img src="~/assets/img/pdf.png"
+              class="printButton"
+              @click="downloadPDF"
+            />
           </ul>
           <ul class="actionButton">
             <img src="~/assets/img/csv.png" 
-            class="printButton"
-            @click="csvExport(dataSets)"
-          />
+              class="printButton"
+              @click="csvExport(dataSets)"
+            />
           </ul>
         </div>
       </div>
       <div class="viewcases-component">
-        <dataTable
-          :options="tableOptions"
-          :datavalues="dataSets"
-          :casetype="'allProgAccomplish'"
-        />
+	    <div v-if="dataSets.length > 0" id="vue-root">
+          <dataTable
+            :options="tableOptions"
+            :datavalues="dataSets"
+            :casetype="'allProgAccomplish'"
+          />
+		</div>
       </div>
     </div>
   </div>
@@ -62,20 +62,19 @@ export default {
   data() {
     return {
       isPrint: false,
-      dayTime: '',
       tableOptions: {
         tableName: 'cases',
         sortKey: 'updateDate',
         columns: [
           {
             title: 'Program Accomplish ID',
-            key: 'progAccomplishID',
+            key: 'progAccompID',
             sortable: true,
             type: 'clickable',
           },
           {
             title: 'Disease',
-            key: 'disease',
+            key: 'diseaseName',
             sortable: true,
             filter:true,
           },
@@ -87,7 +86,7 @@ export default {
           },
           {
             title: 'Barangay',
-            key: 'barangay',
+            key: 'brgy',
             sortable: true,
           },
           {
@@ -97,40 +96,20 @@ export default {
           },
           {
             title: 'Date Updated',
-            key: 'updateDate',
+            key: 'dateUpdated',
             sortable: true,
           },
         ],
         // source: 'http://demo.datatable/api/users',
         search: true,
       },
-      dataSets: [
-        {
-          progAccomplishID: '123',
-          disease: 'Malaria',
-          city: 'Manila',
-          barangay: 'Barangay 20',
-          year: '2022',
-          updateDate: ''
-        },
-        {
-          progAccomplishID: '123',
-          disease: 'Malaria',
-          city: 'Manila',
-          barangay: 'Barangay 20',
-          year: '2022',
-          updateDate: ''
-        },
-      ],
+      dataSets: [],
     }
   },
-  mounted() {
-    const today = new Date();
-    const monthsList = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Aug', 'Oct', 'Nov', 'Dec'];
-    const hour = today.getHours()>9 ? today.getHours() : '0'+today.getHours()
-    const mins = today.getMinutes()>9 ? today.getMinutes() : '0'+today.getMinutes()
-    this.dayTime = monthsList[today.getMonth()] + ' ' + today.getDate() + ', ' + today.getFullYear()
-                     + ' ' + hour + ':' + mins;
+  async mounted() {
+    const data = (await axios.get('http://localhost:8080/api/getProgAccomps')).data;
+	data.forEach(e => e.dateUpdated = (new Date(e.dateUpdated)).toISOString().substr(0, 10));
+	this.dataSets = data;
   },
   methods: {
     editInput() {
