@@ -1,6 +1,6 @@
 <template>
   <div class="datatable">
-    <div v-if="pageType !== 'patient'" class="search">
+    <div v-if="pageType !== 'patient' && pageType !== 'feedbackReport' " class="search">
       Show
       <select id="rows" v-model="showDataAmount" class="form-control" @change="selectedDataAmount">
         <option value="10">10</option>

@@ -33,20 +33,22 @@
                 <legend for="reportTime" class="inputLegend required"> Year: </legend>
                 <select id="reportTime" v-model="report.year" type="text" class="input-form-field"
                   :class="isRequired()" :disabled="!inputEdit()" required>
-                  <option v-for="(year, index) in yearOption" :key="index">
+                  <option v-for="(year, index) in yearOption" :key="index" :value="year">
                     {{year}}
                   </option>
                 </select>
               </div>
 
-              <div v-if="timeUnit==='Week' || timeUnit==='Month'" class="inline alignCenter marginTopBot2">
+              <div v-if="timeUnit!=='Annual' && timeUnit!==''" class="inline alignCenter marginTopBot2">
                 <legend for="reportTime" class="inputLegend required"> {{timeUnit}}: </legend>
-                <select id="reportTime" v-model="report.time" type="text" class="input-form-field"
+                <select v-if="timeUnit=='Week' || timeUnit==='Month'" id="reportTime" v-model="report.duration" type="text" class="input-form-field"
                   :class="isRequired()" :disabled="!inputEdit()" required>
-                  <option v-for="(time, index) in timeOption" :key="index">
+                  <option v-for="(time, index) in timeOption" :key="index" :value="time">
                     {{time}}
                   </option>
                 </select>
+                <input v-else id="reportTime" v-model="report.duration" type="text" class="input-form-field"
+                  :class="isRequired()" :disabled="!inputEdit()" required/>
               </div>
 
               <div class="inline alignCenter marginTopBot2">
@@ -62,7 +64,7 @@
             </div>
 
             <!-- checkbox -->
-            <div class="alignLeft alignStart marginTop-1" style="width:36%">
+            <div class="alignLeft alignStart marginTop-1" style="width:40%">
               <div class="reportsOptionsBox">
                 <div class="analysisReportOption marginTopBot2" style="width: 210px;font-weight: 600;">
                   Reports Included:
@@ -82,8 +84,31 @@
         <div class="padding15 alignTop block">
           <div v-for="(chart, chartIndex) in report.reportsIncluded" :key="chartIndex" class="fullwidth padding10">
             <h3 class="caps chartTitle marginBottom5"> {{chart}} </h3>
-            <div class="marginTopBottom5 lightgray padding30 borderRadius30 boxShadow">
-              <div class="chartContainer marginBottom5"></div>
+            <div class="marginTopBottom5 lightgrayB padding30 borderRadius30 boxShadow">
+              <div v-if="chart==='Summary'" class="chartContainer marginBottom5">
+                <!-- SUMMARY -->
+                <iframe class="report-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiODdiNTM2N2YtMTA3YS00NzA2LTg5YjItMDBlZDllMTQ2ZDY0IiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D&pageName=ReportSection">
+                </iframe>
+              </div>
+              <div v-else-if="chart==='Prevalence Analysis'" class="chartContainer marginBottom5">
+                <!-- Prevalence Analysis -->
+              </div>
+              <div v-else-if="chart==='Fatality Analysis'" class="chartContainer marginBottom5">
+                <!-- Fatality Analysis -->
+              </div>
+              <div v-else-if="chart==='Person Analysis'" class="chartContainer marginBottom5">
+                <!-- Person Analysis -->
+              </div>
+              <div v-else-if="chart==='Time Analysis'" class="chartContainer marginBottom5">
+                <!-- Time Analysis -->
+              </div>
+              <div v-else-if="chart==='Place Analysis'" class="chartContainer marginBottom5">
+                <!-- Place Analysis -->
+              </div>
+              <div v-else-if="chart==='Risk Analysis'" class="chartContainer marginBottom5">
+                <!-- Risk Analysis -->
+              </div>
+
               <p> <b> Interpretation / Remarks </b> </p>
               <textarea v-model="report.chartRemarks[chartIndex]" class="input-form-field" :class="isRequired()" 
                   style="resize: vertical;width:100%; height: 100px; padding: 5px; 10px;" required/>
@@ -136,7 +161,7 @@ export default {
         title: '',
         type: '',
         year: '',
-        time: '',
+        duration: '',
         disease: '',
         reportsIncluded: [],
         chartRemarks: [],
@@ -145,7 +170,6 @@ export default {
         dateTime: '',
       },
       reportTypeOption: ['Weekly','Monthly','Annual','Adhoc','Outbreak'],
-      reportTimeOption: ['Week','Month'],
       timeOption: [], weekOption:[], monthOption: [], yearOption:[],
       diseaseOption: [
         'Malaria',
@@ -172,42 +196,39 @@ export default {
   },
   head() {
     return {
-      title: 'New Report'
+      title: 'New Feedback Report'
     }
   },
   mounted() {
-    const today = new Date();
-    const hour = today.getHours()>9 ? today.getHours() : '0'+today.getHours()
-    const mins = today.getMinutes()>9 ? today.getMinutes() : '0'+today.getMinutes()
-    const monthsList = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Aug', 'Oct', 'Nov', 'Dec'];
-    this.report.dateTime = monthsList[today.getMonth()] + ' ' + today.getDate() + ', ' + today.getFullYear()
-                     + ' ' + hour + ':' + mins;
-
+    this.getDate();
     this.yearOption= [2022, 2021, 2020, 2019, 2018];
     this.monthOption= ['January', 'February', 'March', 'April', 'May',
       'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-    for (let i=0; i<52; i++)
-      this.weekOption[i] = 'Week ' + (i+1);
+    for (let i=0; i<53; i++) this.weekOption[i] = 'Week ' + (i+1);
+    setInterval(() => { this.getDate() }, 10000)
   },
   methods: {
-    getColor(status) {
-      switch (status) {
-        case 'Approved': return 'green';
-        case 'Pending': return 'blue';
-        case 'For Revision': return 'orange';
-        case 'Declined': return 'red';
-      }
-    },
     isRequired() {  if (!this.isValidated) return 'input-required'; },
     isOptionRequired() { if (!this.isValidated && this.report.reportsIncluded.length < 1) return 'input-required'; },
     inputEdit() { return true; },
     analysisStyle(i) {return ''},
+    getDate() {
+      const today = new Date();
+      const hour = today.getHours()>9 ? today.getHours() : '0'+today.getHours()
+      const mins = today.getMinutes()>9 ? today.getMinutes() : '0'+today.getMinutes()
+      const monthsList = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Aug', 'Oct', 'Nov', 'Dec'];
+      this.report.dateTime = monthsList[today.getMonth()] + ' ' + today.getDate() + ', ' + today.getFullYear()
+                      + ' ' + hour + ':' + mins;
+    },
     changeTime(reportType) {
       this.timeUnit = '';
-      this.report.time = '';
+      this.report.duration = '';
       switch(reportType) {
         case 'Weekly': this.timeUnit = 'Week'; this.timeOption = this.weekOption; break;
         case 'Monthly': this.timeUnit = 'Month'; this.timeOption = this.monthOption; break;
+        case 'Annual': this.timeUnit = ''; break;
+        case 'Adhoc': this.timeUnit = 'Duration'; break;
+        case 'Outbreak': this.timeUnit = 'Duration'; break;
       }
     },
     validate() {
@@ -217,15 +238,15 @@ export default {
           this.report.reportsIncluded.length === this.report.chartRemarks.length) {
         this.isValidated = true;
         console.log(this.isValidated)
-        if (this.report.type === 'Monthly' || this.report.type === 'Weekly') 
-        { if (this.report.time === '') this.isValidated = false; }
+        if (this.report.type !== 'Annual' && this.report.duration === '')
+          this.isValidated = false;
         else {
           this.isValidated = true;
           for (let i=0; i<this.report.reportsIncluded.length; i++)
-            if (this.reports.chartRemarks[i] === '' || this.reports.chartRemarks[i] === null)
+            if (this.report.chartRemarks[i] === '' || this.report.chartRemarks[i] === null)
               this.isValidated = this.isValidated & false;
         }
-        }
+      }
       else this.isValidated = false;
     },
     submit() {
@@ -304,7 +325,7 @@ export default {
 
 .reportsOptionsBox {
     width: fit-content;
-    border: 1px solid black;
+    /* border: 1px solid black; */
     padding: 2px 16px;
     border-radius: 8px;
 }
@@ -329,6 +350,15 @@ export default {
     color: transparent;
     text-shadow: 1px 1px, -1px -1px rgb(0 0 0 / 25%);
     -webkit-background-clip: text;
+}
+
+.report-powerbi-iframe {
+  height: 100%;
+  background-color: gray;
+  width: 100%;
+  /* border-radius: 10px; */
+  /* margin-left: 5px;
+  margin-top: 5px; */
 }
 
 .next-button {
@@ -392,11 +422,11 @@ select {
 /* .input-required{ border-color: hsl(0, 76%, 50%); } */
 .required:after { content: '*'; color: red; }
 
-.green { background: #53a262; }
-.blue { background: #346083; }
-.orange { background: orange; }
-.red { background: red; }
-.lightgray {background: #f2f2f2;}
-.darkerlightgray {background: lightgray;}
+.greenB { background: #008d41; }
+.blueB { background: #346083; }
+.orangeB { background: orange; }
+.redB { background: red; }
+.lightgrayB {background: #f2f2f2;}
+.darkerlightgrayB {background: lightgray;}
 
 </style>
