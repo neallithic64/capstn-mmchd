@@ -276,6 +276,9 @@ const indexFunctions = {
 				progAccompID: progAccompID,
 				month: month
 			}, data);
+			await db.updateRows("mmchddb.PROGRAM_ACCOMPS", {
+				progAccompID: progAccompID
+			}, { dateUpdated: new Date() });
 			res.status(200).send("Update targets successful!");
 		} catch (e) {
 			console.log(e);
