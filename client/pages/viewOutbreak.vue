@@ -3,8 +3,7 @@
     <!--Top Bar of the screen-->
     <TopNav/>
     <div ref="content" class="viewOB-container">
-      <!-- TODO: place v-if here to remove the timer after initial response -->
-      <div id="countdown-container">
+      <div v-if="outbreak.responseTime === 'N/A'" id="countdown-container">
         <client-only>
           <Countdown deadline="January 22, 2022 23:39:00"></Countdown>
         </client-only>
@@ -14,7 +13,7 @@
         <div class="OBnumbers">
           <h1 style="margin: -10px 0">Outbreak No. {{ outbreak.outbreakID }}</h1>
           <h2 style="margin-top: -1px">
-            {{ outbreak.disease }}
+            {{ outbreak.diseaseName }}
           </h2>
         </div>
         <div class="OBstatus" style="align-text: right">
@@ -44,23 +43,27 @@
       </div>
       <div class="viewOB-details" style="align-text: left">
         <div class="CIFnumbers">
-          <p>Date Started: <b> {{ outbreak.dateStarted }} </b></p>
-          <p>Date Closed: <b> {{ outbreak.dateClosed }} </b></p>
+          <p>Date Started: <b> {{ outbreak.startDate }} </b></p>
+          <p>Date Closed: <b> {{ outbreak.endDate }} </b></p>
         </div>
       </div>
-      <div v-show="!isPrint" class="OB-SummaryContainer">
-        <ul
-          v-for="(value, name, i) in formSection.formNames"
-          :key="i"
-          :class="formListClass(i)"
-          @click="move(i)"
-        >
-          {{
-            i+1
-          }}.{{
-            value
-          }}
-        </ul>
+
+      <div style="display: flex; flex-direction: row; justify-content: space-between;">
+        <div v-show="!isPrint" class="OB-SummaryContainer">
+          <ul
+            v-for="(value, name, i) in formSection.formNames"
+            :key="i"
+            :class="formListClass(i)"
+            @click="move(i)"
+          >
+            {{
+              i+1
+            }}.{{
+              value
+            }}
+          </ul>
+        </div>
+        <a href="/addReport"> <button class="make-report-button2" > + Make a Feedback Report </button> </a>
       </div>
 
       <div class="viewOBform-component">
@@ -110,19 +113,17 @@
         </div>
         <div id="risk-col" style="margin-left: 8px;">
           <p style="font-weight: 600;"> Growth Rate </p>
-          <p style="font-weight: 400; padding: 3px;"> {{ grHighRisk }} </p>
-          <p style="font-weight: 400; padding: 3px;"> {{ grModRisk }} </p>
-          <p style="font-weight: 400; padding: 3px;"> {{ grLowRisk }} </p>
+          <p style="font-weight: 400; padding: 3px;"> &gt;{{ grHighRisk }}% </p>
+          <p style="font-weight: 400; padding: 3px;"> &gt;{{ grMod1Risk }}% to &lt;={{ grMod2Risk }}% </p>
+          <p style="font-weight: 400; padding: 3px;"> &lt;={{ grLowRisk }}% </p>
         </div>
         <div id="risk-col" style="margin-left: 5px;">
           <p style="font-weight: 600;"> Attack Rate </p>
-          <p style="font-weight: 400; padding: 3px;"> {{ arHighRisk }} </p>
-          <p style="font-weight: 400; padding: 3px;"> {{ arModRisk }} </p>
-          <p style="font-weight: 400; padding: 3px;"> {{ arLowRisk }} </p>
+          <p style="font-weight: 400; padding: 3px;"> &gt;{{ arHighRisk }} </p>
+          <p style="font-weight: 400; padding: 3px;"> &gt;{{ arMod1Risk }} to &lt;={{ arMod2Risk }} </p>
+          <p style="font-weight: 400; padding: 3px;"> &gt;{{ arLowRisk }} </p>
         </div>
       </div>
-
-      
 
       <div class="OB-statusHistory">
         <h2 style="border-bottom: gray solid; width: fit-content; padding: 0 7px 0 5px;">Outbreak Status History</h2>
@@ -220,12 +221,14 @@ export default {
   compute: {},
   data() {
     return {
-      grLowRisk: '<=0%',
-      grModRisk: '>0% to <=200%',
-      grHighRisk: '>200%',
-      arLowRisk: '>1',
-      arModRisk: '>=1 to <=7',
-      arHighRisk: '>7',
+      grLowRisk: 0,
+      grMod1Risk: 0,
+      grMod2Risk: 200,
+      grHighRisk: 200,
+      arLowRisk: 1,
+      arMod1Risk: 1,
+      arMod2Risk: 7,
+      arHighRisk: 7,
       editStatus: false,
       auditLog: {
         newStatus: '',
@@ -253,7 +256,7 @@ export default {
             source: 'outbreak'
           },
           {
-            title: 'Two-week Growth Rate',
+            title: 'Growth Rate',
             key: 'growthRate',
             type: 'text',
             source: 'outbreak'
@@ -285,7 +288,7 @@ export default {
           },
           {
             title: 'DRU ID',
-            key: 'reportedBy',
+            key: 'druName',
             type: 'text',
             source: 'cases',
             uniqueField: 'id',
@@ -333,7 +336,7 @@ export default {
         columns: [
           {
             title: 'Date',
-            key: 'reportDate',
+            key: 'dateModified',
             type: 'text',
             dateFormat: true,
             currentFormat: 'YYYY-MM-DD',
@@ -342,7 +345,7 @@ export default {
           },
           {
             title: 'From',
-            key: 'from',
+            key: 'prevValue',
             type: 'text',
             source: 'cases',
             uniqueField: 'id',
@@ -362,7 +365,7 @@ export default {
           },
           {
             title: 'Reported By',
-            key: 'reportedBy',
+            key: 'druName',
             type: 'text',
             source: 'cases',
             uniqueField: 'id',
@@ -371,88 +374,19 @@ export default {
         // source: 'http://demo.datatable/api/users',
         search: true,
       },
-      eventHistory: [
-        {
-          reportDate: '2020-12-10',
-          from: 'Ongoing',
-          to: 'Controlled',
-          remarks: 'Visited by coordinator and provided feedback to the representative',
-          reportedBy: 'a',
-        },
-        {
-          reportDate: '2020-10-10',
-          from: '',
-          to: 'Ongoing',
-          remarks: '',
-          reportedBy: 'b',
-        }
-      ],
-      obSummary: [
-        {
-          city: 'Metro Manila',
-          numCases: '1044',
-          growthRate: '20%',
-          attackRate: '2.01',
-          risk: 'High'
-        },
-        {
-          city: 'Caloocan',
-          numCases: '200',
-          growthRate: '20%',
-          attackRate: '2.01',
-          risk: 'High'
-        },
-        {
-          city: 'Las Piñas',
-          numCases: '200',
-          growthRate: '20%',
-          attackRate: '2.01',
-          risk: 'Low'
-        },
-        {
-          city: 'Makati',
-          numCases: '200',
-          growthRate: '20%',
-          attackRate: '2.01',
-          risk: 'Moderate'
-        },
-      ],
-      obCases: [
-        {
-          caseID: '123',
-          reportedBy: 'SG Diagnostics',
-          city: 'Caloocan',
-          reportDate: '2021-12-14',
-          updatedDate: '2021-12-14',
-          caseLevel: 'Confirmed'
-        },
-        {
-          caseID: '124',
-          reportedBy: 'SG Diagnostics',
-          city: 'Caloocan',
-          reportDate: '2021-12-14',
-          updatedDate: '2021-12-14',
-          caseLevel: 'Confirmed'
-        },
-        {
-          caseID: '125',
-          reportedBy: 'SG Diagnostics',
-          city: 'Caloocan',
-          reportDate: '2021-12-14',
-          updatedDate: '2021-12-14',
-          caseLevel: 'Confirmed'
-        },
-      ],
+      eventHistory: [],
+      obSummary: [],
+      obCases: [],
       outbreak: {
         outbreakID: '123',
-        disease: 'Measles',
-        dateStarted: '2021-12-31',
+        diseaseName: 'Measles',
+        startDate: '2021-12-31',
         numCases: '200',
         numDeaths: '0',
         growthRate: '813%',
-        attackRate: '1.07%',
+        attackRate: '1.07',
         outbreakStatus: 'Ongoing',
-        dateClosed: 'N/A'
+        endDate: 'N/A'
       },
       formSection: {
         formNames: {
@@ -470,13 +404,35 @@ export default {
   },
   async fetch() {
     const data = (await axios.get('http://localhost:8080/api/getOutbreak?outbreakID=' + this.$route.query.outbreakID)).data;
-  //   this.formData.cases = data.cases;
-  //   this.DRUData = data.DRUData;
-  //   this.CRFData = data.crfData;
-  //   this.dateLastUpdated = data.dateLastUpdated;
-  //   this.caseHistory = data.caseHistory;
-  //   console.log(data);
+	this.outbreak = data.outbreak;
+	this.outbreak.startDate = this.outbreak.startDate.substr(0, 10);
+	this.outbreak.endDate = this.outbreak.endDate ? this.outbreak.endDate.substr(0, 10) : "N/A";
+	this.outbreak.responseTime = this.outbreak.responseTime ? this.outbreak.responseTime : "N/A";
+	this.eventHistory = data.outbreakAudit;
+	this.obCases = data.outbreakCases;
+	this.obSummary = data.outbreakSumm;
+	for (let i = 0; i < this.obSummary.length; i++) {
+	  this.obSummary[i].numCases = this.obSummary[i].numCases ? this.obSummary[i].numCases : 0;
+	  this.obSummary[i].attackRate = this.obSummary[i].attackRate ? this.obSummary[i].attackRate : "0.00";
+	  this.obSummary[i].growthRate = this.obSummary[i].growthRate
+			? (parseFloat(this.obSummary[i].growthRate) * 100).toFixed(2) + "%"
+			: "0.00%";
+	  if (this.obSummary[i].growthRate > this.grHighRisk)
+	    this.obSummary[i].risk = "High";
+	  else if (this.obSummary[i].attackRate > this.arHighRisk)
+	    this.obSummary[i].risk = "High";
+	  else if (this.obSummary[i].growthRate > this.grMod1Risk && this.obSummary[i].growthRate <= this.grMod2Risk)
+	    this.obSummary[i].risk = "Moderate";
+      else if (this.obSummary[i].attackRate > this.arMod1Risk && this.obSummary[i].attackRate <= this.arMod1Risk)
+	    this.obSummary[i].risk = "Moderate";
+	  else this.obSummary[i].risk = "Low";
+	}
   }, 
+  head() {
+    return {
+      title: 'Outbreak ' + this.outbreak.outbreakID
+    }
+  },
   methods: {
     formListClass(index) {
       if (index === this.pageNum) return 'formSummaryItems selected'
@@ -496,27 +452,26 @@ export default {
     popup() {
       this.editStatus = !this.editStatus
     },
-    // async statusAction(change) {
-    //   if (change==='save') {
-    //     this.formData.caseData.finalClassification = this.newStatus;
-    //     this.formData.cases.caseLevel = this.newStatus;
-    //     const updateCase = await axios.post('http://localhost:8080/api/updateCaseStatus', {
-    //       caseId: this.formData.cases.caseID,
-    //       newStatus: this.newStatus
-    //     });
-    //     if (updateCase.status === 200) {
-    //       alert('CRF case status updated!');
-    //       location.reload();
-    //     } else {
-    //       // eslint-disable-next-line no-console
-    //       console.log(result);
-    //     }
-    //   }
-    //   if (change==='cancel') {
-    //     this.newStatus = this.formData.cases.caseLevel;
-    //   }
-    //   this.popup()
-    // },
+    async statusAction(change) {
+      if (change==='save') {
+        const updateCase = await axios.post('http://localhost:8080/api/updateOutbreakStatus', {
+          outbreakID: this.outbreak.outbreakID,
+          newStatus: this.auditLog,
+		  userID: this.$auth.user.userID
+        });
+        if (updateCase.status === 200) {
+          alert('Outbreak status updated!');
+          location.reload();
+        } else {
+          // eslint-disable-next-line no-console
+          console.log(result);
+        }
+      }
+      if (change==='cancel') {
+        this.newStatus = this.formData.cases.caseLevel;
+      }
+      this.popup()
+    },
     downloadPDF() {
       this.isPrint = !this.isPrint
 
@@ -593,7 +548,7 @@ h3 {
 .OB-SummaryContainer {
   display: flex;
   flex-direction: row;
-  overflow-x: auto;
+  overflow-x: hidden;
   overflow-y: hidden;
   z-index: 1;
 }
@@ -912,7 +867,7 @@ ul ul li {
   font-size: 10px;
   display: flex;
   flex-direction: row;
-  justify-content: flex-end;
+  /* justify-content: flex-end; */
 }
 
 #risk-col {
@@ -1296,6 +1251,20 @@ hr {
 
 .hide {
   display: none;
+}
+
+.make-report-button2 {
+  width: 220px;
+  height: 30px;
+  font-size: 14px;
+  font-family: 'Work Sans', sans-serif;
+  font-weight: 600;
+  background-color: #008d41;
+  color: white;
+}
+
+.make-report-button2:hover {
+  background-color: #346083;
 }
 </style>
 

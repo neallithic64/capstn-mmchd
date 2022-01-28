@@ -1,0 +1,592 @@
+<template>
+  <div id="viewCRF">
+    <!--Top Bar of the screen-->
+    <TopNav />
+    <div ref="content" class="viewcases-container">
+      <div class="viewCRF-details" style="align-text: left">
+        <div class="CRFnumbers">
+          <h1 style="margin: -10px 0">Program Immunization Report No. {{immunProgNo}}</h1>
+          <h2 style="margin-top: -1px">{{ city }}, {{ barangay }}</h2>
+          <p>Last updated: <b> {{ updatedDate }} </b> </p>
+        </div>
+        <div class="CRFstatus" style="align-text: right; place-content: end;">
+          <div v-show="!isPrint" class="CRFActionButtons">
+            <ul class="CRFActionButton">
+              <img
+                src="~/assets/img/pdf.png"
+                class="printButton"
+                @click="downloadPDF"
+              />
+            </ul>
+            <ul class="CRFActionButton">
+              <img src="~/assets/img/csv.png" 
+              class="printButton"
+              @click="csvExport()"
+            />
+            </ul>
+          </div>
+          <div style="display:inline-flex">
+            <select v-model="month" class="input-year" style="float: right;margin-right: 10px;">
+              <option v-for="index in (0,maxMonth)" :key="index" :value="index-1">
+                {{monthsList[index-1]}}
+              </option>
+            </select>
+            <select v-model="year" class="input-year" style="float: right;" @change="countMonth()">
+              <option value='2022'>2022</option>
+              <option value='2021'>2021</option>
+              <option value='2020'>2020</option>
+              <option value='2019'>2019</option>
+              <option value='2018'>2018</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="viewcases-component">
+        <dataTable
+          :options="tableOptions"
+          :datavalues="dataSets"
+          :casetype="'immunProg'"
+        />
+        <div v-if="year+'' === new Date().getFullYear()+'' && month+'' === new Date().getMonth()+''" class="additionalButtons">
+          <button class="addText"><a href="/addImmunizationProgEntry">+ add an entry</a></button></div>
+      </div>
+        <div v-if="year+'' === new Date().getFullYear()+'' && month+'' === new Date().getMonth()+''" class="CRFendButton">
+          <button class="back-button" type="button" @click="save()">
+            Save
+          </button>
+          <button class="submit-button" type="button" @click="submit()">
+            Submit
+          </button>
+        </div>
+    </div>
+    <div v-show="popupOpen" class="overlay">
+      <div class="overlay-form">
+        <button class="close" @click="popupOpen=false">x</button>
+        <h2 style="color:red; text-align:center"> PUSH DATA APPROACH CONSENT </h2>
+        <hr style="border-color: inherit;"/>
+        <div style="padding:10px; text-align:justify;">
+          <p style="margin:10px 5px; font-size:16px"> If you agree, all details will be pushed to MMCHD-RESU.
+             Otherwise, data that will identify the person 
+             (e.g. patient name, complete address) will not be pushed.</p>
+          <p style="margin:10px 5px; font-size:16px"> Only data that is necessary for 
+            time, place, and person analysis will be pushed.</p>
+          <p style="margin:10px 5px; font-size:12px"> You can update this in your settings anytime.</p>
+          <div class="popupButtons" style="text-align: center;">
+            <button class="back-button" type="button" @click="popup(false)">
+              Disagree
+            </button>
+            <button class="next-button" type="button" @click="popup(true)">
+              Agree
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script src="https://code.jquery.com/jquery-1.12.3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/0.9.0rc1/jspdf.min.js"></script>
+
+<script>
+import jsPDF from 'jspdf'
+import html2canvas from 'html2canvas'
+import dataTable from './dataTable.vue'
+const axios = require('axios')
+
+export default {
+  components: {
+    dataTable,
+  },
+  middleware: 'is-auth',
+  head() {
+    return {
+      title: 'Immunization Program'
+    }
+  },
+  compute: {},
+  data() {
+    return {
+      popupOpen:true,
+      monthsList : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+      maxMonth:'',
+      today:'',
+      isPrint: false,
+      immunProgNo: '123',
+      city: 'Manila City',
+      barangay: 'Barangay 123',
+      updatedDate: 'Nov 10, 2020',
+      month: '0',
+      year: '2022',
+
+      tableOptions: {
+        sortKey: 'updatedDate',
+        columns: [
+          {
+            title: 'Patient',
+            key: 'patientID',
+            type: 'clickable',
+            sortable: true,
+          },
+          {
+            title: 'City',
+            key: 'city',
+            type: 'text',
+            source: 'crf',
+            uniqueField: 'id',
+            sortable: true,
+            filter: true,
+          },
+          {
+            title: 'Age',
+            key: 'ageNo',
+            type: 'number',
+            source: 'crf',
+            uniqueField: 'id',
+            sortable: true,
+          },
+          {
+            title: 'Sex',
+            key: 'sex',
+            type: 'text',
+            source: 'crf',
+            uniqueField: 'id',
+            filter: true,
+          },
+          {
+            title: 'Date added',
+            key: 'addDate',
+            type: 'text',
+            dateFormat: true,
+            currentFormat: 'YYYY-MM-DD',
+            expectFormat: 'DD MMM YYYY',
+            sortable: true,
+          },
+          {
+            title: 'Last updated',
+            key: 'updatedDate',
+            type: 'text',
+            dateFormat: true,
+            currentFormat: 'YYYY-MM-DD',
+            expectFormat: 'DD MMM YYYY',
+            sortable: true,
+          },
+          {
+            title: 'Immunization Status',
+            key: 'immunStatus',
+            type: 'text',
+            source: 'cases',
+            uniqueField: 'id',
+            sortable: true,
+            filter: true,
+          },
+          {
+            title: 'Action',
+            key: 'action',
+            source: 'cases',
+          },
+        ],
+        // source: 'http://demo.datatable/api/users',
+        search: true,
+      },
+      dataSets: [
+        {
+          patientID: 'me',
+          city: 'Manila',
+          ageNo: '9',
+          sex: 'F',
+          addDate: '',
+          updatedDate: '',
+          immunStatus: 'Complete',
+          action: 'view',
+        },
+        {
+          patientID: 'me',
+          city: 'Manila',
+          ageNo: '9',
+          sex: 'F',
+          addDate: '',
+          updatedDate: '',
+          immunStatus: 'Ongoing',
+          action: 'update',
+        },
+      ],
+    }
+  },
+  mounted() {
+    const day = new Date();
+    this.today = this.monthsList[day.getMonth()] + ' ' + day.getDate() + ', ' + day.getFullYear();
+    this.year = day.getFullYear()+'';
+    this.month = '0';
+    this.countMonth();
+  },
+  methods: {
+    popup(change) {this.popupOpen = !this.popupOpen},
+    /* async popup(change) {
+      try {
+        this.popupOpen = !this.popupOpen
+        const result = await axios.post('http://localhost:8080/api/updatePushData', {userID: this.$auth.user.userID, pushDataAccept: change});
+        if (result.status === 200) {
+          // alert('Health event submitted!');
+          this.$toast.success('User Settings Updated!', {duration: 4000, icon: 'check_circle'});
+          window.location.href = '/allHealthEvents';
+        } else {
+          // eslint-disable-next-line no-console
+          console.log(result);
+          this.$toast.error('Something went wrong!', {duration: 4000, icon: 'error'});
+        }
+        location.reload()
+      } catch(e) {
+        // eslint-disable-next-line no-console
+        console.log(e);
+        this.$toast.error('Something went wrong!', {duration: 4000, icon: 'error'});
+      }
+    }, */
+    countMonth() {
+      if (this.year=== 2022 || this.year=== '2022') this.maxMonth = new Date().getMonth()+1;
+      else this.maxMonth = 12;
+    },
+    downloadPDF() {
+      this.isPrint = !this.isPrint
+
+      let pWidth = 595.28 // 595.28 is the width of a4
+      let srcWidth = this.$refs.content.scrollWidth
+      let margin = 12 // narrow margin - 1.27 cm (36);
+      let scale = (pWidth - margin * 2) / srcWidth
+
+      var doc = new jsPDF('p', 'pt', 'A4')
+      window.html2canvas = html2canvas
+
+      doc.html(this.$refs.content, {
+        x: margin,
+        y: margin,
+        html2canvas: {
+          scale: scale,
+        },
+        callback: function () {
+          window.open(doc.output('bloburl'))
+        },
+      })
+
+      // doc.save('test.pdf')
+      console.log(this.$refs.content)
+      setTimeout(() => (this.isPrint = !this.isPrint), 5000)
+    },
+    csvExport(arrData) {
+      let csvContent = "data:text/csv;charset=utf-8,";
+      // let header = this.getCols();
+      // let arrData = this.getTable();
+      let header = Object.keys(arrData[0]).join(",");
+      csvContent += [
+        header,
+        ...arrData.map(item => Object.values(item).join(","))
+      ]
+        .join("\n")
+        .replace(/(^\[)|(\]$)/gm, "");
+
+      const data = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", data);
+      link.setAttribute("download", "ImmunizationProgram.csv");
+      link.click();
+    },
+  },
+}
+</script>
+
+<style>
+body {
+  font-family: 'Work Sans', sans-serif;
+  font-weight: 300;
+  padding: 0px;
+  margin: 0px;
+  background-image: none;
+}
+
+.pageHeader {
+  font-weight: 800;
+  font-size: 32px;
+  color: #346083;
+}
+
+.viewCRF-details {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 10px;
+  justify-content: space-between;
+}
+.CRFnumbers,
+.CRFstatus {
+  display: inline-flex;
+  flex-direction: column;
+}
+
+.CRFActionButtons {
+  display: inline-flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  cursor: pointer;
+}
+
+.printButton {
+  width: 30px;
+  height: 30px;
+  /* margin: 0 5px; */
+  margin: 5px;
+}
+
+h1 {
+  color: #008d41;
+  font-size: 40px;
+  font-weight: 800;
+}
+
+h2 {
+  color: #346083;
+  font-size: 25px;
+  font-weight: 600;
+}
+
+h3 {
+  font-size: 24px;
+  font-weight: 600;
+}
+
+b {
+  /* color: #346083; */
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.printCRFButton {
+  width: 30px;
+  height: 30px;
+  margin-top: 10px;
+  margin-bottom: -15px;
+}
+
+.viewcases-container {
+  padding: 80px 20px 5px 20px;
+  width: 100%;
+}
+
+@media only screen and (max-width: 800px) {
+  .viewcases-container {
+    width: 100%;
+    align-items: center;
+    margin: 0px;
+  }
+}
+
+.viewcases-section-container {
+  /* left: 275px; */
+  /* position: relative; */
+  /* width: calc(100vw - 320px); */
+  /* margin: 5px; */
+  width: 100%;
+  padding: 5px;
+  margin: 10px;
+}
+
+@media only screen and (max-width: 800px) {
+  .viewcases-section-container {
+    width: 95%;
+  }
+}
+
+.viewcases-component {
+  /* position: relative;
+  display: inline-flex;
+  flex-direction: row; */
+  height: fit-content;
+  width: 100%;
+
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.25));
+  background-color: #f2f2f2;
+  border-radius: 10px;
+  padding: 15px;
+  padding-bottom: 75px;
+  margin-bottom: 40px;
+}
+@media only screen and (max-width: 800px) {
+  .viewcases-component {
+    position: relative;
+    top: 0px;
+    min-height: fit-content;
+  }
+}
+
+.input-year,
+select {
+  width: 75px;
+  height: 30px;
+  font-size: 16px;
+  font-family: 'Work Sans', sans-serif;
+  padding-right: 5px;
+  padding-left: 5px;
+  /* border: 1p x solid rgba(0, 0, 0, 0.25); */
+  border: 1px solid #a3a3a3;
+  box-sizing: border-box;
+  border-radius: 9px;
+}
+
+.CRF-SummaryContainer {
+  display: flex;
+  flex-direction: row;
+  overflow-x: auto;
+  overflow-y: hidden;
+  z-index: 1;
+  margin-left: 5px;
+}
+
+#datatabale {
+  width: -webkit-fill-available;
+}
+
+
+.additionalButtons {
+  /* position: relative; */
+  position: absolute;
+  margin-top: 0px;
+  margin-left: 5px;
+}
+
+.addText {
+  color: #346083;
+  font-size: 12px;
+}
+
+.CRFendButton {
+  /* margin: -10px 0 5px; */
+  float: right;
+  margin-top: -40px;
+  margin-right: 16px;
+  margin-bottom: 50px;
+}
+
+.submit-button, .next-button {
+  width: 150px;
+  height: 38px;
+  max-width: 100%;
+  font-size: 16px;
+  margin-top: 30px;
+  font-family: 'Work Sans', sans-serif;
+  font-weight: 600;
+  background-color: #346083;
+  color: white;
+  border: #346083 solid 0.75px;
+}
+
+.submit-button:hover, .next-button:hover {
+  background-color: #346083;
+}
+
+.save-button, .back-button {
+  width: 150px;
+  height: 38px;
+  max-width: 100%;
+  font-size: 16px;
+  margin-top: 30px;
+  font-family: 'Work Sans', sans-serif;
+  font-weight: 600;
+  background-color: white;
+  color: #346083;
+}
+
+.save-button:hover, .back-button:hover {
+  border: #346083 solid 1px;
+}
+
+.overlay {
+  display: block;
+  z-index: 11;
+  margin: 0px;
+  padding: 10% 30% 20%;
+  width: -webkit-fill-available;
+  height: -webkit-fill-available;
+  /* background: gray; */
+  /* opacity: 55%; */
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: rgba(100, 100, 100, 0.4);
+  /* border: 100px solid rgba(100, 100, 100, 0.4); */
+}
+
+@media only screen and (max-width:1000px) {
+  .overlay  {
+    padding: 20% 15%;
+  }
+}
+
+.overlay-form {
+  padding: 30px;
+  border-radius: 40px;
+  background: white;
+  /* width: -webkit-fill-available;
+  height: -webkit-fill-available; */
+  overflow-y: auto;
+  box-shadow: 1px 4px 8px rgb(0 0 0 / 40%);
+}
+
+
+.searchPatientValues {
+  background: white;
+  height: fit-content;
+  /* border-radius: 0 0 25px 25px; */
+  margin-top: -1px;
+  display: grid;
+  /* width: 100%; */
+  position: absolute;
+  border: lightgray solid 1px;
+  padding: 0;
+  /* right: 0;
+  left: 0; */
+}
+
+.searchResult {
+  padding: 5px 10px;
+  border-top: 1px solid lightgray;
+  display: inline-flex;
+  flex-direction: row;
+  cursor: pointer;
+}
+
+.searchResult:hover {
+  background: #eeeeee;
+}
+
+.searchResultInfo {
+  display: inline-flex;
+  flex-direction: column;
+}
+
+.searchPerson {
+  font-size: 16px;
+  margin-bottom: -5px;
+  font-weight: 400;
+}
+
+.searchAddress {
+  font-size: 12px;
+  font-weight: 200;
+}
+
+.searchPersonIcon {
+  content: url('~/assets/img/personIcon.png');
+  height: 25px;
+  width: 25px;
+  margin: auto 5px auto 0;
+}
+
+/* :disabled {
+  background: #ffffff;
+  border: 1px solid #c4c4c4;
+  color:#c4c4c4;
+} */
+
+
+</style>
+

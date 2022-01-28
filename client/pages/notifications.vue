@@ -43,7 +43,7 @@ export default {
         e.dateString = Math.floor(dateDiff / (1000 * 60)) + "min";
       else if (dateDiff < (1000 * 60 * 60 * 24)) // within the day
         e.dateString = Math.floor(dateDiff / (1000 * 60 * 60)) + "h";
-      else if (dateDiff < (1000 * 60 * 60 * 24 * 14)) // within 14 days
+      else if ((dateDiff < (1000 * 60 * 60 * 24 * 14)) || !e.viewed) // within 14 days
         e.dateString = Math.floor(dateDiff / (1000 * 60 * 60 * 24)) + "d";
       if (e.dateString) filtNotifs.push(e);
     }

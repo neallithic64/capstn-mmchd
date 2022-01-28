@@ -28,7 +28,7 @@
           <form v-if="pageNum === -1" id="instructEdit" type="submit">
             <div id="new-user-form" class="center">
                 <h2 id="form-header"> Instructions </h2>
-              <div v-if="$auth.user.userType === 'techStaff' || $auth.user.userType === 'BHS'">
+              <div v-if="$auth.user.userType === 'techStaff' || $auth.user.userType === 'BHS' || $auth.user.userType === 'fhsisStaff'">
                 <ul v-for="(value, name, i) in instructions" :key="i" style="displayLinline-flex">
                     <li>
                       <label :for="name" class="defsLabel">
@@ -42,7 +42,7 @@
                      </ul>
                 </ul>
               </div>
-              <div v-if="$auth.user.userType === 'techStaff'">
+              <div v-if="$auth.user.userType === 'techStaff' || $auth.user.userType === 'BHS' || $auth.user.userType === 'fhsisStaff'">
                 <ul style="displayLinline-flex">
                     <li>
                       <label class="defsLabel">
@@ -63,7 +63,7 @@
             <div id="edit-casedefs-form" class="center">
               <div style="display: flex; flex-direction: row; justify-content:space-between;">
                 <h2 id="form-header"> {{formSection[pageNum].disease}} </h2>
-                <div v-show="!isEdit" v-if="$auth.user.userType === 'techStaff' || $auth.user.userType === 'BHS'"> 
+                <div v-show="!isEdit" v-if="$auth.user.userType === 'techStaff' || $auth.user.userType === 'BHS' || $auth.user.userType === 'fhsisStaff'"> 
                   <button id="instructButton" class="instruct-button" type="button" @click="instruct()">
                     Instructions
                   </button>
@@ -138,6 +138,11 @@ export default {
       params: { userID: this.$auth.user.userID }
     })).data;
     this.formSection = diseases;
+  },
+  head() {
+    return {
+      title: 'Program Targets'
+    }
   },
   methods: {
     formColor(index) {

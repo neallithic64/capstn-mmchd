@@ -158,6 +158,33 @@
                 </div>
               </div>
             </div>
+            <div v-if="column.title==='Immunization Status'">
+              <a class="filterButton">
+                <img
+                  src="~/assets/img/filter.png"
+                  alt="filter.png"
+                  style="width: 16px; height: 16px"
+                  @click="immunStatusOpen = !immunStatusOpen"
+                />
+              </a>
+              <div v-if="immunStatusOpen" style="position: absolute">
+                <div class="arrow-up"></div>
+                <div class="filterDropdown">
+                  <b>Select Status:</b>
+                  <div v-for="(value, i) in immunStatusFilters.options" :key="i" style="padding-left: 7px">
+                    <input
+                      :id="value"
+                      v-model="immunStatusFilters.selected"
+                      :value="value"
+                      name="filter"
+                      type="checkbox"
+                      @change="filter()"
+                    />
+                    <label :for="value">{{ value }}</label>
+                  </div>
+                </div>
+              </div>
+            </div>
           </span>
           <span>{{ column.title }}</span>
           <span v-if="requestParams.sortedKey === column.key && requestParams.sortedType === 'asc'" style="float: right">
@@ -179,13 +206,25 @@
       </thead>
       <tbody>
         <template v-if="dataSets.length > 0">
-          <tr v-for="(data, dataIndex) in dataSets" v-show="dataIndex >= showstart && dataIndex <= showend" :key="dataIndex" :class="obStatusRowClass(data['outbreakStatus'], data['reportDate'])" >
+          <tr v-for="(data, dataIndex) in dataSets" v-show="dataIndex >= showstart && dataIndex <= showend" :key="dataIndex" :class="obStatusRowClass(data['outbreakStatus'], data['reportDate'], data['dateReported'])" >
             <td v-for="(column, columnIndex) in options.columns" :key="columnIndex" style="text-align: center">
               <span v-if="column.type === 'component'">
                 <component :is="column.name" :row="data"></component>
               </span>
               <span v-else-if="column.key === 'action'">
-                <div class="actionButtons">
+                <div v-if="pageType==='immunProg'" class="actionButtons">
+                  <ul>
+                    <a :href="'/viewImmunizationProgEntry'" class="CRFActionButton" style="color: #346083; text-decoration-line: underline">
+                      <span v-if="data[column.key]==='update'"> Update </span>
+                      <span v-if="data[column.key]==='view'"> View </span>
+                    
+                      <!-- <img v-if="data[column.key]==='add'" src="~/assets/img/add.png" class="button" />
+                      <img v-if="data[column.key]==='edit'" src="~/assets/img/pen.png" class="button"/>
+                      <img v-if="data[column.key]==='view'" src="~/assets/img/eye.png" class="button"/> -->
+                    </a>
+                  </ul>
+                </div>
+                <div v-else class="actionButtons">
                   <ul v-if="data[column.key]==='add submit' || data[column.key]==='add'" class="CRFActionButton">
                     <a :href="'/add' + 'CRF' + data['disease'] + 'Case'"> Add Case
                       <!-- <img src="~/assets/img/add.png" class="button"/> -->
@@ -203,7 +242,7 @@
                   :href="'/view' + 'CIFMeasles?caseID=' + data[column.key] ">
                   {{ data[column.key] }}
                 </a>
-                <a v-else-if="(pageType === 'patients')"
+                <a v-else-if="(pageType === 'patients' || column.key === 'patientID')"
                   style="color: #346083; text-decoration-line: underline"
                   :href="'/viewPatient?patientID=' + data[column.key]">
                   {{ data[column.key] }}
@@ -238,9 +277,12 @@
                   :href="'/view' + 'CRF' + data['disease'] + 'Case?caseID=' + data[column.key] ">
                   {{ data[column.key] }}
                 </a>
-                <a v-else-if="column.key === 'outbreakID'"
+                <a v-else-if="column.key === 'outbreakID' && ($auth.user.userType === 'pidsrStaff' || $auth.user.userType === 'techStaff')"
                   style="color: #346083; text-decoration-line: underline"
                   :href="'/view' + 'Outbreak?outbreakID=' + data[column.key] ">
+                  {{ data[column.key] }}
+                </a>
+                <a v-else-if="column.key === 'outbreakID' && !($auth.user.userType === 'pidsrStaff')">
                   {{ data[column.key] }}
                 </a>
                 <a v-else-if="column.key === 'caseID'"
@@ -253,13 +295,30 @@
                   :href="'/viewHealthEvent' + '?eventID=' + data[column.key]">
                   {{ data[column.key] }}
                 </a>
+                <a v-else-if="column.key === 'immunizationProgNo'"
+                  style="color: #346083; text-decoration-line: underline"
+                  :href="'/viewImmunizationProg'">
+                  {{ data[column.key] }}
+                </a>
+                <a v-else-if="(column.key === 'progAccomplishID')"
+                  style="color: #346083; text-decoration-line: underline"
+                  :href="'/viewProgAccomplishMalaria'">
+                  <!-- :href="'/addProgAccomplish' + DISEASE + YEAR + data[column.key]"> -->
+                  <!-- ALSO NEED TO INCLUDE DISEASE AND YEAR IN LINK TO REDIRECT TO THAT PAGE -->
+                  {{ data[column.key] }}
+                </a>
                 <!-- <a
                   style="text-decoration: none"
                   v-bind:href="column.source + '/' + data[column.key]"
                   >{{ data[column.key] }}
                 </a> -->
+                <a v-else-if="column.key === 'reportID'"
+                  style="color: #346083; text-decoration-line: underline"
+                  :href="'/viewReport'">
+                  {{ data[column.key] }}
+                </a>
               </span>
-              <span v-else-if="column.title==='Case Status' || column.title==='Status' || column.title==='Risk Classification' || column.title==='Submit Status' || column.title==='Report Status'" :class="caseStatusClass(data[column.key])">
+              <span v-else-if="column.title==='Case Status' || column.title==='Status' || column.title==='Risk Classification' || column.title==='Submit Status' || column.title==='Report Status' || column.title==='Immunization Status'" :class="caseStatusClass(data[column.key])">
                 {{ data[column.key] }}
               </span>
               <span v-else>
@@ -280,13 +339,14 @@
         @click="newPage(currentPage - 1)">
         &laquo;
       </a>
-      <a v-for="(page, pageIndex) in pages"
+      <a v-for="(page, pageIndex) in pageDot"
         v-show="pageIndex > 0"
         :key="pageIndex"
-        href="javascript:"
-        :class="[{ active: currentPage === pageIndex }, { isDisabled: currentPage === pageIndex || page === '...', },]"
-        @click="newPage(pageIndex)">
-        {{ pageIndex }}
+        :class="[{ active: currentPage+'' === page+'' }, { isDisabled: page === '...', },]"
+        @click="newPage(page)">
+        {{ page }}
+        <!-- <span v-if=" (pageIndex <=2 || pageIndex >= totalPage-1) || (pageIndex <= currentPage+2 && pageIndex >= currentPage-2) "> {{ pageIndex }} </span>
+        <span v-else> ... </span> -->
       </a>
       <a :class="{ isDisabled: currentPage == totalPage }"
         href="javascript:"
@@ -294,7 +354,7 @@
         &raquo;
       </a>
     </div>
-    <div v-show="casetype==='all' || casetype==='cif' || casetype==='crfDRU' || casetype==='crfCHD'"
+    <div v-show="casetype==='all' || casetype==='cif' || casetype==='crfDRU' || casetype==='crfCHD' || casetype==='events' || casetype==='reports'"
       style="margin-top:5px;">
       Last updated: <b> {{dayTime}} </b>
     </div>
@@ -316,6 +376,7 @@ export default {
       caseStatusOpen: false,
       submitStatusOpen: false,
       reportStatusOpen: false,
+      immunStatusOpen: false,
       diseaseFilters: {
         options: ['Measles/Rubella','Malaria','Pertussis','Dengue','Leptospirosis','Acute Viral Hepatitis',
         ],
@@ -352,6 +413,10 @@ export default {
         options: ['None', 'Zero Report', 'Case Submitted'],
         selected: [],
       },
+      immunStatusFilters: {
+        options: ['N/A', 'Ongoing', 'Completed'],
+        selected: [],
+      },
       dataFiltered: [],
       dataSearched: [],
       dataSets: [],
@@ -364,6 +429,7 @@ export default {
       },
       currentPage: 1,
       pages: [],
+      pageDot: [],
       showDataAmount: 10,
       totalPage: 1,
       totalCount: 0,
@@ -387,52 +453,70 @@ export default {
   },
   mounted() {
     const today = new Date();
+    const hour = today.getHours()>9 ? today.getHours() : '0'+today.getHours()
+    const mins = today.getMinutes()>9 ? today.getMinutes() : '0'+today.getMinutes()
     const monthsList = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Aug', 'Oct', 'Nov', 'Dec'];
     this.dayTime = monthsList[today.getMonth()] + ' ' + today.getDate() + ', ' + today.getFullYear()
-                     + ' ' + today.getHours() + ':' + today.getMinutes();
+                     + ' ' + hour + ':' + mins;
 
     this.pageType = this.casetype;
-    // this.requestParams.sortedKey = this.options.columns[0].key;
-    this.filterOff();
     this.dataFiltered = this.datavalues;
     this.dataSearched = this.datavalues;
     this.dataSets = this.datavalues;
-	console.log(this.datavalues);
+    console.log(this.datavalues);
+    
+    this.requestParams.sortedKey = this.options.sortKey;
+
     this.sortedKeyValue(this.requestParams.sortedKey, this.requestParams.sortedType);
     this.totalCount = Object.keys(this.dataSets).length;
     if (this.pageType === 'patient') this.requestParams.take = this.totalCount;
+    
     this.getPages();
     this.getStartEnd();
+    this.getDots();
   },
   methods: {
     getTableDisplay() {
-      if (this.pageType === 'all') return 'allDisplay';
+      if (this.pageType === 'all' || this.pageType === 'cif') return 'allDisplay';
     },
     caseStatusClass(c) {
       if (c) {
-        if (c.toString().includes('Suspect')) return 'caseStatus suspectedCase';
-        else if (c.toString().includes('Suspected')) return 'caseStatus suspectedCase';
-        else if (c.toString().includes('Probable')) return 'caseStatus probableCase';
-        else if (c.toString().includes('Confirmed')) return 'caseStatus confirmedCase';
-        else if (c.toString().includes('Compatible')) return 'caseStatus confirmedCase';
-        else if (c.toString().includes('Discarded')) return 'caseStatus discardedCase';
-        else if (c.toString().includes('Ongoing')) return 'caseStatus ongoingOutbreak';
-        else if (c.toString().includes('Controlled')) return 'caseStatus suspectedCase';
-        else if (c.toString().includes('Closed')) return 'caseStatus lowRisk';
-        else if (c.toString().includes('High')) return 'caseStatus confirmedCase';
-        else if (c.toString().includes('Moderate')) return 'caseStatus suspectedCase';
-        else if (c.toString().includes('Low')) return 'caseStatus lowRisk';
-        else if (c.toString().includes('Submitted')) return 'caseStatus lowRisk';
-        else if (c.toString().includes('Pushed')) return 'caseStatus suspectedCase';
-        else if (c.toString().includes('Zero Report')) return 'caseStatus confirmedCase';
+        if (c.toString().includes('Suspect')) return 'caseStatus orange';
+        else if (c.toString().includes('Suspected')) return 'caseStatus orange';
+        else if (c.toString().includes('Probable')) return 'caseStatus yellow';
+        else if (c.toString().includes('Confirmed')) return 'caseStatus red';
+        
+        else if (c.toString().includes('Complete')) return 'caseStatus green';
+        else if (this.pageType==='immunProg' && c.toString().includes('Ongoing')) return 'caseStatus gray';
+        
+        else if (c.toString().includes('Compatible')) return 'caseStatus red';
+        else if (c.toString().includes('Discarded')) return 'caseStatus gray';
+        else if (c.toString().includes('forVerification')) return 'caseStatus gray';
+        
+        else if (c.toString().includes('Ongoing')) return 'caseStatus red';
+        else if (c.toString().includes('Controlled')) return 'caseStatus orange';
+        else if (c.toString().includes('Closed')) return 'caseStatus green';
+        
+        else if (c.toString().includes('High')) return 'caseStatus red';
+        else if (c.toString().includes('Moderate')) return 'caseStatus orange';
+        else if (c.toString().includes('Low')) return 'caseStatus green';
+        
+        else if (c.toString().includes('Submitted')) return 'caseStatus green';
+        else if (c.toString().includes('Pushed')) return 'caseStatus orange';
+        else if (c.toString().includes('Zero Report')) return 'caseStatus red';
+
+        else if (c.toString().includes('For Approval')) return 'caseStatus orange';
+        else if (c.toString().includes('For Revision')) return 'caseStatus red';
+        else if (c.toString().includes('Approved')) return 'caseStatus green';
+        
         return 'none';
       }
     },
-    obStatusRowClass(c, d) {
+    obStatusRowClass(c, d, e) {
       if (c) {
         if (c.toString().includes('Ongoing')) return 'ongoingOBRow';
-        // else if (c.toString().includes('Controlled')) return 'caseStatus suspectedCase';
-        // else if (c.toString().includes('Closed')) return 'caseStatus lowRisk';
+        // else if (c.toString().includes('Controlled')) return 'caseStatus orange';
+        // else if (c.toString().includes('Closed')) return 'caseStatus green';
         return 'none';
       }
       if (d) {
@@ -445,17 +529,17 @@ export default {
           return 'none';
         }
       }
+      if (e) {
+        let today = new Date();
+        const offset = today.getTimezoneOffset()
+        today = new Date(today.getTime() - (offset*60*1000))
+        today = today.toISOString().split('T')[0];
+        if (e) {
+          if (e.localeCompare(today) === 0) return 'newCaseRow';
+          return 'none';
+        }
+      }
     },
-    // caseRowClass(c) {
-    //   let today = new Date();
-    //   const offset = today.getTimezoneOffset()
-    //   today = new Date(today.getTime() - (offset*60*1000))
-    //   today = today.toISOString().split('T')[0];
-    //   if (c) {
-    //     if (c.localeCompare('2021-12-16') === 0) return 'newCaseRow';
-    //     return 'none';
-    //   }
-    // },
     getStartEnd() {
       this.showstart = this.pages[this.currentPage][1];
       this.showend = this.pages[this.currentPage][2];
@@ -469,6 +553,19 @@ export default {
         if (end === this.totalCount - 1) end = this.totalCount - 1;
         this.pages[i] = [i, start, end];
         start = end + 1;
+      }
+      this.getDots();
+    },
+    getDots() {
+      if (this.pages.length<10) for(let i=1; i<this.pages.length; i++) this.pageDot[i] = this.pages[i][0];
+      else {
+        this.pageDot = [];
+        this.pageDot[0] = '';
+        for (let i=1; i<this.pages.length; i++) {
+          if (i<=1+1 || i>=this.pages.length-2) { this.pageDot.push(this.pages[i][0] +''); }
+          else if (i <= this.currentPage + 2 && i >=this.currentPage - 2) { this.pageDot.push(this.pages[i][0] +''); }
+          else if ( parseInt(this.pageDot[this.pageDot.length-1]) ) { this.pageDot.push("..."); };
+        }
       }
     },
     sortedKeyValue(key, type) {
@@ -510,7 +607,7 @@ export default {
       this.dataFiltered = [];
 
       if (this.diseaseFilters.selected.length === 0 && this.cityFilters.selected.length === 0 && this.caseStatusFilters.selected.length === 0
-        && this.submitStatusFilters.selected.length === 0 && this.reportStatusFilters.selected.length === 0)
+        && this.submitStatusFilters.selected.length === 0 && this.reportStatusFilters.selected.length === 0 && this.immunStatusFilters.selected.length === 0)
         this.dataFiltered = this.datavalues;
 
       else if (this.pageType === 'crfCase' || this.pageType === 'addcrfID') {
@@ -536,6 +633,14 @@ export default {
             (this.cityFilters.selected.length === 0 || this.cityFilters.selected.includes(this.datavalues[i].city)) &&
             (this.submitStatusFilters.selected.length === 0 || this.submitStatusFilters.selected.includes(this.datavalues[i].submitStatus)) &&
             (this.reportStatusFilters.selected.length === 0 || this.reportStatusFilters.selected.includes(this.datavalues[i].reportStatus))) {
+            this.dataFiltered.push(this.datavalues[i]);
+          }
+      }
+
+      else if (this.pageType === 'immunProg') {
+        for (let i = 0; i < Object.keys(this.datavalues).length; i++)
+          if ((this.cityFilters.selected.length === 0 || this.cityFilters.selected.includes(this.datavalues[i].city)) &&
+            (this.immunStatusFilters.selected.length === 0 || this.immunStatusFilters.selected.includes(this.datavalues[i].immunStatus))) {
             this.dataFiltered.push(this.datavalues[i]);
           }
       }
@@ -581,12 +686,8 @@ export default {
 
       this.currentPage = 1;
       this.totalCount = Object.keys(this.dataSets).length;
-      console.log('DATA:' + this.dataSets)
-    },
-    filterOff() {
-      this.filters = [];
-      for (let i = 0; i < this.options.columns.length; i++)
-        if (this.options.columns[i].filter) this.filters[0] = false;
+      console.log('DATA:' + this.dataSets);
+      this.getPages();
     },
     selectedDataAmount() {
       this.currentPage = 1;
@@ -594,40 +695,14 @@ export default {
       this.getStartEnd();
     },
     newPage(page) {
+      console.log("GOTO" + page);
+      page = parseInt(page);
       if (page !== 0 && page <= this.totalPage) {
-        this.requestParams.skip = (page - 1) * this.requestParams.take;
+        // this.requestParams.skip = (page - 1) * this.requestParams.take;
         this.currentPage = page;
+        this.getStartEnd();
+        this.getDots();
       }
-      this.currentPage = page;
-      this.getStartEnd();
-    },
-    pagination(c, m) {
-      const delta = 2;
-      const range = [];
-      const rangeWithDots = [];
-      let l;
-
-      range.push(1);
-      for (let i = c - delta; i <= c + delta; i++) {
-        if (i < m && i > 1) {
-          range.push(i);
-        }
-      }
-      range.push(m);
-
-      for (const i of range) {
-        if (l) {
-          if (i - l === 2) {
-            rangeWithDots.push(l + 1);
-          } else if (i - l !== 1) {
-            rangeWithDots.push('...');
-          }
-        }
-        rangeWithDots.push(i);
-        l = i;
-      }
-
-      return rangeWithDots;
     },
   },
 }
@@ -663,20 +738,20 @@ export default {
   border-radius: 10px;
   font-weight: 500;
 }
-.ongoingOutbreak {
+.red {
   background: red;
 }
-.confirmedCase {
-  background: red;
-}
-.suspectedCase {
+.orange {
   background: #FC8F00;
 }
-.probableCase {
+.yellow {
   background: #FDCE00;
 }
-.lowRisk {
+.green {
   background: #008d41;
+}
+.gray {
+  background: gray;
 }
 .ongoingOBRow {
   background: #ffd2d2;
@@ -809,6 +884,7 @@ table {
   text-decoration: none;
   transition: background-color 0.3s;
   border: 1px solid #ddd;
+  cursor: pointer;
 }
 
 .datatable .pagination a.active {
@@ -816,6 +892,8 @@ table {
   color: white;
   font-weight: 600;
   opacity: 1;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 .datatable .pagination a:hover:not(.active) {

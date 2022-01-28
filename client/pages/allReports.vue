@@ -1,19 +1,19 @@
 <template>
-  <div id="viewpatients">
+  <div id="viewevents">
     <!--Top Bar of the screen-->
-    <TopNav />
-    <div ref="content" class="viewpatients-container">
+    <TopNav/>
+    <div ref="content" class="all-reports-container">
       <div class="exportButtons">
-        <h1 class="pageHeader">All Patients</h1>
+        <h1 class="pageHeader">All Reports</h1>
         <div v-show="!isPrint" class="actionButtons">
-          <ul class="CRFActionButton" @click="downloadPDF">
+          <ul class="rep-action-button" @click="downloadPDF">
           <img
             src="~/assets/img/pdf.png"
             class="printButton"
-            @click="downloadPDF"
+            @click="downloadPDF()"
           />
           </ul>
-          <ul class="CRFActionButton">
+          <ul class="rep-action-button">
             <img src="~/assets/img/csv.png" 
             class="printButton"
             @click="csvExport(getTable())"
@@ -21,12 +21,12 @@
           </ul>
         </div>
       </div>
-      <div class="viewpatients-component">
-        <div v-if="allPatients.length > 0" id="vue-root">
+      <div class="all-reports-component">
+        <div v-if="allReports.length > 0" id="vue-root">
           <dataTable
             :options="tableOptions"
-            :datavalues="allPatients"
-            :casetype="'patients'"
+            :datavalues="allReports"
+            :casetype="'reports'"
           />
         </div>
       </div>
@@ -48,69 +48,115 @@ export default {
     dataTable,
   },
   middleware: 'is-auth',
-  header: {
-    title: 'Add Case',
-  },
-  compute: {},
   head() {
     return {
-      title: 'All Patients'
+      title: 'All Feedback Reports'
     }
   },
+  compute: {},
   data() {
     return {
       isPrint: false,
       tableOptions: {
-        tableName: 'patients',
-        sortKey: 'patientID',
+        tableName: 'reports',
+        sortKey: 'reportDateSub',
         columns: [
           {
-            title: 'Patient ID',
-            key: 'patientID',
+            title: 'Report ID',
+            key: 'reportID',
             type: 'clickable',
-            source: 'patients',
+            source: 'reports',
             uniqueField: 'id',
           },
           {
-            title: 'Patient Name',
-            key: 'patientName',
+            title: 'Disease',
+            key: 'reportDisease',
             type: 'text',
-            source: 'patients',
-            uniqueField: 'id',
-            sortable: true,
+            source: 'reports',
           },
           {
-            title: 'City',
-            key: 'currCity',
+            // Monthly Feedback, Annual Feedback, Adhoc Feedback, Outbreak Feedback
+            title: 'Type',
+            key: 'reportType',
             type: 'text',
-            source: 'patients',
-            uniqueField: 'id',
-            sortable: true,
-            filter: true,
+            source: 'reports',
           },
           {
-            title: 'Last Case Update',
-            key: 'updatedDate',
+            title: 'Date Submitted',
+            key: 'reportDateSub',
             type: 'text',
             dateFormat: true,
             currentFormat: 'YYYY-MM-DD',
             expectFormat: 'DD MMM YYYY',
             sortable: true,
           },
+          {
+            title: 'Status',
+            key: 'reportStatus',
+            type: 'text',
+            source: 'reports',
+            sortable: true,
+          },
+          {
+            title: 'Date Approved',
+            key: 'reportDateApp',
+            type: 'text',
+            dateFormat: true,
+            currentFormat: 'YYYY-MM-DD',
+            expectFormat: 'DD MMM YYYY',
+          },
         ],
         // source: 'http://demo.datatable/api/users',
         search: true,
       },
-      allPatients: [],
+      allReports: [
+        {
+          reportID: '123',
+          reportDisease: 'Measles',
+          reportType: 'Monthly Feedback',
+          reportDateSub: '2021-12-13',
+          reportStatus: 'For Approval',
+          reportDateApp: ''
+        },
+        {
+          reportID: '124',
+          reportDisease: 'Measles',
+          reportType: 'Annual Feedback',
+          reportDateSub: '2021-12-13',
+          reportStatus: 'For Approval',
+          reportDateApp: ''
+        },
+        {
+          reportID: '125',
+          reportDisease: 'Measles',
+          reportType: 'Adhoc Feedback',
+          reportDateSub: '2021-12-13',
+          reportStatus: 'For Revision',
+          reportDateApp: ''
+        },
+        {
+          reportID: '126',
+          reportDisease: 'Measles',
+          reportType: 'Outbreak Feedback',
+          reportDateSub: '2021-12-13',
+          reportStatus: 'Approved',
+          reportDateApp: '2021-12-25'
+        }
+      ],
+    }
+  },
+  head() {
+    return {
+      title: 'Reports'
     }
   },
   async mounted() {
-    const rows = (await axios.get('http://localhost:8080/api/getPatients')).data;
-    for (let i = 0; i < rows.length; i++) {
-      rows[i].patientName = rows[i].lastName + ", " + rows[i].firstName + " " + rows[i].midName;
-      rows[i].updatedDate = rows[i].updatedDate ? rows[i].updatedDate.substr(0, 10) : "N/A";
-    }
-    this.allPatients = rows;
+    // const DRUUserTypes = ['BHS', 'RHU', 'CHO', 'govtHosp', 'privHosp', 'clinic', 'govtLab', 'privLab', 'airseaPort', 'fhsis'];
+    // const rows = (await axios.get('http://localhost:8080/api/getAllEvents')).data;
+    
+    // if (DRUUserTypes.includes(this.$auth.user.userType)) {
+    //   this.allEvents = rows.filter(e => e.userID === this.$auth.user.userID);
+    // } else this.allEvents = rows;
   },
   methods: {
     downloadPDF() {
@@ -141,8 +187,8 @@ export default {
    },
     csvExport(arrData) {
       let csvContent = "data:text/csv;charset=utf-8,";
-      // let header = this.getCols();
-      let header = Object.keys(arrData[0]).join(",");
+      let header = this.getCols();
+      // let header = Object.keys(arrData[0]).join(",");
       csvContent += [
         header,
         ...arrData.map(item => Object.values(item).join(","))
@@ -153,30 +199,9 @@ export default {
       const data = encodeURI(csvContent);
       const link = document.createElement("a");
       link.setAttribute("href", data);
-      link.setAttribute("download", "patients.csv");
+      link.setAttribute("download", this.caseTab+".csv");
       link.click();
     },
-    getTable() {
-      return this.allPatients;
-      /*
-      let data = [];
-      for (let i=0; i<this.allOutbreaks.length; i++) {
-        let name = "\""+ this.allData[i].patientName +"\"";
-        data[i] =  {
-          // CHANGE VALUES, depends on backend
-          caseID : this.allData[i].caseID,
-          patientName : name,
-          diseaseName : this.allData[i].diseaseName,
-          reportedBy : this.allData[i].reportedBy,
-          city : this.allData[i].city,
-          reportDate : this.allData[i].reportDate,
-          updatedDate : this.allData[i].updatedDate,
-          caseLevel : this.allData[i].caseLevel,
-        }
-      }
-      return data;
-      */
-    }
   },
 }
 </script>
@@ -196,20 +221,20 @@ body {
   color: #346083;
 }
 
-.viewpatients-container {
+.all-reports-container {
   padding: 80px 20px 5px 20px;
   width: 100%;
 }
 
 @media only screen and (max-width: 800px) {
-  .viewpatients-ontainer {
+  .allevents-ontainer {
     width: 100%;
     align-items: center;
     margin: 0px;
   }
 }
 
-.viewpatients-section-container {
+.allevents-section-container {
   /* left: 275px; */
   /* position: relative; */
   /* width: calc(100vw - 320px); */
@@ -220,12 +245,12 @@ body {
 }
 
 @media only screen and (max-width: 800px) {
-  .viewpatients-section-container {
+  .allevents-section-container {
     width: 95%;
   }
 }
 
-.viewpatients-component {
+.all-reports-component {
   /* position: relative;
   display: inline-flex;
   flex-direction: row; */
@@ -240,14 +265,14 @@ body {
   margin-bottom: 40px;
 }
 @media only screen and (max-width: 800px) {
-  .viewpatients-component {
+  .all-reports-component {
     position: relative;
     top: 0px;
     min-height: fit-content;
   }
 }
 
-.patient-SummaryContainer {
+.events-SummaryContainer {
   display: flex;
   flex-direction: row;
   overflow-x: auto;

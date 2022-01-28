@@ -553,6 +553,11 @@ export default {
       }
     }
   },
+  head() {
+    return {
+      title: 'New User'
+    }
+  },
   methods: {
     formColor(index) {
       if (this.isOpen) {

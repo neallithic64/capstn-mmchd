@@ -48,12 +48,18 @@ export default {
     dataTable,
   },
   middleware: 'is-auth',
+  head() {
+    return {
+      title: 'All Health Events'
+    }
+  },
   compute: {},
   data() {
     return {
       isPrint: false,
       tableOptions: {
         tableName: 'events',
+        sortKey: 'dateReported',
         columns: [
           {
             title: 'Event ID',
@@ -71,6 +77,14 @@ export default {
           {
             title: 'Date Captured',
             key: 'dateCaptured',
+            type: 'text',
+            dateFormat: true,
+            currentFormat: 'YYYY-MM-DD',
+            expectFormat: 'DD MMM YYYY',
+          },
+          {
+            title: 'Date Reported',
+            key: 'dateReported',
             type: 'text',
             dateFormat: true,
             currentFormat: 'YYYY-MM-DD',

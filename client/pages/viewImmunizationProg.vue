@@ -5,12 +5,14 @@
     <div ref="content" class="viewcases-container">
       <div class="viewCRF-details" style="align-text: left">
         <div class="CRFnumbers">
-          <h1 style="margin: -10px 0">Case No. {{ CRFID }}</h1>
-          <h2 style="margin-top: -1px">Disease: {{ disease }}</h2>
+          <h1 style="margin: -10px 0">Program Immunization Report No. {{immunProgNo}}</h1>
+          <h2 style="margin-top: -1px">{{ city }}, {{ barangay }}</h2>
+          <h3>{{ month }} {{ year }} </h3>
+          <p>Submitted by: <b> {{ submittedBy }} </b> </p>
         </div>
          
-        <div class="CRFstatus" style="align-text: right">
-          <h3>Week No: {{ weekNo }} </h3>
+        <div class="CRFstatus" style="align-text: right; place-content: end;">
+          
           <div v-show="!isPrint" class="CRFActionButtons">
             <ul class="CRFActionButton">
               <img
@@ -26,17 +28,6 @@
             />
             </ul>
           </div>
-        </div>
-      </div>
-
-      <div class="viewCRF-details" style="align-text: left">
-        <div class="CIFnumbers">
-          <p>DRU City: <b></b></p>
-          <p>DRU Name: <b></b></p>
-          <p>DRU Type: <b></b></p>
-          <p>DRU Address: <b></b></p>
-        </div>
-        <div class="CRFstatus" style="align-text: right">
           <p>Submitted on: <b> {{ submittedDate }} </b> </p>
           <p>Last updated: <b> {{ updatedDate }} </b> </p>
         </div>
@@ -46,8 +37,8 @@
         <div id="vue-root">
           <dataTable
             :options="tableOptions"
-            :datavalues="crfData"
-            :casetype="'crfCase'"
+            :datavalues="dataSets"
+            :casetype="'immunProg'"
           />
         </div>
       </div>
@@ -73,32 +64,31 @@ export default {
     title: 'View CRF',
   },
   compute: {},
+  head() {
+    return {
+      title: 'Immunization Report ' + this.immunProgNo
+    }
+  },
   data() {
     return {
       isPrint: false,
-      disease: 'Dengue',
-      CRFID: '',
-      druID: '',
+      immunProgNo: '123',
+      city: 'Manila City',
+      barangay: 'Barangay 123',
+      submittedBy: 'me',
       submittedDate: 'Nov 11,2021',
       updatedDate: 'Nov 10, 2020',
-      weekNo: '',
+      month: 'January',
+      year: '2021',
 
       tableOptions: {
-        tableName: 'crf',
+        sortKey: 'updatedDate',
         columns: [
           {
-            title: 'Case ID',
-            key: 'caseID',
-            type: 'clickable',
-            source: 'crf',
-            uniqueField: 'id',
-            sortable: true,
-          },
-          {
             title: 'Patient',
-            key: 'patientName',
-            type: 'number',
-            source: 'crf',
+            key: 'patientID',
+            type: 'clickable',
+            sortable: true,
           },
           {
             title: 'City',
@@ -127,7 +117,7 @@ export default {
           },
           {
             title: 'Date added',
-            key: 'reportDate',
+            key: 'addDate',
             type: 'text',
             dateFormat: true,
             currentFormat: 'YYYY-MM-DD',
@@ -144,22 +134,49 @@ export default {
             sortable: true,
           },
           {
-            title: 'Case Status',
-            key: 'caseLevel',
+            title: 'Immunization Status',
+            key: 'immunStatus',
             type: 'text',
             source: 'cases',
             uniqueField: 'id',
             sortable: true,
             filter: true,
           },
+          {
+            title: 'Action',
+            key: 'action',
+            source: 'cases',
+          },
         ],
         // source: 'http://demo.datatable/api/users',
         search: true,
       },
-      crfData: [],
+      dataSets: [
+        {
+          patientID: 'me',
+          city: 'Manila',
+          ageNo: '9',
+          sex: 'F',
+          addDate: '',
+          updatedDate: '',
+          immunStatus: 'Complete',
+          action: 'view',
+        },
+        {
+          patientID: 'me',
+          city: 'Manila',
+          ageNo: '9',
+          sex: 'F',
+          addDate: '',
+          updatedDate: '',
+          immunStatus: 'Ongoing',
+          action: 'update',
+        },
+      ],
     }
   },
   mounted() {},
+  /*
   async fetch() {
     const rows = (await axios.get('http://localhost:8080/api/getCRFPage', {
       params: {
@@ -169,19 +186,15 @@ export default {
       }
     })).data;
     console.log(rows);
-    for (let i = 0; i < rows.crfData.length; i++) {
-      rows.crfData[i].updatedDate = rows.crfData[i].updatedDate ? rows.crfData[i].updatedDate.substr(0, 10) : "N/A";
-      rows.crfData[i].reportDate = rows.crfData[i].reportDate.substr(0, 10);
+    for (let i = 0; i < rows.dataSets.length; i++) {
+      rows.dataSets[i].updatedDate = rows.dataSets[i].updatedDate ? rows.dataSets[i].updatedDate.substr(0, 10) : "N/A";
+      rows.dataSets[i].reportDate = rows.dataSets[i].reportDate.substr(0, 10);
     }
-    this.crfData = rows.crfData;
+    this.dataSets = rows.dataSets;
     this.weekNo = rows.CRF.year + "-" + rows.CRF.week;
     this.CRFID = this.$route.query.CRFID;
   },
-  head() {
-    return {
-      title: 'Dengue ' + this.CRFID
-    }
-  },
+  */
   methods: {
     downloadPDF() {
       this.isPrint = !this.isPrint
@@ -209,11 +222,11 @@ export default {
       console.log(this.$refs.content)
       setTimeout(() => (this.isPrint = !this.isPrint), 5000)
     },
-    csvExport() {
+    csvExport(arrData) {
       let csvContent = "data:text/csv;charset=utf-8,";
-      let header = this.getCols();
-      let arrData = this.getTable();
-      // let header = Object.keys(arrData[0]).join(",");
+      // let header = this.getCols();
+      // let arrData = this.getTable();
+      let header = Object.keys(arrData[0]).join(",");
       csvContent += [
         header,
         ...arrData.map(item => Object.values(item).join(","))
@@ -224,33 +237,8 @@ export default {
       const data = encodeURI(csvContent);
       const link = document.createElement("a");
       link.setAttribute("href", data);
-      link.setAttribute("download", "CRF"+this.disease+".csv");
+      link.setAttribute("download", "ImmunizationProgram.csv");
       link.click();
-    },
-    getCols() {
-      var columns='';
-      for (let i=0; i<Object.keys(this.tableOptions.columns).length; i++) {
-        columns += this.tableOptions.columns[i].title;
-        if (i+1!==Object.keys(this.tableOptions.columns)) columns += ','
-      }
-      return columns;
-    },
-    getTable() {
-      let data = [];
-      for (let i=0; i<this.crfData.length; i++) {
-        let name = "\""+ this.crfData[i].patientName +"\"";
-        data[i] =  {
-          caseID : this.crfData[i].caseID,
-          patientName : name,
-          city : this.crfData[i].city,
-          ageNo : this.crfData[i].ageNo,
-          sex : this.crfData[i].sex,
-          reportDate : this.crfData[i].reportDate,
-          updatedDate : this.crfData[i].updatedDate,
-          caseLevel : this.crfData[i].caseLevel,
-        }
-      }
-      return data;
     },
   },
 }
