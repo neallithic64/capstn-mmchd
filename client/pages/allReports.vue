@@ -151,12 +151,21 @@ export default {
     }
   },
   async mounted() {
+    // if (this.dataSets.length === 0) {
+    //   this.$toast.show('Loading...', {icon: 'hourglass_top'});
+    // }
+    
     // const DRUUserTypes = ['BHS', 'RHU', 'CHO', 'govtHosp', 'privHosp', 'clinic', 'govtLab', 'privLab', 'airseaPort', 'fhsis'];
     // const rows = (await axios.get('http://localhost:8080/api/getAllEvents')).data;
     
     // if (DRUUserTypes.includes(this.$auth.user.userType)) {
     //   this.allEvents = rows.filter(e => e.userID === this.$auth.user.userID);
     // } else this.allEvents = rows;
+    
+    // if (this.dataSets.length > 0) {
+    //   this.$toast.clear();
+    //   this.$toast.success('All TCLs loaded!', {duration: 4000, icon: 'check_circle'});
+    // }
   },
   methods: {
     downloadPDF() {
