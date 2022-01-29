@@ -617,7 +617,7 @@ const indexFunctions = {
 	
 	getAllCRFs: async function(req, res) {
 		try {
-			let match = await db.exec(`SELECT cr.*, d.diseaseName, a.city, COUNT(cr.CRFID) AS caseCount,
+			let match = await db.exec(`SELECT cr.*, d.diseaseName, a.city, COUNT(c.caseID) AS caseCount,
 									n.dateCreated AS submittedOn
 									FROM mmchddb.CRFS cr
 									INNER JOIN mmchddb.DISEASES d ON cr.diseaseID = d.diseaseID

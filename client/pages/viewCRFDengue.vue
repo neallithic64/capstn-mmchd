@@ -79,10 +79,9 @@ export default {
       disease: 'Dengue',
       CRFID: '',
       druID: '',
-      submittedDate: 'Nov 11,2021',
+      submittedDate: 'Nov 11, 2021',
       updatedDate: 'Nov 10, 2020',
       weekNo: '',
-
       tableOptions: {
         tableName: 'crf',
         columns: [
