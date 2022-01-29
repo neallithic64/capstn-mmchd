@@ -47,7 +47,7 @@
         <!--Form itself-->
         <div class="form-component">
 
-          <form v-if="pageNum == 1 || pageNum == Object.keys(disease.formNames).length" id="dengue1" type="submit">
+          <form v-if="pageNum == 1 || pageNum == Object.keys(disease.formNames).length" id="Dengue1date" type="submit">
             <div id="case-report-form" class="center">
               <div style="display:flex; flex-direction:row; justify-content: space-between;">
                 <h2 id="form-header">
@@ -471,7 +471,7 @@
           </form>
           <hr v-if="pageNum == Object.keys(disease.formNames).length" />
 
-          <form v-if="pageNum == 2 || pageNum == Object.keys(disease.formNames).length" id="dengue2" type="submit">
+          <form v-if="pageNum == 2 || pageNum == Object.keys(disease.formNames).length" id="Dengue2date" type="submit">
             <div id="case-report-form" class="center">
               <h2 id="form-header"> {{ Object.values(disease.formNames)[2] }} </h2>
 
@@ -932,7 +932,7 @@
           </form>
           <hr v-if="pageNum == Object.keys(disease.formNames).length" />
 
-          <form v-if="pageNum == 3 || pageNum == Object.keys(disease.formNames).length" id="dengue3" type="submit">
+          <form v-if="pageNum == 3 || pageNum == Object.keys(disease.formNames).length" id="Dengue3date" type="submit">
             <div id="case-report-form" class="center">
               <h2 id="form-header"> {{ Object.values(disease.formNames)[3] }} </h2>
               <div class="viewcases-component">
@@ -942,84 +942,84 @@
                       <template>
                             <tr>
                               <th colspan="2">BCG</th>
-                              <td> <input v-if="loadedData[0].bcg != '' || action!='view'" v-model="dataSets[0].bcg" type="date" max="today" :disabled="loadedData[0].bcg != '' || inputEdit()"/> </td>
-                              <td> <span v-if="loadedData[0].bcg != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="complete"/> COMPLETE </span> </td>
+                              <td> <input v-if="loadedData[0].BCGdate != '' || action!='view'" v-model="dataSets[0].BCGdate" type="date" max="today" :disabled="loadedData[0].BCGdate != '' || inputEdit()"/> </td>
+                              <td> <span v-if="loadedData[0].BCGdate != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="complete"/> COMPLETE </span> </td>
                             </tr>
                             <tr>
                               <th rowspan="2"> HEPA B1</th>
                               <th> w/in 24 hrs </th>
-                              <td> <input v-if="loadedData[0].hepa1 != '' || action!='view'" v-model="dataSets[0].hepa1" type="date" max="today" :disabled="loadedData[0].hepa1 != '' || inputEdit()"/> </td>
-                              <td rowspan="2"> <span v-if="loadedData[0].hepa1 != '' && loadedData[0].hepa2 != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="complete"/> COMPLETE </span></td>
+                              <td> <input v-if="loadedData[0].HEPAwithdate != '' || action!='view'" v-model="dataSets[0].HEPAwithdate" type="date" max="today" :disabled="loadedData[0].HEPAwithdate != '' || inputEdit()"/> </td>
+                              <td rowspan="2"> <span v-if="loadedData[0].HEPAwithdate != '' && loadedData[0].HEPAmoredate != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="complete"/> COMPLETE </span></td>
                             </tr>
                             <tr>
                               <th>more than 24 hrs</th>
-                              <td> <input v-if="loadedData[0].hepa2 != '' || action!='view'" v-model="dataSets[0].hepa2" type="date" max="today" :disabled="loadedData[0].hepa2 != '' || inputEdit()"/> </td>
+                              <td> <input v-if="loadedData[0].HEPAmoredate != '' || action!='view'" v-model="dataSets[0].HEPAmoredate" type="date" max="today" :disabled="loadedData[0].HEPAmoredate != '' || inputEdit()"/> </td>
                             </tr>
                             <tr>
                               <th rowspan="3"> OPV </th>
                               <th> 1 </th>
-                              <td> <input v-if="loadedData[0].opv1 != '' || action!='view'" v-model="dataSets[0].opv1" type="date" max="today" :disabled="loadedData[0].opv1 != '' || inputEdit()"/> </td>
-                              <td rowspan="3"> <span v-if="loadedData[0].opv1 != '' && loadedData[0].opv2 != '' && loadedData[0].opv3 != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="complete"/> COMPLETE </span> </td>
+                              <td> <input v-if="loadedData[0].OPV1date != '' || action!='view'" v-model="dataSets[0].OPV1date" type="date" max="today" :disabled="loadedData[0].OPV1date != '' || inputEdit()"/> </td>
+                              <td rowspan="3"> <span v-if="loadedData[0].OPV1date != '' && loadedData[0].OPV2date != '' && loadedData[0].OPV3date != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="complete"/> COMPLETE </span> </td>
                             </tr>
                             <tr>
                               <th> 2 </th>
-                              <td> <input v-if="loadedData[0].opv2 != '' || action!='view'" v-model="dataSets[0].opv2" type="date" max="today" :disabled="loadedData[0].opv2 != '' || inputEdit()"/> </td>
+                              <td> <input v-if="loadedData[0].OPV2date != '' || action!='view'" v-model="dataSets[0].OPV2date" type="date" max="today" :disabled="loadedData[0].OPV2date != '' || inputEdit()"/> </td>
                             </tr>
                             <tr>
                               <th> 3 </th>
-                              <td> <input v-if="loadedData[0].opv3 != '' || action!='view'" v-model="dataSets[0].opv3" type="date" max="today" :disabled="loadedData[0].opv3 != '' || inputEdit()"/> </td>
+                              <td> <input v-if="loadedData[0].OPV3date != '' || action!='view'" v-model="dataSets[0].OPV3date" type="date" max="today" :disabled="loadedData[0].OPV3date != '' || inputEdit()"/> </td>
                             </tr>
                             <tr>
                               <th rowspan="3"> PENTA </th>
                               <th> 1 </th>
-                              <td> <input v-if="loadedData[0].penta1 != '' || action!='view'" v-model="dataSets[0].penta1" type="date" max="today" :disabled="loadedData[0].penta1 != '' || inputEdit()"/> </td>
-                              <td rowspan="3"> <span v-if="loadedData[0].penta1 != '' && loadedData[0].penta2 != '' && loadedData[0].penta3 != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="complete"/> COMPLETE </span> </td>
+                              <td> <input v-if="loadedData[0].PENTA1date != '' || action!='view'" v-model="dataSets[0].PENTA1date" type="date" max="today" :disabled="loadedData[0].PENTA1date != '' || inputEdit()"/> </td>
+                              <td rowspan="3"> <span v-if="loadedData[0].PENTA1date != '' && loadedData[0].PENTA2date != '' && loadedData[0].PENTA3date != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="complete"/> COMPLETE </span> </td>
                             </tr>
                             <tr>
                               <th> 2 </th>
-                              <td> <input v-if="loadedData[0].penta2 != '' || action!='view'" v-model="dataSets[0].penta2" type="date" max="today" :disabled="loadedData[0].penta2 != '' || inputEdit()"/> </td>
+                              <td> <input v-if="loadedData[0].PENTA2date != '' || action!='view'" v-model="dataSets[0].PENTA2date" type="date" max="today" :disabled="loadedData[0].PENTA2date != '' || inputEdit()"/> </td>
                             </tr>
                             <tr>
                               <th> 3 </th>
-                              <td> <input v-if="loadedData[0].penta3 != '' || action!='view'" v-model="dataSets[0].penta3" type="date" max="today" :disabled="loadedData[0].penta3 != '' || inputEdit()"/> </td>
+                              <td> <input v-if="loadedData[0].PENTA3date != '' || action!='view'" v-model="dataSets[0].PENTA3date" type="date" max="today" :disabled="loadedData[0].PENTA3date != '' || inputEdit()"/> </td>
                             </tr>
                             <tr>
                               <th rowspan="3"> PCV </th>
                               <th> 1 </th>
-                              <td> <input v-if="loadedData[0].pcv1 != '' || action!='view'" v-model="dataSets[0].pcv1" type="date" max="today" :disabled="loadedData[0].pcv1 != '' || inputEdit()"/> </td>
-                              <td rowspan="3"> <span v-if="loadedData[0].pcv1 != '' && loadedData[0].pcv2 != '' && loadedData[0].pcv3 != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="complete"/> </span> </td>
+                              <td> <input v-if="loadedData[0].PCV1date != '' || action!='view'" v-model="dataSets[0].PCV1date" type="date" max="today" :disabled="loadedData[0].PCV1date != '' || inputEdit()"/> </td>
+                              <td rowspan="3"> <span v-if="loadedData[0].PCV1date != '' && loadedData[0].PCV2date != '' && loadedData[0].PCV3date != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="complete"/> </span> </td>
                             </tr>
                             <tr>
                               <th> 2 </th>
-                              <td> <input v-if="loadedData[0].pcv2 != '' || action!='view'" v-model="dataSets[0].pcv2" type="date" max="today" :disabled="loadedData[0].pcv2 != '' || inputEdit()"/> </td>
+                              <td> <input v-if="loadedData[0].PCV2date != '' || action!='view'" v-model="dataSets[0].PCV2date" type="date" max="today" :disabled="loadedData[0].PCV2date != '' || inputEdit()"/> </td>
                             </tr>
                             <tr>
                               <th> 3 </th>
-                              <td> <input v-if="loadedData[0].pcv3 != '' || action!='view'" v-model="dataSets[0].pcv3" type="date" max="today" :disabled="loadedData[0].pcv3 != '' || inputEdit()"/> </td>
+                              <td> <input v-if="loadedData[0].PCV3date != '' || action!='view'" v-model="dataSets[0].PCV3date" type="date" max="today" :disabled="loadedData[0].PCV3date != '' || inputEdit()"/> </td>
                             </tr>
                             <tr>
                               <th rowspan="2">MCV</th>
                               <th> MCV 1 (AMV)</th>
-                              <td> <input v-if="loadedData[0].mcv1 != '' || action!='view'" v-model="dataSets[0].mcv1" type="date" max="today" :disabled="loadedData[0].mcv1 != '' || inputEdit()"/> </td>
-                              <td rowspan="2"> <span v-if="loadedData[0].mcv1 != '' && loadedData[0].mcv2 != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="complete"/> COMPLETE </span> </td>
+                              <td> <input v-if="loadedData[0].MCV1date != '' || action!='view'" v-model="dataSets[0].MCV1date" type="date" max="today" :disabled="loadedData[0].MCV1date != '' || inputEdit()"/> </td>
+                              <td rowspan="2"> <span v-if="loadedData[0].MCV1date != '' && loadedData[0].MCV2date != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="complete"/> COMPLETE </span> </td>
                             </tr>
                             <tr>
                               <th> MCV 2 (MMR)</th>
-                              <td> <input v-if="loadedData[0].mcv2 != '' || action!='view'" v-model="dataSets[0].mcv2" type="date" max="today" :disabled="loadedData[0].mcv2 != '' || inputEdit()"/> </td>
+                              <td> <input v-if="loadedData[0].MCV2date != '' || action!='view'" v-model="dataSets[0].MCV2date" type="date" max="today" :disabled="loadedData[0].MCV2date != '' || inputEdit()"/> </td>
                             </tr>
                             <tr>
                               <th rowspan="3"> Dengue </th>
                               <th> 1 </th>
-                              <td> <input v-if="loadedData[0].dengue1 != '' || action!='view'" v-model="dataSets[0].dengue1" type="date" max="today" :disabled="loadedData[0].dengue1 != '' || inputEdit()"/> </td>
-                              <td rowspan="3"> <span v-if="loadedData[0].dengue1 != '' && loadedData[0].dengue2 != '' && loadedData[0].dengue3 != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="complete"/> COMPLETE </span> </td>
+                              <td> <input v-if="loadedData[0].Dengue1date != '' || action!='view'" v-model="dataSets[0].Dengue1date" type="date" max="today" :disabled="loadedData[0].Dengue1date != '' || inputEdit()"/> </td>
+                              <td rowspan="3"> <span v-if="loadedData[0].Dengue1date != '' && loadedData[0].Dengue2date != '' && loadedData[0].Dengue3date != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="complete"/> COMPLETE </span> </td>
                             </tr>
                             <tr>
                               <th> 2 </th>
-                              <td> <input v-if="loadedData[0].dengue2 != '' || action!='view'" v-model="dataSets[0].dengue2" type="date" max="today" :disabled="loadedData[0].dengue2 != '' || inputEdit()"/> </td>
+                              <td> <input v-if="loadedData[0].Dengue2date != '' || action!='view'" v-model="dataSets[0].Dengue2date" type="date" max="today" :disabled="loadedData[0].Dengue2date != '' || inputEdit()"/> </td>
                             </tr>
                             <tr>
                               <th> 3 </th>
-                              <td> <input v-if="loadedData[0].dengue3 != '' || action!='view'" v-model="dataSets[0].dengue3" type="date" max="today" :disabled="loadedData[0].dengue3 != '' || inputEdit()"/> </td>
+                              <td> <input v-if="loadedData[0].Dengue3date != '' || action!='view'" v-model="dataSets[0].Dengue3date" type="date" max="today" :disabled="loadedData[0].Dengue3date != '' || inputEdit()"/> </td>
                             </tr>
                       </template>
                     </tbody>
@@ -1144,7 +1144,6 @@ export default {
           OOthers: '',
         },
         immunization: {
-          
         }
       },
       riskFactors: {
@@ -1164,64 +1163,66 @@ export default {
         },
       },
       cityList: [
-        'Caloocan',
-        'Las Piñas',
-        'Makati',
-        'Malabon',
-        'Mandaluyong',
-        'Manila',
-        'Marikina',
-        'Muntinlupa',
-        'Navotas',
-        'Parañaque',
-        'Pasay',
-        'Pasig',
+        'Caloocan City',
+        'Las Piñas City',
+        'Makati City',
+        'Malabon City',
+        'Mandaluyong City',
+        'Manila City',
+        'Marikina City',
+        'Muntinlupa City',
+        'Navotas City',
+        'Parañaque City',
+        'Pasay City',
+        'Pasig City',
         'Quezon City',
-        'San Juan',
-        'Taguig',
-        'Valenzuela',
+        'San Juan City',
+        'Taguig City',
+        'Valenzuela City',
       ],
-
       loadedData: [
         {
-          bcg: '2020-02-03',
-          hepa1: '2020-02-03',
-          hepa2: '',
-          opv1: '2020-02-03',
-          opv2: '2020-02-03',
-          opv3: '2020-02-03',
-          penta1: '2020-02-03',
-          penta2: '2020-02-03',
-          penta3: '2020-02-03',
-          pcv1: '2020-02-03',
-          pcv2: '2020-02-03',
-          pcv3: '',
-          mcv1: '2020-02-03',
-          mcv2: '2020-02-03',
-          dengue1: '',
-          dengue2: '',
-          dengue3: '',
+          BCGdate: '2020-02-03',
+          HEPAwithdate: '2020-02-03',
+          HEPAmoredate: '',
+          OPV1date: '2020-02-03',
+          OPV2date: '2020-02-03',
+          OPV3date: '2020-02-03',
+          PENTA1date: '2020-02-03',
+          PENTA2date: '2020-02-03',
+          PENTA3date: '2020-02-03',
+          PCV1date: '2020-02-03',
+          PCV2date: '2020-02-03',
+          PCV3date: '',
+          MCV1date: '2020-02-03',
+          MCV2date: '2020-02-03',
+          Dengue1date: '',
+          Dengue2date: '',
+          Dengue3date: '',
         },
       ],
       dataSets: [
         {
-          bcg: '',
-          hepa1: '',
-          hepa2: '',
-          opv1: '',
-          opv2: '',
-          opv3: '',
-          penta1: '',
-          penta2: '',
-          penta3: '',
-          pcv1: '',
-          pcv2: '',
-          pcv3: '',
-          mcv1: '',
-          mcv2: '',
-          dengue1: '',
-          dengue2: '',
-          dengue3: '',
+          patientID: '',
+          dateAdded: '',
+          immunizationStatus: '',
+          BCGdate: '',
+          HEPAwithdate: '',
+          HEPAmoredate: '',
+          OPV1date: '',
+          OPV2date: '',
+          OPV3date: '',
+          PENTA1date: '',
+          PENTA2date: '',
+          PENTA3date: '',
+          PCV1date: '',
+          PCV2date: '',
+          PCV3date: '',
+          MCV1date: '',
+          MCV2date: '',
+          Dengue1date: '',
+          Dengue2date: '',
+          Dengue3date: '',
         },
       ],
     }
@@ -1259,23 +1260,23 @@ export default {
 
     console.log(this.loadedData[0])
 
-    this.dataSets[0].bcg = this.loadedData[0].bcg;
-    this.dataSets[0].hepa1 = this.loadedData[0].hepa1;
-    this.dataSets[0].hepa2 = this.loadedData[0].hepa2;
-    this.dataSets[0].opv1 = this.loadedData[0].opv1;
-    this.dataSets[0].opv2 = this.loadedData[0].opv2;
-    this.dataSets[0].opv3 = this.loadedData[0].opv3;
-    this.dataSets[0].penta1 = this.loadedData[0].penta1;
-    this.dataSets[0].penta2 = this.loadedData[0].penta2;
-    this.dataSets[0].penta3 = this.loadedData[0].penta3;
-    this.dataSets[0].pcv1 = this.loadedData[0].pcv1;
-    this.dataSets[0].pcv2 = this.loadedData[0].pcv2;
-    this.dataSets[0].pcv3 = this.loadedData[0].pcv3;
-    this.dataSets[0].mcv1 = this.loadedData[0].mcv1;
-    this.dataSets[0].mcv2 = this.loadedData[0].mcv2;
-    this.dataSets[0].dengue1 = this.loadedData[0].dengue1;
-    this.dataSets[0].dengue2 = this.loadedData[0].dengue2;
-    this.dataSets[0].dengue3 = this.loadedData[0].dengue3;
+    this.dataSets[0].BCGdate = this.loadedData[0].BCGdate;
+    this.dataSets[0].HEPAwithdate = this.loadedData[0].HEPAwithdate;
+    this.dataSets[0].HEPAmoredate = this.loadedData[0].HEPAmoredate;
+    this.dataSets[0].OPV1date = this.loadedData[0].OPV1date;
+    this.dataSets[0].OPV2date = this.loadedData[0].OPV2date;
+    this.dataSets[0].OPV3date = this.loadedData[0].OPV3date;
+    this.dataSets[0].PENTA1date = this.loadedData[0].PENTA1date;
+    this.dataSets[0].PENTA2date = this.loadedData[0].PENTA2date;
+    this.dataSets[0].PENTA3date = this.loadedData[0].PENTA3date;
+    this.dataSets[0].PCV1date = this.loadedData[0].PCV1date;
+    this.dataSets[0].PCV2date = this.loadedData[0].PCV2date;
+    this.dataSets[0].PCV3date = this.loadedData[0].PCV3date;
+    this.dataSets[0].MCV1date = this.loadedData[0].MCV1date;
+    this.dataSets[0].MCV2date = this.loadedData[0].MCV2date;
+    this.dataSets[0].Dengue1date = this.loadedData[0].Dengue1date;
+    this.dataSets[0].Dengue2date = this.loadedData[0].Dengue2date;
+    this.dataSets[0].Dengue3date = this.loadedData[0].Dengue3date;
 
     console.log(this.dataSets[0]);
     this.$forceUpdate();
@@ -1367,45 +1368,45 @@ export default {
       })
     },
     validate() {
-      if ((this.loadedData[0].bcg !=='' && this.loadedData[0].bcg !== null) &&
-          (this.loadedData[0].hepa1 !=='' &&  this.loadedData[0].hepa1 !== null) && 
-          (this.loadedData[0].hepa2 !=='' &&  this.loadedData[0].hepa2 !== null) && 
-          (this.loadedData[0].opv1 !=='' &&  this.loadedData[0].opv1 !== null) && 
-          (this.loadedData[0].opv2 !=='' &&  this.loadedData[0].opv2 !== null) && 
-          (this.loadedData[0].opv3 !=='' &&  this.loadedData[0].opv3 !== null) && 
-          (this.loadedData[0].penta1 !=='' &&  this.loadedData[0].penta1 !== null) && 
-          (this.loadedData[0].penta2 !=='' &&  this.loadedData[0].penta2 !== null) && 
-          (this.loadedData[0].penta3 !=='' &&  this.loadedData[0].penta3 !== null) && 
-          (this.loadedData[0].pcv1 !=='' &&  this.loadedData[0].pcv1 !== null) && 
-          (this.loadedData[0].pcv2 !=='' &&  this.loadedData[0].pcv2 !== null) && 
-          (this.loadedData[0].pcv3 !=='' &&  this.loadedData[0].pcv3 !== null) && 
-          (this.loadedData[0].mcv1 !=='' &&  this.loadedData[0].mcv1 !== null) && 
-          (this.loadedData[0].mcv2 !=='' && this.loadedData[0].mcv2 !== null) &&
-          (this.loadedData[0].dengue1 !=='' &&  this.loadedData[0].dengue1 !== null) && 
-          (this.loadedData[0].dengue2 !=='' &&  this.loadedData[0].dengue2 !== null) && 
-          (this.loadedData[0].dengue3 !=='' &&  this.loadedData[0].dengue3 !== null)
+      if ((this.loadedData[0].BCGdate !=='' && this.loadedData[0].BCGdate !== null) &&
+          (this.loadedData[0].HEPAwithdate !=='' &&  this.loadedData[0].HEPAwithdate !== null) && 
+          (this.loadedData[0].HEPAmoredate !=='' &&  this.loadedData[0].HEPAmoredate !== null) && 
+          (this.loadedData[0].OPV1date !=='' &&  this.loadedData[0].OPV1date !== null) && 
+          (this.loadedData[0].OPV2date !=='' &&  this.loadedData[0].OPV2date !== null) && 
+          (this.loadedData[0].OPV3date !=='' &&  this.loadedData[0].OPV3date !== null) && 
+          (this.loadedData[0].PENTA1date !=='' &&  this.loadedData[0].PENTA1date !== null) && 
+          (this.loadedData[0].PENTA2date !=='' &&  this.loadedData[0].PENTA2date !== null) && 
+          (this.loadedData[0].PENTA3date !=='' &&  this.loadedData[0].PENTA3date !== null) && 
+          (this.loadedData[0].PCV1date !=='' &&  this.loadedData[0].PCV1date !== null) && 
+          (this.loadedData[0].PCV2date !=='' &&  this.loadedData[0].PCV2date !== null) && 
+          (this.loadedData[0].PCV3date !=='' &&  this.loadedData[0].PCV3date !== null) && 
+          (this.loadedData[0].MCV1date !=='' &&  this.loadedData[0].MCV1date !== null) && 
+          (this.loadedData[0].MCV2date !=='' && this.loadedData[0].MCV2date !== null) &&
+          (this.loadedData[0].Dengue1date !=='' &&  this.loadedData[0].Dengue1date !== null) && 
+          (this.loadedData[0].Dengue2date !=='' &&  this.loadedData[0].Dengue2date !== null) && 
+          (this.loadedData[0].Dengue3date !=='' &&  this.loadedData[0].Dengue3date !== null)
         )
       return true;
       else return false;
     },
     saveData() {
-      this.loadedData[0].bcg = this.dataSets[0].bcg;
-      this.loadedData[0].hepa1 = this.dataSets[0].hepa1;
-      this.loadedData[0].hepa2 = this.dataSets[0].hepa2;
-      this.loadedData[0].opv1 = this.dataSets[0].opv1;
-      this.loadedData[0].opv2 = this.dataSets[0].opv2;
-      this.loadedData[0].opv3 = this.dataSets[0].opv3;
-      this.loadedData[0].penta1 = this.dataSets[0].penta1;
-      this.loadedData[0].penta2 = this.dataSets[0].penta2;
-      this.loadedData[0].penta3 = this.dataSets[0].penta3;
-      this.loadedData[0].pcv1 = this.dataSets[0].pcv1;
-      this.loadedData[0].pcv2 = this.dataSets[0].pcv2;
-      this.loadedData[0].pcv3 = this.dataSets[0].pcv3;
-      this.loadedData[0].mcv1 = this.dataSets[0].mcv1;
-      this.loadedData[0].mcv2 = this.dataSets[0].mcv2;
-      this.loadedData[0].dengue1 = this.dataSets[0].dengue1;
-      this.loadedData[0].dengue2 = this.dataSets[0].dengue2;
-      this.loadedData[0].dengue3 = this.dataSets[0].dengue3;
+      this.loadedData[0].BCGdate = this.dataSets[0].BCGdate;
+      this.loadedData[0].HEPAwithdate = this.dataSets[0].HEPAwithdate;
+      this.loadedData[0].HEPAmoredate = this.dataSets[0].HEPAmoredate;
+      this.loadedData[0].OPV1date = this.dataSets[0].OPV1date;
+      this.loadedData[0].OPV2date = this.dataSets[0].OPV2date;
+      this.loadedData[0].OPV3date = this.dataSets[0].OPV3date;
+      this.loadedData[0].PENTA1date = this.dataSets[0].PENTA1date;
+      this.loadedData[0].PENTA2date = this.dataSets[0].PENTA2date;
+      this.loadedData[0].PENTA3date = this.dataSets[0].PENTA3date;
+      this.loadedData[0].PCV1date = this.dataSets[0].PCV1date;
+      this.loadedData[0].PCV2date = this.dataSets[0].PCV2date;
+      this.loadedData[0].PCV3date = this.dataSets[0].PCV3date;
+      this.loadedData[0].MCV1date = this.dataSets[0].MCV1date;
+      this.loadedData[0].MCV2date = this.dataSets[0].MCV2date;
+      this.loadedData[0].Dengue1date = this.dataSets[0].Dengue1date;
+      this.loadedData[0].Dengue2date = this.dataSets[0].Dengue2date;
+      this.loadedData[0].Dengue3date = this.dataSets[0].Dengue3date;
       
     },
     isRequired() {

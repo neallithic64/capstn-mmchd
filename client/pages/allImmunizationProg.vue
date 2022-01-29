@@ -72,7 +72,7 @@ export default {
         columns: [
           {
             title: 'Immunization Program ID',
-            key: 'immunizationProgNo',
+            key: 'TCLID',
             sortable: true,
             type: 'clickable',
           },
@@ -84,7 +84,7 @@ export default {
           },
           {
             title: 'Barangay',
-            key: 'barangay',
+            key: 'brgy',
             sortable: true,
           },
           {

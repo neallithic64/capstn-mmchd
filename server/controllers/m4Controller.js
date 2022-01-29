@@ -247,6 +247,54 @@ const indexFunctions = {
 		}
 	},
 	
+	getTCLEntry: async function(req, res) {
+		try {
+			let match = await db.exec(`SELECT td.*, p.*, rf.*, a.city
+					FROM mmchddb.TCL_DATA td
+					LEFT JOIN mmchddb.PATIENTS p ON p.patientID = td.patientID
+					LEFT JOIN mmchddb.ADDRESS a ON a.addressID = p.caddressID
+					LEFT JOIN mmchddb.CASES c ON c.patientID = p.patientID
+					LEFT JOIN mmchddb.RISK_FACTORS rf ON rf.caseID = c.caseID
+					WHERE td.patientID = ${ req.query.patientID };`);
+			res.status(200).send(match);
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
+	
+	getTCL: async function(req, res) {
+		try {
+			let match = await db.exec(`SELECT t.*, td.*, p.*, a.city
+					FROM mmchddb.TCLS
+					LEFT JOIN mmchddb.TCL_DATA td ON td.TCLID = t.TCLID
+					LEFT JOIN mmchddb.PATIENTS p ON p.patientID = td.patientID
+					LEFT JOIN mmchddb.ADDRESS a ON a.addressID = p.caddressID
+					WHERE t.TCLID = ${ req.query.TCLID };`);
+			res.status(200).send(match);
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
+	
+	getAllTCLs: async function(req, res) {
+		try {
+			let match = await db.exec(`SELECT d.diseaseName, u.druName, a.*, td.*,
+					SUM(CASE WHEN td.immunizationStatus = "Complete" THEN 1 ELSE 0 END) AS immuniPati,
+					COUNT(td.TCLID) AS totalPatients FROM mmchddb.TCLS t
+					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = t.diseaseID
+					LEFT JOIN mmchddb.USERS u ON u.userID = t.userID
+					LEFT JOIN mmchddb.ADDRESSES a ON a.addressID = u.addressID
+					LEFT JOIN mmchddb.TCL_DATA td ON td.TCLID = t.TCLID
+					GROUP BY td.TCLID;`);
+			res.status(200).send(match);
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
+	
 	/*
 	 * POST METHODS
 	 */
