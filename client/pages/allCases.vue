@@ -378,6 +378,10 @@ export default {
     }
   },
   async mounted() {
+
+    if (this.allData.length === 0) {
+      this.$toast.show('Loading...', {icon: 'hourglass_top'});
+    }
     const CHDtypes = ['Chief', 'Staff', 'resuHead', 'chdDirector'];
     const cifRows = (await axios.get('http://localhost:8080/api/getCases')).data;
     const crfRows = (await axios.get('http://localhost:8080/api/getAllCRFs')).data;
@@ -406,6 +410,10 @@ export default {
     } else { // is not-CHD; CIF, or CRF whose CRFID matches a CRF that matches the user's ID
       this.allData = cifRows.filter(e1 => e1.type === "CIF" ||
             !!this.crfDRUData.find(e2 => e2.CRFID === e1.CRFID && e2.userID === this.$auth.user.userType));
+    }
+    if (this.allData.length > 0) {
+      this.$toast.clear();
+      this.$toast.success('All cases loaded!', {duration: 4000, icon: 'check_circle'});
     }
   },
   methods: {

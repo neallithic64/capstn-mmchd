@@ -5,12 +5,12 @@
     <div class="viewcases-container">
       <div class="viewCRF-details" style="align-text: left">
         <div class="CRFnumbers">
-          <h1 style="margin-top: -1px">Disease: {{ disease }}</h1>
-          <h2 style="margin-top: -1px">Week No: {{ weekNo }}</h2>
+          <h1 style="margin-top: -1px">{{ disease }} Case Report Form </h1>
+          <h2 style="margin-top: -7px">Week No: {{ weekNo }}</h2>
           <h3>Last updated: {{ updatedDate }}</h3>
         </div>
       </div>
-      <div>
+      <div style="margin-top: 20px;">
         <div class="viewcases-component">
           <div id="vue-root">
             <dataTable
@@ -21,7 +21,7 @@
           </div>
         </div>
         <div class="additionalButtons">
-          <button class="addText"><a :href="'/addCRFDengueCase?CRFID=' + CRFID">+ add a case</a></button>
+          <button class="addText"><a :href="'/addCRFDengueCase?CRFID=' + CRFID">+ Add a Case</a></button>
         </div>
         <div class="CRFendButton">
           <button class="submit-button" type="button" @click="submit()">
@@ -502,13 +502,14 @@ h3 {
 .additionalButtons {
   /* position: relative; */
   position: absolute;
-  margin-top: -115px;
-  margin-left: 15px;
+  margin-top: -110px;
+  margin-left: 20px;
 }
 
 .addText {
   color: #346083;
-  font-size: 12px;
+  font-size: 16px;
+  font-weight: 600;
 }
 
 .CRFendButton {
