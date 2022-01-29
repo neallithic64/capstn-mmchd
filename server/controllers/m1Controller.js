@@ -3,6 +3,15 @@ const saltRounds = 10;
 
 const db = require("../models/db");
 
+Date.prototype.getWeek = function() {
+	let d = new Date(Date.UTC(this.getFullYear(), this.getMonth(), this.getDate()));
+	let dayNum = d.getUTCDay() || 7;
+	d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+	let yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+	return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+}
+
+const math = require('mathjs');
 const DRUUserTypes = ['BHS','RHU','CHO', 'govtHosp', 'privHosp', 'clinic', 'privLab', 'airseaPort'];
 /** OBJECT CONSTRUCTORS
 */
@@ -39,10 +48,10 @@ function Disease(diseaseID, diseaseName, notifiable, caseThreshold) {
 }
 
 function Patient(patientID, epiID, lastName, firstName, midName, caddressID, paddressID, sex,
-					birthDate, ageNo, ageType, admitStatus, civilStatus, occupation,
-					occuLoc, occuAddrID, guardianName, guardianContact,
-					indigeneous, indGroup,
-					pregnant, pregMonths, HCPN, ILHZ ) {
+					birthDate, ageNo, ageType, admitStatus, civilStatus, occupation, 
+					occuLoc, occuAddrID, guardianName, guardianContact, 
+					indigeneous,
+					pregWeeks, HCPN, ILHZ ) {
 	this.patientID = patientID;
 	this.epiID = epiID;
 	this.lastName = lastName;
@@ -61,9 +70,8 @@ function Patient(patientID, epiID, lastName, firstName, midName, caddressID, pad
 	this.occuAddrID = occuAddrID;
 	this.guardianName = guardianName;
 	this.guardianContact = guardianContact;
-	this.indGroup = indGroup;
-	this.pregnant = pregnant;
-	this.pregMonths = pregMonths;
+	this.indigeneous = indigeneous;
+	this.pregWeeks = pregWeeks;
 	this.HCPN = HCPN;
 	this.ILHZ = ILHZ;
 }
@@ -118,6 +126,14 @@ function Notification(notificationID, receiverID, type, message, caseID, dateCre
 	this.viewed = viewed;
 }
 
+function Outbreak(outbreakID, diseaseID, outbreakStatus, startDate, endDate, responseTime) {
+	this.outbreakID = outbreakID;
+	this.diseaseID = diseaseID;
+	this.outbreakStatus = outbreakStatus;
+	this.startDate = startDate;
+	this.endDate = endDate;
+	this.responseTime = responseTime;
+}
 /** ON ID CREATION
 */
 function getPrefix(table) {
@@ -140,8 +156,8 @@ function getPrefix(table) {
 			return "RE-";
 		case "mmchddb.TARGETS":
 			return "TA-";
-		case "mmchddb.PROGRAMS":
-			return "PR-";
+		case "mmchddb.TCLS":
+			return "TC-";
 		case "mmchddb.AGE_RANGE_REF":
 			return "AR-";
 		case "mmchddb.ADDRESSES":
@@ -152,7 +168,10 @@ function getPrefix(table) {
 			return "SE-";
 		case "mmchddb.PROGRAM_EVAL":
 			return "PE-";
+		case "mmchddb.PROGRAM_ACCOMPS":
+			return "PC-";
 	}
+	return undefined;
 }
 
 async function generateID(table, checkObj) {
@@ -241,10 +260,8 @@ async function sendBulkNotifs(userTypes, notificationType, message, caseID) {
 			element.push(message);
 			element.push(caseID);
 			element.push(dateCreated);
-			if(notificationType == 'updateNotif')
-				element.push('http://localhost:3000/caseDefs');
-			else
-				element.push('http://localhost:3000/allCases');
+			if (notificationType == 'updateNotif') element.push('http://localhost:3000/caseDefs');
+			else element.push('http://localhost:3000/allCases');
 			element.push(false);
 			element.shift();
 		});
@@ -257,8 +274,69 @@ async function sendBulkNotifs(userTypes, notificationType, message, caseID) {
 	}
 }
 
-async function checkIfOutbreak(diseaseID){
+async function createOutbreak(diseaseID, outbreakStatus){
+	try {
+		let match = await db.exec("SELECT * FROM mmchddb.OUTBREAKS WHERE diseaseID='" + diseaseID +
+								"' AND NOT outbreakStatus='Closed';");
+		if(match.length > 0) {
+			if(match[0] == outbreakStatus)
+				return match[0];
+			else if(outbreakStatus == 'Epidemic') {
+				let result = await db.updateRows("mmchddb.OUTBREAKS", {outbreakID:match[0].outbreakID}, {outbreakStatus:outbreakStatus});
+				if(result)
+					return match[0];
+				else
+					return false;
+			}	
+		} else {
+			let newOutbreak = new Outbreak(await generateID("mmchddb.OUTBREAKS"), diseaseID, 'Ongoing', new Date(), null, null);
+			let result = await db.insertOne("mmchddb.OUTBREAKS", newOutbreak);
+			return result;
+		}
+	} catch (error) {
+		console.log(error);
+		return false;
+	}
+}
 
+async function checkIfOutbreak(diseaseID, caseObj){
+	try {
+		// check if disease case is measles (suspected case for alert, confirmed case for epidemic)
+		if(diseaseID == "DI-0000000000000") {
+			if(caseObj.caseStatus == "Suspected Case") {
+				return await createOutbreak("DI-0000000000000", "Alert");
+			}
+			else if (caseObj.caseStatus == "Discarded Case")
+				return false;
+			else
+				return await createOutbreak("DI-0000000000000", "Epidemic");
+		} else {
+			// general formula (1 standard deviation above the norm for alert, 2 standard deviation for epidemic)
+			let cases = await db.exec("SELECT * FROM mmchddb.CASES WHERE YEARWEEK(reportDate, 1) = YEARWEEK(CURDATE(), 1)");
+			let disease = await db.findRows("mmchddb.DISEASES", {diseaseID:diseaseID});
+			
+			if(cases.length >= disease[0].alertThreshold) {
+				return await createOutbreak(diseaseID, "Alert");
+			} else if(cases.length >= disease[0].epiThreshold) {
+				return await createOutbreak(diseaseID, "Epidemic");
+			} else
+				return false;
+		}
+	} catch (error) {
+		console.log(error);
+		return false;
+	}
+	
+}
+
+function computeThreshold(numCases){
+	while(numCases.length < 156)
+		numCases.push(0);
+	let thresholds = {
+		alertThreshold : Math.floor(math.mean(numCases) + math.std(numCases,"uncorrected")),
+		epiThreshold : Math.floor(math.mean(numCases) + math.std(numCases,"uncorrected") * 2),
+	}
+	return thresholds;
 }
 
 async function getOutbreakData(outbreakID) {
@@ -289,7 +367,8 @@ async function getOutbreakData(outbreakID) {
 					GROUP BY a.city
 					ORDER BY (CASE WHEN o.type = 'Ongoing' THEN '1' ELSE '2' END) ASC, o.startDate DESC;`);
 			
-			/* growth rate: i have no clue how this will work... */
+			/* growth rate: rate of the difference of outbreak and non-outbreak cases and non-outbreak cases
+			 */
 			growth = await db.exec(`SELECT o.outbreakID, IFNULL(a.city, 'NCR') AS city,
 					SUM(CASE WHEN c.reportDate > o.startDate THEN 1 ELSE 0 END) AS growthRate
 					FROM mmchddb.OUTBREAKS o
@@ -349,7 +428,8 @@ async function getOutbreakData(outbreakID) {
 					GROUP BY o.outbreakID
 					ORDER BY (CASE WHEN o.type = 'Ongoing' THEN '1' ELSE '2' END) ASC, o.startDate DESC;`);
 			
-			/* growth rate: i have no clue how this will work... */
+			/* growth rate: rate of the difference of outbreak and non-outbreak cases and non-outbreak cases
+			 */
 			growth = await db.exec(`SELECT o.outbreakID,
 					SUM(CASE WHEN c.reportDate > o.startDate THEN 1 ELSE -1 END) /
 					SUM(CASE WHEN c.reportDate < o.startDate THEN 1 ELSE 0 END) AS growthRate
@@ -382,12 +462,29 @@ async function getOutbreakData(outbreakID) {
 				outbreaks.push(tempOutbreak);
 			}
 		}
-		console.log(outbreaks);
 		return outbreaks;
 	} catch (e) {
 		console.log(e);
 		return "Server error";
 	}
+}
+
+async function updateDiseaseThreshold(diseaseID){
+	try {
+		let numCases = await db.exec("SELECT yearweek(reportDate) AS 'yearweek', COUNT(caseID) AS 'numCases' from mmchddb.CASES " +
+								"WHERE yearweek(reportDate) >= yearweek(DATE_SUB(CURDATE(), INTERVAL 3 YEAR)) " +
+								"AND diseaseID='" + diseaseID + "' " +
+								"GROUP BY yearweek(reportDate);");
+		if(numCases.length > 0) {
+			let thresholds = computeThreshold(numCases.numCases);
+			return await db.updateRows("mmchddb.DISEASES", {diseaseID : diseaseID}, {alertThreshold : thresholds.alertThreshold, epiThreshold : thresholds.epiThreshold});
+		} else 
+			return false;
+	} catch (error) {
+		console.log(error);
+		return false;
+	}
+	
 }
 
 const indexFunctions = {
@@ -402,9 +499,14 @@ const indexFunctions = {
 	},
 	
 	mkData: async function(req, res) {
-		let r/* = await getOutbreakData("OU-0000000000000")*/;
-		if (r) res.status(200).send(r);
-		else res.status(500).send("problems");
+		try {
+			let rows = await db.exec(`SELECT userID FROM mmchddb.USERS ORDER BY userID;`);
+			if (rows) rows = rows.map(e => e.userID);
+			res.status(200).send(rows);
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
 	},
 	
 	getAllDiseases: async function(req, res) {
@@ -838,13 +940,6 @@ const indexFunctions = {
 						pushDataAccept: userSettings[0].pushDataAccept
 					});
 				} else {
-					Date.prototype.getWeek = function() {
-						let d = new Date(Date.UTC(this.getFullYear(), this.getMonth(), this.getDate()));
-						let dayNum = d.getUTCDay() || 7;
-						d.setUTCDate(d.getUTCDate() + 4 - dayNum);
-						let yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-						return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
-					}
 					let thisDate = new Date(), firstCRF = {
 						CRFID: (await generateID("mmchddb.CRFS")).id,
 						diseaseID: req.query.diseaseID,
@@ -961,6 +1056,18 @@ const indexFunctions = {
 					HAVING c.diseaseID = '${outbreak.outbreak.diseaseID}' AND
 					c.reportDate > '${outbreak.outbreak.startDate.toISOString().substr(0, 10)}';`);
 			res.status(200).send(outbreak);
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
+
+	getOngoingOutbreaks: async function(req, res){
+		try {
+			let outbreaks = await db.exec("SELECT * FROM mmchddb.OUTBREAKS WHERE NOT outbreakStatus='Closed'");
+			if(outbreaks.length > 0)
+				res.status(200).send(outbreaks);
+			else res.status(400).send("No outbreaks");
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
@@ -1511,7 +1618,7 @@ const indexFunctions = {
 						editedID: caseID,
 						dateModified: dateNow,
 						fieldName: Object.keys(newOutcome)[i],
-						prevValue: rows[0].value,
+						prevValue: rows[0].value ? rows[0].value : "N/A",
 						modifiedBy: submitted
 					});
 					updateObj[Object.keys(newOutcome)[i]] = newOutcome[Object.keys(newOutcome)[i]];
@@ -1655,9 +1762,10 @@ const indexFunctions = {
 			let { outbreakID, newStatus, userID } = req.body, updateObj = { outbreakStatus: newStatus.newStatus }
 					dateNow = new Date();
 			let outbreak = await db.findRows("mmchddb.OUTBREAKS", { outbreakID: outbreakID });
+			
 			// response time updating
-			if (newStatus === "Ongoing with Initial Response" && outbreak.length > 0) {
-				updateObj.responseTime = dateNow - new Date(outbreak[0].startDate);
+			if (newStatus.newStatus === "Ongoing with Initial Response" && outbreak.length > 0) {
+				updateObj.responseTime = Math.floor((dateNow - new Date(outbreak[0].startDate)) / 1000);
 			}
 			await db.updateRows("mmchddb.OUTBREAKS", { outbreakID: outbreakID }, updateObj);
 			
@@ -1666,10 +1774,10 @@ const indexFunctions = {
 				outbreakID: outbreakID,
 				modifiedBy: userID,
 				dateModified: dateNow,
-				prevValue: outbreak[0].status,
+				prevValue: outbreak[0].outbreakStatus,
 				remarks: newStatus.remarks
 			};
-			await db.insertOne("mmchddb.OUTBREAKS_AUDIT", audit);
+			await db.insertOne("mmchddb.OUTBREAK_AUDIT", audit);
 			res.status(200).send("Updated outbreak status.");
 		} catch (e) {
 			console.log(e);
@@ -1712,10 +1820,11 @@ const indexFunctions = {
 			if (pushData) {
 				// generate new CRFs
 				for (let i = 0; i < crfs.length; i++) {
-					currWeek = new Date(crfs[i].year, 0, (1 + (crfs[i].week - 1) * 7));
+					let newCRFID = (await generateID("mmchddb.CRFS")).id;
+					currWeek = new Date(crfs[i].year, 0, (1 + crfs[i].week * 7));
 					nextWeek = new Date(currWeek.getFullYear(), currWeek.getMonth(), currWeek.getDate() + 7);
 					await db.insertOne("mmchddb.CRFS", {
-						CRFID: crfs[i].CRFID,
+						CRFID: newCRFID,
 						diseaseID: crfs[i].diseaseID,
 						userID: crfs[i].userID,
 						week: nextWeek.getWeek(),
@@ -1725,7 +1834,7 @@ const indexFunctions = {
 				}
 				let result = await sendBulkNotifs(DRUUserTypes, 'pushDataNotif',
 						'SUBMISSION UPDATE: Your Case Report Forms for Week ' +
-						week.getWeek() + ' has been automatically pushed to MMCHD-RESU', null);
+						currWeek.getWeek() + ' has been automatically pushed to MMCHD-RESU', null);
 				if (result) console.log("Push Data Success");
 				else console.log("Adding Notification to DRU Failed");
 			} else {
@@ -1736,6 +1845,20 @@ const indexFunctions = {
 			console.log("Server Error");
 		}
 	},
+	cronUpdateThresholds : async function() {
+		try {
+			let diseases = await db.findAll("mmchddb.DISEASES");
+			for(let i = 0; i < diseases.length; i++) {
+				let result = await updateDiseaseThreshold(diseases[i].diseaseID);
+				if(result) {
+					console.log(diseases[i].diseaseName + " thresholds updated successfully");
+				} else console.log(diseases[i].diseaseName + " thresholds were not updated");
+			}
+		} catch (e) {
+			console.log(e);
+			console.log("Server Error");
+		}
+	}
 };
 
 module.exports = indexFunctions;

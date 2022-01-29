@@ -70,8 +70,8 @@
         <i class="fa fa-caret-down"></i>
       </button>
       <div class="dropdown-content">
-        <nuxt-link to="/addReport"> Add Feedback Report </nuxt-link>
         <nuxt-link to="/analytics"> View Analytics </nuxt-link>
+        <nuxt-link to="/addReport"> Add Feedback Report </nuxt-link>
         <nuxt-link to="/allReports"> All Feedback Reports </nuxt-link>
       </div>
     </div>

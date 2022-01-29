@@ -26,8 +26,8 @@
               style="width: 100%; align-content: center"
             >
               <!-- <div v-if="i > 1" :id="name" :class="formColor(i - 1)"> -->
-              <!-- <a :href="value" style="margin: auto"> -->
-              <a :href="'/addCIF'+value" style="margin: auto">
+              <!-- <a :href="'/addCIF'+value" style="margin: auto"> -->
+              <a :href="'/addCIFMeasles'" style="margin: auto">
                 <div class="cases-disease-name">{{ name }}</div>
               </a>
             </div>
@@ -52,7 +52,8 @@
               style="width: 100%; align-content: center"
             >
               <!-- <div v-if="i > 1" :id="name" :class="formColor(i - 1)"> -->
-              <a :href="'/addCRF'+value" style="margin: auto">
+              <!-- <a :href="'/addCRF'+value" style="margin: auto"> -->
+              <a :href="'/addCRFDengue'" style="margin: auto">
                 <div class="cases-disease-name">{{ name }}</div>
               </a>
             </div>

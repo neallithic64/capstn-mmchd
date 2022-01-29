@@ -5,9 +5,11 @@ const m1Cont = require("../controllers/m1Controller");
 const m4Cont = require("../controllers/m4Controller");
 // const middleware = require("../middlewares/indexMiddleware");
 
+
 // Testing Routes
 router.get("/", m1Cont.testConn);
 router.get("/mkdata", m1Cont.mkData);
+
 
 // GET Routes
 router.get("/getAllDiseases", m1Cont.getAllDiseases);
@@ -30,10 +32,14 @@ router.get("/getPatientData", m1Cont.getPatientData);
 
 router.get("/getAllOutbreaks", m1Cont.getAllOutbreaks);
 router.get("/getOutbreak", m1Cont.getOutbreak);
+router.get("/getOngoingOutbreaks", m1Cont.getOngoingOutbreaks);
 router.get("/getAllEvents", m1Cont.getAllEvents);
 router.get("/getEvent", m1Cont.getEvent);
 
 router.get("/getProgTargets", m4Cont.getAllProgTargets);
+router.get("/getProgAccomps", m4Cont.getAllProgAccomps);
+router.get("/getViewProgAccomp", m4Cont.getProgAccomps);
+
 
 // POST Routes
 router.post("/login", m1Cont.postLogin);
@@ -56,10 +62,14 @@ router.post("/updatePushData", m1Cont.postUpdatePushData);
 router.post("/updateOutbreakStatus", m1Cont.postUpdateOutbreakStatus);
 
 router.post("/editProgTargets", m4Cont.postEditProgTargets);
+router.post("/editProgAccomp", m4Cont.postEditProgAccomp);
+
 
 // CRON Routes
 cron.schedule("00 14 * * 3", m1Cont.cronCRFDeadlineNotif);
 cron.schedule("00 17 * * 5", m1Cont.cronCRFPushData);
+// cron.schedule("00 17 * * 6", m1Cont.cronUpdateThresholds);
+
 
 // 404 PAGE
 router.get("*", function(req, res) {

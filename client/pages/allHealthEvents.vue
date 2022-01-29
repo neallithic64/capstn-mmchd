@@ -131,7 +131,7 @@ export default {
     }
   },
   async mounted() {
-    const DRUUserTypes = ['BHS', 'RHU', 'CHO', 'govtHosp', 'privHosp', 'clinic', 'govtLab', 'privLab', 'airseaPort', 'fhsis'];
+    const DRUUserTypes = ['BHS', 'RHU', 'CHO', 'govtHosp', 'privHosp', 'clinic', 'govtLab', 'privLab', 'airseaPort', 'fhsisStaff'];
     const rows = (await axios.get('http://localhost:8080/api/getAllEvents')).data;
     
     if (DRUUserTypes.includes(this.$auth.user.userType)) {

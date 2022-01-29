@@ -1,6 +1,6 @@
 <template>
   <div class="datatable">
-    <div v-if="pageType !== 'patient'" class="search">
+    <div v-if="pageType !== 'patient' && pageType !== 'feedbackReport' " class="search">
       Show
       <select id="rows" v-model="showDataAmount" class="form-control" @change="selectedDataAmount">
         <option value="10">10</option>
@@ -277,7 +277,7 @@
                   :href="'/view' + 'CRF' + data['disease'] + 'Case?caseID=' + data[column.key] ">
                   {{ data[column.key] }}
                 </a>
-                <a v-else-if="column.key === 'outbreakID' && $auth.user.userType === 'pidsrStaff'"
+                <a v-else-if="column.key === 'outbreakID' && ($auth.user.userType === 'pidsrStaff' || $auth.user.userType === 'techStaff')"
                   style="color: #346083; text-decoration-line: underline"
                   :href="'/view' + 'Outbreak?outbreakID=' + data[column.key] ">
                   {{ data[column.key] }}
@@ -300,11 +300,9 @@
                   :href="'/viewImmunizationProg'">
                   {{ data[column.key] }}
                 </a>
-                <a v-else-if="(column.key === 'progAccomplishID')"
+                <a v-else-if="(column.key === 'progAccompID')"
                   style="color: #346083; text-decoration-line: underline"
-                  :href="'/viewProgAccomplishMalaria'">
-                  <!-- :href="'/addProgAccomplish' + DISEASE + YEAR + data[column.key]"> -->
-                  <!-- ALSO NEED TO INCLUDE DISEASE AND YEAR IN LINK TO REDIRECT TO THAT PAGE -->
+                  :href="'/viewProgAccomplishMalaria?paID=' + data[column.key]">
                   {{ data[column.key] }}
                 </a>
                 <!-- <a
@@ -339,13 +337,14 @@
         @click="newPage(currentPage - 1)">
         &laquo;
       </a>
-      <a v-for="(page, pageIndex) in pages"
+      <a v-for="(page, pageIndex) in pageDot"
         v-show="pageIndex > 0"
         :key="pageIndex"
-        href="javascript:"
-        :class="[{ active: currentPage === pageIndex }, { isDisabled: currentPage === pageIndex || page === '...', },]"
-        @click="newPage(pageIndex)">
-        {{ pageIndex }}
+        :class="[{ active: currentPage+'' === page+'' }, { isDisabled: page === '...', },]"
+        @click="newPage(page)">
+        {{ page }}
+        <!-- <span v-if=" (pageIndex <=2 || pageIndex >= totalPage-1) || (pageIndex <= currentPage+2 && pageIndex >= currentPage-2) "> {{ pageIndex }} </span>
+        <span v-else> ... </span> -->
       </a>
       <a :class="{ isDisabled: currentPage == totalPage }"
         href="javascript:"
@@ -428,6 +427,7 @@ export default {
       },
       currentPage: 1,
       pages: [],
+      pageDot: [],
       showDataAmount: 10,
       totalPage: 1,
       totalCount: 0,
@@ -451,9 +451,11 @@ export default {
   },
   mounted() {
     const today = new Date();
+    const hour = today.getHours()>9 ? today.getHours() : '0'+today.getHours()
+    const mins = today.getMinutes()>9 ? today.getMinutes() : '0'+today.getMinutes()
     const monthsList = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Aug', 'Oct', 'Nov', 'Dec'];
     this.dayTime = monthsList[today.getMonth()] + ' ' + today.getDate() + ', ' + today.getFullYear()
-                     + ' ' + today.getHours() + ':' + today.getMinutes();
+                     + ' ' + hour + ':' + mins;
 
     this.pageType = this.casetype;
     this.dataFiltered = this.datavalues;
@@ -466,8 +468,10 @@ export default {
     this.sortedKeyValue(this.requestParams.sortedKey, this.requestParams.sortedType);
     this.totalCount = Object.keys(this.dataSets).length;
     if (this.pageType === 'patient') this.requestParams.take = this.totalCount;
+    
     this.getPages();
     this.getStartEnd();
+    this.getDots();
   },
   methods: {
     getTableDisplay() {
@@ -547,6 +551,19 @@ export default {
         if (end === this.totalCount - 1) end = this.totalCount - 1;
         this.pages[i] = [i, start, end];
         start = end + 1;
+      }
+      this.getDots();
+    },
+    getDots() {
+      if (this.pages.length<10) for(let i=1; i<this.pages.length; i++) this.pageDot[i] = this.pages[i][0];
+      else {
+        this.pageDot = [];
+        this.pageDot[0] = '';
+        for (let i=1; i<this.pages.length; i++) {
+          if (i<=1+1 || i>=this.pages.length-2) { this.pageDot.push(this.pages[i][0] +''); }
+          else if (i <= this.currentPage + 2 && i >=this.currentPage - 2) { this.pageDot.push(this.pages[i][0] +''); }
+          else if ( parseInt(this.pageDot[this.pageDot.length-1]) ) { this.pageDot.push("..."); };
+        }
       }
     },
     sortedKeyValue(key, type) {
@@ -667,7 +684,8 @@ export default {
 
       this.currentPage = 1;
       this.totalCount = Object.keys(this.dataSets).length;
-      console.log('DATA:' + this.dataSets)
+      console.log('DATA:' + this.dataSets);
+      this.getPages();
     },
     selectedDataAmount() {
       this.currentPage = 1;
@@ -675,40 +693,14 @@ export default {
       this.getStartEnd();
     },
     newPage(page) {
+      console.log("GOTO" + page);
+      page = parseInt(page);
       if (page !== 0 && page <= this.totalPage) {
-        this.requestParams.skip = (page - 1) * this.requestParams.take;
+        // this.requestParams.skip = (page - 1) * this.requestParams.take;
         this.currentPage = page;
+        this.getStartEnd();
+        this.getDots();
       }
-      this.currentPage = page;
-      this.getStartEnd();
-    },
-    pagination(c, m) {
-      const delta = 2;
-      const range = [];
-      const rangeWithDots = [];
-      let l;
-
-      range.push(1);
-      for (let i = c - delta; i <= c + delta; i++) {
-        if (i < m && i > 1) {
-          range.push(i);
-        }
-      }
-      range.push(m);
-
-      for (const i of range) {
-        if (l) {
-          if (i - l === 2) {
-            rangeWithDots.push(l + 1);
-          } else if (i - l !== 1) {
-            rangeWithDots.push('...');
-          }
-        }
-        rangeWithDots.push(i);
-        l = i;
-      }
-
-      return rangeWithDots;
     },
   },
 }
@@ -890,6 +882,7 @@ table {
   text-decoration: none;
   transition: background-color 0.3s;
   border: 1px solid #ddd;
+  cursor: pointer;
 }
 
 .datatable .pagination a.active {
@@ -897,6 +890,8 @@ table {
   color: white;
   font-weight: 600;
   opacity: 1;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 .datatable .pagination a:hover:not(.active) {
