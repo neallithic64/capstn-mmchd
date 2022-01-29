@@ -107,9 +107,16 @@ export default {
     }
   },
   async mounted() {
+    if (this.dataSets.length === 0) {
+      this.$toast.show('Loading...', {icon: 'hourglass_top'});
+    }
     const data = (await axios.get('http://localhost:8080/api/getProgAccomps')).data;
-	data.forEach(e => e.dateUpdated = (new Date(e.dateUpdated)).toISOString().substr(0, 10));
-	this.dataSets = data;
+    data.forEach(e => e.dateUpdated = (new Date(e.dateUpdated)).toISOString().substr(0, 10));
+    this.dataSets = data;
+    if (this.dataSets.length > 0) {
+      this.$toast.clear();
+      this.$toast.success('All program accomplishments loaded!', {duration: 4000, icon: 'check_circle'});
+    }
   },
   methods: {
     editInput() {
