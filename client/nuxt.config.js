@@ -54,13 +54,13 @@ export default {
   toast: {
     position: 'bottom-right',
     register: [ // Register custom toasts
-      // {
-      //   name: 'success',
-      //   message: 'Success!',
-      //   options: {
-      //     type: 'success'
-      //   }
-      // }
+      {
+        name: 'loading',
+        message: 'Loading...',
+        options: {
+          type: 'info'
+        }
+      }
     ]
 },
 

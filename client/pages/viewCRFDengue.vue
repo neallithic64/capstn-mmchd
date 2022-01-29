@@ -51,6 +51,9 @@
           />
         </div>
       </div>
+      <div class="additionalButtons">
+          <button class="addText" type="button" @click="lateCases()"><a :href="'/addCRFDengueCase?CRFID=' + CRFID">+ Add a Late Case</a></button>
+      </div>
     </div>
   </div>
 </template>
@@ -331,6 +334,44 @@ b {
 .viewcases-container {
   padding: 80px 20px 5px 20px;
   width: 100%;
+}
+
+.additionalButtons {
+  /* position: relative; */
+  position: absolute;
+  margin-top: -110px;
+  margin-left: 20px;
+}
+
+.addText {
+  color: #346083;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.CRFendButton {
+  /* margin: -10px 0 5px; */
+  float: right;
+  margin-top: -40px;
+  margin-right: 16px;
+  margin-bottom: 50px;
+}
+
+.submit-button, .next-button {
+  width: 150px;
+  height: 38px;
+  max-width: 100%;
+  font-size: 16px;
+  margin-top: 30px;
+  font-family: 'Work Sans', sans-serif;
+  font-weight: 600;
+  background-color: #346083;
+  color: white;
+  border: #346083 solid 0.75px;
+}
+
+.submit-button:hover, .next-button:hover {
+  background-color: #346083;
 }
 
 @media only screen and (max-width: 800px) {

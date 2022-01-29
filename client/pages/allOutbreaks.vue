@@ -90,7 +90,7 @@ export default {
             sortable: true,
           },
           {
-            title: 'Active Cases',
+            title: 'Cases',
             key: 'numCases',
             type: 'text',
             source: 'events'
@@ -129,7 +129,7 @@ export default {
             expectFormat: 'DD MMM YYYY',
           },
           {
-            title: 'Response Time',
+            title: 'Response',
             key: 'responseTime',
             type: 'text',
             source: 'events'
@@ -147,6 +147,9 @@ export default {
     }
   },
   async mounted() {
+    if (this.allOutbreaks.length === 0) {
+      this.$toast.show('Loading...', {icon: 'hourglass_top'});
+    }
     const rows = (await axios.get('http://localhost:8080/api/getAllOutbreaks')).data;
     console.log(rows[0]);
     for (let i = 0; i < rows.length; i++) {
@@ -159,6 +162,10 @@ export default {
 	  rows[i].growthRate = rows[i].growthRate ? (parseFloat(rows[i].growthRate) * 100).toFixed(2) + "%" : "0.00%";
     }
     this.allOutbreaks = rows;
+    if (this.allOutbreaks.length > 0) {
+      this.$toast.clear();
+      this.$toast.success('All outbreaks loaded!', {duration: 4000, icon: 'check_circle'});
+    }
   },
   methods: {
     downloadPDF() {

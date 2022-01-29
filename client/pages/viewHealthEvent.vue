@@ -15,7 +15,7 @@
                 {{ status }}
               </h1>
               <ul
-                v-show="!isPrint"
+                v-show="!isPrint && !(status === 'Closed')"
                 class="HEEdit"
                 @click="popup()"
               >
