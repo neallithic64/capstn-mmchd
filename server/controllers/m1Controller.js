@@ -636,7 +636,7 @@ const indexFunctions = {
 					LEFT JOIN mmchddb.CASES c ON cr.CRFID = c.CRFID
 					LEFT JOIN mmchddb.NOTIFICATIONS n ON c.caseID = n.caseID
 					GROUP BY cr.CRFID
-					ORDER BY cr.year DESC, cr.week ASC;`);
+					ORDER BY cr.year DESC, cr.week DESC;`);
 			for (let i = 0; i < match.length; i++) {
 				match[i].submitStatus = match[i].isPushed > 0 ? "Pushed" : "Submitted";
 				match[i].submittedOn = match[i].submittedOn !== null ? match[i].submittedOn.toISOString().substr(0, 10) : "N/A";
