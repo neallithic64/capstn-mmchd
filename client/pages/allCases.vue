@@ -383,8 +383,12 @@ export default {
       this.$toast.show('Loading...', {icon: 'hourglass_top'});
     }
     const CHDtypes = ['Chief', 'Staff', 'resuHead', 'chdDirector'];
-    const cifRows = (await axios.get('http://localhost:8080/api/getCases')).data;
-    const crfRows = (await axios.get('http://localhost:8080/api/getAllCRFs')).data;
+    const cifRows = (await axios.get('http://localhost:8080/api/getCases', {
+	  params: {userID: this.$auth.user.userID}
+	})).data;
+    const crfRows = (await axios.get('http://localhost:8080/api/getAllCRFs', {
+	  params: {userID: this.$auth.user.userID}
+	})).data;
     for (let i = 0; i < cifRows.length; i++) {
       cifRows[i].reportDate = cifRows[i].reportDate ? cifRows[i].reportDate.substr(0, 10) : "undefined";
       // default to reportDate if updatedDate is null

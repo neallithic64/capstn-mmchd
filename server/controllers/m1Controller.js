@@ -607,15 +607,16 @@ const indexFunctions = {
 	getCases: async function(req, res) {
 		try {
 			let match = await db.exec(`SELECT c.*, d.diseaseName,
-									CONCAT(p.lastName, ", ", p.firstName, " ", p.midName) AS patientName,
-									a.city, MAX(al.dateModified) AS updatedDate
-									FROM mmchddb.CASES c
-									INNER JOIN mmchddb.DISEASES d ON c.diseaseID = d.diseaseID
-									INNER JOIN mmchddb.PATIENTS p ON c.patientID = p.patientID
-									INNER JOIN mmchddb.ADDRESSES a ON p.caddressID = a.addressID
-									LEFT JOIN mmchddb.AUDIT_LOG al ON c.caseID = al.editedID
-									GROUP BY c.caseID
-									ORDER BY reportDate DESC;`);
+					CONCAT(p.lastName, ", ", p.firstName, " ", p.midName) AS patientName,
+					a.city, MAX(al.dateModified) AS updatedDate
+					FROM mmchddb.CASES c
+					INNER JOIN mmchddb.DISEASES d ON c.diseaseID = d.diseaseID
+					INNER JOIN mmchddb.PATIENTS p ON c.patientID = p.patientID
+					INNER JOIN mmchddb.ADDRESSES a ON p.caddressID = a.addressID
+					LEFT JOIN mmchddb.AUDIT_LOG al ON c.caseID = al.editedID
+					GROUP BY c.caseID
+					HAVING c.reportedBy = '${req.query.userID}'
+					ORDER BY reportDate DESC;`);
 			// label the cases now as CIF or CRF
 			for (let i = 0; i < match.length; i++) match[i].type = match[i].CRFID ? "CRF" : "CIF";
 			res.status(200).send(match);
@@ -636,6 +637,7 @@ const indexFunctions = {
 					LEFT JOIN mmchddb.CASES c ON cr.CRFID = c.CRFID
 					LEFT JOIN mmchddb.NOTIFICATIONS n ON c.caseID = n.caseID
 					GROUP BY cr.CRFID
+					HAVING cr.userID = '${req.query.userID}'
 					ORDER BY cr.year DESC, cr.week DESC;`);
 			for (let i = 0; i < match.length; i++) {
 				match[i].submitStatus = match[i].isPushed > 0 ? "Pushed" : "Submitted";
