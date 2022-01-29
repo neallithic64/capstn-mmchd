@@ -502,6 +502,7 @@ export default {
         else if (c.toString().includes('Submitted')) return 'caseStatus green';
         else if (c.toString().includes('Pushed')) return 'caseStatus orange';
         else if (c.toString().includes('Zero Report')) return 'caseStatus red';
+        else if (c.toString().includes('Late Cases')) return 'caseStatus red';
 
         else if (c.toString().includes('For Approval')) return 'caseStatus orange';
         else if (c.toString().includes('For Revision')) return 'caseStatus red';
