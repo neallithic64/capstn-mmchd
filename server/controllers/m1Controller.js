@@ -628,18 +628,25 @@ const indexFunctions = {
 	getAllCRFs: async function(req, res) {
 		try {
 			let match = await db.exec(`SELECT cr.*, d.diseaseName, a.city, COUNT(c.caseID) AS caseCount,
-									n.dateCreated AS submittedOn
-									FROM mmchddb.CRFS cr
-									INNER JOIN mmchddb.DISEASES d ON cr.diseaseID = d.diseaseID
-									INNER JOIN mmchddb.USERS u ON cr.userID = u.userID
-									INNER JOIN mmchddb.ADDRESSES a ON u.addressID = a.addressID
-									LEFT JOIN mmchddb.CASES c ON cr.CRFID = c.CRFID
-									LEFT JOIN mmchddb.NOTIFICATIONS n ON c.caseID = n.caseID
-									GROUP BY cr.CRFID;`);
+					n.dateCreated AS submittedOn, MAX(c.reportDate) AS lastCase
+					FROM mmchddb.CRFS cr
+					INNER JOIN mmchddb.DISEASES d ON cr.diseaseID = d.diseaseID
+					INNER JOIN mmchddb.USERS u ON cr.userID = u.userID
+					INNER JOIN mmchddb.ADDRESSES a ON u.addressID = a.addressID
+					LEFT JOIN mmchddb.CASES c ON cr.CRFID = c.CRFID
+					LEFT JOIN mmchddb.NOTIFICATIONS n ON c.caseID = n.caseID
+					GROUP BY cr.CRFID
+					ORDER BY cr.year DESC, cr.week ASC;`);
 			for (let i = 0; i < match.length; i++) {
 				match[i].submitStatus = match[i].isPushed > 0 ? "Pushed" : "Submitted";
 				match[i].submittedOn = match[i].submittedOn !== null ? match[i].submittedOn.toISOString().substr(0, 10) : "N/A";
-				match[i].reportStatus = match[i].isPushed > 0 ? match[i].caseCount > 0 ? "Cases Submitted" : "Zero Report" : "Ongoing";
+				if (match[i].isPushed > 0) {
+					if (match[i].caseCount > 0) {
+						if (match[i].lastCase >= new Date(match[i].year, 0, 1 + match[i].week * 7)) {
+							match[i].reportStatus = "Late Cases";
+						} else match[i].reportStatus = "Cases Submitted";
+					} else match[i].reportStatus = "Zero Report";
+				} else "Ongoing";
 			}
 			res.status(200).send(match);
 		} catch (e) {
