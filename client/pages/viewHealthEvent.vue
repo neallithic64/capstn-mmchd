@@ -344,10 +344,10 @@
               </div>
             </div>
 
-            <h2 v-if="assessment === ''" id="form-header" class="required">
+            <h2 v-if="newStatus != 'Discarded' && assessment === ''" id="form-header" class="required">
               Please select the health event assessment.
             </h2>
-            <div v-if="assessment === ''">
+            <div v-if="newStatus != 'Discarded' && assessment === ''">
               <!-- ASSESSMENT -->
               <div>
                 <div class="collpaseWrapper">
@@ -495,7 +495,8 @@ export default {
       eventLevels: {
         'Ongoing': 'Other information is still on verification; Specimens are to be collected and pending laboratory results; The concerned team is currently monitoring the event; The concerned team is currently monitoring the event; There are continuous additional cases or deaths',
         'Controlled': 'Gradual or abrupt decrease of cases; Cases showed good prognosis or event has already been managed but other information is still on verification such as description of cases, laboratory findings, etc.; No cases or deaths had been added',
-        'Closed': 'Laboratory results have no significant findings that are potential for endangering health; Cases were already discharged and in good condition; Follow-up reports indicate no further monitoring, assistance and investigation needed'
+        'Closed': 'Laboratory results have no significant findings that are potential for endangering health; Cases were already discharged and in good condition; Follow-up reports indicate no further monitoring, assistance and investigation needed',
+        'Discarded': 'Not a health event; Does not associate with any disease, Does not interfere with travel/trade; etc.'
       },
       eventAssess: {
         'PHELC': 'The health event includes signs and symptoms that may involve diseases included in PIDSR like a report of cases of gastroenteritis;' +
