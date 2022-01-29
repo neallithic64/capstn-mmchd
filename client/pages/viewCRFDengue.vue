@@ -31,10 +31,10 @@
 
       <div class="viewCRF-details" style="align-text: left">
         <div class="CIFnumbers">
-          <p>DRU City: <b></b></p>
-          <p>DRU Name: <b></b></p>
-          <p>DRU Type: <b></b></p>
-          <p>DRU Address: <b></b></p>
+          <p>DRU City: <b>{{ druCity }}</b></p>
+          <p>DRU Name: <b>{{ druName }}</b></p>
+          <p>DRU Type: <b>{{ druType }}</b></p>
+          <p>DRU Address: <b>{{ druAddr }}</b></p>
         </div>
         <div class="CRFstatus" style="align-text: right">
           <p>Submitted on: <b> {{ submittedDate }} </b> </p>
@@ -78,9 +78,12 @@ export default {
       isPrint: false,
       disease: 'Dengue',
       CRFID: '',
-      druID: '',
-      submittedDate: 'Nov 11, 2021',
-      updatedDate: 'Nov 10, 2020',
+      submittedDate: '',
+      updatedDate: '',
+      druCity: '',
+      druName: '',
+      druType: '',
+      druAddr: '',
       weekNo: '',
       tableOptions: {
         tableName: 'crf',
@@ -163,18 +166,35 @@ export default {
     const rows = (await axios.get('http://localhost:8080/api/getCRFPage', {
       params: {
         CRFID: this.$route.query.CRFID,
-		diseaseID: "DI-0000000000003",
-		userID: this.$auth.user.userID
+        diseaseID: "DI-0000000000003",
+        userID: this.$auth.user.userID
       }
     })).data;
-    console.log(rows);
     for (let i = 0; i < rows.crfData.length; i++) {
-      rows.crfData[i].updatedDate = rows.crfData[i].updatedDate ? rows.crfData[i].updatedDate.substr(0, 10) : "N/A";
-      rows.crfData[i].reportDate = rows.crfData[i].reportDate.substr(0, 10);
+      rows.crfData[i].updatedDate = rows.crfData[i].updatedDate ? this.convDatePHT(new Date(rows.crfData[i].updatedDate)) : "N/A";
+      rows.crfData[i].reportDate = this.convDatePHT(new Date(rows.crfData[i].reportDate));
     }
+	this.submittedDate = rows.CRF.isPushed
+	    ? this.convDatePHT(new Date(rows.CRF.year, 0, (1 + rows.CRF.week * 7)))
+		: "N/A";
+    this.updatedDate = rows.crfData.reduce((acc, val) => {
+	  let accD = new Date(acc.updatedDate), valD = new Date(val.updatedDate);
+	  return accD > valD ? accD : valD;
+	}).updatedDate;
+	if (this.updatedDate === "N/A") {
+	  this.updatedDate = rows.crfData.reduce((acc, val) => {
+	    let accD = new Date(acc.reportDate), valD = new Date(val.reportDate);
+	    return accD > valD ? accD : valD;
+	  }).reportDate;
+	}
+	console.log(rows);
     this.crfData = rows.crfData;
     this.weekNo = rows.CRF.year + "-" + rows.CRF.week;
     this.CRFID = this.$route.query.CRFID;
+    this.druCity = rows.userData.druCity;
+    this.druName = rows.userData.druName;
+    this.druType = rows.userData.druType;
+    this.druAddr = rows.userData.druAddr;
   },
   head() {
     return {
@@ -251,6 +271,9 @@ export default {
       }
       return data;
     },
+	convDatePHT(d) { // only accepts Date object; includes checking
+	  return !isNaN(Date.parse(d)) ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10) : "N/A";
+	},
   },
 }
 </script>

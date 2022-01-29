@@ -11,6 +11,16 @@ Date.prototype.getWeek = function() {
 	return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
 }
 
+/** This prototype function only accepts Date object. Function also includes checking
+ * if the object itslef is valid. If the object-to-be-converted is itself a String, it
+ * is advised to pass it through `new Date()` first before passing to this function.
+ * This will return a String representation of the corrected date in Philippine Standard
+ * Time. This is done by offsetting the date by a constant of 8 hours in miliseconds.
+ */
+Date.prototype.convDatePHT = function(d) {
+	return !isNaN(Date.parse(d)) ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10) : "N/A";
+}
+
 const math = require('mathjs');
 const DRUUserTypes = ['BHS','RHU','CHO', 'govtHosp', 'privHosp', 'clinic', 'privLab', 'airseaPort'];
 /** OBJECT CONSTRUCTORS
@@ -895,29 +905,29 @@ const indexFunctions = {
 	getCRFPage: async function(req, res) {
 		try {
 			let userSettings = await db.findRows("mmchddb.USER_SETTINGS", {userID: req.query.userID});
-			// console.log(req.query);
+			let userData = await db.exec(`SELECT u.userType AS druType, u.druName,
+					a.city AS druCity, CONCAT(a.houseStreet, ', ', a.brgy) AS druAddr
+					FROM mmchddb.USERS u
+					LEFT JOIN mmchddb.ADDRESSES a ON a.addressID = u.addressID
+					WHERE u.userID = '${ req.query.userID }';`);
 			if (req.query.CRFID) {
 				// if viewing the CRF as a report
 				let CRFobj = await db.findRows("mmchddb.CRFS", {CRFID: req.query.CRFID});
 				let data = await db.exec(`SELECT c.*, d.diseaseName,
-										CONCAT(p.lastName, ", ", p.firstName, " ", p.midName) AS patientName,
-										p.ageNo, p.sex, a.city, MAX(al.dateModified) AS updatedDate
-										FROM mmchddb.CASES c
-										INNER JOIN mmchddb.DISEASES d ON c.diseaseID = d.diseaseID
-										INNER JOIN mmchddb.PATIENTS p ON c.patientID = p.patientID
-										INNER JOIN mmchddb.ADDRESSES a ON p.caddressID = a.addressID
-										LEFT JOIN mmchddb.AUDIT_LOG al ON c.caseID = al.editedID
-										WHERE c.CRFID = '${req.query.CRFID}'
-										GROUP BY c.caseID;`);
-				console.log({
-					CRF: CRFobj[0],
-					crfData: data,
-					pushDataAccept: userSettings[0].pushDataAccept
-				});
+						CONCAT(p.lastName, ", ", p.firstName, " ", p.midName) AS patientName,
+						p.ageNo, p.sex, a.city, MAX(al.dateModified) AS updatedDate
+						FROM mmchddb.CASES c
+						INNER JOIN mmchddb.DISEASES d ON c.diseaseID = d.diseaseID
+						INNER JOIN mmchddb.PATIENTS p ON c.patientID = p.patientID
+						INNER JOIN mmchddb.ADDRESSES a ON p.caddressID = a.addressID
+						LEFT JOIN mmchddb.AUDIT_LOG al ON c.caseID = al.editedID
+						WHERE c.CRFID = '${req.query.CRFID}'
+						GROUP BY c.caseID;`);
 				res.status(200).send({
 					CRF: CRFobj[0],
 					crfData: data,
-					pushDataAccept: userSettings[0].pushDataAccept
+					pushDataAccept: userSettings[0].pushDataAccept,
+					userData: userData[0]
 				});
 			} else {
 				// if viewing the CRF to add a case
@@ -928,19 +938,20 @@ const indexFunctions = {
 				if (r.length > 0) {
 					// collect the cases with that CRFID
 					let data = await db.exec(`SELECT c.*, d.diseaseName,
-										CONCAT(p.lastName, ", ", p.firstName, " ", p.midName) AS patientName,
-										p.ageNo, p.sex, a.city, MAX(al.dateModified) AS updatedDate
-										FROM mmchddb.CASES c
-										INNER JOIN mmchddb.DISEASES d ON c.diseaseID = d.diseaseID
-										INNER JOIN mmchddb.PATIENTS p ON c.patientID = p.patientID
-										INNER JOIN mmchddb.ADDRESSES a ON p.caddressID = a.addressID
-										LEFT JOIN mmchddb.AUDIT_LOG al ON c.caseID = al.editedID
-										WHERE c.CRFID = '${r[r.length - 1].CRFID}'
-										GROUP BY c.caseID;`);
+							CONCAT(p.lastName, ", ", p.firstName, " ", p.midName) AS patientName,
+							p.ageNo, p.sex, a.city, MAX(al.dateModified) AS updatedDate
+							FROM mmchddb.CASES c
+							INNER JOIN mmchddb.DISEASES d ON c.diseaseID = d.diseaseID
+							INNER JOIN mmchddb.PATIENTS p ON c.patientID = p.patientID
+							INNER JOIN mmchddb.ADDRESSES a ON p.caddressID = a.addressID
+							LEFT JOIN mmchddb.AUDIT_LOG al ON c.caseID = al.editedID
+							WHERE c.CRFID = '${r[r.length - 1].CRFID}'
+							GROUP BY c.caseID;`);
 					res.status(200).send({
 						CRF: r[r.length - 1],
 						crfData: data,
-						pushDataAccept: userSettings[0].pushDataAccept
+						pushDataAccept: userSettings[0].pushDataAccept,
+						userData: userData[0]
 					});
 				} else {
 					let thisDate = new Date(), firstCRF = {
@@ -954,7 +965,8 @@ const indexFunctions = {
 					res.status(200).send({
 						CRF: firstCRF,
 						crfData: [],
-						pushDataAccept: userSettings[0].pushDataAccept
+						pushDataAccept: userSettings[0].pushDataAccept,
+						userData: userData[0]
 					});
 				}
 			}
