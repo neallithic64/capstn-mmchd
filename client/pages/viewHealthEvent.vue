@@ -6,6 +6,7 @@
       <div class="viewHE-details" style="align-text: left">
         <div class="HEnumbers">
           <h1 style="margin: -10px 0">Event No. {{ healthEvent.eventID }}</h1>
+          <span v-if="status != 'forVerification' || status != 'For Verification'" :class="caseStatusClass(assessment)"> {{ assessment }} </span>
         </div>
         <div class="HEstatus" style="align-text: right">
           <span style="display: inline-flex; align-items: center"
@@ -316,8 +317,7 @@
               Please select the health event status.
             </h2>
             <div>
-              <!-- <div style="display: inline-flex; flex-direction: column"> -->
-              <!-- CASE DEFINITION -->
+              <!--STATUS -->
               <div>
                 <div class="collpaseWrapper">
                   <ul v-for="(value, name, i) in eventLevels" :key="i" style="displayLinline-flex">
@@ -343,6 +343,38 @@
                 </div>
               </div>
             </div>
+
+            <h2 v-if="assessment === ''" id="form-header" class="required">
+              Please select the health event assessment.
+            </h2>
+            <div v-if="assessment === ''">
+              <!-- ASSESSMENT -->
+              <div>
+                <div class="collpaseWrapper">
+                  <ul v-for="(value, name, i) in eventAssess" :key="i" style="displayLinline-flex">
+                    <li>
+                      <input :id="name" type="checkbox" class="collapseInput"/>
+                      <label :for="name" class="collapseLabel">
+                        <input
+                          :id="name"
+                          v-model="assessment"
+                          :value="name"
+                          class="input-checkbox"
+                          name="assessment"
+                          type="radio"
+                          :disabled="statusInputEdit(name)"
+                        />
+                        {{ name }}
+                      </label>
+                      <ul>
+                        <li style="background-color: lightgrey;">{{ value }}</li>
+                      </ul>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            
             <div style="margin: -10px 10 5px; float: right; margin-left: auto;">
               <button class="back-button" type="button" @click="statusAction('cancel')">
                 Cancel
@@ -381,6 +413,7 @@ export default {
       editStatus: false,
       newStatus: '',
       status:'',
+      assessment: '',
       isDisabled: false,
       editCase: false,
       isPrint: false, 
@@ -463,6 +496,18 @@ export default {
         'Ongoing': 'Other information is still on verification; Specimens are to be collected and pending laboratory results; The concerned team is currently monitoring the event; The concerned team is currently monitoring the event; There are continuous additional cases or deaths',
         'Controlled': 'Gradual or abrupt decrease of cases; Cases showed good prognosis or event has already been managed but other information is still on verification such as description of cases, laboratory findings, etc.; No cases or deaths had been added',
         'Closed': 'Laboratory results have no significant findings that are potential for endangering health; Cases were already discharged and in good condition; Follow-up reports indicate no further monitoring, assistance and investigation needed'
+      },
+      eventAssess: {
+        'PHELC': 'The health event includes signs and symptoms that may involve diseases included in PIDSR like a report of cases of gastroenteritis;' +
+                  'The health event does not require the use of extensive laboratory examination for confirmation and diagnosis like cases of febrile illnesses;' +
+                  'The health event is confined in a specific geographical location or involves vulnerable groups in the locality.',
+        'PHERC': 'The health event may involve diseases that have already been eradicated or with eradication program in the region;' +
+                  'The health event requires additional technical and laboratory support not existing in the local area;' +
+                  'The health event has potential to spread to other provinces/cities/municipalities.',
+        'PHENC': 'The health event is rare and with undefined cause; The health event has potential characteristics to cross boundaries or borders;' +
+                  'The health event involves possible development of resistant strain and may require wider surveillance for similar cases.',
+        'PHEIC': 'The health event is rare and similar to those reported in other countries (e.g. SARS); The health event has possible implication for International trade;' +
+                  'The health event may involve diseases not previously reported in the country.'
       }
     }
   },
@@ -552,6 +597,12 @@ export default {
       console.log(this.$refs.content)
       setTimeout(() => (this.isPrint = !this.isPrint), 5000)
     },
+    caseStatusClass(c) {
+      if (c.toString().includes('PHELC')) return 'healthAssess assessRed';
+      else if (c.toString().includes('PHERC')) return 'healthAssess assessRed';
+      else if (c.toString().includes('PHENC')) return 'healthAssesss assessRed';
+      else if (c.toString().includes('PHEIC')) return 'healthAssess assessRed';
+    },
   },
 }
 </script>
@@ -581,6 +632,19 @@ h3 {
     align-items: center;
     margin: 0px;
   }
+}
+
+.healthAssess {
+  color: white;
+  padding: 2px 10px;
+  border-radius: 50px;
+  font-weight: 500;
+  font-size: 20px;
+  height: fit-content;
+  margin-left: 10px;
+}
+.assessRed {
+  background: red;
 }
 
 .viewHE-section-container {
@@ -654,10 +718,15 @@ h3 {
   margin-bottom: 10px;
   justify-content: space-between;
 }
-.HEnumbers,
+
 .HEstatus {
   display: inline-flex;
   flex-direction: column;
+}
+
+.HEnumbers {
+  display: flex;
+  flex-direction: row;
 }
 
 h1 {

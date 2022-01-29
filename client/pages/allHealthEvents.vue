@@ -100,13 +100,13 @@ export default {
             filter: true,
           },
           {
-            title: 'No. of Cases',
+            title: 'Cases',
             key: 'numCases',
             type: 'text',
             source: 'events'
           },
           {
-            title: 'No. of Deaths',
+            title: 'Deaths',
             key: 'numDeaths',
             type: 'text',
             source: 'events'
@@ -114,6 +114,14 @@ export default {
           {
             title: 'Status',
             key: 'eventStatus',
+            type: 'text',
+            source: 'events',
+            sortable: true,
+          },
+          {
+            // PHELC, PHERC, PHENC, PHEIC
+            title: 'Assessment',
+            key: 'eventAssess',
             type: 'text',
             source: 'events',
             sortable: true,
