@@ -542,7 +542,9 @@ const indexFunctions = {
 					INNER JOIN mmchddb.ADDRESSES a1 ON p.caddressID = a1.addressID
 					INNER JOIN mmchddb.ADDRESSES a2 ON p.paddressID = a2.addressID
 					LEFT JOIN mmchddb.CASES c ON p.patientID = c.patientID
+					WHERE c.reportedBy = '${req.query.userID}'
 					GROUP BY p.patientID;`);
+			console.log(match.length);
 			res.status(200).send(match);
 		} catch (e) {
 			console.log(e);

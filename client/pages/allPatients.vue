@@ -105,7 +105,9 @@ export default {
     }
   },
   async mounted() {
-    const rows = (await axios.get('http://localhost:8080/api/getPatients')).data;
+    const rows = (await axios.get('http://localhost:8080/api/getPatients', {
+	  params: { userID: this.$auth.user.userID }
+	})).data;
     for (let i = 0; i < rows.length; i++) {
       rows[i].patientName = rows[i].lastName + ", " + rows[i].firstName + " " + rows[i].midName;
       rows[i].updatedDate = rows[i].updatedDate ? rows[i].updatedDate.substr(0, 10) : "N/A";
