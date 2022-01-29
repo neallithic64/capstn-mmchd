@@ -284,7 +284,7 @@ async function sendBulkNotifs(userTypes, notificationType, message, caseID) {
 	}
 }
 
-async function createOutbreak(diseaseID, outbreakStatus){
+async function createOutbreak(diseaseID, outbreakStatus) {
 	try {
 		let match = await db.exec("SELECT * FROM mmchddb.OUTBREAKS WHERE diseaseID='" + diseaseID +
 								"' AND NOT outbreakStatus='Closed';");
@@ -309,7 +309,7 @@ async function createOutbreak(diseaseID, outbreakStatus){
 	}
 }
 
-async function checkIfOutbreak(diseaseID, caseObj){
+async function checkIfOutbreak(diseaseID, caseObj) {
 	try {
 		// check if disease case is measles (suspected case for alert, confirmed case for epidemic)
 		if(diseaseID == "DI-0000000000000") {
@@ -339,14 +339,35 @@ async function checkIfOutbreak(diseaseID, caseObj){
 	
 }
 
-function computeThreshold(numCases){
-	while(numCases.length < 156)
-		numCases.push(0);
+function computeThreshold(numCases) {
+	while (numCases.length < 156) numCases.push({ numCases: 0 });
+	// converting obj-array "numCases" to a 1D array
+	let flattenedCases = numCases.map(e => e.numCases);
 	let thresholds = {
-		alertThreshold : Math.floor(math.mean(numCases) + math.std(numCases,"uncorrected")),
-		epiThreshold : Math.floor(math.mean(numCases) + math.std(numCases,"uncorrected") * 2),
+		alertThreshold: Math.floor(math.mean(flattenedCases) + math.std(flattenedCases, "uncorrected")),
+		epiThreshold: Math.floor(math.mean(flattenedCases) + math.std(flattenedCases, "uncorrected") * 2),
 	}
 	return thresholds;
+}
+
+
+async function updateDiseaseThreshold(diseaseID) {
+	try {
+		let numCases = await db.exec(`SELECT yearweek(reportDate) AS 'yearweek', COUNT(caseID) AS 'numCases'
+				FROM mmchddb.CASES WHERE yearweek(reportDate) >= yearweek(DATE_SUB(CURDATE(), INTERVAL 3 YEAR))
+				AND diseaseID='${diseaseID}' GROUP BY yearweek(reportDate);`);
+		if (numCases.length > 0) {
+			let thresholds = computeThreshold(numCases);
+			return await db.updateRows("mmchddb.DISEASES", {diseaseID : diseaseID}, {
+				alertThreshold: thresholds.alertThreshold,
+				epiThreshold: thresholds.epiThreshold
+			});
+		} else return false;
+	} catch (error) {
+		console.log(error);
+		return false;
+	}
+	
 }
 
 async function getOutbreakData(outbreakID) {
@@ -477,24 +498,6 @@ async function getOutbreakData(outbreakID) {
 		console.log(e);
 		return "Server error";
 	}
-}
-
-async function updateDiseaseThreshold(diseaseID){
-	try {
-		let numCases = await db.exec("SELECT yearweek(reportDate) AS 'yearweek', COUNT(caseID) AS 'numCases' from mmchddb.CASES " +
-								"WHERE yearweek(reportDate) >= yearweek(DATE_SUB(CURDATE(), INTERVAL 3 YEAR)) " +
-								"AND diseaseID='" + diseaseID + "' " +
-								"GROUP BY yearweek(reportDate);");
-		if(numCases.length > 0) {
-			let thresholds = computeThreshold(numCases.numCases);
-			return await db.updateRows("mmchddb.DISEASES", {diseaseID : diseaseID}, {alertThreshold : thresholds.alertThreshold, epiThreshold : thresholds.epiThreshold});
-		} else 
-			return false;
-	} catch (error) {
-		console.log(error);
-		return false;
-	}
-	
 }
 
 const indexFunctions = {
@@ -1870,14 +1873,13 @@ const indexFunctions = {
 			console.log("Server Error");
 		}
 	},
-	cronUpdateThresholds : async function() {
+	cronUpdateThresholds: async function() {
 		try {
 			let diseases = await db.findAll("mmchddb.DISEASES");
-			for(let i = 0; i < diseases.length; i++) {
+			for (let i = 0; i < diseases.length; i++) {
 				let result = await updateDiseaseThreshold(diseases[i].diseaseID);
-				if(result) {
-					console.log(diseases[i].diseaseName + " thresholds updated successfully");
-				} else console.log(diseases[i].diseaseName + " thresholds were not updated");
+				if (result) console.log(diseases[i].diseaseName + " thresholds updated successfully");
+				else console.log(diseases[i].diseaseName + " thresholds were not updated");
 			}
 		} catch (e) {
 			console.log(e);
