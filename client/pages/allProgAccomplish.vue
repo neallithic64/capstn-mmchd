@@ -111,7 +111,7 @@ export default {
       this.$toast.show('Loading...', {icon: 'hourglass_top'});
     }
     const data = (await axios.get('http://localhost:8080/api/getProgAccomps')).data;
-    data.forEach(e => e.dateUpdated = this.convDatePHT(new Date(e.dateUpdated));
+    data.forEach(e => e.dateUpdated = this.convDatePHT(new Date(e.dateUpdated)));
     this.dataSets = data;
     if (this.dataSets.length > 0) {
       this.$toast.clear();
