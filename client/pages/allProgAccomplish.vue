@@ -27,13 +27,13 @@
         </div>
       </div>
       <div class="viewcases-component">
-	    <div v-if="dataSets.length > 0" id="vue-root">
+        <div v-if="dataSets.length > 0" id="vue-root">
           <dataTable
             :options="tableOptions"
             :datavalues="dataSets"
             :casetype="'allProgAccomplish'"
           />
-		</div>
+        </div>
       </div>
     </div>
   </div>
@@ -165,9 +165,9 @@ export default {
       link.setAttribute("download", "AllProgAccomplishReport.csv");
       link.click();
     },
-	convDatePHT(d) { // only accepts Date object; includes checking
-	  return !isNaN(Date.parse(d)) ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10) : "N/A";
-	},
+    convDatePHT(d) { // only accepts Date object; includes checking
+      return !isNaN(Date.parse(d)) ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10) : "N/A";
+    },
   },
 }
 </script>

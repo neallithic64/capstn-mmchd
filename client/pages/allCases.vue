@@ -384,11 +384,11 @@ export default {
     }
     const CHDtypes = ['Chief', 'Staff', 'resuHead', 'chdDirector'];
     const cifRows = (await axios.get('http://localhost:8080/api/getCases', {
-	  params: {userID: this.$auth.user.userID}
-	})).data;
+      params: {userID: this.$auth.user.userID}
+    })).data;
     const crfRows = (await axios.get('http://localhost:8080/api/getAllCRFs', {
-	  params: {userID: this.$auth.user.userID}
-	})).data;
+      params: {userID: this.$auth.user.userID}
+    })).data;
     for (let i = 0; i < cifRows.length; i++) {
       cifRows[i].reportDate = cifRows[i].reportDate ? this.convDatePHT(new Date(cifRows[i].reportDate)) : "undefined";
       // default to reportDate if updatedDate is null
@@ -559,9 +559,9 @@ export default {
         return data;
       }
     },
-	convDatePHT(d) { // only accepts Date object; includes checking
-	  return !isNaN(Date.parse(d)) ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10) : "N/A";
-	},
+    convDatePHT(d) { // only accepts Date object; includes checking
+      return !isNaN(Date.parse(d)) ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10) : "N/A";
+    },
   },
 }
 </script>

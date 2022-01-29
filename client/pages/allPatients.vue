@@ -106,8 +106,8 @@ export default {
   },
   async mounted() {
     const rows = (await axios.get('http://localhost:8080/api/getPatients', {
-	  params: { userID: this.$auth.user.userID }
-	})).data;
+      params: { userID: this.$auth.user.userID }
+    })).data;
     for (let i = 0; i < rows.length; i++) {
       rows[i].patientName = rows[i].lastName + ", " + rows[i].firstName + " " + rows[i].midName;
       rows[i].updatedDate = rows[i].updatedDate ? this.convDatePHT(new Date(rows[i].updatedDate)) : "N/A";
@@ -179,9 +179,9 @@ export default {
       return data;
       */
     },
-	convDatePHT(d) { // only accepts Date object; includes checking
-	  return !isNaN(Date.parse(d)) ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10) : "N/A";
-	},
+    convDatePHT(d) { // only accepts Date object; includes checking
+      return !isNaN(Date.parse(d)) ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10) : "N/A";
+    },
   },
 }
 </script>

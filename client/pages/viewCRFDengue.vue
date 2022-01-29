@@ -177,20 +177,20 @@ export default {
       rows.crfData[i].updatedDate = rows.crfData[i].updatedDate ? this.convDatePHT(new Date(rows.crfData[i].updatedDate)) : "N/A";
       rows.crfData[i].reportDate = this.convDatePHT(new Date(rows.crfData[i].reportDate));
     }
-	this.submittedDate = rows.CRF.isPushed
-	    ? this.convDatePHT(new Date(rows.CRF.year, 0, (1 + rows.CRF.week * 7)))
-		: "N/A";
+    this.submittedDate = rows.CRF.isPushed
+        ? this.convDatePHT(new Date(rows.CRF.year, 0, (1 + rows.CRF.week * 7)))
+        : "N/A";
     this.updatedDate = rows.crfData.reduce((acc, val) => {
-	  let accD = new Date(acc.updatedDate), valD = new Date(val.updatedDate);
-	  return accD > valD ? accD : valD;
-	}).updatedDate;
-	if (this.updatedDate === "N/A") {
-	  this.updatedDate = rows.crfData.reduce((acc, val) => {
-	    let accD = new Date(acc.reportDate), valD = new Date(val.reportDate);
-	    return accD > valD ? accD : valD;
-	  }).reportDate;
-	}
-	console.log(rows);
+      let accD = new Date(acc.updatedDate), valD = new Date(val.updatedDate);
+      return accD > valD ? accD : valD;
+    }).updatedDate;
+    if (this.updatedDate === "N/A") {
+      this.updatedDate = rows.crfData.reduce((acc, val) => {
+        let accD = new Date(acc.reportDate), valD = new Date(val.reportDate);
+        return accD > valD ? accD : valD;
+      }).reportDate;
+    }
+    console.log(rows);
     this.crfData = rows.crfData;
     this.weekNo = rows.CRF.year + "-" + rows.CRF.week;
     this.CRFID = this.$route.query.CRFID;
@@ -274,9 +274,9 @@ export default {
       }
       return data;
     },
-	convDatePHT(d) { // only accepts Date object; includes checking
-	  return !isNaN(Date.parse(d)) ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10) : "N/A";
-	},
+    convDatePHT(d) { // only accepts Date object; includes checking
+      return !isNaN(Date.parse(d)) ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10) : "N/A";
+    },
   },
 }
 </script>

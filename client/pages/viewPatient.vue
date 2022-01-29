@@ -1233,11 +1233,11 @@ export default {
   },
   async fetch() {
     const data = (await axios.get('http://localhost:8080/api/getPatientData', {
-	  params: {
-	    patientID: this.$route.query.patientID,
-		userID: this.$auth.user.userID
+      params: {
+        patientID: this.$route.query.patientID,
+        userID: this.$auth.user.userID
       }
-	})).data;
+    })).data;
     this.formData.patient = data.patient;
     this.formData.riskFactors = data.riskFactors; // working already
     this.DRUData = data.DRUData;

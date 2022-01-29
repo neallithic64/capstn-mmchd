@@ -1840,7 +1840,7 @@ export default {
           this.formData.caseData.outcome = this.newOutcome.outcome;
           this.formData.caseData.dateDied = this.newOutcome.dateDied;
           this.formData.caseData.finalDiagnosis = this.newOutcome.finalDiagnosis;
-		  
+          
           const serve = await axios.post("http://localhost:8080/api/editPatientOutcome", {
             caseID: this.formData.cases.caseID,
             newOutcome: this.newOutcome,

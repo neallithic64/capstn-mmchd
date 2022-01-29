@@ -154,12 +154,12 @@ export default {
     console.log(rows[0]);
     for (let i = 0; i < rows.length; i++) {
       rows[i].disease = rows[i].diseaseName;
-	  delete rows[i].diseaseID;
-	  rows[i].dateStarted = this.convDatePHT(new Date(rows[i].startDate));
-	  rows[i].dateClosed = rows[i].endDate ? this.convDatePHT(new Date(rows[i].endDate)) : "N/A";
-	  rows[i].responseTime = rows[i].responseTime ? rows[i].responseTime : "N/A";
-	  rows[i].attackRate = rows[i].attackRate ? rows[i].attackRate : "0.0";
-	  rows[i].growthRate = rows[i].growthRate ? (parseFloat(rows[i].growthRate) * 100).toFixed(2) + "%" : "0.00%";
+      delete rows[i].diseaseID;
+      rows[i].dateStarted = this.convDatePHT(new Date(rows[i].startDate));
+      rows[i].dateClosed = rows[i].endDate ? this.convDatePHT(new Date(rows[i].endDate)) : "N/A";
+      rows[i].responseTime = rows[i].responseTime ? rows[i].responseTime : "N/A";
+      rows[i].attackRate = rows[i].attackRate ? rows[i].attackRate : "0.0";
+      rows[i].growthRate = rows[i].growthRate ? (parseFloat(rows[i].growthRate) * 100).toFixed(2) + "%" : "0.00%";
     }
     this.allOutbreaks = rows;
     if (this.allOutbreaks.length > 0) {
@@ -230,9 +230,9 @@ export default {
       return data;
       */
     },
-	convDatePHT(d) { // only accepts Date object; includes checking
-	  return !isNaN(Date.parse(d)) ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10) : "N/A";
-	},
+    convDatePHT(d) { // only accepts Date object; includes checking
+      return !isNaN(Date.parse(d)) ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10) : "N/A";
+    },
   },
 }
 </script>

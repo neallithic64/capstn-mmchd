@@ -181,8 +181,8 @@ export default {
     const rows = (await axios.get('http://localhost:8080/api/getCRFPage', {
       params: {
         CRFID: this.$route.query.CRFID,
-		diseaseID: "DI-0000000000003",
-		userID: this.$auth.user.userID
+        diseaseID: "DI-0000000000003",
+        userID: this.$auth.user.userID
       }
     })).data;
     console.log(rows);
@@ -240,9 +240,9 @@ export default {
       link.setAttribute("download", "ImmunizationProgram.csv");
       link.click();
     },
-	convDatePHT(d) { // only accepts Date object; includes checking
-	  return !isNaN(Date.parse(d)) ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10) : "N/A";
-	},
+    convDatePHT(d) { // only accepts Date object; includes checking
+      return !isNaN(Date.parse(d)) ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10) : "N/A";
+    },
   },
 }
 </script>

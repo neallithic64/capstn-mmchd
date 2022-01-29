@@ -404,29 +404,29 @@ export default {
   },
   async fetch() {
     const data = (await axios.get('http://localhost:8080/api/getOutbreak?outbreakID=' + this.$route.query.outbreakID)).data;
-	this.outbreak = data.outbreak;
-	this.outbreak.startDate = this.convDatePHT(new Date(this.outbreak.startDate));
-	this.outbreak.endDate = this.outbreak.endDate ? this.convDatePHT(new Date(this.outbreak.endDate)) : "N/A";
-	this.outbreak.responseTime = this.outbreak.responseTime ? this.outbreak.responseTime : "N/A";
-	this.eventHistory = data.outbreakAudit;
-	this.obCases = data.outbreakCases;
-	this.obSummary = data.outbreakSumm;
-	for (let i = 0; i < this.obSummary.length; i++) {
-	  this.obSummary[i].numCases = this.obSummary[i].numCases ? this.obSummary[i].numCases : 0;
-	  this.obSummary[i].attackRate = this.obSummary[i].attackRate ? this.obSummary[i].attackRate : "0.00";
-	  this.obSummary[i].growthRate = this.obSummary[i].growthRate
-			? (parseFloat(this.obSummary[i].growthRate) * 100).toFixed(2) + "%"
-			: "0.00%";
-	  if (this.obSummary[i].growthRate > this.grHighRisk)
-	    this.obSummary[i].risk = "High";
-	  else if (this.obSummary[i].attackRate > this.arHighRisk)
-	    this.obSummary[i].risk = "High";
-	  else if (this.obSummary[i].growthRate > this.grMod1Risk && this.obSummary[i].growthRate <= this.grMod2Risk)
-	    this.obSummary[i].risk = "Moderate";
+    this.outbreak = data.outbreak;
+    this.outbreak.startDate = this.convDatePHT(new Date(this.outbreak.startDate));
+    this.outbreak.endDate = this.outbreak.endDate ? this.convDatePHT(new Date(this.outbreak.endDate)) : "N/A";
+    this.outbreak.responseTime = this.outbreak.responseTime ? this.outbreak.responseTime : "N/A";
+    this.eventHistory = data.outbreakAudit;
+    this.obCases = data.outbreakCases;
+    this.obSummary = data.outbreakSumm;
+    for (let i = 0; i < this.obSummary.length; i++) {
+      this.obSummary[i].numCases = this.obSummary[i].numCases ? this.obSummary[i].numCases : 0;
+      this.obSummary[i].attackRate = this.obSummary[i].attackRate ? this.obSummary[i].attackRate : "0.00";
+      this.obSummary[i].growthRate = this.obSummary[i].growthRate
+            ? (parseFloat(this.obSummary[i].growthRate) * 100).toFixed(2) + "%"
+            : "0.00%";
+      if (this.obSummary[i].growthRate > this.grHighRisk)
+        this.obSummary[i].risk = "High";
+      else if (this.obSummary[i].attackRate > this.arHighRisk)
+        this.obSummary[i].risk = "High";
+      else if (this.obSummary[i].growthRate > this.grMod1Risk && this.obSummary[i].growthRate <= this.grMod2Risk)
+        this.obSummary[i].risk = "Moderate";
       else if (this.obSummary[i].attackRate > this.arMod1Risk && this.obSummary[i].attackRate <= this.arMod1Risk)
-	    this.obSummary[i].risk = "Moderate";
-	  else this.obSummary[i].risk = "Low";
-	}
+        this.obSummary[i].risk = "Moderate";
+      else this.obSummary[i].risk = "Low";
+    }
   }, 
   head() {
     return {
@@ -457,7 +457,7 @@ export default {
         const updateCase = await axios.post('http://localhost:8080/api/updateOutbreakStatus', {
           outbreakID: this.outbreak.outbreakID,
           newStatus: this.auditLog,
-		  userID: this.$auth.user.userID
+          userID: this.$auth.user.userID
         });
         if (updateCase.status === 200) {
           alert('Outbreak status updated!');
@@ -498,9 +498,9 @@ export default {
       console.log(this.$refs.content)
       setTimeout(() => (this.isPrint = !this.isPrint), 5000)
     },
-	convDatePHT(d) { // only accepts Date object; includes checking
-	  return !isNaN(Date.parse(d)) ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10) : "N/A";
-	},
+    convDatePHT(d) { // only accepts Date object; includes checking
+      return !isNaN(Date.parse(d)) ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10) : "N/A";
+    },
   },
 }
 </script>

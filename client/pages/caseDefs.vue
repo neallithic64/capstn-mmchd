@@ -64,7 +64,7 @@
               <div style="display: flex; flex-direction: row; justify-content:space-between;">
                 <h2 id="form-header"> {{ Object.values(formSection.diseaseNames)[pageNum] }} </h2>
                 <div v-show="!isEdit" v-if="$auth.user.userType === 'lhsdChief' || $auth.user.userType === 'resuHead'
-				  || $auth.user.userType === 'chdDirector' || $auth.user.userType === 'techStaff'"> 
+                  || $auth.user.userType === 'chdDirector' || $auth.user.userType === 'techStaff'"> 
                   <button id="instructButton" class="instruct-button" type="button" @click="instruct()">
                     Instructions
                   </button>
@@ -126,7 +126,7 @@ export default {
       pageNum: -1,
       formSection: {
         diseaseNames: {},
-		diseaseIDs: {}
+        diseaseIDs: {}
       },
       allCaseDefs: {},
       diseaseDefs: {},
@@ -146,10 +146,10 @@ export default {
     
     // setting diseaseNames
     const tempA = {};
-	  const tempB = {};
+      const tempB = {};
     for (let i = 0; i < diseases.length; i++) {
       tempA[i] = diseases[i].diseaseName;
-	  tempB[i] = diseases[i].diseaseID;
+      tempB[i] = diseases[i].diseaseID;
     }
     this.formSection.diseaseNames = tempA;
     this.formSection.diseaseIDs = tempB;
@@ -253,8 +253,8 @@ export default {
           diseaseID: this.formSection.diseaseIDs[this.pageNum]
       });
       
-	    // eslint-disable-next-line no-console
-	    console.log(result);
+        // eslint-disable-next-line no-console
+        console.log(result);
 
       if (result.status === 200) {
         // alert('Health event submitted!');
