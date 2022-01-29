@@ -33,8 +33,8 @@ function getPrefix(table) {
 			return "RE-";
 		case "mmchddb.TARGETS":
 			return "TA-";
-		case "mmchddb.PROGRAMS":
-			return "PR-";
+		case "mmchddb.TCLS":
+			return "TC-";
 		case "mmchddb.AGE_RANGE_REF":
 			return "AR-";
 		case "mmchddb.ADDRESSES":
@@ -48,6 +48,7 @@ function getPrefix(table) {
 		case "mmchddb.PROGRAM_ACCOMPS":
 			return "PC-";
 	}
+	return undefined;
 }
 
 async function generateID(table, checkObj) {
