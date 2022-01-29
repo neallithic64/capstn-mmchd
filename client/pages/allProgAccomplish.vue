@@ -111,7 +111,7 @@ export default {
       this.$toast.show('Loading...', {icon: 'hourglass_top'});
     }
     const data = (await axios.get('http://localhost:8080/api/getProgAccomps')).data;
-    data.forEach(e => e.dateUpdated = (new Date(e.dateUpdated)).toISOString().substr(0, 10));
+    data.forEach(e => e.dateUpdated = this.convDatePHT(new Date(e.dateUpdated));
     this.dataSets = data;
     if (this.dataSets.length > 0) {
       this.$toast.clear();
@@ -165,6 +165,9 @@ export default {
       link.setAttribute("download", "AllProgAccomplishReport.csv");
       link.click();
     },
+	convDatePHT(d) { // only accepts Date object; includes checking
+	  return !isNaN(Date.parse(d)) ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10) : "N/A";
+	},
   },
 }
 </script>

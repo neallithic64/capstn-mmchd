@@ -405,8 +405,8 @@ export default {
   async fetch() {
     const data = (await axios.get('http://localhost:8080/api/getOutbreak?outbreakID=' + this.$route.query.outbreakID)).data;
 	this.outbreak = data.outbreak;
-	this.outbreak.startDate = this.outbreak.startDate.substr(0, 10);
-	this.outbreak.endDate = this.outbreak.endDate ? this.outbreak.endDate.substr(0, 10) : "N/A";
+	this.outbreak.startDate = this.convDatePHT(new Date(this.outbreak.startDate));
+	this.outbreak.endDate = this.outbreak.endDate ? this.convDatePHT(new Date(this.outbreak.endDate)) : "N/A";
 	this.outbreak.responseTime = this.outbreak.responseTime ? this.outbreak.responseTime : "N/A";
 	this.eventHistory = data.outbreakAudit;
 	this.obCases = data.outbreakCases;
@@ -498,6 +498,9 @@ export default {
       console.log(this.$refs.content)
       setTimeout(() => (this.isPrint = !this.isPrint), 5000)
     },
+	convDatePHT(d) { // only accepts Date object; includes checking
+	  return !isNaN(Date.parse(d)) ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10) : "N/A";
+	},
   },
 }
 </script>

@@ -110,7 +110,7 @@ export default {
 	})).data;
     for (let i = 0; i < rows.length; i++) {
       rows[i].patientName = rows[i].lastName + ", " + rows[i].firstName + " " + rows[i].midName;
-      rows[i].updatedDate = rows[i].updatedDate ? rows[i].updatedDate.substr(0, 10) : "N/A";
+      rows[i].updatedDate = rows[i].updatedDate ? this.convDatePHT(new Date(rows[i].updatedDate)) : "N/A";
     }
     this.allPatients = rows;
   },
@@ -140,7 +140,7 @@ export default {
       // doc.save('test.pdf')
       console.log(this.$refs.content)
       setTimeout(() => (this.isPrint = !this.isPrint), 3000)
-   },
+    },
     csvExport(arrData) {
       let csvContent = "data:text/csv;charset=utf-8,";
       // let header = this.getCols();
@@ -178,7 +178,10 @@ export default {
       }
       return data;
       */
-    }
+    },
+	convDatePHT(d) { // only accepts Date object; includes checking
+	  return !isNaN(Date.parse(d)) ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10) : "N/A";
+	},
   },
 }
 </script>

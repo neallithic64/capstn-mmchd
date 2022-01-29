@@ -11,13 +11,13 @@ Date.prototype.getWeek = function() {
 	return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
 }
 
-/** This prototype function only accepts Date object. Function also includes checking
+/** This helper function only accepts Date objects. Function also includes checking
  * if the object itslef is valid. If the object-to-be-converted is itself a String, it
  * is advised to pass it through `new Date()` first before passing to this function.
  * This will return a String representation of the corrected date in Philippine Standard
  * Time. This is done by offsetting the date by a constant of 8 hours in miliseconds.
  */
-Date.prototype.convDatePHT = function(d) {
+function convDatePHT (d) {
 	return !isNaN(Date.parse(d)) ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10) : "N/A";
 }
 

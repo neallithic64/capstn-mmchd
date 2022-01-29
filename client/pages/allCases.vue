@@ -390,9 +390,9 @@ export default {
 	  params: {userID: this.$auth.user.userID}
 	})).data;
     for (let i = 0; i < cifRows.length; i++) {
-      cifRows[i].reportDate = cifRows[i].reportDate ? cifRows[i].reportDate.substr(0, 10) : "undefined";
+      cifRows[i].reportDate = cifRows[i].reportDate ? this.convDatePHT(new Date(cifRows[i].reportDate)) : "undefined";
       // default to reportDate if updatedDate is null
-      cifRows[i].updatedDate = cifRows[i].updatedDate ? cifRows[i].updatedDate.substr(0, 10) : cifRows[i].reportDate;
+      cifRows[i].updatedDate = cifRows[i].updatedDate ? this.convDatePHT(new Date(cifRows[i].updatedDate)) : cifRows[i].reportDate;
     }
     this.cifData = cifRows.filter(e => e.type === "CIF");
     
@@ -558,7 +558,10 @@ export default {
         }
         return data;
       }
-    }
+    },
+	convDatePHT(d) { // only accepts Date object; includes checking
+	  return !isNaN(Date.parse(d)) ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10) : "N/A";
+	},
   },
 }
 </script>
