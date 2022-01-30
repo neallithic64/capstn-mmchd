@@ -1635,7 +1635,7 @@ const indexFunctions = {
 	},
 	
 	postUpdateEventStatus: async function(req, res) {
-		let { eventID, newStatus, modifiedBy } = req.body;
+		let { eventID, newStatus, modifiedBy, assessment} = req.body;
 		try {
 			// retrieve the case (that hopefully exists)
 			let eventData = await db.findRows("mmchddb.EVENTS", {eventID: eventID});
@@ -1653,7 +1653,7 @@ const indexFunctions = {
 				// then updating the case object itself
 				let updateEvent = await db.updateRows("mmchddb.EVENTS",
 						{eventID: eventID},
-						{eventStatus: newStatus});
+						{eventStatus: newStatus, assessment:assessment});
 				if (newEventAudit && updateEvent) {
 					// actual notification object insertion
 					let notification = new Notification(null, eventData[0].userID, 'updateNotif',

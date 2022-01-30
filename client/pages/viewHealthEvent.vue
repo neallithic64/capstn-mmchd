@@ -6,7 +6,7 @@
       <div class="viewHE-details" style="align-text: left">
         <div class="HEnumbers">
           <h1 style="margin: -10px 0">Event No. {{ healthEvent.eventID }}</h1>
-          <span v-if="status != 'forVerification' || status != 'For Verification'" :class="caseStatusClass(assessment)"> {{ assessment }} </span>
+          <span v-if="status != 'forVerification' || status != 'For Verification'" :class="caseStatusClass(healthEvent.assessment)"> {{ healthEvent.assessment }} </span>
         </div>
         <div class="HEstatus" style="align-text: right">
           <span style="display: inline-flex; align-items: center"
@@ -344,10 +344,10 @@
               </div>
             </div>
 
-            <h2 v-if="newStatus != 'Discarded' && assessment === ''" id="form-header" class="required">
+            <h2 v-if="newStatus != 'Discarded' && healthEvent.assessment === ''" id="form-header" class="required">
               Please select the health event assessment.
             </h2>
-            <div v-if="newStatus != 'Discarded' && assessment === ''">
+            <div v-if="newStatus != 'Discarded' && healthEvent.assessment === ''">
               <!-- ASSESSMENT -->
               <div>
                 <div class="collpaseWrapper">
@@ -357,7 +357,7 @@
                       <label :for="name" class="collapseLabel">
                         <input
                           :id="name"
-                          v-model="assessment"
+                          v-model="healthEvent.assessment"
                           :value="name"
                           class="input-checkbox"
                           name="assessment"
@@ -484,7 +484,8 @@ export default {
         locBrgy: '',
         numCases: '',
         numDeaths: '',
-        remarks: ''
+        remarks: '',
+        assessment:''
       },
       formSection: {
         formNames: {
@@ -555,7 +556,8 @@ export default {
         const updateCase = await axios.post('http://localhost:8080/api/updateEventStatus', {
           eventID: this.healthEvent.eventID,
           newStatus: this.newStatus,
-          modifiedBy: this.$auth.user.userID
+          modifiedBy: this.$auth.user.userID,
+          eventAssess: this.healthEvent.assessment
         });
         if (updateCase.status === 200) {
           // alert('Event status updated!');
