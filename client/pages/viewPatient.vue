@@ -1229,12 +1229,13 @@ export default {
     this.formData.riskFactors = data.riskFactors; // working already
     this.DRUData = data.DRUData;
     this.allData = data.rowData;
-	if ((!['Chief', 'Staff', 'resuHead', 'chdDirector'].some(e => this.DRUData.druType.includes(e)) && !this.DRUData.pushDataAccept) ||
+	if ((!['Chief', 'Staff', 'resuHead', 'chdDirector'].some(e => this.$auth.user.userType.includes(e)) && !this.DRUData.pushDataAccept) ||
 	    (this.$auth.user.druName !== this.DRUData.druName)) {
 	  this.formData.patient.firstName = "";
 	  this.formData.patient.midName = "";
 	  this.formData.patient.lastName = "";
 	  this.formData.patient.currHouseStreet = "";
+	  this.formData.patient.permHouseStreet = "";
 	}
     this.update('cancel');
   }, 
