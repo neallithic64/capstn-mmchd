@@ -24,7 +24,7 @@
             <ul class="CRFActionButton">
               <img src="~/assets/img/csv.png" 
               class="printButton"
-              @click="csvExport()"
+              @click="csvExport(dataSets)"
             />
             </ul>
           </div>

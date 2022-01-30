@@ -58,7 +58,7 @@ export default {
       isPrint: false,
       tableOptions: {
         tableName: 'cases',
-        sortKey: 'updateDate',
+        sortKey: 'dateUpdated',
         columns: [
           {
             title: 'Program Accomplish ID',
@@ -92,6 +92,10 @@ export default {
             title: 'Date Updated',
             key: 'dateUpdated',
             sortable: true,
+          },
+          {
+            title: 'Submit Status',
+            key: 'submitStatus',
           },
         ],
         // source: 'http://demo.datatable/api/users',
@@ -153,7 +157,7 @@ export default {
       const data = encodeURI(csvContent);
       const link = document.createElement("a");
       link.setAttribute("href", data);
-      link.setAttribute("download", "AllProgAccomplishReport.csv");
+      link.setAttribute("download", "ProgAccomplishReport.csv");
       link.click();
     },
     convDatePHT(d) { // only accepts Date object; includes checking

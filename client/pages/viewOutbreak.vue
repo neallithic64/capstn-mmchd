@@ -78,7 +78,7 @@
               <dataTable
                 :options="obSummaryOptions"
                 :datavalues="obSummary"
-                :casetype="'summary'"
+                :casetype="'obSummary'"
               />
             </div>
           </div>
@@ -94,7 +94,7 @@
               <dataTable
                 :options="obCasesOptions"
                 :datavalues="obCases"
-                :casetype="'cases'"
+                :casetype="'obCases'"
               />
             </div>
           </div>
@@ -271,7 +271,8 @@ export default {
             title: 'Risk Classification',
             key: 'risk',
             type: 'text',
-            source: 'outbreak'
+            source: 'outbreak',
+            filter: true,
           },
         ]
       },

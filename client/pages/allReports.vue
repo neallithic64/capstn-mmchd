@@ -16,7 +16,7 @@
           <ul class="rep-action-button">
             <img src="~/assets/img/csv.png" 
             class="printButton"
-            @click="csvExport(getTable())"
+            @click="csvExport(allReports)"
           />
           </ul>
         </div>
@@ -196,8 +196,8 @@ export default {
    },
     csvExport(arrData) {
       let csvContent = "data:text/csv;charset=utf-8,";
-      let header = this.getCols();
-      // let header = Object.keys(arrData[0]).join(",");
+      // let header = this.getCols();
+      let header = Object.keys(arrData[0]).join(",");
       csvContent += [
         header,
         ...arrData.map(item => Object.values(item).join(","))
@@ -208,7 +208,7 @@ export default {
       const data = encodeURI(csvContent);
       const link = document.createElement("a");
       link.setAttribute("href", data);
-      link.setAttribute("download", this.caseTab+".csv");
+      link.setAttribute("download", "AllReports.csv");
       link.click();
     },
   },

@@ -16,7 +16,7 @@
           <ul class="HEActionButton">
             <img src="~/assets/img/csv.png" 
             class="AHEprint"
-            @click="csvExport(getTable())"
+            @click="csvExport(allEvents)"
           />
           </ul>
         </div>
@@ -174,8 +174,8 @@ export default {
    },
     csvExport(arrData) {
       let csvContent = "data:text/csv;charset=utf-8,";
-      let header = this.getCols();
-      // let header = Object.keys(arrData[0]).join(",");
+      // let header = this.getCols();
+      let header = Object.keys(arrData[0]).join(",");
       csvContent += [
         header,
         ...arrData.map(item => Object.values(item).join(","))
@@ -186,7 +186,7 @@ export default {
       const data = encodeURI(csvContent);
       const link = document.createElement("a");
       link.setAttribute("href", data);
-      link.setAttribute("download", this.caseTab+".csv");
+      link.setAttribute("download", "HealthEvents.csv");
       link.click();
     },
   },
@@ -202,7 +202,7 @@ export default {
   background-image: none;
 }
 
-.AHEAHEpageHeader {
+.AHEpageHeader {
   font-weight: 800;
   font-size: 32px;
   color: #346083;

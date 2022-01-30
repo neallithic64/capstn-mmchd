@@ -73,6 +73,7 @@ export default {
             key: 'disease',
             type: 'text',
             source: 'outbreaks',
+            filter: true,
           },
           {
             title: 'Type',
@@ -119,6 +120,7 @@ export default {
             type: 'text',
             source: 'events',
             sortable: true,
+            filter: true,
           },
           {
             title: 'End',
@@ -208,7 +210,7 @@ export default {
       const data = encodeURI(csvContent);
       const link = document.createElement("a");
       link.setAttribute("href", data);
-      link.setAttribute("download", "outbreaks.csv");
+      link.setAttribute("download", "Outbreaks.csv");
       link.click();
     },
     getTable() {

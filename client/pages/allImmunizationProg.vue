@@ -2,11 +2,11 @@
   <div id="viewCases" class="AIPbody">
     <!--Top Bar of the screen-->
     <TopNav />
-    <div ref="content" class="AIP-viewCases">
+    <div ref="content" class="AIP-view">
       <div class="AIPexport">
         <h1 class="AIPpeageHeader"> Immunization Program Reports </h1>
         <div v-show="!isPrint" class="AIPactionButtons" style="display: flex;margin-top: 5px;">
-          <ul v-show="year==='2022' || year===2022" class="AIPactionButton">
+          <ul class="AIPactionButton">
           <img
             src="~/assets/img/pen.png"
             class="AIPprint"
@@ -112,6 +112,10 @@ export default {
             key: 'updateDate',
             sortable: true,
           },
+          {
+            title: 'Submit Status',
+            key: 'submitStatus',
+          },
         ],
         // source: 'http://demo.datatable/api/users',
         search: true,
@@ -209,7 +213,7 @@ export default {
       const data = encodeURI(csvContent);
       const link = document.createElement("a");
       link.setAttribute("href", data);
-      link.setAttribute("download", this.caseTab.toUpperCase()+".csv");
+      link.setAttribute("download", "ImmunizationPrograms.csv");
       link.click();
     },
   },

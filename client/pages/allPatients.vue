@@ -155,7 +155,7 @@ export default {
       const data = encodeURI(csvContent);
       const link = document.createElement("a");
       link.setAttribute("href", data);
-      link.setAttribute("download", "patients.csv");
+      link.setAttribute("download", "Patients.csv");
       link.click();
     },
     getTable() {

@@ -326,7 +326,7 @@ export default {
       const data = encodeURI(csvContent);
       const link = document.createElement("a");
       link.setAttribute("href", data);
-      link.setAttribute("download", this.caseTab.toUpperCase()+".csv");
+      link.setAttribute("download", "MalariaProgAccomplish.csv");
       link.click();
     },
     save(action) {
