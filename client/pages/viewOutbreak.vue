@@ -69,7 +69,7 @@
       <div class="viewOBform-component">
 
         <form v-show="pageNum == 0 || isPrint" id="ob1" type="submit">
-          <div id="case-report-form" class="center">
+          <div id="case-report-form" class="center" style="margin-bottom: 45px;">
             <h2 id="form-header">
               {{ Object.values(formSection.formNames)[0] }}
             </h2>
@@ -78,7 +78,7 @@
               <dataTable
                 :options="obSummaryOptions"
                 :datavalues="obSummary"
-                :casetype="'summary'"
+                :casetype="'obSummary'"
               />
             </div>
           </div>
@@ -87,14 +87,14 @@
         <hr v-if="isPrint" />
 
         <form v-show="pageNum == 1 || isPrint" id="ob2" type="submit">
-          <div id="case-report-form" class="center">
+          <div id="case-report-form" class="center" style="margin-bottom: 45px;">
             <h2 id="form-header"> {{ Object.values(formSection.formNames)[1] }} </h2>
 
             <div class="OB-cases">
               <dataTable
                 :options="obCasesOptions"
                 :datavalues="obCases"
-                :casetype="'cases'"
+                :casetype="'obCases'"
               />
             </div>
           </div>
@@ -272,7 +272,8 @@ export default {
             title: 'Risk Classification',
             key: 'risk',
             type: 'text',
-            source: 'outbreak'
+            source: 'outbreak',
+            filter: true,
           },
         ]
       },

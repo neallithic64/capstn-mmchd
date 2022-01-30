@@ -23,7 +23,7 @@
               style="width: 100%; align-content: center"
             >
               <!-- <a :href="'/progAccomplishDisease'+value" style="margin: auto"> -->
-              <a :href="'/viewProgAccomplishMalaria' + value" style="margin: auto">
+              <a :href="'/viewProgAccomplishMalaria'" style="margin: auto">
                 <div class="APAdiseaseName">{{ name }}</div>
               </a>
             </div>

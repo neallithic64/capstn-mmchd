@@ -5,7 +5,7 @@
     <div ref="content" class="addIPcontainer">
       <div class="addIP-viewDetails" style="align-text: left">
         <div class="addIP-info">
-          <addIPh1 style="margin: -10px 0" class="addIPh1">Program Immunization Report No. {{immunProgNo}}</addIPh1>
+          <h1 style="margin: -10px 0" class="addIPh1">Program Immunization Report No. {{immunProgNo}}</h1>
           <h2 style="margin-top: -1px" class="addIPh2">{{ city }}, {{ barangay }}</h2>
           <p>Last updated: <b class="addIPhBold"> {{ updatedDate }} </b> </p>
         </div>
@@ -21,7 +21,7 @@
             <ul class="CRFActionButton">
               <img src="~/assets/img/csv.png" 
               class="addIP-printButt"
-              @click="csvExport()"
+              @click="csvExport(dataSets)"
             />
             </ul>
           </div>

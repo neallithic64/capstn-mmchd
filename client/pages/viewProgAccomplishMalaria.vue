@@ -34,7 +34,7 @@
             Save </button>
         </div>
       </div>
-      <div class="viewcases-component">
+      <div class="VPAMviewComponent">
       <div class="datatable">
         <div style="display: flex; justify-content: space-between; margin-top:-5px;">
           <h3 id="form-header" style="padding: 10px 0;">DRU: {{ druName }}</h3>
@@ -96,6 +96,14 @@
           Last updated: <b> {{dayTime}}</b>
         </div>
       </div>
+      </div>
+      <div>
+        <div v-show="!isEdit" style="margin: 20px 10px 40px; text-align: -webkit-right;">
+          <button class="cancel-button" type="button" @click="save('Save')">
+            Save </button>
+          <button class="save-button" type="button" @click="save('Submit')">
+            Submit </button>
+        </div>
       </div>
     </div>
   </div>
@@ -318,9 +326,17 @@ export default {
       const data = encodeURI(csvContent);
       const link = document.createElement("a");
       link.setAttribute("href", data);
-      link.setAttribute("download", this.caseTab.toUpperCase()+".csv");
+      link.setAttribute("download", "MalariaProgAccomplish.csv");
       link.click();
     },
+    save(action) {
+      if (action==='Save') {
+        // TO DO
+      }
+      else if (action === 'Submit') {
+        // TO DO
+      }
+    }
   },
 }
 </script>
@@ -369,7 +385,7 @@ body {
   }
 }
 
-.viewcases-component {
+.VPAMviewComponent {
   /* position: relative;
   display: inline-flex;
   flex-direction: row; */
@@ -381,10 +397,9 @@ body {
   border-radius: 10px;
   padding: 15px;
   padding-bottom: 20px;
-  margin-bottom: 40px;
 }
 @media only screen and (max-width: 800px) {
-  .viewcases-component {
+  .VPAMviewComponent {
     position: relative;
     top: 0px;
     min-height: fit-content;

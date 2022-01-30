@@ -1,5 +1,5 @@
 <template>
-  <div id="viewpatients">
+  <div id="viewpatients" class="allPatientsBody">
     <!--Top Bar of the screen-->
     <TopNav />
     <div ref="content" class="viewpatients-container">
@@ -105,7 +105,7 @@ export default {
     }
   },
   async mounted() {
-    if (this.allOutbreaks.length === 0) {
+    if (this.allPatients.length === 0) {
       this.$toast.show('Loading...', {className: 'blink', icon: 'hourglass_top'});
     }
     const rows = (await axios.get('http://localhost:8080/api/getPatients', {
@@ -116,7 +116,7 @@ export default {
       rows[i].updatedDate = rows[i].updatedDate ? this.convDatePHT(new Date(rows[i].updatedDate)) : "N/A";
     }
     this.allPatients = rows;
-    if (this.allOutbreaks.length > 0) {
+    if (this.allPatients.length > 0) {
       this.$toast.clear();
       this.$toast.success('All outbreaks loaded!', {duration: 4000, icon: 'check_circle'});
     }
@@ -162,7 +162,7 @@ export default {
       const data = encodeURI(csvContent);
       const link = document.createElement("a");
       link.setAttribute("href", data);
-      link.setAttribute("download", "patients.csv");
+      link.setAttribute("download", "Patients.csv");
       link.click();
     },
     getTable() {
@@ -194,7 +194,7 @@ export default {
 </script>
 
 <style>
-body {
+.allPatientsBody {
   font-family: 'Work Sans', sans-serif;
   font-weight: 300;
   padding: 0px;
@@ -273,15 +273,6 @@ body {
     top: 0px;
     min-height: fit-content;
   }
-}
-
-.patient-SummaryContainer {
-  display: flex;
-  flex-direction: row;
-  overflow-x: auto;
-  overflow-y: hidden;
-  z-index: 1;
-  margin-left: 5px;
 }
 
 #datatabale {

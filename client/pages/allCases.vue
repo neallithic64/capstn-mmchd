@@ -21,7 +21,7 @@
             CRF
           </ul>
         </div>
-        <div v-show="!isPrint" class="allCasesActionButtons">
+        <div v-show="!isPrint" class="allCasesActionButtons" style="margin-top: -15px;">
           <ul class="CRFActionButton">
           <img
             src="~/assets/img/pdf.png"

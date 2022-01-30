@@ -86,10 +86,10 @@
                 style="resize: vertical; height: 100px; padding: 5px; 10px;"/>
           </div>
           <div class="marginTop5" style="display: flex; justify-content: right;">
-            <button class="viewRep-backButton" type="button" @click="submit('assessment','cancel')">
+            <button class="viewRep-backButton" type="button" @click="submit('cancel')">
               Cancel
             </button>
-            <button class="viewRep-nextButton" type="button" @click="submit('assessment','submit')">
+            <button class="viewRep-nextButton" type="button" @click="submit('submit')">
               Submit
             </button>
           </div>
@@ -235,66 +235,32 @@ export default {
       else if (index === reportCount-1) return '';
       else return 'fullHeightNotFirst';
     },
-    validate(part) {
-      if (part==='assessment') {
-        if (this.inputStatus === '' || this.inputStatus === null) this.isValidated = false;
-        else this.isValidated = true;
-        }
-      else if (part==='revision') {
-        this.isValidated = true;
-        console.log(this.inputChartRemarks);
-        for (let i=0; i<this.inputChartRemarks.length; i++)
-          if (this.inputChartRemarks[i] === '') this.isValidated = false;
-      }
+    validate() {
+      if (this.inputStatus === '' || this.inputStatus === null) this.isValidated = false;
+      else this.isValidated = true;
     },
-    submit(part, action) {
-      if (part==='assessment') {
-        if (action === 'cancel') {
-          // CANCEL ASSESSMENT / one with drop down
+    submit(action) {
+      if (action === 'cancel') {
+        // CANCEL ASSESSMENT / one with drop down
+        this.isAssess = false;
+        this.inputStatus = '';
+        this.inputRemarks = '';
+      }
+      else {
+        // SUBMIT ASSESSMENT (drop down)
+        this.validate();
+        if (!this.isValidated) this.$toast.error('Please select a status!', {duration: 4000, icon: 'error'});
+        else { // eslint-disable-next-line no-lonely-if
+          if (this.inputStatus === 'Approve') {
+            this.report.status = 'Approved';
+            this.report.approvedByDate = this.today;
+          }
+          else if (this.inputStatus === 'Reject') this.report.status = 'Rejected';
+          // QUESTION: what happens pag nareject, does the 3 people sa lower part have to change (if so, use x.png)
           this.isAssess = false;
-          this.inputStatus = '';
-          this.inputRemarks = '';
-        }
-        else {
-          // SUBMIT ASSESSMENT (drop down)
-          this.validate(part);
-          if (!this.isValidated) this.$toast.error('Please select a status!', {duration: 4000, icon: 'error'});
-          else { // eslint-disable-next-line no-lonely-if
-            if (this.inputStatus === 'Approve') {
-              this.report.status = 'Approved';
-              this.report.approvedByDate = this.today;
-            }
-            else if (this.inputStatus === 'Rejected') this.report.status = 'Rejected';
-            for (let i=0; i<this.inputChartRemarks.length; i++) this.report.chartRemarks[i] = this.inputChartRemarks[i];
 
           // TO DO: SAVE SAVE in db
-            this.isAssess = false;
-            this.$toast.success('Status saved!', {duration: 4000, icon: 'check_circle'});
-          }
-        }
-      }
-
-      else if (part=== 'revision') {
-        if (action === 'cancel') {
-          // CANCEL CHART COMMENT REVISIONS
-          this.isRevise = false;
-          for (let i=0; i<this.report.chartRemarks.length; i++) this.inputChartRemarks[i] = this.report.chartRemarks[i];
-        }
-        else {
-          // SUBMIT REVISION (for each chart)
-          this.validate(part);
-          if (!this.isValidated) this.$toast.error('Please fill up the required fields!', {duration: 4000, icon: 'error'});
-          else {
-            for (let i=0; i<this.report.chartRemarks.length; i++) this.report.chartRemarks[i] = this.inputChartRemarks[i];
-            this.isRevise = false;
-            this.report.notedByDate = '';
-            this.report.recommendedByDate = '';
-            this.report.status = 'Pending';
-            this.isAssess = true;
-
-            // TO DO: SAVE SAVE in db
-            this.$toast.success('Changes saved!', {duration: 4000, icon: 'check_circle'});
-          }
+          this.$toast.success('Status saved!', {duration: 4000, icon: 'check_circle'});
         }
       }
     },

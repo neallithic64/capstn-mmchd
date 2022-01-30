@@ -1,24 +1,18 @@
 <template>
-  <div id="viewCases">
+  <div id="viewCases" class="APAbody">
     <!--Top Bar of the screen-->
     <TopNav />
-    <div ref="content" class="viewcases-container">
+    <div ref="content" class="APAcontainer">
       <div class="exportButtons">
-        <h1 class="pageHeader"> All Program Accomplishment Report </h1>
-        <div v-show="!isPrint" class="actionButtons" style="display: flex;margin-top: 5px;">
-          <ul class="actionButton">
-            <img src="~/assets/img/pen.png"
-              class="printButton"
-              @click="isEdit=true"
-            />
-          </ul>
-          <ul class="actionButton">
+        <h1 class="APApageHeader"> All Program Accomplishment Report </h1>
+        <div v-show="!isPrint" class="APAactionButtons" style="display: flex;margin-top: 5px;">
+          <ul class="APAactionButton">
             <img src="~/assets/img/pdf.png"
               class="printButton"
               @click="downloadPDF"
             />
           </ul>
-          <ul class="actionButton">
+          <ul class="APAactionButton">
             <img src="~/assets/img/csv.png" 
               class="printButton"
               @click="csvExport(dataSets)"
@@ -26,7 +20,7 @@
           </ul>
         </div>
       </div>
-      <div class="viewcases-component">
+      <div class="APAcomponent">
         <div v-if="dataSets.length > 0" id="vue-root">
           <dataTable
             :options="tableOptions"
@@ -64,7 +58,7 @@ export default {
       isPrint: false,
       tableOptions: {
         tableName: 'cases',
-        sortKey: 'updateDate',
+        sortKey: 'dateUpdated',
         columns: [
           {
             title: 'Program Accomplish ID',
@@ -99,6 +93,10 @@ export default {
             key: 'dateUpdated',
             sortable: true,
           },
+          {
+            title: 'Submit Status',
+            key: 'submitStatus',
+          },
         ],
         // source: 'http://demo.datatable/api/users',
         search: true,
@@ -119,9 +117,6 @@ export default {
     }
   },
   methods: {
-    editInput() {
-      if (this.isEdit) return 'editable';
-    },
     downloadPDF() {
       // this.isPrint = !this.isPrint
 
@@ -162,7 +157,7 @@ export default {
       const data = encodeURI(csvContent);
       const link = document.createElement("a");
       link.setAttribute("href", data);
-      link.setAttribute("download", "AllProgAccomplishReport.csv");
+      link.setAttribute("download", "ProgAccomplishReport.csv");
       link.click();
     },
     convDatePHT(d) { // only accepts Date object; includes checking
@@ -173,7 +168,7 @@ export default {
 </script>
 
 <style>
-body {
+.APAbody {
   font-family: 'Work Sans', sans-serif;
   font-weight: 300;
   padding: 0px;
@@ -181,13 +176,13 @@ body {
   background-image: none;
 }
 
-.pageHeader {
+.APApageHeader {
   font-weight: 800;
   font-size: 32px;
   color: #346083;
 }
 
-.viewcases-container {
+.APAcontainer {
   padding: 80px 20px 5px 20px;
   width: 100%;
 }
@@ -209,14 +204,14 @@ body {
 }
 
 @media only screen and (max-width: 800px) {
-  .viewcases-ontainer {
+  .APAcontainer {
     width: 100%;
     align-items: center;
     margin: 0px;
   }
 }
 
-.viewcases-section-container {
+.APAsectionContainer {
   /* left: 275px; */
   /* position: relative; */
   /* width: calc(100vw - 320px); */
@@ -227,12 +222,12 @@ body {
 }
 
 @media only screen and (max-width: 800px) {
-  .viewcases-section-container {
+  .APAsectionContainer {
     width: 95%;
   }
 }
 
-.viewcases-component {
+.APAcomponent {
   /* position: relative;
   display: inline-flex;
   flex-direction: row; */
@@ -247,124 +242,11 @@ body {
   margin-bottom: 40px;
 }
 @media only screen and (max-width: 800px) {
-  .viewcases-component {
+  .APAcomponent {
     position: relative;
     top: 0px;
     min-height: fit-content;
   }
-}
-
-#form-header {
-    text-align: left;
-    padding-left: 5px;
-    margin-bottom: 5px;
-    font-weight: 600;
-    font-size: 20px;
-    background-color: #008d41;
-    color: transparent;
-    text-shadow: 1px 1px, -1px -1px rgb(0 0 0 / 25%);
-}
-
-
-table {
-  /* display: block; */
-  display: table;
-  overflow-x: auto;
-  white-space: nowrap;
-}
-
-.allDisplay {
-  display: block;
-}
-
-@media only screen and (max-width: 1000px) {
-  table {
-    display: block;
-  }
-}
-
-.datatable input[type='text'] {
-  padding: 8px 12px;
-  margin: 8px 0;
-  border: 1px solid #f1f1f1;
-  box-sizing: border-box;
-}
-
-.datatable select {
-  padding: 5px 12px;
-  margin: 8px 0;
-  box-sizing: border-box;
-  outline: none !important;
-  border: 1px solid #dddddd;
-  background: #fff;
-  width: auto;
-}
-
-.datatable input:focus {
-  border: 1px solid #dddddd !important;
-  outline: none;
-}
-
-.datatable select:focus {
-  outline: none !important;
-  border: 1px solid #dddddd;
-  background: #fff;
-}
-
-#datatable {
-  font-family: Arial, Helvetica, sans-serif;
-  border-collapse: collapse;
-  width: 100%;
-}
-
-#datatable td,
-#datatable th {
-  border: 1px solid #ddd;
-  padding: 8px;
-}
-
-#datatable tr:hover {
-  background-color: #ddd;
-  border: 1px solid #f1f1f1;
-}
-
-#datatable th {
-  padding-top: 12px;
-  padding-bottom: 12px;
-  text-align: center;
-  background: lightgray;
-}
-
-.datatable .pagination {
-  display: inline-block;
-  margin-top: 12px;
-  /* float:right; */
-}
-
-.datatable .pagination a {
-  color: black;
-  float: left;
-  padding: 8px 16px;
-  text-decoration: none;
-  transition: background-color 0.3s;
-  border: 1px solid #ddd;
-}
-
-.datatable .pagination a.active {
-  background-color: #346083;
-  color: white;
-  font-weight: 600;
-  opacity: 1;
-}
-
-.datatable .pagination a:hover:not(.active) {
-  background-color: #ddd;
-}
-
-.datatable .isDisabled {
-  cursor: not-allowed;
-  opacity: 0.5;
-  pointer-events: none;
 }
 
 .printButton {
@@ -378,67 +260,6 @@ table {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-}
-
-.save-button {
-  width: 150px;
-  height: 38px;
-  max-width: 100%;
-  font-size: 16px;
-  font-family: 'Work Sans', sans-serif;
-  font-weight: 600;
-  background-color: #346083;
-  color: white;
-  border: #346083 solid 0.75px;
-}
-
-.save-button:hover {
-  background-color: #346083;
-}
-
-.cancel-button {
-  width: 150px;
-  height: 38px;
-  max-width: 100%;
-  font-size: 16px;
-  font-family: 'Work Sans', sans-serif;
-  font-weight: 600;
-  background-color: white;
-  color: #346083;
-}
-
-.cancel-button:hover {
-  border: #346083 solid 1px;
-}
-
-.input-year,
-select {
-  height: 30px;
-  font-size: 16px;
-  font-family: 'Work Sans', sans-serif;
-  padding-right: 5px;
-  padding-left: 5px;
-  /* border: 1p x solid rgba(0, 0, 0, 0.25); */
-  border: 1px solid #a3a3a3;
-  box-sizing: border-box;
-  border-radius: 9px;
-}
-
-.actionButton {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    margin-top: 5px;
-}
-
-.input-edit {
-  text-align: center;
-  background: none;
-  max-width: 75px;
-}
-
-.editable {
-  background: white;
 }
 
 </style>
