@@ -713,6 +713,13 @@ const indexFunctions = {
 	
 	getAllCRFs: async function(req, res) {
 		try {
+			let havingClause,
+					userTypeCheck = await db.findRows("mmchddb.USERS", {userID: req.query.userID});
+			if (userTypeCheck.length > 0 && userTypeCheck[0].userType.includes("Staff")) {
+				console.log(userTypeCheck[0]);
+				havingClause = `HAVING cr.isPushed = 1 OR cr.userID = '${req.query.userID}'`;
+			} else havingClause = `HAVING cr.userID = '${req.query.userID}'`;
+			
 			let match = await db.exec(`SELECT cr.*, d.diseaseName, a.city, COUNT(c.caseID) AS caseCount,
 					n.dateCreated AS submittedOn, MAX(c.reportDate) AS lastCase
 					FROM mmchddb.CRFS cr
@@ -721,8 +728,7 @@ const indexFunctions = {
 					INNER JOIN mmchddb.ADDRESSES a ON u.addressID = a.addressID
 					LEFT JOIN mmchddb.CASES c ON cr.CRFID = c.CRFID
 					LEFT JOIN mmchddb.NOTIFICATIONS n ON c.caseID = n.caseID
-					GROUP BY cr.CRFID
-					HAVING cr.userID = '${req.query.userID}'
+					GROUP BY cr.CRFID ${ havingClause }
 					ORDER BY cr.year DESC, cr.week DESC;`);
 			for (let i = 0; i < match.length; i++) {
 				match[i].submitStatus = match[i].isPushed > 0 ? "Pushed" : "Submitted";
@@ -770,7 +776,7 @@ const indexFunctions = {
 			let caseAudit = await db.exec("SELECT a.dateModified AS 'reportDate', a.prevValue AS 'from', "+
 			 		"CONCAT(u.firstName,' ', u.midName, ' ', u.lastName, ', ' , u.druName) AS 'reportedBy' " +
 					"FROM mmchddb.AUDIT_LOG a JOIN mmchddb.USERS u ON a.modifiedBy = u.userID " +
-					"WHERE a.editedID = '" + req.query.caseID + "' " +
+					"WHERE a.editedID = '" + req.query.caseID + "' AND a.fieldName = 'caseLevel'" +
 					"ORDER BY a.dateModified;");
 			let DRUData = await db.exec("SELECT u.druName, userType AS 'druType', a.city AS 'druCity', CONCAT_WS(', ',a.houseStreet, a.brgy, a.city) AS 'druAddress' " +
 					"FROM mmchddb.USERS u INNER JOIN mmchddb.ADDRESSES a ON u.addressID = a.addressID " +
@@ -856,7 +862,7 @@ const indexFunctions = {
 			let rows = await db.exec(`SELECT c.caseID, c.reportDate, c.caseLevel,
 					d.diseaseName AS 'disease', a.city AS 'city', u.druName AS 'reportedBy',
 					IFNULL(MAX(al.dateModified), c.reportDate) AS 'updatedDate',
-					c.reportedBy AS 'reportedByID', IF(ISNULL(c.CRFID), 'CIF', 'CRF') AS 'type'
+					c.reportedBy, IF(ISNULL(c.CRFID), 'CIF', 'CRF') AS 'type'
 					FROM mmchddb.CASES c
 					INNER JOIN mmchddb.DISEASES d ON c.diseaseID = d.diseaseID
 					INNER JOIN mmchddb.USERS u ON c.reportedBy = u.userID
@@ -874,9 +880,11 @@ const indexFunctions = {
 					WHERE p.patientID = '${req.query.patientID}';`);
 			let riskFactorsData = await db.findRows("mmchddb.RISK_FACTORS", {caseID: rows[rows.length - 1].caseID});
 			let DRUData = await db.exec(`SELECT u.druName, userType AS 'druType', a.city AS 'druCity',
-					CONCAT_WS(', ', a.houseStreet, a.brgy, a.city) AS 'druAddress'
-					FROM mmchddb.USERS u INNER JOIN mmchddb.ADDRESSES a ON u.addressID = a.addressID
-					WHERE u.userID = '${rows[0].reportedByID}';`);
+					a.houseStreet AS 'druHouseStreet', a.brgy AS 'druBrgy', us.pushDataAccept
+					FROM mmchddb.USERS u
+					INNER JOIN mmchddb.ADDRESSES a ON u.addressID = a.addressID
+					INNER JOIN mmchddb.USER_SETTINGS us ON us.userID = u.userID
+					WHERE u.userID = '${rows[0].reportedBy}';`);
 			let cases;
 			let data = {
 				rowData: rows,
@@ -916,21 +924,23 @@ const indexFunctions = {
 			let caseAudit = await db.exec("SELECT a.dateModified AS 'reportDate', a.prevValue AS 'from', " +
 			 		"CONCAT(u.firstName,' ', u.midName, ' ', u.lastName, ', ' , u.druName) AS 'reportedBy' " +
 					"FROM mmchddb.AUDIT_LOG a JOIN mmchddb.USERS u ON a.modifiedBy = u.userID " +
-					"WHERE a.editedID = '" + req.query.caseID + "' " +
+					"WHERE a.editedID = '" + req.query.caseID + "' AND a.fieldName = 'caseLevel'" +
 					"ORDER BY a.dateModified;");
-			let DRUData = await db.exec("SELECT u.druName, userType AS 'druType', a.city AS 'druCity', " +
-					"CONCAT_WS(', ',a.houseStreet, a.brgy, a.city) AS 'druAddress' " +
-					"FROM mmchddb.USERS u INNER JOIN mmchddb.ADDRESSES a ON u.addressID = a.addressID " +
-					"WHERE u.userID='" + rows[0].reportedBy + "';");
+			let DRUData = await db.exec(`SELECT u.druName, userType AS 'druType', a.city AS 'druCity',
+					a.houseStreet AS 'druHouseStreet', a.brgy AS 'druBrgy', us.pushDataAccept
+					FROM mmchddb.USERS u
+					INNER JOIN mmchddb.ADDRESSES a ON u.addressID = a.addressID
+					INNER JOIN mmchddb.USER_SETTINGS us ON us.userID = u.userID
+					WHERE u.userID = '${rows[0].reportedBy}';`);
 
 			let caseDataObj = {};
 			
 			caseData.forEach(function(element) {
 				caseDataObj[element.fieldName] = element.value;
 			});
-
-			if(DRUData[0].druName == 'TestDRU' || DRUData[0].druName == '')
-				DRUData[0].druType = 'N/A';
+			
+			console.log(DRUData);
+			if (!DRUData[0].druName) DRUData[0].druType = 'N/A';
 
 			let dateLastUpdated = new Date(rows[0].reportDate);
 			let i = 0;

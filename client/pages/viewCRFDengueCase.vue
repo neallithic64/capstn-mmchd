@@ -40,7 +40,7 @@
           <p>DRU City: <b> {{DRUData.druCity}} </b></p>
           <p>DRU Name: <b> {{DRUData.druName}} </b></p>
           <p>DRU Type: <b> {{DRUData.druType}} </b></p>
-          <p>DRU Address: <b> {{DRUData.druAddress}} </b></p>
+          <p>DRU Address: <b> {{DRUData.druCity + ", " + DRUData.druBrgy + ", " + DRUData.druHouseStreet}} </b></p>
         </div>
         <div class="CRFstatus" style="align-text: right">
           <p>Week No: <b> {{ CRFData.year }}-{{ CRFData.week }} </b> </p>
@@ -1572,20 +1572,7 @@ export default {
         // source: 'http://demo.datatable/api/users',
         search: true,
       },
-      caseHistory: [
-        {
-          reportDate: '2020-10-10',
-          from: 'a',
-          to: 'a',
-          reportedBy: 'a',
-        },
-        {
-          reportDate: '2021-10-10',
-          from: 'b',
-          to: 'b',
-          reportedBy: 'b',
-        }
-      ],
+      caseHistory: [],
       CRFData:{
         CRFID: '',
         diseaseID: '',
@@ -1598,7 +1585,8 @@ export default {
         druName:'',
         druType:'',
         druCity:'',
-        druAddress:''
+        druBrgy:'',
+        druHouseStreet:''
       },
       formData: {
         cases: {
@@ -1767,7 +1755,6 @@ export default {
   },
   async fetch() {
     const data = (await axios.get('http://localhost:8080/api/getCRF?caseID=' + this.$route.query.caseID)).data;
-    // const data = (await axios.get('http://localhost:8080/api/getCRF?caseID=' + 'CA-0000000000007')).data;
     this.formData.cases = data.cases;
     this.formData.caseData = data.caseData;
     this.formData.patient = data.patient;
@@ -1776,6 +1763,13 @@ export default {
     this.CRFData = data.crfData;
     this.dateLastUpdated = data.dateLastUpdated;
     this.caseHistory = data.caseHistory;
+	if ((!['Chief', 'Staff', 'resuHead', 'chdDirector'].some(e => this.DRUData.druType.includes(e)) && !this.DRUData.pushDataAccept) ||
+	    (this.$auth.user.druName !== this.DRUData.druName)) {
+	  this.formData.patient.firstName = "";
+	  this.formData.patient.midName = "";
+	  this.formData.patient.lastName = "";
+	  this.formData.patient.currHouseStreet = "";
+	}
     this.editLabResult('cancel')
     this.editPatientOutcome('cancel')
     
