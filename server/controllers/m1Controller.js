@@ -367,7 +367,6 @@ async function updateDiseaseThreshold(diseaseID) {
 		console.log(error);
 		return false;
 	}
-	
 }
 
 async function getOutbreakData(outbreakID) {
