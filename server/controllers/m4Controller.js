@@ -344,6 +344,32 @@ const indexFunctions = {
 			res.status(500).send("Server error");
 		}
 	},
+
+	postFileTest: async function(req, res) {
+		let { file } = req.body;
+		try {
+			console.log(file);
+			let insert = await db.insertOne("mmchddb.zzzREPORT_COMMENTS", {
+				reportID: "001",
+				file: file
+			});
+			if (insert) res.status(200).send("success!");
+			else res.status(500).send("error!");
+		} catch(e) {
+			res.status(500).send("Server error");
+		}
+	},
+
+	getFileTest: async function(req, res) {
+    try {
+        let match = await db.exec(`SELECT * FROM mmchddb.zzzREPORT_COMMENTS;`);
+        res.status(200).send(match[0].file);
+    } catch (e) {
+        console.log(e);
+        res.status(500).send("Server error");
+    }
+	},
+
 };
 
 module.exports = indexFunctions;

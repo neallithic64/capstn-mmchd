@@ -67,6 +67,8 @@ router.post("/updateOutbreakStatus", m1Cont.postUpdateOutbreakStatus);
 router.post("/editProgTargets", m4Cont.postEditProgTargets);
 router.post("/editProgAccomp", m4Cont.postEditProgAccomp);
 
+router.post("/postFileTest", m4Cont.postFileTest);
+router.get("/getFileTest", m4Cont.getFileTest);
 
 // CRON Routes
 cron.schedule("00 14 * * 3", m1Cont.cronCRFDeadlineNotif);

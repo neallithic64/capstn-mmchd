@@ -5,21 +5,10 @@
     <div ref="content" :class="[{ addReportOuterContainer: !isPrint }, { padding20 : isPrint, }, { paddingTop75 : isPrint, },]">
       <!-- HEADER -->
       <div class="centerSide paddingSide25">
-        <div class="">
-          <div v-if="isPrint" class="marginTop40 marginBottom-40 centerText"></div>
-          <img v-show="isPrint" src="~/assets/img/logo.png" style="height: 100px; marginBottom15"/>
-          <div v-if="!isPrint" class="marginTop10">
-            <div v-if="!isPrint" class="marginTop40 marginBottom-40 centerText">
-              <div class="viewRep-actionStatusButton inlineFlex marginBottom-50">
-                <img v-show="report.status==='For Revision' && !isRevise" src="~/assets/img/pen.png" class="printButton width30 inline marginTop-6" @click="isRevise=true" />
-                <img v-show="report.status==='Approved'" src="~/assets/img/pdf.png" class="printButton width30 inline marginTop-6" @click="downloadPDF()" />
-              </div>
-              <div v-if="!isPrint" class="viewRep-mainStatus marginLeft10 marginTop-10" :class="getColor(report.status)"> {{report.status}} </div>
-            </div>
-          </div>
-          <h1 v-if="!isPrint" class="textAlighRight greenC weight800 size32 marginTop2 marginBottom-3"> Feedback Report # 123 </h1>
+        <div class="space-inline">
+          <h1 class="textAlighRight greenC weight800 size32 marginTop2 marginBottom-3"> Feedback Report # 123 </h1>
+          <div class="viewRep-mainStatus marginLeft10 marginTop10" :class="getColor(report.status)"> {{report.status}} </div>
         </div>
-        <hr v-if="isPrint" class="marginTopBot10" id="1"/>
         <div class="space-inline marginTop5">
           <h3 class="weight500 size18"> {{report.title}} </h3>
           <h3 class="weight500 size18">
@@ -29,48 +18,15 @@
           <h3 class="weight500 size18"> {{report.disease}} </h3>
         </div>
         <hr class="marginTopBot10" id="2"/>
-
-        <!-- CANCEL SUBMIT IF REVISING -->
-        <div v-if="isRevise & report.status==='For Revision'">
-          <div class="marginTop10" style="display: flex; justify-content: right;">
-            <button class="viewRep-backButton" type="button" @click="submit('revision','cancel')">
-              Cancel
-            </button>
-            <button class="viewRep-nextButton" type="button" @click="submit('revision','submit')">
-              Submit
-            </button>
-          </div>
-        </div>
-
       </div>
 
-      <!-- CHARTS -->
-      <div class="padding15 alignTop block paddingTop-10">
-        <div v-for="(chart, chartIndex) in report.reportsIncluded" :key="chartIndex" class="fullwidth padding10">
-          <h3 v-if="isPrint" class="caps viewRep-chartTitle marginBottom-15 blueC"> {{chart}} </h3>
-          <div v-else class="caps viewRep-chartTitle marginBottom-15 blueB whiteC paddingLeft10 marginRight10 marginLeft10"> {{chart}} </div>
-          <div class="padding30" :class="getMinClass(chartIndex, report.reportsIncluded.length)">
-            <div class="viewRep-chartContainer marginBottom5">
-              <!-- <iframe class="viewRep-report-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiODdiNTM2N2YtMTA3YS00NzA2LTg5YjItMDBlZDllMTQ2ZDY0IiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D&pageName=ReportSection">
-              </iframe> -->
-            </div>
-            <!-- <div v-if="!isRevise" style="padding: 5px 10px;" :class="chartRemarkClass()" :contentEditable="isRevise" class="width100" required> {{inputChartRemarks[chartIndex]}} </div> -->
-            <div v-if="!isRevise" style="padding: 5px 10px;" class="width100"> {{inputChartRemarks[chartIndex]}} </div>
-            <textarea v-else v-model="inputChartRemarks[chartIndex]" class="input-form-field" :class="isRequired()" 
-                  style="resize: vertical;width:100%; height: 100px; padding: 5px; 10px;" required/>
-          </div>
-          <hr v-if="isPrint" class="marginTopBot5" id="3charts"/>
-          <div v-if=" isPrint && chartIndex != report.reportsIncluded.length - 1" class="space-inline size10 marginBottom85">
-            <p> Department of Health - Metro Manila Center for Health Development </p>
-            <p> {{report.title}} | Page {{chartIndex+1}}</p>
-          </div>
-        </div>
-        <hr v-if="!isPrint" class="marginTopBot5" id="4"/>
-        
+      <!-- PDF -->
+      <div class="addReportInnerContainter width100" style="text-align: -webkit-center;">
+        <iframe></iframe>
       </div>
 
       <div class="addReportInnerContainter">
-
+        <hr class="marginTopBot10" id="3"/>
         <!-- BOTTOM : prepare + submit buttons -->
         <div class="marginTopBot5 padding5 alignTop">
           <!-- name -->
@@ -104,18 +60,9 @@
               </div>
             </div>
           </div>
-          <div v-show="isPrint" class="padding15 border margin20 marginBottom115">
-            <span class="italics"> *NOTE: Case counts reported here do NOT represent the final number and are subject to change after inclusion of delayed reports and eview of cases.
-            Data Source: 2022  </span>
-          </div>
 
         <hr class="marginTopBot5" id="5"/>
         </div>
-
-          <div v-show="isPrint" class="space-inline size10 marginBottom25">
-            <p> Department of Health - Metro Manila Center for Health Development </p>
-            <p> {{report.title}} | Page {{report.reportsIncluded.length}}</p>
-          </div>
 
         <!-- APPROVAL / REMARKS -->
 
@@ -129,7 +76,6 @@
               <select id="inputStatus" v-model="inputStatus" type="text" class="input-form-field marginLeft5"
                 :class="isRequired()" required>
                 <option value="Approve"> Approve </option>
-                <option value="For Revision"> For Revision </option>
                 <option value="Reject"> Reject </option>
               </select>
             </div>
@@ -147,7 +93,7 @@
               Submit
             </button>
           </div>
-        <hr v-if="!isPrint" class="marginTop30" />
+        <hr class="marginTop30" />
         </div>
 
         <!-- Historry -->
@@ -166,9 +112,10 @@
 </template>
 
 <script>
+import dataTable from './dataTable.vue'
+const axios = require("axios");
 // import jsPDF from 'jspdf'
 // import html2canvas from 'html2canvas'
-import dataTable from './dataTable.vue'
 
 export default {
   components: { dataTable, },
@@ -185,7 +132,7 @@ export default {
       today:'',
       timeUnit:'',
       report: {
-        status: 'For Revision',
+        status: 'Pending',
         title: 'THe Best Report',
         type: 'Weekly',
         year: '2020',
@@ -207,15 +154,6 @@ export default {
         approvedBy: 'I',
         approvedByDate: '',
       },
-      reportsOption: [
-        'Summary',
-        'Prevalence Analysis',
-        'Fatality Analysis',
-        'Person Analysis',
-        'Time Analysis',
-        'Place Analysis',
-        'Risk Analysis',
-      ],
 
       tableOptions: {
         tableName: 'cases',
@@ -261,7 +199,7 @@ export default {
       title: 'View Feedback Report'
     }
   },
-  mounted() {
+  async mounted() {
     const today = new Date();
       const hour = today.getHours()>9 ? today.getHours() : '0'+today.getHours()
       const mins = today.getMinutes()>9 ? today.getMinutes() : '0'+today.getMinutes()
@@ -271,13 +209,17 @@ export default {
 
       for (let i=0; i<this.report.chartRemarks.length; i++) this.inputChartRemarks[i] = this.report.chartRemarks[i];
       if (this.report.status === 'Pending') this.isAssess = true;
+
+    const pdfFile = await axios.get("http://localhost:8080/api/getFileTest", {responseType: 'blob'});
+    // const url = window.URL.createObjectURL(pdfFile.data);
+    const iFrameElement = document.querySelector('iframe');
+    iFrameElement.src = pdfFile.data;
   },
   methods: {
     getColor(status) {
       switch (status) {
         case 'Approved': return 'greenB';
         case 'Pending': return 'darkGrayB';
-        case 'For Revision': return 'orangeB';
         case 'Rejected': return 'redB';
       }
     },
@@ -322,7 +264,6 @@ export default {
               this.report.status = 'Approved';
               this.report.approvedByDate = this.today;
             }
-            else if (this.inputStatus === 'For Revision') this.report.status = 'For Revision';
             else if (this.inputStatus === 'Rejected') this.report.status = 'Rejected';
             for (let i=0; i<this.inputChartRemarks.length; i++) this.report.chartRemarks[i] = this.inputChartRemarks[i];
 
