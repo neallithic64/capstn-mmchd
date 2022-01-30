@@ -3,6 +3,7 @@ const router = express();
 const cron = require('node-cron');
 const m1Cont = require("../controllers/m1Controller");
 const m4Cont = require("../controllers/m4Controller");
+const m2Cont = require("../controllers/m2Controller");
 // const middleware = require("../middlewares/indexMiddleware");
 
 
