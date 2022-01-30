@@ -12,7 +12,7 @@ Date.prototype.getWeek = function() {
 }
 
 /** This helper function only accepts Date objects. Function also includes checking
- * if the object itslef is valid. If the object-to-be-converted is itself a String, it
+ * if the object itself is valid. If the object-to-be-converted is itself a String, it
  * is advised to pass it through `new Date()` first before passing to this function.
  * This will return a String representation of the corrected date in Philippine Standard
  * Time. This is done by offsetting the date by a constant of 8 hours in miliseconds.
