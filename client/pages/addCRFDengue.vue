@@ -206,6 +206,10 @@ export default {
       }
     })).data;
     console.log(rows);
+    for (let i = 0; i < rows.crfData.length; i++) {
+      rows.crfData[i].reportDate = this.convDatePHT(new Date(rows.crfData[i].reportDate));
+      rows.crfData[i].updatedDate = this.convDatePHT(new Date(rows.crfData[i].updatedDate));
+    }
     this.crfData = rows.crfData;
     this.weekNo = rows.CRF.year + "-" + rows.CRF.week;
     this.CRFID = rows.CRF.CRFID;
@@ -224,9 +228,9 @@ export default {
       try {
         this.popupOpen = !this.popupOpen
         const result = await axios.post('http://localhost:8080/api/updatePushData', {
-		  userID: this.$auth.user.userID,
-		  pushDataAccept: change
-		});
+          userID: this.$auth.user.userID,
+          pushDataAccept: change
+        });
         if (result.status === 200) {
           this.$toast.success('User Settings Updated!', {duration: 4000, icon: 'check_circle'});
         } else {
@@ -301,7 +305,10 @@ export default {
         console.log(submitResponse);
         this.$toast.error('Something went wrong!', {duration: 4000, icon: 'error'});
       }
-    }
+    },
+    convDatePHT(d) { // only accepts Date object; includes checking
+      return !isNaN(Date.parse(d)) ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10) : "N/A";
+    },
   },
 }
 </script>
