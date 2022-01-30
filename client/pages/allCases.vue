@@ -378,7 +378,6 @@ export default {
     }
   },
   async mounted() {
-
     if (this.allData.length === 0) {
       this.$toast.show('Loading...', {className: 'blink', icon: 'hourglass_top'});
     }
@@ -406,11 +405,8 @@ export default {
     this.crfCHDData = crfRows.filter(e => e.userID === this.$auth.user.userID || e.isPushed > 0);
     this.crfDRUData = crfRows.filter(e => e.userID === this.$auth.user.userID);
     this.tableOptions.columns = this.allColumns;
-    if (this.$auth.user.userType === "techStaff") {
+    if (CHDtypes.find(e => this.$auth.user.userType.includes(e)) !== undefined) {
       this.allData = cifRows;
-    } else if (CHDtypes.find(e => this.$auth.user.userType.includes(e)) !== undefined) {
-      this.allData = cifRows.filter(e1 => e1.type === "CIF" ||
-            !!this.crfCHDData.find(e2 => e2.CRFID === e1.CRFID && e2.userID === this.$auth.user.userType));
     } else { // is not-CHD; CIF, or CRF whose CRFID matches a CRF that matches the user's ID
       this.allData = cifRows.filter(e1 => e1.type === "CIF" ||
             !!this.crfDRUData.find(e2 => e2.CRFID === e1.CRFID && e2.userID === this.$auth.user.userType));

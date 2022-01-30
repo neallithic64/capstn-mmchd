@@ -691,6 +691,11 @@ const indexFunctions = {
 	
 	getCases: async function(req, res) {
 		try {
+			let havingClause,
+					userTypeCheck = await db.findRows("mmchddb.USERS", {userID: req.query.userID});
+			if (userTypeCheck.length > 0 && userTypeCheck[0].userType.includes("Staff")) havingClause = ``;
+			else havingClause = `HAVING cr.userID = '${req.query.userID}'`;
+			
 			let match = await db.exec(`SELECT c.*, d.diseaseName,
 					CONCAT(p.lastName, ", ", p.firstName, " ", p.midName) AS patientName,
 					a.city, MAX(al.dateModified) AS updatedDate
@@ -700,7 +705,7 @@ const indexFunctions = {
 					INNER JOIN mmchddb.ADDRESSES a ON p.caddressID = a.addressID
 					LEFT JOIN mmchddb.AUDIT_LOG al ON c.caseID = al.editedID
 					GROUP BY c.caseID
-					HAVING c.reportedBy = '${req.query.userID}'
+					${havingClause}
 					ORDER BY reportDate DESC;`);
 			// label the cases now as CIF or CRF
 			for (let i = 0; i < match.length; i++) match[i].type = match[i].CRFID ? "CRF" : "CIF";
