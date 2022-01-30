@@ -176,11 +176,10 @@ export default {
     }
   },
   mounted() {},
-  /*
   async fetch() {
-    const rows = (await axios.get('http://localhost:8080/api/getCRFPage', {
+    const rows = (await axios.get('http://localhost:8080/api/getTCL', {
       params: {
-        CRFID: this.$route.query.CRFID,
+        TCLID: this.$route.query.TCLID,
         diseaseID: "DI-0000000000003",
         userID: this.$auth.user.userID
       }
@@ -194,7 +193,6 @@ export default {
     this.weekNo = rows.CRF.year + "-" + rows.CRF.week;
     this.CRFID = this.$route.query.CRFID;
   },
-  */
   methods: {
     downloadPDF() {
       this.isPrint = !this.isPrint

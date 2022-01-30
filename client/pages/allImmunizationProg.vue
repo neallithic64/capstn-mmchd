@@ -28,7 +28,7 @@
           </ul>
         </div>
       </div>
-      <div class="AIP-viewComponent">
+      <div v-if="dataSets.length > 0" class="AIP-viewComponent">
         <dataTable
           :options="tableOptions"
           :datavalues="dataSets"
@@ -66,6 +66,7 @@ export default {
     return {
       isPrint: false,
       dayTime: '',
+      monthsList: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
       tableOptions: {
         tableName: 'cases',
         sortKey: 'updateDate',
@@ -99,7 +100,7 @@ export default {
           },
           {
             title: 'Immunized Patients',
-            key: 'immunizedPatients',
+            key: 'immuniPati',
             sortable: true,
           },
           {
@@ -107,11 +108,11 @@ export default {
             key: 'totalPatients',
             sortable: true,
           },
-          {
+          /*{
             title: 'Last Updated',
             key: 'updateDate',
             sortable: true,
-          },
+          },*/
           {
             title: 'Submit Status',
             key: 'submitStatus',
@@ -120,41 +121,7 @@ export default {
         // source: 'http://demo.datatable/api/users',
         search: true,
       },
-      dataSets: [
-        {
-          TCLID: '124',
-          city: 'ad',
-          brgy: '',
-          year: '2020',
-          month: 'Feb',
-          immunizedPatients: '10',
-          totalPatients: '30',
-          updateDate: '',
-          submitStatus: '',
-        },
-        {
-          TCLID: '124',
-          city: 'ad',
-          brgy: '',
-          year: '2020',
-          month: 'Feb',
-          immunizedPatients: '10',
-          totalPatients: '30',
-          updateDate: '',
-          submitStatus: '',
-        },
-        {
-          TCLID: '124',
-          city: 'ad',
-          brgy: '',
-          year: '2020',
-          month: 'Feb',
-          immunizedPatients: '10',
-          totalPatients: '30',
-          updateDate: '',
-          submitStatus: '',
-        },
-      ],
+      dataSets: [],
     }
   },
   async mounted() {
@@ -163,6 +130,10 @@ export default {
     }
     this.dayTime = (new Date()).toString().split(":").slice(0, 2).join(":");
 	const data = (await axios.get('http://localhost:8080/api/getAllTCLs')).data;
+	for (let i = 0; i < data.length; i++) {
+	  data[i].month = this.monthsList[data[i].month];
+	  data[i].submitStatus = data[i].isPushed ? "Submitted" : "Ongoing";
+	}
 	this.dataSets = data;
     if (this.dataSets.length > 0) {
       this.$toast.clear();

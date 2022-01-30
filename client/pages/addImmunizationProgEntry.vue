@@ -1376,6 +1376,7 @@ export default {
         console.log(result);
         this.$toast.error('Something went wrong!', {duration: 4000, icon: 'error'});
       }
+	  return result.data;
     },
     saveData() {
       this.loadedData[0].BCGdate = this.dataSets[0].BCGdate;
@@ -1414,9 +1415,10 @@ export default {
       else if (page===4) {
         if (this.patientExist || (this.pageDone[1] && this.pageDone[2] && this.pageColor[1] && this.Color[2])) {
           this.saveData();
-          await this.save();
+          const res = await this.save();
+		  console.log(res);
           // redirect to view page with update action
-		  window.location.href = "/addImmunizationProg";
+		  window.location.href = "/viewImmunizationProgEntry";
         }
         else {
           // alert('Please fill up the required fields');
