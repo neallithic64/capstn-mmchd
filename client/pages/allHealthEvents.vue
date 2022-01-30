@@ -100,13 +100,13 @@ export default {
             filter: true,
           },
           {
-            title: 'No. of Cases',
+            title: 'Cases',
             key: 'numCases',
             type: 'text',
             source: 'events'
           },
           {
-            title: 'No. of Deaths',
+            title: 'Deaths',
             key: 'numDeaths',
             type: 'text',
             source: 'events'
@@ -114,6 +114,14 @@ export default {
           {
             title: 'Status',
             key: 'eventStatus',
+            type: 'text',
+            source: 'events',
+            sortable: true,
+          },
+          {
+            // PHELC, PHERC, PHENC, PHEIC
+            title: 'Assessment',
+            key: 'eventAssess',
             type: 'text',
             source: 'events',
             sortable: true,
@@ -132,7 +140,7 @@ export default {
   },
   async mounted() {
     if (this.allEvents.length === 0) {
-      this.$toast.show('Loading...', {icon: 'hourglass_top'});
+      this.$toast.show('Loading...', {className: 'blink', icon: 'hourglass_top'});
     }
     const DRUUserTypes = ['BHS', 'RHU', 'CHO', 'govtHosp', 'privHosp', 'clinic', 'govtLab', 'privLab', 'airseaPort', 'fhsisStaff'];
     const rows = (await axios.get('http://localhost:8080/api/getAllEvents')).data;
@@ -218,6 +226,22 @@ export default {
     width: 100%;
     align-items: center;
     margin: 0px;
+  }
+}
+
+.blink {
+  animation: blink 2s steps(3, end) infinite;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
   }
 }
 
