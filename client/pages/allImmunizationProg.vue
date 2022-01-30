@@ -1,34 +1,34 @@
 <template>
-  <div id="viewCases">
+  <div id="viewCases" class="AIPbody">
     <!--Top Bar of the screen-->
     <TopNav />
-    <div ref="content" class="viewcases-container">
-      <div class="exportButtons">
-        <h1 class="pageHeader"> Immunization Program Reports </h1>
-        <div v-show="!isPrint" class="actionButtons" style="display: flex;margin-top: 5px;">
-          <ul v-show="year==='2022' || year===2022" class="actionButton">
+    <div ref="content" class="AIP-view">
+      <div class="AIPexport">
+        <h1 class="AIPpeageHeader"> Immunization Program Reports </h1>
+        <div v-show="!isPrint" class="AIPactionButtons" style="display: flex;margin-top: 5px;">
+          <ul class="AIPactionButton">
           <img
             src="~/assets/img/pen.png"
-            class="printButton"
+            class="AIPprint"
             @click="isEdit=true"
           />
           </ul>
-          <ul class="actionButton">
+          <ul class="AIPactionButton">
           <img
             src="~/assets/img/pdf.png"
-            class="printButton"
+            class="AIPprint"
             @click="downloadPDF"
           />
           </ul>
-          <ul class="actionButton">
+          <ul class="AIPactionButton">
             <img src="~/assets/img/csv.png" 
-            class="printButton"
+            class="AIPprint"
             @click="csvExport(dataSets)"
           />
           </ul>
         </div>
       </div>
-      <div class="viewcases-component">
+      <div class="AIP-viewComponent">
         <dataTable
           :options="tableOptions"
           :datavalues="dataSets"
@@ -111,6 +111,10 @@ export default {
             title: 'Last Updated',
             key: 'updateDate',
             sortable: true,
+          },
+          {
+            title: 'Submit Status',
+            key: 'submitStatus',
           },
         ],
         // source: 'http://demo.datatable/api/users',
@@ -209,7 +213,7 @@ export default {
       const data = encodeURI(csvContent);
       const link = document.createElement("a");
       link.setAttribute("href", data);
-      link.setAttribute("download", this.caseTab.toUpperCase()+".csv");
+      link.setAttribute("download", "ImmunizationPrograms.csv");
       link.click();
     },
   },
@@ -217,7 +221,7 @@ export default {
 </script>
 
 <style>
-body {
+.AIPbody {
   font-family: 'Work Sans', sans-serif;
   font-weight: 300;
   padding: 0px;
@@ -225,13 +229,13 @@ body {
   background-image: none;
 }
 
-.pageHeader {
+.AIPpeageHeader {
   font-weight: 800;
   font-size: 32px;
   color: #346083;
 }
 
-.viewcases-container {
+.AIP-view {
   padding: 80px 20px 5px 20px;
   width: 100%;
 }
@@ -253,14 +257,14 @@ body {
 }
 
 @media only screen and (max-width: 800px) {
-  .viewcases-ontainer {
+  .AIP-view {
     width: 100%;
     align-items: center;
     margin: 0px;
   }
 }
 
-.viewcases-section-container {
+.AIP-viewSectionContainer {
   /* left: 275px; */
   /* position: relative; */
   /* width: calc(100vw - 320px); */
@@ -271,12 +275,12 @@ body {
 }
 
 @media only screen and (max-width: 800px) {
-  .viewcases-section-container {
+  .AIP-viewSectionContainer {
     width: 95%;
   }
 }
 
-.viewcases-component {
+.AIP-viewComponent {
   /* position: relative;
   display: inline-flex;
   flex-direction: row; */
@@ -291,134 +295,21 @@ body {
   margin-bottom: 40px;
 }
 @media only screen and (max-width: 800px) {
-  .viewcases-component {
+  .AIP-viewComponent {
     position: relative;
     top: 0px;
     min-height: fit-content;
   }
 }
 
-#form-header {
-    text-align: left;
-    padding-left: 5px;
-    margin-bottom: 5px;
-    font-weight: 600;
-    font-size: 20px;
-    background-color: #008d41;
-    color: transparent;
-    text-shadow: 1px 1px, -1px -1px rgb(0 0 0 / 25%);
-}
-
-
-table {
-  /* display: block; */
-  display: table;
-  overflow-x: auto;
-  white-space: nowrap;
-}
-
-.allDisplay {
-  display: block;
-}
-
-@media only screen and (max-width: 1000px) {
-  table {
-    display: block;
-  }
-}
-
-.datatable input[type='text'] {
-  padding: 8px 12px;
-  margin: 8px 0;
-  border: 1px solid #f1f1f1;
-  box-sizing: border-box;
-}
-
-.datatable select {
-  padding: 5px 12px;
-  margin: 8px 0;
-  box-sizing: border-box;
-  outline: none !important;
-  border: 1px solid #dddddd;
-  background: #fff;
-  width: auto;
-}
-
-.datatable input:focus {
-  border: 1px solid #dddddd !important;
-  outline: none;
-}
-
-.datatable select:focus {
-  outline: none !important;
-  border: 1px solid #dddddd;
-  background: #fff;
-}
-
-#datatable {
-  font-family: Arial, Helvetica, sans-serif;
-  border-collapse: collapse;
-  width: 100%;
-}
-
-#datatable td,
-#datatable th {
-  border: 1px solid #ddd;
-  padding: 8px;
-}
-
-#datatable tr:hover {
-  background-color: #ddd;
-  border: 1px solid #f1f1f1;
-}
-
-#datatable th {
-  padding-top: 12px;
-  padding-bottom: 12px;
-  text-align: center;
-  background: lightgray;
-}
-
-.datatable .pagination {
-  display: inline-block;
-  margin-top: 12px;
-  /* float:right; */
-}
-
-.datatable .pagination a {
-  color: black;
-  float: left;
-  padding: 8px 16px;
-  text-decoration: none;
-  transition: background-color 0.3s;
-  border: 1px solid #ddd;
-}
-
-.datatable .pagination a.active {
-  background-color: #346083;
-  color: white;
-  font-weight: 600;
-  opacity: 1;
-}
-
-.datatable .pagination a:hover:not(.active) {
-  background-color: #ddd;
-}
-
-.datatable .isDisabled {
-  cursor: not-allowed;
-  opacity: 0.5;
-  pointer-events: none;
-}
-
-.printButton {
+.AIPprint {
   width: 30px;
   height: 30px;
   /* margin: 0 5px; */
   margin: -5px 5px 5px;
 }
 
-.exportButtons {
+.AIPexport {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -468,17 +359,11 @@ select {
   border-radius: 9px;
 }
 
-.actionButton {
+.AIPactionButton {
     list-style: none;
     margin: 0;
     padding: 0;
     margin-top: 5px;
-}
-
-.input-edit {
-  text-align: center;
-  background: none;
-  max-width: 75px;
 }
 
 .editable {

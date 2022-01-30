@@ -1,11 +1,11 @@
 <template>
-  <div>
+  <div class="caseDefsBody">
     <TopNav/>
     <!--Everything below = main screen-->
-    <div class="case-container">
+    <div class="caseDefs-caseContainer">
       <!--SUMMARY: left side-->
-      <div class="form-summary-container">
-        <div class="form-summary">
+      <div class="caseDefs-formSummary-container">
+        <div class="caseDefs-formSummary">
           <button id="login-submit" type="submit" style="width: 210px; text-align: left" @click="instruct()">
             <h2 style="font-weight: 600">Diseases</h2>
           </button>
@@ -22,8 +22,8 @@
       </div>
 
       <!--Everything in the right-->
-      <div class="form-section-container">
-        <div class="form-component" style="margin-top: 8px;">
+      <div class="caseDefs-sectionContainer">
+        <div class="caseDefs-formComponent" style="margin-top: 8px;">
           <!-- Instructions -->
           <form v-if="pageNum === -1" id="instructEdit" type="submit">
             <div id="new-user-form" class="center">
@@ -31,7 +31,7 @@
               <div v-if="$auth.user.userType === 'lhsdChief' || $auth.user.userType === 'resuHead' || $auth.user.userType === 'chdDirector' || $auth.user.userType === 'techStaff'">
                 <ul v-for="(value, name, i) in instructions" :key="i" style="displayLinline-flex">
                     <li>
-                      <label :for="name" class="defsLabel">
+                      <label :for="name" class="defsLabel caseDefsLabel">
                         {{ name }}
                       </label>
                     </li>
@@ -45,7 +45,7 @@
               <div v-if="$auth.user.userType !== 'lhsdChief' || $auth.user.userType !== 'resuHead' || $auth.user.userType !== 'chdDirector'">
                 <ul style="displayLinline-flex">
                     <li>
-                      <label class="defsLabel">
+                      <label class="defsLabel caseDefsLabel">
                         To see case definitions:
                       </label>
                     </li>
@@ -77,7 +77,7 @@
                 <div>
                   <ul v-for="(value, name, i) in diseaseDefs" :key="i" style="displayLinline-flex">
                     <li>
-                      <label :for="name" class="defsLabel">
+                      <label :for="name" class="defsLabel caseDefsLabel">
                         {{ name }}
                       </label>
                       <ul>
@@ -281,7 +281,7 @@ export default {
 </script>
 
 <style>
-  body {
+  .caseDefsBody {
     font-family: 'Work Sans', sans-serif;
     font-weight: 300;
     padding: 0px;
@@ -289,7 +289,7 @@ export default {
     background-image: none;
   }
 
-  .case-container {
+  .caseDefs-caseContainer {
     margin: 70px 20px 5px 20px;
     display: flex;
     flex-direction: row;
@@ -298,7 +298,7 @@ export default {
   }
 
   @media only screen and (max-width: 800px) {
-    .case-container {
+    .caseDefs-caseContainer {
       width: 100%;
       flex-direction: column;
       align-items: center;
@@ -307,7 +307,7 @@ export default {
     }
   }
 
-  .form-summary {
+  .caseDefs-formSummary {
     width: fit-content;
     height: fit-content;
     left: 23px;
@@ -320,7 +320,7 @@ export default {
     border-radius: 10px;
   }
   @media only screen and (max-width: 800px) {
-    .form-summary {
+    .caseDefs-formSummary {
       width: 100%;
       position: unset;
       height: fit-content;
@@ -328,7 +328,7 @@ export default {
     }
   }
 
-  .form-summary-container {
+  .caseDefs-formSummary-container {
     position: fixed;
     width: fit-content;
     margin: 5px;
@@ -336,7 +336,7 @@ export default {
   }
 
   @media only screen and (max-width: 800px) {
-    .form-summary-container {
+    .caseDefs-formSummary-container {
       width: 95%;
       position: sticky;
       margin: 0px;
@@ -345,25 +345,6 @@ export default {
 
   .defsTextArea {
     max-width: 100%;
-  }
-
-  
-
-  .disease {
-    font-family: Work Sans;
-    font-style: normal;
-    font-weight: 500;
-    font-size: 20px;
-    line-height: 33px;
-    margin: 0;
-    color: #000000;
-    text-align: center;
-  }
-
-  .error-message {
-        color: #da4944;
-        font-weight: 500;
-        font-size: 12px;
   }
 
   .formnum {
@@ -407,7 +388,7 @@ export default {
     color: white;
   }
 
-  .form-section-container {
+  .caseDefs-sectionContainer {
     left: 275px;
     position: relative;
     width: calc(100vw - 320px);
@@ -416,25 +397,13 @@ export default {
   }
 
   @media only screen and (max-width: 800px) {
-    .form-section-container {
+    .caseDefs-sectionContainer {
       left: 0px;
       width: 95%;
     }
   }
 
-  .disease-name {
-    position: relative;
-    top: -3px;
-    z-index: 3;
-  }
-  @media only screen and (max-width: 800px) {
-    .disease-name {
-      position: relative;
-      top: 0px;
-    }
-  }
-
-  .form-component {
+  .caseDefs-formComponent {
     position: relative;
     height: fit-content;
     width: 100%;
@@ -448,7 +417,7 @@ export default {
     min-height: calc(100vh - 220px);
   }
   @media only screen and (max-width: 800px) {
-    .form-component {
+    .caseDefs-formComponent {
       position: relative;
       top: 0px;
       min-height: fit-content;
@@ -479,226 +448,7 @@ export default {
     }
   }
 
-  .field-row-straight {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    margin: 0 7px 6px 0px;
-  }
-
-  @media only screen and (max-width: 950px) {
-    .field-row-straight {
-      /* flex-direction: column; */
-      margin: 0;
-      width: 98%;
-    }
-  }
-
-  .field-row {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    margin: 0 7px 6px 5px;
-  }
-
-  @media only screen and (max-width: 950px) {
-    .field-row {
-      flex-direction: column;
-      margin: 0 0 10px;
-    }
-  }
-
-  .usertype-column {
-    display: flex; 
-    flex-direction: column; 
-    margin-right: 50px;
-  }
-
-  @media only screen and (max-width: 950px) {
-    .usertype-column {
-      display: flex; 
-      flex-direction: column; 
-      margin-right: 0px;
-    }
-  }
-
-  .name-field {
-    width: 100%;
-    padding: 0px 7px;
-    font-size: 14px;
-    display: flex;
-    flex-direction: column;
-    padding-bottom: 5px;
-  }
-
-  .field {
-    width: 100%;
-    padding: 0px 7px;
-    font-size: 14px;
-    display: flex;
-    flex-direction: column;
-    padding-bottom: 5px;
-  }
-
-  .halffield {
-    width: 50%;
-    padding: 0px 7px;
-    font-size: 14px;
-    display: flex;
-    padding-bottom: 5px;
-  }
-
-  @media only screen and (max-width: 950px) {
-    .name-field {
-      width: 98%;
-    }
-
-    .halffield {
-      width: 100%;
-      flex-direction: column;
-    }
-  }
-
-  .input-form-field,
-  select {
-    width: 100%;
-    height: 30px;
-    font-size: 16px;
-    font-family: 'Work Sans', sans-serif;
-    padding-right: 5px;
-    padding-left: 5px;
-    /* border: 1p x solid rgba(0, 0, 0, 0.25); */
-    border: 1px solid #a3a3a3;
-    box-sizing: border-box;
-    border-radius: 9px;
-  }
-
-  .input-radio {
-    /* width: 10%; */
-    height: 15px;
-    font-size: 16px;
-    font-family: 'Work Sans', sans-serif;
-    padding-right: 5px;
-    padding-left: 5px;
-    /* border: 1p x solid rgba(0, 0, 0, 0.25); */
-    border: 1px solid #a3a3a3;
-    box-sizing: border-box;
-    border-radius: 9px;
-    margin: 0 5px;
-  }
-
-  .input-checkbox {
-    /* width: 10%; */
-    height: 15px;
-    font-size: 16px;
-    font-family: 'Work Sans', sans-serif;
-    padding-right: 5px;
-    padding-left: 5px;
-    /* border: 1p x solid rgba(0, 0, 0, 0.25); */
-    border: 1px solid #a3a3a3;
-    box-sizing: border-box;
-    border-radius: 9px;
-    margin: 0 5px;
-  }
-
-  .half-half {
-    display: inline-flex;
-  }
-
-  .half-half1 {
-    width: 45%;
-  }
-
-  .half-half2 {
-    width: 55%;
-  }
-
-  .userType-field {
-    /* width: 15%; */
-    width: 100%;
-  }
-
-  @media only screen and (max-width: 950px) {
-    .half-half,
-    .half-half1,
-    .half-half2 {
-      width: 100%;
-    }
-    .userType-field {
-      width: 50%;
-    }
-  }
-
-  .info-icon-img {
-    width: 10px;
-    height: 10px;
-    margin: 0 5px;
-  }
-
-  .tooltip {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-right: 40px;
-    cursor: pointer;
-  }
-
-  .tooltipText {
-    background-color: #fff;
-    position: absolute;
-    bottom: 130%;
-    padding: 10px 15px;
-    border-radius: 5px;
-    font-size: 14px;
-    opacity: 0;
-    transition: all 0.5s;
-  }
-
-  .tooltip:hover .tooltipText {
-    opacity: 1;
-    transform: translateY(-10px);
-  }
-
-  .tooltipText::after {
-    content: '';
-    border-width: 5px;
-    border-style: solid;
-    border-color: #fff transparent transparent transparent;
-    position: absolute;
-    top: 100%;
-    left: 40%;
-    margin-left: 5%;
-  }
-
-  img:hover + .info-desc {
-    display: block;
-  }
-
-  .info-desc {
-    display: none;
-    background-color: #fff;
-    position: absolute;
-    bottom: 130%;
-    padding: 10px 15px;
-    border-radius: 5px;
-    font-size: 14px;
-    opacity: 0;
-    transition: all 0.5s;
-  }
-
-  .infodesc-outside {
-    position: relative;
-    background: #adadad;
-    color: white;
-    border-radius: 10px;
-    font-size: 11px;
-    padding: 2px 7px;
-    top: -20px;
-    left: -20px;
-  }
-
-  label {
+  .caseDefsLabel {
     display: inline-flex;
     flex-direction: row;
     align-items: center;
@@ -707,11 +457,6 @@ export default {
   .required:after {
     content: '*';
     color: red;
-  }
-
-  h3 {
-    font-size: 15px;
-    font-weight: 600;
   }
 
   .defsButton {
@@ -752,24 +497,6 @@ export default {
     background: #dddddd;
   }
 
-  hr {
-    margin: 20px 0;
-  }
-
-  .center-center {
-    display: inline-flex;
-    flex-direction: row;
-    align-items: center;
-  }
-
-  .show {
-    display: unset;
-  }
-
-  .hide {
-    display: none;
-  }
-
   /* COLLAPSE EME BELOW */
 
   .collpaseWrapper {
@@ -798,13 +525,6 @@ export default {
     font-weight: 600;
   }
 
-  /* .collapseLabel:hover {
-    background: #346083;
-    opacity: 0.85;
-    color: white;
-    font-weight: 600;
-  } */
-
   .defsLabel.last {
     border-bottom: 1px solid #fff;
   }
@@ -814,118 +534,4 @@ export default {
     background: white;
   }
 
-  .collapseInput[type='checkbox'] {
-    position: absolute;
-    left: -9999px;
-  }
-
-  .collapseInput[type='checkbox'] ~ ul {
-    height: 0;
-    transform: scaleY(0);
-  }
-
-  .collapseInput[type='checkbox']:checked ~ ul {
-    height: 100%;
-    transform-origin: top;
-    transition: transform 0.2s ease-out;
-    transform: scaleY(1);
-  }
-
-  .collapseInput[type='checkbox']:checked + label {
-    background: #346083;
-    opacity: 0.85;
-    color: white;
-    font-weight: 500;
-    border-bottom: 1px solid #fff;
-  }
-
-  /* SEARCH BAR ALL BELOW */
-
-  .searchbar {
-    background: #ffffff;
-    border: 1px solid #a3a3a3;
-    box-sizing: border-box;
-    border-radius: 40px;
-    width: 100%;
-    height: 40px;
-    padding: 10px 20px 10px 40px;
-
-    height: 45px;
-    border: none;
-    font-size: 16px;
-    outline: none;
-    margin-top: -1px;
-
-    /* background-image: url(../assets/img/search.svg); */
-    background-image: url(https://cdn1.iconfinder.com/data/icons/hawcons/32/698956-icon-111-search-512.png);
-    background-size: 20px;
-    background-repeat: no-repeat;
-    background-position: 15px 12.5px;
-  }
-
-  .bar {
-    margin: 0 auto;
-    width: 100%;
-    height: 45px;
-    border-radius: 40px;
-    /* border: 1px solid #dcdcdc; */
-
-    position: relative;
-  }
-  .bar:hover {
-    box-shadow: 1px 1px 8px 1px #dcdcdc;
-  }
-  .bar:focus-within {
-    box-shadow: 1px 1px 8px 1px #dcdcdc;
-    outline: none;
-  }
-
-  .container {
-    background: white;
-    border-radius: 40px;
-    width: 60%;
-    margin: 0 auto;
-  }
-
-  #input_img {
-    position: absolute;
-    bottom: 8px;
-    left: 10px;
-    width: 30px;
-    height: 30px;
-  }
-
-  .searchResult {
-    padding: 5px 10px;
-    border-bottom: 1px solid lightgray;
-    display: inline-flex;
-    flex-direction: row;
-  }
-
-  .searchResult:hover {
-    background: #eeeeee;
-  }
-
-  .searchResultInfo {
-    display: inline-flex;
-    flex-direction: column;
-  }
-
-  .searchPerson {
-    font-size: 16px;
-    margin-bottom: -5px;
-    font-weight: 400;
-  }
-
-  .searchAddress {
-    font-size: 12px;
-    font-weight: 200;
-  }
-
-  .searchPersonIcon {
-    content: url('~/assets/img/personIcon.png');
-    height: 25px;
-    width: 25px;
-    margin: auto 5px auto 0;
-  }
 </style>

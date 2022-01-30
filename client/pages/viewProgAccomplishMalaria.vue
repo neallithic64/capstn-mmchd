@@ -97,6 +97,14 @@
         </div>
       </div>
       </div>
+      <div>
+        <div v-show="!isEdit" style="margin: -15px 10px 50px; text-align: -webkit-right;">
+          <button class="cancel-button" type="button" @click="save('Save')">
+            Save </button>
+          <button class="save-button" type="button" @click="save('Submit')">
+            Submit </button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -318,9 +326,17 @@ export default {
       const data = encodeURI(csvContent);
       const link = document.createElement("a");
       link.setAttribute("href", data);
-      link.setAttribute("download", this.caseTab.toUpperCase()+".csv");
+      link.setAttribute("download", "MalariaProgAccomplish.csv");
       link.click();
     },
+    save(action) {
+      if (action==='Save') {
+        // TO DO
+      }
+      else if (action === 'Submit') {
+        // TO DO
+      }
+    }
   },
 }
 </script>

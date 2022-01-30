@@ -326,7 +326,7 @@
                 <div class="field-row-straight">
                   <div class="name-field">
                     <label for="userCity" class="required"> City </label>
-                    <select id="userCity" v-model="user.userCity" name="userCity" :disabled="inputEdit()" @change="getBrgyList()">
+                    <select id="userCity" v-model="user.userCity" name="userCity" class="addUserSelect" :disabled="inputEdit()" @change="getBrgyList()">
                       <option value="Caloocan City">Caloocan</option>
                       <option value="Las Piñas City">Las Piñas</option>
                       <option value="Makati City">Makati</option>
@@ -348,7 +348,7 @@
 
                   <div class="field">
                     <label for="userBrgy" class="required"> Barangay </label>
-                    <select v-if="true" id="userBrgy" v-model="user.userBrgy" name="userBrgy" :disabled="inputEdit()">
+                    <select v-if="true" id="userBrgy" v-model="user.userBrgy" name="userBrgy" :disabled="inputEdit()" class="addUserSelect">
                       <!-- <option v-for="(brgy, i) in brgyList" :key = "i" :value="brgy"> 
                         {{ brgy }} 
                       </option> -->
@@ -910,7 +910,7 @@ export default {
   }
 
   .input-form-field,
-  select {
+  .addUserSelect {
     width: 100%;
     height: 30px;
     font-size: 16px;

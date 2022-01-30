@@ -1,11 +1,11 @@
 <template>
-  <div id="viewPatient">
+  <div id="viewPatient" class="viewPatientBody">
     <!--Top Bar of the screen-->
     <TopNav />
     <div id="printPage" ref="content" class="viewPatient-container">
       <div class="viewPatient-details" style="align-text: left">
         <div class="patientNumbers">
-          <h1 style="margin: -10px 0">Patient No. {{ formData.patient.patientID }}</h1>
+          <h1 class="viewPatienth1" style="margin: -10px 0">Patient No. {{ formData.patient.patientID }}</h1>
         </div>
         <div class="patientStatus" style="align-text: right">
           <div v-if="editCase">
@@ -32,14 +32,14 @@
       </div>
       <div class="viewPatient-details" style="align-text: left">
         <div class="patientNumbers">
-          <p>DRU City: <b>{{ DRUData.druCity }}</b></p>
-          <p>DRU Name: <b>{{ DRUData.druName }}</b></p>
+          <p>DRU City: <b class="viewPatientb">{{ DRUData.druCity }}</b></p>
+          <p>DRU Name: <b class="viewPatientb">{{ DRUData.druName }}</b></p>
         </div>
       </div>
       <div class="viewPatient-component">
         <form id="patient1" type="submit">
           <div id="case-investigation-form" class="center">
-            <h2 id="form-header">
+            <h2 id="form-header" class="viewPatienth2">
               Personal Information
             </h2>
 
@@ -230,7 +230,7 @@
                 </div>
               </div>
 
-              <hr/>
+              <hr class="viewPatienthr"/>
 
               <div class="field-row">
                 <div class="field">
@@ -370,7 +370,7 @@
                 </div>
               </div>
 
-              <hr/>
+              <hr class="viewPatienthr"/>
 
               <div class="field-row-straight">
                 <div class="field">
@@ -422,11 +422,11 @@
 
           </div>
         </form>
-        <hr />
+        <hr class="viewPatienthr"/>
 
         <form id="patient2" type="submit">
           <div id="case-investigation-form" class="center">
-            <h2 id="form-header">Risk Factors</h2>
+            <h2 id="form-header" class="viewPatienth2">Risk Factors</h2>
 
             <div class="risk-flex">
               <div style="display: inline-flex;flex-direction: row;">
@@ -434,7 +434,7 @@
                 <div style="display: block">
                   <div class="risk-factors" style="display: inline-flex; margin-bottom: -1 px; flex-direction: column;">
                     <div class="field">
-                      <h3 class="required">Lifestyle:</h3>
+                      <h3 class="required viewPatienth3">Lifestyle:</h3>
                       <div style="flex-direction: column; align-items: center">
 
                         <div style="display: flex; align-items: center;">
@@ -534,7 +534,7 @@
                 <div style="display: block">
                   <div class="risk-factors" style="display: inline-flex; margin-bottom: -1 px; flex-direction: column;">
                     <div class="field">
-                      <h3 class="required">Current Health Conditions:</h3>
+                      <h3 class="required viewPatienth3">Current Health Conditions:</h3>
                       <div style="flex-direction: column; align-items: center">
 
                         <div style="display: flex; align-items: center;">
@@ -606,7 +606,7 @@
                 <div style="display: block">
                   <div class="risk-factors" style="display: inline-flex; margin-bottom: -1 px; flex-direction: column;">
                     <div class="field">
-                      <h3 class="required">Historical Health Data:</h3>
+                      <h3 class="required viewPatienth3">Historical Health Data:</h3>
                       <div style="flex-direction: column; align-items: center">
 
                         <div style="display: flex; align-items: center;">
@@ -703,7 +703,7 @@
 
                 <div class="risk-factors" style="display: block; margin-bottom: -1 px">
                   <div class="field" style="display: block">
-                    <h3 class="required">Other Risks:</h3>
+                    <h3 class="required viewPatienth3">Other Risks:</h3>
                     <div style="display:inline-flex; flex-direction:row">
                       <div class="otherRisk" style="margin-right: 10px;">
 
@@ -875,12 +875,12 @@
             </div>
           </div>
         </form>
-        <hr />
+        <hr class="viewPatienthr"/>
 
         <form v-if="immunization.status!=='N/A'" id="patient3" type="submit">
           <div id="case-investigation-form" class="center">
             <div style="display: flex; flex-direction: width; justify-content: space-between;">
-              <h2 id="form-header">
+              <h2 id="form-header" class="viewPatienth2">
                 Immunization Program Status
               </h2>
               <a v-if="immunization.status!=''" href="/viewImmunizationProgEntry" class="immunLink">
@@ -939,11 +939,11 @@
           </div>
         </form>
 
-        <hr/>
+        <hr class="viewPatienthr"/>
 
         <form id="patient3" type="submit">
           <div id="case-investigation-form" class="center">
-            <h2 id="form-header">
+            <h2 id="form-header" class="viewPatienth2">
               Cases
             </h2>
             <dataTable
@@ -1499,9 +1499,9 @@ export default {
 .immunStatus {
     color: white;
     padding: 5px 10px;
-    border-radius: 10px;
-    font-weight: 600;
-    font-size: 20px;
+    border-radius: 20px;
+    font-weight: 525;
+    font-size: 18px;
 }
 
 .input-required:invalid, textarea:invalid { 
@@ -1514,7 +1514,7 @@ export default {
   border-color: hsl(0, 76%, 50%);
 }
 
-body {
+.viewPatientBody {
   font-family: 'Work Sans', sans-serif;
   font-weight: 300;
   padding: 0px;
@@ -1522,7 +1522,7 @@ body {
   background-image: none;
 }
 
-h3 {
+.viewPatienth3 {
   font-size: 15px;
   font-weight: 600;
 }
@@ -1608,19 +1608,19 @@ h3 {
   flex-direction: column;
 }
 
-h1 {
+.viewPatienth1 {
   color: #346083;
   font-size: 40px;
   font-weight: 800;
 }
 
-h2 {
+.viewPatienth2 {
   color: #008d41;
   font-size: 25px;
   font-weight: 600;
 }
 
-b {
+.viewPatientb {
   /* color: #346083; */
   font-size: 18px;
   font-weight: 600;
@@ -1912,16 +1912,9 @@ select:disabled {
   background: #dddddd;
 }
 
-hr {
+.viewPatienthr {
   margin: 20px 0;
 }
 
-.show {
-  display: unset;
-}
-
-.hide {
-  display: none;
-}
 </style>
 

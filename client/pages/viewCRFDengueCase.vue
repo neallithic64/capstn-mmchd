@@ -1,12 +1,12 @@
 <template>
-  <div id="viewCRF">
+  <div id="viewCRF" class="viewCRFDCbody">
     <!--Top Bar of the screen-->
     <TopNav />
     <div ref="content" class="viewCRF-container">
       <div class="viewCRF-details" style="align-text: left">
         <div class="CRFnumbers">
-          <h1 style="margin: -10px 0">Case No. {{ formData.cases.caseID }}</h1>
-           <h2 style="margin-top: -1px">
+          <h1 class="viewCRFDCh1" style="margin: -10px 0">Case No. {{ formData.cases.caseID }}</h1>
+           <h2 class="viewCRFDCh2" style="margin-top: -1px">
             Patient No. <a :href="'/viewPatient?patientID=' + formData.patient.patientID" class="patientlink"> {{ formData.patient.patientID }} </a>
           </h2>
         </div>
@@ -14,7 +14,7 @@
           <span style="display: inline-flex; align-items: center"
             >Case Classification:&nbsp;
             <div v-show="!editStatus" class="CRFActionButtons">
-              <h1 style="line-height: 1; align-items: center">
+              <h1 class="viewCRFDCh1" style="line-height: 1; align-items: center">
                 {{ formData.cases.caseLevel }}
               </h1>
               <ul
@@ -37,15 +37,15 @@
       </div>
       <div class="viewCRF-details" style="align-text: left">
         <div class="CIFnumbers">
-          <p>DRU City: <b> {{DRUData.druCity}} </b></p>
-          <p>DRU Name: <b> {{DRUData.druName}} </b></p>
-          <p>DRU Type: <b> {{DRUData.druType}} </b></p>
-          <p>DRU Address: <b> {{DRUData.druCity + ", " + DRUData.druBrgy + ", " + DRUData.druHouseStreet}} </b></p>
+          <p>DRU City: <b class="viewCRFDChr"> {{DRUData.druCity}} </b></p>
+          <p>DRU Name: <b class="viewCRFDChr"> {{DRUData.druName}} </b></p>
+          <p>DRU Type: <b class="viewCRFDChr"> {{DRUData.druType}} </b></p>
+          <p>DRU Address: <b class="viewCRFDChr"> {{DRUData.druCity + ", " + DRUData.druBrgy + ", " + DRUData.druHouseStreet}} </b></p>
         </div>
         <div class="CRFstatus" style="align-text: right">
-          <p>Week No: <b> {{ CRFData.year }}-{{ CRFData.week }} </b> </p>
-          <p>Reported Date: <b>{{ formData.cases.reportDate }}</b></p>
-          <p>Last Updated: <b>{{ dateLastUpdated }}</b></p>
+          <p>Week No: <b class="viewCRFDChr"> {{ CRFData.year }}-{{ CRFData.week }} </b> </p>
+          <p>Reported Date: <b class="viewCRFDChr">{{ formData.cases.reportDate }}</b></p>
+          <p>Last Updated: <b class="viewCRFDChr">{{ dateLastUpdated }}</b></p>
         </div>
       </div>
       <div v-show="!isPrint" class="CRF-SummaryContainer">
@@ -67,7 +67,7 @@
 
         <form v-if="pageNum == 1 || isPrint" id="dengue1" type="submit">
           <div id="case-report-form" class="center">
-            <h2 id="form-header">
+            <h2 id="form-header" class="viewCRFDCh2">
               {{ Object.values(disease.formNames)[1] }}
             </h2>
 
@@ -254,7 +254,7 @@
               </div>
             </div>
 
-            <hr/>
+            <hr class="viewCRFDChr"/>
 
             <div class="field-row">
               <div class="field">
@@ -368,7 +368,7 @@
               </div>
             </div>
 
-            <hr/>
+            <hr class="viewCRFDChr"/>
 
             <div class="field-row-straight">
               <div class="field">
@@ -417,11 +417,11 @@
             </div>
           </div>
         </form>
-        <hr v-if="isPrint" />
+        <hr v-if="isPrint" class="viewCRFDChr"/>
 
         <form v-if="pageNum == 2 || isPrint" id="dengue2" type="submit">
           <div id="case-report-form" class="center">
-            <h2 id="form-header"> {{ Object.values(disease.formNames)[2] }} </h2>
+            <h2 id="form-header" class="viewCRFDCh2"> {{ Object.values(disease.formNames)[2] }} </h2>
 
             <div class="field-row">
               <div class="thirtyDesk" style="display: inline-flex; flex-direction: row">
@@ -539,10 +539,10 @@
             </div>
           </div>
 
-          <hr />
+          <hr class="viewCRFDChr"/>
 
           <div id="case-report-form" class="center">
-            <h2 id="form-header">Risk Factors</h2>
+            <h2 id="form-header" class="viewCRFDCh2">Risk Factors</h2>
 
             <div class="risk-flex">
               <div style="display: inline-flex;flex-direction: row;">
@@ -550,7 +550,7 @@
                 <div style="display: block">
                   <div class="risk-factors" style="display: inline-flex; margin-bottom: -1 px; flex-direction: column;">
                     <div class="field">
-                      <h3 class="required">Lifestyle:</h3>
+                      <h3 class="required viewCRFDCh3">Lifestyle:</h3>
                       <div style="flex-direction: column; align-items: center">
 
                         <div style="display: flex; align-items: center;">
@@ -637,7 +637,7 @@
                 <div style="display: block">
                   <div class="risk-factors" style="display: inline-flex; margin-bottom: -1 px; flex-direction: column;">
                     <div class="field">
-                      <h3 class="required">Current Health Conditions:</h3>
+                      <h3 class="required viewCRFDCh3">Current Health Conditions:</h3>
                       <div style="flex-direction: column; align-items: center">
 
                         <div style="display: flex; align-items: center">
@@ -696,7 +696,7 @@
                 <div style="display: block">
                   <div class="risk-factors" style="display: inline-flex; margin-bottom: -1 px; flex-direction: column;">
                     <div class="field">
-                      <h3 class="required">Historical Health Data:</h3>
+                      <h3 class="required viewCRFDCh3">Historical Health Data:</h3>
                       <div style="flex-direction: column; align-items: center">
 
                         <div style="display: flex; align-items: center">
@@ -780,7 +780,7 @@
 
                 <div class="risk-factors" style="display: block; margin-bottom: -1 px">
                   <div class="field" style="display: block">
-                    <h3 class="required">Other Risks:</h3>
+                    <h3 class="required viewCRFDCh3">Other Risks:</h3>
                     <div style="display:inline-flex; flex-direction:row">
                       <div class="otherRisk" style="margin-right: 10px;">
 
@@ -939,11 +939,11 @@
             </div>
           </div>
         </form>
-        <hr v-if="isPrint" />
+        <hr v-if="isPrint" class="viewCRFDChr"/>
 
         <form v-if="pageNum == 3 || isPrint" id="dengue3" type="submit">
           <div id="case-report-form" class="center">
-            <h2 id="form-header"> {{ Object.values(disease.formNames)[3] }} </h2>
+            <h2 id="form-header" class="viewCRFDCh2"> {{ Object.values(disease.formNames)[3] }} </h2>
 
             <div class="field-row">
               <div class="thirtyDesk" style="display: inline-flex; flex-direction: row; width:22%">
@@ -1000,11 +1000,11 @@
             </div>
           </div>
         </form>
-        <hr v-if="isPrint" />
+        <hr v-if="isPrint" class="viewCRFDChr"/>
 
         <form v-if="pageNum == 4 || isPrint" id="dengue4" type="submit">
           <div id="case-investigation-form" class="center">
-            <h2 id="form-header">
+            <h2 id="form-header" class="viewCRFDCh2">
               {{ Object.values(disease.formNames)[4] }}
             </h2>
 
@@ -1053,11 +1053,11 @@
 
           </div>
         </form>
-        <hr v-if="isPrint" />
+        <hr v-if="isPrint" class="viewCRFDChr"/>
 
         <form v-if="pageNum == 5 || isPrint" id="dengue5" type="submit">
           <div id="case-investigation-form" class="center">
-            <h2 id="form-header" style="display: inline-flex;">
+            <h2 id="form-header" class="viewCRFDCh2" style="display: inline-flex;">
               {{ Object.values(disease.formNames)[5] }}
               <ul
                 v-show="!isPrint && !editLab && !editOutcome"
@@ -1149,7 +1149,7 @@
 
         <form v-if="pageNum == 6 || isPrint" id="dengue6" type="submit">
           <div id="case-investigation-form" class="center">
-            <h2 id="form-header" style="display: inline-flex;">
+            <h2 id="form-header" class="viewCRFDCh2" style="display: inline-flex;">
               {{ Object.values(disease.formNames)[6] }}
               <!-- ADD this in ul v-show below: 
                 && $auth.user.userID === formData.cases.investigatorLab -->
@@ -1370,11 +1370,11 @@
 
           </div>
         </form>
-        <hr v-if="isPrint" />
+        <hr v-if="isPrint" class="viewCRFDChr"/>
 
         <form v-if="pageNum == 7 || isPrint" id="dengue7" type="submit">
           <div id="case-investigation-form" class="center">
-            <h2 id="form-header">
+            <h2 id="form-header" class="viewCRFDCh2">
               {{ Object.values(disease.formNames)[7] }}
             </h2>
 
@@ -1422,7 +1422,7 @@
             </div>
           </div>
         </form>
-        <hr v-if="isPrint" />
+        <hr v-if="isPrint" class="viewCRFDChr"/>
       
       </div>
       <div class="CRF-statusHistory">
@@ -1439,7 +1439,7 @@
         <button class="close" @click="status('cancel')">x</button>
         <div class="field-row" style="display: inline-flex; margin-bottom: -1 px">
           <div class="field">
-            <h2 id="form-header" class="required">
+            <h2 id="form-header" class="viewCRFDCh2 required">
               Please select the final classification
             </h2>
             <div>
@@ -1997,7 +1997,7 @@ export default {
   border-color: hsl(0, 76%, 50%);
 }
 
-body {
+.viewCRFDCbody {
   font-family: 'Work Sans', sans-serif;
   font-weight: 300;
   padding: 0px;
@@ -2005,7 +2005,7 @@ body {
   background-image: none;
 }
 
-h3 {
+.viewCRFDCh3 {
   font-size: 15px;
   font-weight: 600;
 }
@@ -2105,19 +2105,19 @@ h3 {
   flex-direction: column;
 }
 
-h1 {
+.viewCRFDCh1 {
   color: #008d41;
   font-size: 40px;
   font-weight: 800;
 }
 
-h2 {
+.viewCRFDCh2 {
   color: #346083;
   font-size: 25px;
   font-weight: 600;
 }
 
-b {
+.viewCRFDCb {
   /* color: #346083; */
   font-size: 18px;
   font-weight: 600;
@@ -2184,53 +2184,6 @@ th, td {
 }
 
 tr:nth-child(odd) {background-color: #f2f2f2;}
-
-/* POPUP BELOW */
-
-.close {
-  color: red;
-  position: relative;
-  float: right;
-  top: -15px;
-  font-weight: 800;
-}
-
-.overlay {
-  display: block;
-  z-index: 11;
-  margin: 0px;
-  padding: 90px;
-  width: -webkit-fill-available;
-  height: -webkit-fill-available;
-  /* background: gray; */
-  /* opacity: 55%; */
-  position: absolute;
-  top: 0;
-  left: 0;
-  background: rgba(100, 100, 100, 0.4);
-  /* border: 100px solid rgba(100, 100, 100, 0.4); */
-}
-@media only screen and (max-width: 550px) {
-  .overlay {
-    padding: 85px;
-  }
-}
-
-@media only screen and (max-width: 400px) {
-  .overlay {
-    padding: 40px;
-  }
-}
-
-.overlay-form {
-  padding: 30px;
-  border-radius: 40px;
-  background: white;
-  width: -webkit-fill-available;
-  height: -webkit-fill-available;
-  overflow-y: auto;
-}
-
 
 /* COLLAPSE EME BELOW */
 

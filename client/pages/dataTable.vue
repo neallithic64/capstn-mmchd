@@ -23,7 +23,7 @@
       <thead>
         <th v-for="(column, columnIndex) in options.columns" :key="columnIndex" :style="{ 'text-align': column.textAlign }">
           <span v-if="column.filter" style="float: left">
-            <div v-if="column.key === 'disease'">
+            <div v-if="column.key === 'disease' || column.key === 'Disease' || column.title === 'Disease'">
               <a class="filterButton">
                 <img
                   src="~/assets/img/filter.png"
@@ -50,7 +50,7 @@
                 </div>
               </div>
             </div>
-            <div v-if="column.key === 'city'">
+            <div v-else-if="column.key === 'city' || column.key === 'City' || column.title === 'City'">
               <a class="filterButton">
                 <img
                   src="~/assets/img/filter.png"
@@ -77,7 +77,7 @@
                 </div>
               </div>
             </div>
-            <div v-if="column.title==='Case Status'">
+            <div v-else-if="column.title==='Case Status'">
               <a class="filterButton">
                 <img
                   src="~/assets/img/filter.png"
@@ -104,7 +104,7 @@
                 </div>
               </div>
             </div>
-            <div v-if="column.title==='Submit Status'">
+            <div v-else-if="column.title==='Submit Status'">
               <a class="filterButton">
                 <img
                   src="~/assets/img/filter.png"
@@ -131,7 +131,7 @@
                 </div>
               </div>
             </div>
-            <div v-if="column.title==='Report Status'">
+            <div v-else-if="column.title==='Report Status'">
               <a class="filterButton">
                 <img
                   src="~/assets/img/filter.png"
@@ -158,7 +158,7 @@
                 </div>
               </div>
             </div>
-            <div v-if="column.title==='Immunization Status'">
+            <div v-else-if="column.title==='Immunization Status'">
               <a class="filterButton">
                 <img
                   src="~/assets/img/filter.png"
@@ -175,6 +175,60 @@
                     <input
                       :id="value"
                       v-model="immunStatusFilters.selected"
+                      :value="value"
+                      name="filter"
+                      type="checkbox"
+                      @change="filter()"
+                    />
+                    <label :for="value">{{ value }}</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div v-else-if="column.key==='outbreakStatus'">
+              <a class="filterButton">
+                <img
+                  src="~/assets/img/filter.png"
+                  alt="filter.png"
+                  style="width: 16px; height: 16px"
+                  @click="outbreakStatusOpen = !outbreakStatusOpen"
+                />
+              </a>
+              <div v-if="outbreakStatusOpen" style="position: absolute">
+                <div class="arrow-up"></div>
+                <div class="filterDropdown">
+                  <b>Select Status:</b>
+                  <div v-for="(value, i) in outbreakStatusFilters.options" :key="i" style="padding-left: 7px">
+                    <input
+                      :id="value"
+                      v-model="outbreakStatusFilters.selected"
+                      :value="value"
+                      name="filter"
+                      type="checkbox"
+                      @change="filter()"
+                    />
+                    <label :for="value">{{ value }}</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div v-else-if="column.title==='Risk Classification'">
+              <a class="filterButton">
+                <img
+                  src="~/assets/img/filter.png"
+                  alt="filter.png"
+                  style="width: 16px; height: 16px"
+                  @click="riskClassificationOpen = !riskClassificationOpen"
+                />
+              </a>
+              <div v-if="riskClassificationOpen" style="position: absolute">
+                <div class="arrow-up"></div>
+                <div class="filterDropdown">
+                  <b>Select Classification:</b>
+                  <div v-for="(value, i) in riskClassificationFilters.options" :key="i" style="padding-left: 7px">
+                    <input
+                      :id="value"
+                      v-model="riskClassificationFilters.selected"
                       :value="value"
                       name="filter"
                       type="checkbox"
@@ -375,8 +429,20 @@ export default {
       submitStatusOpen: false,
       reportStatusOpen: false,
       immunStatusOpen: false,
+      outbreakStatusOpen: false,
+      riskClassificationOpen: false,
       diseaseFilters: {
-        options: ['Measles/Rubella','Malaria','Pertussis','Dengue','Leptospirosis','Acute Viral Hepatitis',
+        options: [
+          'Malaria',
+          'Measles/Rubella',
+          'Tetanus',
+          'Pertussis',
+          'Meningococcal',
+          'Dengue',
+          'Cholera',
+          'Leptospirosis',
+          'Chikungunya',
+          'Typhoid',
         ],
         selected: [],
       },
@@ -413,6 +479,14 @@ export default {
       },
       immunStatusFilters: {
         options: ['N/A', 'Ongoing', 'Completed'],
+        selected: [],
+      },
+      outbreakStatusFilters: {
+        options: ['Ongoing', 'Controlled', 'Closed'],
+        selected: [],
+      },
+      riskClassificationFilters: {
+        options: ['Low', 'Moderate', 'High'],
         selected: [],
       },
       dataFiltered: [],
@@ -606,7 +680,8 @@ export default {
       this.dataFiltered = [];
 
       if (this.diseaseFilters.selected.length === 0 && this.cityFilters.selected.length === 0 && this.caseStatusFilters.selected.length === 0
-        && this.submitStatusFilters.selected.length === 0 && this.reportStatusFilters.selected.length === 0 && this.immunStatusFilters.selected.length === 0)
+        && this.submitStatusFilters.selected.length === 0 && this.reportStatusFilters.selected.length === 0 && this.immunStatusFilters.selected.length === 0
+        && this.outbreakStatusFilters.selected.length === 0 && this.riskClassificationFilters.selected.length === 0)
         this.dataFiltered = this.datavalues;
 
       else if (this.pageType === 'crfCase' || this.pageType === 'addcrfID') {
@@ -644,13 +719,30 @@ export default {
           }
       }
 
-      else 
+      else if (this.pageType === 'outbreaks') {
+        for (let i = 0; i < Object.keys(this.datavalues).length; i++)
+          if ((this.diseaseFilters.selected.length === 0 || this.diseaseFilters.selected.includes(this.datavalues[i].disease)) &&
+            (this.outbreakStatusFilters.selected.length === 0 || this.outbreakStatusFilters.selected.includes(this.datavalues[i].outbreakStatus) || 
+            (this.outbreakStatusFilters.selected.includes('Ongoing') && this.datavalues[i].outbreakStatus === 'Ongoing with Initial Response' ))) {
+            this.dataFiltered.push(this.datavalues[i]);
+          }
+      }
+
+      else if (this.pageType === 'obSummary') {
+        for (let i = 0; i < Object.keys(this.datavalues).length; i++)
+          if (this.riskClassificationFilters.selected.length === 0 || this.riskClassificationFilters.selected.includes(this.datavalues[i].risk)) {
+            this.dataFiltered.push(this.datavalues[i]);
+          }
+      }
+
+      else {
         for (let i = 0; i < Object.keys(this.datavalues).length; i++)
           if ((this.diseaseFilters.selected.length === 0 || this.diseaseFilters.selected.includes(this.datavalues[i].disease)) &&
             (this.cityFilters.selected.length === 0 || this.cityFilters.selected.includes(this.datavalues[i].city)) &&
             (this.caseStatusFilters.selected.length === 0 || this.caseStatusFilters.selected.find(e => this.datavalues[i].caseLevel.includes(e)) !== undefined)) {
             this.dataFiltered.push(this.datavalues[i]);
           }
+      }
 
       this.getDataSet();
     },
