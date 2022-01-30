@@ -10,11 +10,11 @@
           <img v-show="isPrint" src="~/assets/img/logo.png" style="height: 100px; marginBottom15"/>
           <div v-if="!isPrint" class="marginTop10">
             <div v-if="!isPrint" class="marginTop40 marginBottom-40 centerText">
-              <div class="actionStatusButton inlineFlex marginBottom-50">
+              <div class="viewRep-actionStatusButton inlineFlex marginBottom-50">
                 <img v-show="report.status==='For Revision' && !isRevise" src="~/assets/img/pen.png" class="printButton width30 inline marginTop-6" @click="isRevise=true" />
                 <img v-show="report.status==='Approved'" src="~/assets/img/pdf.png" class="printButton width30 inline marginTop-6" @click="downloadPDF()" />
               </div>
-              <div v-if="!isPrint" class="main-status marginLeft10 marginTop-10" :class="getColor(report.status)"> {{report.status}} </div>
+              <div v-if="!isPrint" class="viewRep-mainStatus marginLeft10 marginTop-10" :class="getColor(report.status)"> {{report.status}} </div>
             </div>
           </div>
           <h1 v-if="!isPrint" class="textAlighRight greenC weight800 size32 marginTop2 marginBottom-3"> Feedback Report # 123 </h1>
@@ -33,10 +33,10 @@
         <!-- CANCEL SUBMIT IF REVISING -->
         <div v-if="isRevise & report.status==='For Revision'">
           <div class="marginTop10" style="display: flex; justify-content: right;">
-            <button class="back-button" type="button" @click="submit('revision','cancel')">
+            <button class="viewRep-backButton" type="button" @click="submit('revision','cancel')">
               Cancel
             </button>
-            <button class="next-button" type="button" @click="submit('revision','submit')">
+            <button class="viewRep-nextButton" type="button" @click="submit('revision','submit')">
               Submit
             </button>
           </div>
@@ -47,11 +47,11 @@
       <!-- CHARTS -->
       <div class="padding15 alignTop block paddingTop-10">
         <div v-for="(chart, chartIndex) in report.reportsIncluded" :key="chartIndex" class="fullwidth padding10">
-          <h3 v-if="isPrint" class="caps chartTitle marginBottom-15 blueC"> {{chart}} </h3>
-          <div v-else class="caps chartTitle marginBottom-15 blueB whiteC paddingLeft10 marginRight10 marginLeft10"> {{chart}} </div>
+          <h3 v-if="isPrint" class="caps viewRep-chartTitle marginBottom-15 blueC"> {{chart}} </h3>
+          <div v-else class="caps viewRep-chartTitle marginBottom-15 blueB whiteC paddingLeft10 marginRight10 marginLeft10"> {{chart}} </div>
           <div class="padding30" :class="getMinClass(chartIndex, report.reportsIncluded.length)">
-            <div class="chartContainer marginBottom5">
-              <!-- <iframe class="report-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiODdiNTM2N2YtMTA3YS00NzA2LTg5YjItMDBlZDllMTQ2ZDY0IiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D&pageName=ReportSection">
+            <div class="viewRep-chartContainer marginBottom5">
+              <!-- <iframe class="viewRep-report-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiODdiNTM2N2YtMTA3YS00NzA2LTg5YjItMDBlZDllMTQ2ZDY0IiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D&pageName=ReportSection">
               </iframe> -->
             </div>
             <!-- <div v-if="!isRevise" style="padding: 5px 10px;" :class="chartRemarkClass()" :contentEditable="isRevise" class="width100" required> {{inputChartRemarks[chartIndex]}} </div> -->
@@ -130,7 +130,7 @@
                 :class="isRequired()" required>
                 <option value="Approve"> Approve </option>
                 <option value="For Revision"> For Revision </option>
-                <option value="Decline"> Decline </option>
+                <option value="Reject"> Reject </option>
               </select>
             </div>
           </div>
@@ -140,10 +140,10 @@
                 style="resize: vertical; height: 100px; padding: 5px; 10px;"/>
           </div>
           <div class="marginTop5" style="display: flex; justify-content: right;">
-            <button class="back-button" type="button" @click="submit('assessment','cancel')">
+            <button class="viewRep-backButton" type="button" @click="submit('assessment','cancel')">
               Cancel
             </button>
-            <button class="next-button" type="button" @click="submit('assessment','submit')">
+            <button class="viewRep-nextButton" type="button" @click="submit('assessment','submit')">
               Submit
             </button>
           </div>
@@ -152,7 +152,7 @@
 
         <!-- Historry -->
         <div v-show="!isPrint" id="case-investigation-form" class="center">
-          <h3 class="caps chartTitle marginBottom5 form-header"> Report History </h3>
+          <h3 class="caps viewRep-chartTitle marginBottom5 viewRep-formHeader"> Report History </h3>
           <dataTable
           :options="tableOptions"
           :datavalues="dataSet"
@@ -231,7 +231,7 @@ export default {
             // sortable: true,
           },
           {
-            title: 'Action', // approve, decline, edit, comment, etc.
+            title: 'Action', // approve, Reject, edit, comment, etc.
             key: 'action',
           },
           {
@@ -278,7 +278,7 @@ export default {
         case 'Approved': return 'greenB';
         case 'Pending': return 'darkGrayB';
         case 'For Revision': return 'orangeB';
-        case 'Declined': return 'redB';
+        case 'Rejected': return 'redB';
       }
     },
     isRequired() {  if (!this.isValidated) return 'input-required'; },
@@ -288,7 +288,7 @@ export default {
       else if (this.isRevise) return 'whiteB';
     },
     getMinClass(index, reportCount) {
-      if (!this.isPrint) return 'chartContainerView';
+      if (!this.isPrint) return 'viewRep-chartContainerView';
       else if (index === 0) return 'fullHeightFirst';
       else if (index === reportCount-1) return '';
       else return 'fullHeightNotFirst';
@@ -323,7 +323,7 @@ export default {
               this.report.approvedByDate = this.today;
             }
             else if (this.inputStatus === 'For Revision') this.report.status = 'For Revision';
-            else if (this.inputStatus === 'Decline') this.report.status = 'Declined';
+            else if (this.inputStatus === 'Rejected') this.report.status = 'Rejected';
             for (let i=0; i<this.inputChartRemarks.length; i++) this.report.chartRemarks[i] = this.inputChartRemarks[i];
 
           // TO DO: SAVE SAVE in db
@@ -489,7 +489,7 @@ body {font-family:Arial, Helvetica, sans-serif}
   .peopleRight { width: 60% }
 }
 
-.form-header {
+.viewRep-formHeader {
   text-align: left;
   padding-left: 5px;
   margin-bottom: 5px;
@@ -510,13 +510,13 @@ body {font-family:Arial, Helvetica, sans-serif}
   /* align-items: center; */
 }
 
-.actionStatusButton {
+.viewRep-actionStatusButton {
     display: -webkit-inline-box;
     margin-top: -10px;
     padding-top: 5px;
 }
 
-.main-status {
+.viewRep-mainStatus {
   padding: 3px 15px 4px;
   border-radius: 22px;
   color: white;
@@ -526,33 +526,20 @@ body {font-family:Arial, Helvetica, sans-serif}
   float: right;
 }
 
-.chartContainerView {
+.viewRep-chartContainerView {
     margin: 15px 10px 10px;
     filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.25));
     background-color: #f2f2f2;
 }
 
-.reportsOptionsBox {
-    width: fit-content;
-    /* border: 1px solid black; */
-    padding: 2px 16px;
-    border-radius: 8px;
-}
-
-.analysisReportOption {
-    align-items: center;
-    width: 215px;
-    display: inline-block;
-}
-
-.chartContainer {
+.viewRep-chartContainer {
   border: lightgray solid 1px;
   /* width: 100%; */
   height: 415px;
   background: lightgray;
 }
 
-.chartTitle {
+.viewRep-chartTitle {
     font-weight: 600;
     font-size: 20px;
     /* background-color: #008d41;
@@ -561,7 +548,7 @@ body {font-family:Arial, Helvetica, sans-serif}
     -webkit-background-clip: text; */
 }
 
-.report-powerbi-iframe {
+.viewRep-report-powerbi-iframe {
   height: 100%;
   background-color: gray;
   width: 100%;
@@ -570,13 +557,13 @@ body {font-family:Arial, Helvetica, sans-serif}
   margin-top: 5px; */
 }
 
-.approvalPeople {
+.viewRep-approvalPeople {
     font-size: 16px;
     padding-right: 5px;
     padding-left: 5px;
 }
 
-.back-button {
+.viewRep-backButton {
     width: 150px;
     height: 38px;
     max-width: 100%;
@@ -587,11 +574,11 @@ body {font-family:Arial, Helvetica, sans-serif}
     margin-right: 10px;
   }
 
-.back-button:hover {
+.viewRep-backButton:hover {
   border: #346083 solid 1px;
 }
 
-.next-button {
+.viewRep-nextButton {
   width: 150px;
   height: 38px;
   max-width: 100%;

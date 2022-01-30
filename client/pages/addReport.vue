@@ -7,19 +7,19 @@
         <!-- TOP : report details -->
         <div class="padding5 marginBottom15">
           <!-- title + status -->
-          <div class="space-inline"> <h1 class="formHeader marginTopBot5">Add Feedback Report</h1> </div>
+          <div class="space-inline alignCenter"> <h1 class="addRep-formHeader marginTopBot5">Add Feedback Report</h1> </div>
 
           <!-- details -->
-          <div class="space-inline marginTopBot5 alignTop">
+          <div class="space-inline alignCenter marginTopBot5 alignTop">
             <!-- input -->
             <div class="half alignStart paddingSide10 block">
-              <div class="inline alignCenter marginTopBot2">
+              <div class="inlineFlex alignCenter marginTopBot2">
                 <legend for="reportTitle" class="inputLegend required"> Report Title: </legend>
                 <input id="reportTitle" v-model="report.title" type="text" class="input-form-field"
                   :class="isRequired()" :disabled="!inputEdit()" required />
               </div>
 
-              <div class="inline alignCenter marginTopBot2">
+              <div class="inlineFlex alignCenter marginTopBot2">
                 <legend for="reportType" class="inputLegend required"> Report Type: </legend>
                 <select id="reportType" v-model="report.type" type="text" class="input-form-field"
                   :class="isRequired()" :disabled="!inputEdit()" required @change="changeTime(report.type)">
@@ -29,7 +29,7 @@
                 </select>
               </div>
 
-              <div class="inline alignCenter marginTopBot2">
+              <div class="inlineFlex alignCenter marginTopBot2">
                 <legend for="reportTime" class="inputLegend required"> Year: </legend>
                 <select id="reportTime" v-model="report.year" type="text" class="input-form-field"
                   :class="isRequired()" :disabled="!inputEdit()" required>
@@ -51,7 +51,7 @@
                   :class="isRequired()" :disabled="!inputEdit()" required/>
               </div>
 
-              <div class="inline alignCenter marginTopBot2">
+              <div class="inlineFlex alignCenter marginTopBot2">
                 <legend for="reportDisease" class="inputLegend required"> Disease: </legend>
                 <select id="reportDisease" v-model="report.disease" type="text" class="input-form-field"
                   :class="isRequired()" :disabled="!inputEdit()" required>
@@ -83,29 +83,29 @@
         <!-- CHARTS -->
         <div class="padding15 alignTop block">
           <div v-for="(chart, chartIndex) in report.reportsIncluded" :key="chartIndex" class="fullwidth padding10">
-            <h3 class="caps chartTitle marginBottom5"> {{chart}} </h3>
+            <h3 class="caps addRep-chartTitle marginBottom5"> {{chart}} </h3>
             <div class="marginTopBottom5 lightgrayB padding30 borderRadius30 boxShadow">
-              <div v-if="chart==='Summary'" class="chartContainer marginBottom5">
+              <div v-if="chart==='Summary'" class="addRep-chartContainer marginBottom5">
                 <!-- SUMMARY -->
-                <iframe class="report-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiODdiNTM2N2YtMTA3YS00NzA2LTg5YjItMDBlZDllMTQ2ZDY0IiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D&pageName=ReportSection">
+                <iframe class="addRep-report-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiODdiNTM2N2YtMTA3YS00NzA2LTg5YjItMDBlZDllMTQ2ZDY0IiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D&pageName=ReportSection">
                 </iframe>
               </div>
-              <div v-else-if="chart==='Prevalence Analysis'" class="chartContainer marginBottom5">
+              <div v-else-if="chart==='Prevalence Analysis'" class="addRep-chartContainer marginBottom5">
                 <!-- Prevalence Analysis -->
               </div>
-              <div v-else-if="chart==='Fatality Analysis'" class="chartContainer marginBottom5">
+              <div v-else-if="chart==='Fatality Analysis'" class="addRep-chartContainer marginBottom5">
                 <!-- Fatality Analysis -->
               </div>
-              <div v-else-if="chart==='Person Analysis'" class="chartContainer marginBottom5">
+              <div v-else-if="chart==='Person Analysis'" class="addRep-chartContainer marginBottom5">
                 <!-- Person Analysis -->
               </div>
-              <div v-else-if="chart==='Time Analysis'" class="chartContainer marginBottom5">
+              <div v-else-if="chart==='Time Analysis'" class="addRep-chartContainer marginBottom5">
                 <!-- Time Analysis -->
               </div>
-              <div v-else-if="chart==='Place Analysis'" class="chartContainer marginBottom5">
+              <div v-else-if="chart==='Place Analysis'" class="addRep-chartContainer marginBottom5">
                 <!-- Place Analysis -->
               </div>
-              <div v-else-if="chart==='Risk Analysis'" class="chartContainer marginBottom5">
+              <div v-else-if="chart==='Risk Analysis'" class="addRep-chartContainer marginBottom5">
                 <!-- Risk Analysis -->
               </div>
 
@@ -120,15 +120,15 @@
       <!-- <hr class="marginTopBot5"/> -->
 
         <!-- BOTTOM : prepare + submit buttons -->
-        <div class="space-inline marginTopBot5 padding5 alignTop">
+        <div class="space-inline alignCenter marginTopBot5 padding5 alignTop">
           <!-- name -->
           <div class="half alignStart paddingSide10 block">
-              <div class="inline alignCenter marginTopBot2">
+              <div class="inlineFlex alignCenter marginTopBot2">
                 <legend for="preparedBy" class="inputLegend required"> Prepared By: </legend>
                 <input id="preparedBy" v-model="report.preparedBy" type="text" class="input-form-field"
                   :class="isRequired()" :disabled="!inputEdit()" required />
               </div>
-              <div class="inline alignCenter marginTopBot2">
+              <div class="inlineFlex alignCenter marginTopBot2">
                 <legend for="reportType" class="inputLegend required"> Date and Time: </legend>
                 <input id="reportType" v-model="report.dateTime" type="text" class="input-form-field" disabled/>
               </div>
@@ -291,7 +291,8 @@ export default {
 
 .boxShadow { box-shadow: 0px 2px 4px rgb(0 0 0 / 25%); }
 
-.inline { display: inline-flex; }
+.inline { display: inline; }
+.inlineFlex { display: inline-flex; }
 .block { display: block; }
 .alignCenter { align-items: center; }
 .alightRight { align-items: right; }
@@ -301,7 +302,7 @@ export default {
 .alignEnd { align-self: end; }
 .caps {text-transform: uppercase;}
 
-.formHeader {
+.addRep-formHeader {
     margin: -5px 0;
     font-weight: 800;
     font-size: 32px;
@@ -312,15 +313,6 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  align-items: center;
-}
-
-.main-status {
-  padding: 3px 15px 4px;
-  border-radius: 22px;
-  color: white;
-  font-weight: 900;
-  font-size: 20px;
 }
 
 .reportsOptionsBox {
@@ -336,14 +328,14 @@ export default {
     display: inline-block;
 }
 
-.chartContainer {
+.addRep-chartContainer {
   border: lightgray solid 1px;
   width: 100%;
   height: 500px;
   background: lightgray;
 }
 
-.chartTitle {
+.addRep-chartTitle {
     font-weight: 600;
     font-size: 20px;
     background-color: #008d41;
@@ -352,7 +344,7 @@ export default {
     -webkit-background-clip: text;
 }
 
-.report-powerbi-iframe {
+.addRep-report-powerbi-iframe {
   height: 100%;
   background-color: gray;
   width: 100%;
