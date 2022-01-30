@@ -575,7 +575,7 @@ body {
 
 #tracker-content {
   padding-left: 5px;
-  max-height: 180px;
+  max-height: 150px;
   overflow: auto;
 }
 
