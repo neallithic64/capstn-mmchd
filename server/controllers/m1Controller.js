@@ -136,13 +136,14 @@ function Notification(notificationID, receiverID, type, message, caseID, dateCre
 	this.viewed = viewed;
 }
 
-function Outbreak(outbreakID, diseaseID, outbreakStatus, startDate, endDate, responseTime) {
+function Outbreak(outbreakID, diseaseID, outbreakStatus, startDate, endDate, type ,responseTime) {
 	this.outbreakID = outbreakID;
 	this.diseaseID = diseaseID;
 	this.outbreakStatus = outbreakStatus;
 	this.startDate = startDate;
 	this.endDate = endDate;
 	this.responseTime = responseTime;
+	this.type = type;
 }
 /** ON ID CREATION
 */
@@ -299,7 +300,7 @@ async function createOutbreak(diseaseID, outbreakStatus) {
 					return false;
 			}	
 		} else {
-			let newOutbreak = new Outbreak(await generateID("mmchddb.OUTBREAKS"), diseaseID, 'Ongoing', new Date(), null, null);
+			let newOutbreak = new Outbreak(await generateID("mmchddb.OUTBREAKS").id, diseaseID, 'Ongoing', new Date(), null,outbreakStatus, null);
 			let result = await db.insertOne("mmchddb.OUTBREAKS", newOutbreak);
 			return result;
 		}
@@ -1523,8 +1524,10 @@ const indexFunctions = {
 									result = await sendBulkNotifs(['pidsrStaff', 'fhsisStaff'],'caseNotif',
 										'NEW CASE: '+ user[0].druName + ' submitted a ' + disease[0].diseaseName + ' case', formData.cases.caseID);
 									
-									if (result)
-										res.status(200).send("Add case success");
+									if (result){
+										let ifOutbreak = await checkIfOutbreak(formData.cases.diseaseID, formData.cases);
+										res.status(200).send(ifOutbreak);
+									}
 									else res.status(500).send("Send Notifs Failed");
 
 								} else {
@@ -1621,7 +1624,8 @@ const indexFunctions = {
 					let newNotif = await db.insertOne("mmchddb.NOTIFICATIONS", notification);
 					
 					if (newNotif) {
-						res.status(200).send("Case has been updated!");
+						let ifOutbreak = await checkIfOutbreak(caseData[0].diseaseID, caseData[0]);
+						res.status(200).send(ifOutbreak);
 					} else {
 						console.log("Add Notification failed");
 						res.status(500).send("Add Notification failed");

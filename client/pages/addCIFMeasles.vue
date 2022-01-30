@@ -2753,6 +2753,14 @@ export default {
       if (result.status === 200) {
         // alert('Case submitted!');
         this.$toast.success('Case submitted!', {duration: 4000, icon: 'check_circle'});
+        
+        if(result.data.ifOutbreak){
+          if(result.data.ifOutbreak.type === 'Alert'){
+            window.open('http://localhost:3000/alertOutbreak?outbreakID='+ result.data.ifOutbreak.outbreakID)
+          } else
+            window.open('http://localhost:3000/epiOutbreak?outbreakID='+ result.data.ifOutbreak.outbreakID);
+        }
+
         window.location.href = '/allCases';
 
         // TODO: add notif/alert checking here 
