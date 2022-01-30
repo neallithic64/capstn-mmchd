@@ -1820,17 +1820,18 @@ const indexFunctions = {
 			}, { isPushed: true });
 			
 			let oldCRF = (await db.findRows("mmchddb.CRFS", { CRFID: CRFID }))[0];
+			let nextWeek;
 			
 			// if cases were submitted ahead of time, generate the next week
-			if (oldCRF.year === (new Date()).getFullYear() && oldCRF.week === (new Date()).getWeek()) {
-				let nextWeek = new Date(oldCRF.year, 0, 1 + oldCRF.week * 7);
+			if (oldCRF.year == (new Date()).getFullYear() && oldCRF.week == (new Date()).getWeek()) {
+				nextWeek = new Date(oldCRF.year, 0, 1 + oldCRF.week * 7);
 			} else { // if not, just get the currect date
-				let nextWeek = new Date();
+				nextWeek = new Date();
 			}
 			
 			// generate new CRF
 			await db.insertOne("mmchddb.CRFS", {
-				CRFID: CRFID,
+				CRFID: (await generateID("mmchddb.CRFS")).id,
 				diseaseID: diseaseID,
 				userID: userID,
 				week: nextWeek.getWeek(),
