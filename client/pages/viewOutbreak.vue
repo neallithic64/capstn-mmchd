@@ -5,7 +5,7 @@
     <div ref="content" class="viewOB-container">
       <div v-if="outbreak.responseTime === 'N/A'" id="countdown-container">
         <client-only>
-          <Countdown deadline="January 22, 2022 23:39:00"></Countdown>
+          <Countdown :deadline="resDeadline"></Countdown>
         </client-only>
         <span style="font-weight: 600;"> TIME LEFT FOR INITIAL RESPONSE </span>
       </div>
@@ -230,6 +230,7 @@ export default {
       arMod2Risk: 7,
       arHighRisk: 7,
       editStatus: false,
+	  resDeadline: '',
       auditLog: {
         newStatus: '',
         remarks: '',
@@ -409,15 +410,31 @@ export default {
     this.outbreak.startDate = this.convDatePHT(new Date(this.outbreak.startDate));
     this.outbreak.endDate = this.outbreak.endDate ? this.convDatePHT(new Date(this.outbreak.endDate)) : "N/A";
     this.outbreak.responseTime = this.outbreak.responseTime ? this.outbreak.responseTime : "N/A";
+	
     this.eventHistory = data.outbreakAudit;
+    for (let i = 0; i < this.eventHistory.length; i++) {
+	  this.eventHistory[i].dateModified = this.eventHistory[i].dateModified
+	    ? this.convDatePHT(new Date(this.eventHistory[i].dateModified))
+		: "N/A";
+	}
+	
     this.obCases = data.outbreakCases;
+	for (let i = 0; i < this.obCases.length; i++) {
+	  this.obCases[i].reportDate = this.obCases[i].reportDate
+	    ? this.convDatePHT(new Date(this.obCases[i].reportDate))
+		: "N/A";
+	  this.obCases[i].updatedDate = this.obCases[i].updatedDate
+	    ? this.convDatePHT(new Date(this.obCases[i].updatedDate))
+		: "N/A";
+	}
+	
     this.obSummary = data.outbreakSumm;
     for (let i = 0; i < this.obSummary.length; i++) {
       this.obSummary[i].numCases = this.obSummary[i].numCases ? this.obSummary[i].numCases : 0;
       this.obSummary[i].attackRate = this.obSummary[i].attackRate ? this.obSummary[i].attackRate : "0.00";
       this.obSummary[i].growthRate = this.obSummary[i].growthRate
-            ? (parseFloat(this.obSummary[i].growthRate) * 100).toFixed(2) + "%"
-            : "0.00%";
+          ? (parseFloat(this.obSummary[i].growthRate) * 100).toFixed(2) + "%"
+          : "0.00%";
       if (this.obSummary[i].growthRate > this.grHighRisk)
         this.obSummary[i].risk = "High";
       else if (this.obSummary[i].attackRate > this.arHighRisk)
@@ -428,6 +445,8 @@ export default {
         this.obSummary[i].risk = "Moderate";
       else this.obSummary[i].risk = "Low";
     }
+	
+	this.resDeadline = (new Date((new Date(this.outbreak.startDate)).getTime() + 115200000)).toString();
   }, 
   head() {
     return {

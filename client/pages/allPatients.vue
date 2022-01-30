@@ -105,6 +105,9 @@ export default {
     }
   },
   async mounted() {
+    if (this.allOutbreaks.length === 0) {
+      this.$toast.show('Loading...', {className: 'blink', icon: 'hourglass_top'});
+    }
     const rows = (await axios.get('http://localhost:8080/api/getPatients', {
       params: { userID: this.$auth.user.userID }
     })).data;
@@ -113,6 +116,10 @@ export default {
       rows[i].updatedDate = rows[i].updatedDate ? this.convDatePHT(new Date(rows[i].updatedDate)) : "N/A";
     }
     this.allPatients = rows;
+    if (this.allOutbreaks.length > 0) {
+      this.$toast.clear();
+      this.$toast.success('All outbreaks loaded!', {duration: 4000, icon: 'check_circle'});
+    }
   },
   methods: {
     downloadPDF() {
@@ -204,6 +211,22 @@ export default {
 .viewpatients-container {
   padding: 80px 20px 5px 20px;
   width: 100%;
+}
+
+.blink {
+  animation: blink 2s steps(3, end) infinite;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 @media only screen and (max-width: 800px) {

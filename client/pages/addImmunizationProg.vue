@@ -71,7 +71,7 @@
              (e.g. patient name, complete address) will not be pushed.</p>
           <p style="margin:10px 5px; font-size:16px"> Only data that is necessary for 
             time, place, and person analysis will be pushed.</p>
-          <p style="margin:10px 5px; font-size:12px"> You can update this in your settings anytime.</p>
+          <!--p style="margin:10px 5px; font-size:12px"> You can update this in your settings anytime.</p-->
           <div class="popupButtons" style="text-align: center;">
             <button class="back-button" type="button" @click="popup(false)">
               Disagree

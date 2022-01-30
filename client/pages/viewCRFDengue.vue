@@ -87,6 +87,7 @@ export default {
       druName: '',
       druType: '',
       druAddr: '',
+	  pushDataAccept: 0,
       weekNo: '',
       tableOptions: {
         tableName: 'crf',
@@ -173,9 +174,14 @@ export default {
         userID: this.$auth.user.userID
       }
     })).data;
+    this.pushDataAccept = rows.pushDataAccept;
     for (let i = 0; i < rows.crfData.length; i++) {
       rows.crfData[i].updatedDate = rows.crfData[i].updatedDate ? this.convDatePHT(new Date(rows.crfData[i].updatedDate)) : "N/A";
       rows.crfData[i].reportDate = this.convDatePHT(new Date(rows.crfData[i].reportDate));
+	  if ((!['Chief', 'Staff', 'resuHead', 'chdDirector'].some(e => this.$auth.user.userType.includes(e)) && !this.pushDataAccept) ||
+	      (this.$auth.user.druName !== this.druName)) {
+	    rows.crfData[i].patientName = "";
+	  }
     }
     this.submittedDate = rows.CRF.isPushed
         ? this.convDatePHT(new Date(rows.CRF.year, 0, (1 + rows.CRF.week * 7)))

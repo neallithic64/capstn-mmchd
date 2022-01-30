@@ -35,12 +35,14 @@ export default {
       pageNum: 0,
       analyticsList: {
         'A1': 'Summary',
-        'A2': 'Prevalence Analysis',
-        'A3': 'Fatality Analysis',
-        'A4': 'Person Analysis',
-        'A5': 'Time Analysis',
-        'A6': 'Place Analysis',
-        'A7': 'Risks Analysis',
+        'A2': 'Prevalence',
+        'A3': 'Fatality',
+        'A4': 'Person',
+        'A5': 'Time',
+        'A6': 'Place',
+        'A7': 'Risks',
+        'A8': 'Accomplishments',
+        'A9': 'Health Events'
       } 
     }
   },

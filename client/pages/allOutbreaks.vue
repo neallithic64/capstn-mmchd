@@ -150,7 +150,7 @@ export default {
   },
   async mounted() {
     if (this.allOutbreaks.length === 0) {
-      this.$toast.show('Loading...', {icon: 'hourglass_top'});
+      this.$toast.show('Loading...', {className: 'blink', icon: 'hourglass_top'});
     }
     const rows = (await axios.get('http://localhost:8080/api/getAllOutbreaks')).data;
     console.log(rows[0]);
@@ -160,8 +160,8 @@ export default {
       rows[i].dateStarted = this.convDatePHT(new Date(rows[i].startDate));
       rows[i].dateClosed = rows[i].endDate ? this.convDatePHT(new Date(rows[i].endDate)) : "N/A";
       rows[i].responseTime = rows[i].responseTime ? rows[i].responseTime : "N/A";
-      rows[i].attackRate = rows[i].attackRate ? rows[i].attackRate : "0.0";
-      rows[i].growthRate = rows[i].growthRate ? (parseFloat(rows[i].growthRate) * 100).toFixed(2) + "%" : "0.00%";
+      rows[i].attackRate = !isNaN(rows[i].attackRate) ? rows[i].attackRate : "0.0";
+      rows[i].growthRate = !isNaN(rows[i].growthRate) ? (parseFloat(rows[i].growthRate) * 100).toFixed(2) + "%" : "0.00%";
     }
     this.allOutbreaks = rows;
     if (this.allOutbreaks.length > 0) {
@@ -252,6 +252,22 @@ body {
   font-weight: 800;
   font-size: 32px;
   color: #346083;
+}
+
+.blink {
+  animation: blink 2s steps(3, end) infinite;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 .alloutbreaks-container {
