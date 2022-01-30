@@ -40,7 +40,7 @@
              (e.g. patient name, complete address) will not be pushed.</p>
           <p style="margin:10px 5px; font-size:16px"> Only data that is necessary for 
             time, place, and person analysis will be pushed.</p>
-          <p style="margin:10px 5px; font-size:12px"> You can update this in your settings anytime.</p>
+          <!--p style="margin:10px 5px; font-size:12px"> You can update this in your settings anytime.</p-->
           <div class="addCRFpopupButtons">
             <button class="back-button" type="button" @click="popup(false)">
               Disagree
@@ -209,9 +209,8 @@ export default {
     this.crfData = rows.crfData;
     this.weekNo = rows.CRF.year + "-" + rows.CRF.week;
     this.CRFID = rows.CRF.CRFID;
-  if(rows.pushDataAccept === null)
-    this.popupOpen = true;
-  else this.popupOpen = false;
+    if (!rows.pushDataAccept) this.popupOpen = true;
+    else this.popupOpen = false;
   },
   compute: {},
   head() {
@@ -226,15 +225,13 @@ export default {
         this.popupOpen = !this.popupOpen
         const result = await axios.post('http://localhost:8080/api/updatePushData', {userID: this.$auth.user.userID, pushDataAccept: change});
         if (result.status === 200) {
-          // alert('Health event submitted!');
           this.$toast.success('User Settings Updated!', {duration: 4000, icon: 'check_circle'});
-          window.location.href = '/allHealthEvents';
         } else {
           // eslint-disable-next-line no-console
           console.log(result);
           this.$toast.error('Something went wrong!', {duration: 4000, icon: 'error'});
         }
-        location.reload()
+        this.popupOpen = false;
       } catch(e) {
         // eslint-disable-next-line no-console
         console.log(e);

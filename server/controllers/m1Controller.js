@@ -1878,11 +1878,9 @@ const indexFunctions = {
 	postUpdatePushData: async function(req,res){
 		try {
 			let {userID, pushDataAccept} = req.body;
-			let updateSettings = await db.updateRows("mmchddb.USER_SETTINGS", {userID:userID}, {pushDataAccept:pushDataAccept});
-			if(updateSettings)
-				res.status(200).send();
-			else
-				res.status(500).send();
+			let updateSettings = await db.updateRows("mmchddb.USER_SETTINGS", {userID: userID}, {pushDataAccept: pushDataAccept});
+			if (updateSettings) res.status(200).send();
+			else res.status(500).send();
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error.");
