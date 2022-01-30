@@ -290,7 +290,7 @@ async function createOutbreak(diseaseID, outbreakStatus) {
 		let match = await db.exec("SELECT * FROM mmchddb.OUTBREAKS WHERE diseaseID='" + diseaseID +
 								"' AND NOT outbreakStatus='Closed';");
 		if(match.length > 0) {
-			if(match[0] == outbreakStatus)
+			if(match[0].outbreakStatus == outbreakStatus)
 				return match[0];
 			else if(outbreakStatus == 'Epidemic') {
 				let result = await db.updateRows("mmchddb.OUTBREAKS", {outbreakID:match[0].outbreakID}, {outbreakStatus:outbreakStatus});
@@ -314,10 +314,10 @@ async function checkIfOutbreak(diseaseID, caseObj) {
 	try {
 		// check if disease case is measles (suspected case for alert, confirmed case for epidemic)
 		if(diseaseID == "DI-0000000000000") {
-			if(caseObj.caseStatus == "Suspected Case") {
+			if(caseObj.caseLevel == "Suspected Case") {
 				return await createOutbreak("DI-0000000000000", "Alert");
 			}
-			else if (caseObj.caseStatus == "Discarded Case")
+			else if (caseObj.caseLevel == "Non-Measles/Rubella Discarded Case")
 				return false;
 			else
 				return await createOutbreak("DI-0000000000000", "Epidemic");
@@ -1200,6 +1200,20 @@ const indexFunctions = {
 		}
 	},
 
+	getOutbreakAlertDetails: async function(req, res){
+		try {
+			let outbreaks = await db.findRows("mmchddb.OUTBREAKS", {outbreakID:req.query.outbreakID});
+			if(outbreaks.length > 0){
+				let disease = await db.findRows("mmchddb.DISEASES", {diseaseID:outbreaks[0].diseaseID});
+				res.status(200).send({outbreak: outbreaks[0], disease:disease[0]});
+			}
+			else res.status(400).send("No outbreaks");
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
+
 	getOngoingOutbreaks: async function(req, res){
 		try {
 			let outbreaks = await db.exec("SELECT * FROM mmchddb.OUTBREAKS WHERE NOT outbreakStatus='Closed'");
@@ -1806,7 +1820,13 @@ const indexFunctions = {
 			}, { isPushed: true });
 			
 			let oldCRF = (await db.findRows("mmchddb.CRFS", { CRFID: CRFID }))[0];
-			let nextWeek = new Date(oldCRF.getFullYear(), oldCRF.getMonth(), oldCRF.getDate() + 7);
+			
+			// if cases were submitted ahead of time, generate the next week
+			if (oldCRF.year === (new Date()).getFullYear() && oldCRF.week === (new Date()).getWeek()) {
+				let nextWeek = new Date(oldCRF.year, 0, 1 + oldCRF.week * 7);
+			} else { // if not, just get the currect date
+				let nextWeek = new Date();
+			}
 			
 			// generate new CRF
 			await db.insertOne("mmchddb.CRFS", {

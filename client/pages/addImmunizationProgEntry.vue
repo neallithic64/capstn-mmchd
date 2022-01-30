@@ -78,7 +78,7 @@
             </div>
           </form>
 
-          <form v-if="pageNum == 1 || pageNum == Object.keys(disease.formNames).length" id="dengue1" type="submit">
+          <form v-if="pageNum == 1 || pageNum == Object.keys(disease.formNames).length" id="Dengue1date" type="submit">
             <div id="AIPE-case-form" class="center">
               <div style="display:flex; flex-direction:row; justify-content: space-between;">
                 <h2 id="AIPE-formHeader">
@@ -502,7 +502,7 @@
           </form>
           <hr v-if="pageNum == Object.keys(disease.formNames).length" class="AIPEhr"/>
 
-          <form v-if="pageNum == 2 || pageNum == Object.keys(disease.formNames).length" id="dengue2" type="submit">
+          <form v-if="pageNum == 2 || pageNum == Object.keys(disease.formNames).length" id="Dengue2date" type="submit">
             <div id="AIPE-case-form" class="center">
               <h2 id="AIPE-formHeader"> {{ Object.values(disease.formNames)[2] }} </h2>
 
@@ -963,7 +963,7 @@
           </form>
           <hr v-if="pageNum == Object.keys(disease.formNames).length" class="AIPEhr"/>
 
-          <form v-if="pageNum == 3 || pageNum == Object.keys(disease.formNames).length" id="dengue3" type="submit">
+          <form v-if="pageNum == 3 || pageNum == Object.keys(disease.formNames).length" id="Dengue3date" type="submit">
             <div id="AIPE-case-form" class="center">
               <h2 id="AIPE-formHeader"> {{ Object.values(disease.formNames)[3] }} </h2>
               <div class="viewcases-component">
@@ -971,87 +971,87 @@
                   <table v-if="dataSets[0]" id="datatable">
                     <tbody>
                       <template>
-                            <tr>
-                              <th colspan="2">BCG</th>
-                              <td> <input v-if="loadedData[0].bcg != '' || action!='view'" v-model="dataSets[0].bcg" type="date" max="today" :disabled="loadedData[0].bcg != '' || inputEdit()"/> </td>
-                              <td> <span v-if="loadedData[0].bcg != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="IPentryComplete"/> COMPLETE </span> </td>
-                            </tr>
-                            <tr>
-                              <th rowspan="2"> HEPA B1</th>
-                              <th> w/in 24 hrs </th>
-                              <td> <input v-if="loadedData[0].hepa1 != '' || action!='view'" v-model="dataSets[0].hepa1" type="date" max="today" :disabled="loadedData[0].hepa1 != '' || inputEdit()"/> </td>
-                              <td rowspan="2"> <span v-if="loadedData[0].hepa1 != '' && loadedData[0].hepa2 != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="IPentryComplete"/> COMPLETE </span></td>
-                            </tr>
-                            <tr>
-                              <th>more than 24 hrs</th>
-                              <td> <input v-if="loadedData[0].hepa2 != '' || action!='view'" v-model="dataSets[0].hepa2" type="date" max="today" :disabled="loadedData[0].hepa2 != '' || inputEdit()"/> </td>
-                            </tr>
-                            <tr>
-                              <th rowspan="3"> OPV </th>
-                              <th> 1 </th>
-                              <td> <input v-if="loadedData[0].opv1 != '' || action!='view'" v-model="dataSets[0].opv1" type="date" max="today" :disabled="loadedData[0].opv1 != '' || inputEdit()"/> </td>
-                              <td rowspan="3"> <span v-if="loadedData[0].opv1 != '' && loadedData[0].opv2 != '' && loadedData[0].opv3 != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="IPentryComplete"/> COMPLETE </span> </td>
-                            </tr>
-                            <tr>
-                              <th> 2 </th>
-                              <td> <input v-if="loadedData[0].opv2 != '' || action!='view'" v-model="dataSets[0].opv2" type="date" max="today" :disabled="loadedData[0].opv2 != '' || inputEdit()"/> </td>
-                            </tr>
-                            <tr>
-                              <th> 3 </th>
-                              <td> <input v-if="loadedData[0].opv3 != '' || action!='view'" v-model="dataSets[0].opv3" type="date" max="today" :disabled="loadedData[0].opv3 != '' || inputEdit()"/> </td>
-                            </tr>
-                            <tr>
-                              <th rowspan="3"> PENTA </th>
-                              <th> 1 </th>
-                              <td> <input v-if="loadedData[0].penta1 != '' || action!='view'" v-model="dataSets[0].penta1" type="date" max="today" :disabled="loadedData[0].penta1 != '' || inputEdit()"/> </td>
-                              <td rowspan="3"> <span v-if="loadedData[0].penta1 != '' && loadedData[0].penta2 != '' && loadedData[0].penta3 != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="IPentryComplete"/> COMPLETE </span> </td>
-                            </tr>
-                            <tr>
-                              <th> 2 </th>
-                              <td> <input v-if="loadedData[0].penta2 != '' || action!='view'" v-model="dataSets[0].penta2" type="date" max="today" :disabled="loadedData[0].penta2 != '' || inputEdit()"/> </td>
-                            </tr>
-                            <tr>
-                              <th> 3 </th>
-                              <td> <input v-if="loadedData[0].penta3 != '' || action!='view'" v-model="dataSets[0].penta3" type="date" max="today" :disabled="loadedData[0].penta3 != '' || inputEdit()"/> </td>
-                            </tr>
-                            <tr>
-                              <th rowspan="3"> PCV </th>
-                              <th> 1 </th>
-                              <td> <input v-if="loadedData[0].pcv1 != '' || action!='view'" v-model="dataSets[0].pcv1" type="date" max="today" :disabled="loadedData[0].pcv1 != '' || inputEdit()"/> </td>
-                              <td rowspan="3"> <span v-if="loadedData[0].pcv1 != '' && loadedData[0].pcv2 != '' && loadedData[0].pcv3 != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="IPentryComplete"/> </span> </td>
-                            </tr>
-                            <tr>
-                              <th> 2 </th>
-                              <td> <input v-if="loadedData[0].pcv2 != '' || action!='view'" v-model="dataSets[0].pcv2" type="date" max="today" :disabled="loadedData[0].pcv2 != '' || inputEdit()"/> </td>
-                            </tr>
-                            <tr>
-                              <th> 3 </th>
-                              <td> <input v-if="loadedData[0].pcv3 != '' || action!='view'" v-model="dataSets[0].pcv3" type="date" max="today" :disabled="loadedData[0].pcv3 != '' || inputEdit()"/> </td>
-                            </tr>
-                            <tr>
-                              <th rowspan="2">MCV</th>
-                              <th> MCV 1 (AMV)</th>
-                              <td> <input v-if="loadedData[0].mcv1 != '' || action!='view'" v-model="dataSets[0].mcv1" type="date" max="today" :disabled="loadedData[0].mcv1 != '' || inputEdit()"/> </td>
-                              <td rowspan="2"> <span v-if="loadedData[0].mcv1 != '' && loadedData[0].mcv2 != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="IPentryComplete"/> COMPLETE </span> </td>
-                            </tr>
-                            <tr>
-                              <th> MCV 2 (MMR)</th>
-                              <td> <input v-if="loadedData[0].mcv2 != '' || action!='view'" v-model="dataSets[0].mcv2" type="date" max="today" :disabled="loadedData[0].mcv2 != '' || inputEdit()"/> </td>
-                            </tr>
-                            <tr>
-                              <th rowspan="3"> Dengue </th>
-                              <th> 1 </th>
-                              <td> <input v-if="loadedData[0].dengue1 != '' || action!='view'" v-model="dataSets[0].dengue1" type="date" max="today" :disabled="loadedData[0].dengue1 != '' || inputEdit()"/> </td>
-                              <td rowspan="3"> <span v-if="loadedData[0].dengue1 != '' && loadedData[0].dengue2 != '' && loadedData[0].dengue3 != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="IPentryComplete"/> COMPLETE </span> </td>
-                            </tr>
-                            <tr>
-                              <th> 2 </th>
-                              <td> <input v-if="loadedData[0].dengue2 != '' || action!='view'" v-model="dataSets[0].dengue2" type="date" max="today" :disabled="loadedData[0].dengue2 != '' || inputEdit()"/> </td>
-                            </tr>
-                            <tr>
-                              <th> 3 </th>
-                              <td> <input v-if="loadedData[0].dengue3 != '' || action!='view'" v-model="dataSets[0].dengue3" type="date" max="today" :disabled="loadedData[0].dengue3 != '' || inputEdit()"/> </td>
-                            </tr>
+						<tr>
+						  <th colspan="2">BCG</th>
+						  <td> <input v-if="loadedData[0].BCGdate != '' || action!='view'" v-model="dataSets[0].BCGdate" type="date" max="today" :disabled="loadedData[0].BCGdate != '' || inputEdit()"/> </td>
+						  <td> <span v-if="loadedData[0].BCGdate != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="IPentryComplete"/> COMPLETE </span> </td>
+						</tr>
+						<tr>
+						  <th rowspan="2"> HEPA B1</th>
+						  <th> w/in 24 hrs </th>
+						  <td> <input v-if="loadedData[0].HEPAwithdate != '' || action!='view'" v-model="dataSets[0].HEPAwithdate" type="date" max="today" :disabled="loadedData[0].HEPAwithdate != '' || inputEdit()"/> </td>
+						  <td rowspan="2"> <span v-if="loadedData[0].HEPAwithdate != '' && loadedData[0].HEPAmoredate != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="IPentryComplete"/> COMPLETE </span></td>
+						</tr>
+						<tr>
+						  <th>more than 24 hrs</th>
+						  <td> <input v-if="loadedData[0].HEPAmoredate != '' || action!='view'" v-model="dataSets[0].HEPAmoredate" type="date" max="today" :disabled="loadedData[0].HEPAmoredate != '' || inputEdit()"/> </td>
+						</tr>
+						<tr>
+						  <th rowspan="3"> OPV </th>
+						  <th> 1 </th>
+						  <td> <input v-if="loadedData[0].OPV1date != '' || action!='view'" v-model="dataSets[0].OPV1date" type="date" max="today" :disabled="loadedData[0].OPV1date != '' || inputEdit()"/> </td>
+						  <td rowspan="3"> <span v-if="loadedData[0].OPV1date != '' && loadedData[0].OPV2date != '' && loadedData[0].OPV3date != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="IPentryComplete"/> COMPLETE </span> </td>
+						</tr>
+						<tr>
+						  <th> 2 </th>
+						  <td> <input v-if="loadedData[0].OPV2date != '' || action!='view'" v-model="dataSets[0].OPV2date" type="date" max="today" :disabled="loadedData[0].OPV2date != '' || inputEdit()"/> </td>
+						</tr>
+						<tr>
+						  <th> 3 </th>
+						  <td> <input v-if="loadedData[0].OPV3date != '' || action!='view'" v-model="dataSets[0].OPV3date" type="date" max="today" :disabled="loadedData[0].OPV3date != '' || inputEdit()"/> </td>
+						</tr>
+						<tr>
+						  <th rowspan="3"> PENTA </th>
+						  <th> 1 </th>
+						  <td> <input v-if="loadedData[0].PENTA1date != '' || action!='view'" v-model="dataSets[0].PENTA1date" type="date" max="today" :disabled="loadedData[0].PENTA1date != '' || inputEdit()"/> </td>
+						  <td rowspan="3"> <span v-if="loadedData[0].PENTA1date != '' && loadedData[0].PENTA2date != '' && loadedData[0].PENTA3date != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="IPentryComplete"/> COMPLETE </span> </td>
+						</tr>
+						<tr>
+						  <th> 2 </th>
+						  <td> <input v-if="loadedData[0].PENTA2date != '' || action!='view'" v-model="dataSets[0].PENTA2date" type="date" max="today" :disabled="loadedData[0].PENTA2date != '' || inputEdit()"/> </td>
+						</tr>
+						<tr>
+						  <th> 3 </th>
+						  <td> <input v-if="loadedData[0].PENTA3date != '' || action!='view'" v-model="dataSets[0].PENTA3date" type="date" max="today" :disabled="loadedData[0].PENTA3date != '' || inputEdit()"/> </td>
+						</tr>
+						<tr>
+						  <th rowspan="3"> PCV </th>
+						  <th> 1 </th>
+						  <td> <input v-if="loadedData[0].PCV1date != '' || action!='view'" v-model="dataSets[0].PCV1date" type="date" max="today" :disabled="loadedData[0].PCV1date != '' || inputEdit()"/> </td>
+						  <td rowspan="3"> <span v-if="loadedData[0].PCV1date != '' && loadedData[0].PCV2date != '' && loadedData[0].PCV3date != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="IPentryComplete"/> </span> </td>
+						</tr>
+						<tr>
+						  <th> 2 </th>
+						  <td> <input v-if="loadedData[0].PCV2date != '' || action!='view'" v-model="dataSets[0].PCV2date" type="date" max="today" :disabled="loadedData[0].PCV2date != '' || inputEdit()"/> </td>
+						</tr>
+						<tr>
+						  <th> 3 </th>
+						  <td> <input v-if="loadedData[0].PCV3date != '' || action!='view'" v-model="dataSets[0].PCV3date" type="date" max="today" :disabled="loadedData[0].PCV3date != '' || inputEdit()"/> </td>
+						</tr>
+						<tr>
+						  <th rowspan="2">MCV</th>
+						  <th> MCV 1 (AMV)</th>
+						  <td> <input v-if="loadedData[0].MCV1date != '' || action!='view'" v-model="dataSets[0].MCV1date" type="date" max="today" :disabled="loadedData[0].MCV1date != '' || inputEdit()"/> </td>
+						  <td rowspan="2"> <span v-if="loadedData[0].MCV1date != '' && loadedData[0].MCV2date != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="IPentryComplete"/> COMPLETE </span> </td>
+						</tr>
+						<tr>
+						  <th> MCV 2 (MMR)</th>
+						  <td> <input v-if="loadedData[0].MCV2date != '' || action!='view'" v-model="dataSets[0].MCV2date" type="date" max="today" :disabled="loadedData[0].MCV2date != '' || inputEdit()"/> </td>
+						</tr>
+						<tr>
+						  <th rowspan="3"> Dengue </th>
+						  <th> 1 </th>
+						  <td> <input v-if="loadedData[0].Dengue1date != '' || action!='view'" v-model="dataSets[0].Dengue1date" type="date" max="today" :disabled="loadedData[0].Dengue1date != '' || inputEdit()"/> </td>
+						  <td rowspan="3"> <span v-if="loadedData[0].Dengue1date != '' && loadedData[0].Dengue2date != '' && loadedData[0].Dengue3date != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="IPentryComplete"/> COMPLETE </span> </td>
+						</tr>
+						<tr>
+						  <th> 2 </th>
+						  <td> <input v-if="loadedData[0].Dengue2date != '' || action!='view'" v-model="dataSets[0].Dengue2date" type="date" max="today" :disabled="loadedData[0].Dengue2date != '' || inputEdit()"/> </td>
+						</tr>
+						<tr>
+						  <th> 3 </th>
+						  <td> <input v-if="loadedData[0].Dengue3date != '' || action!='view'" v-model="dataSets[0].Dengue3date" type="date" max="today" :disabled="loadedData[0].Dengue3date != '' || inputEdit()"/> </td>
+						</tr>
                       </template>
                     </tbody>
                   </table>
@@ -1162,9 +1162,7 @@ export default {
           OVacCoverage: '',
           OOthers: '',
         },
-        immunization: {
-          
-        }
+        immunization: {}
       },
       riskFactors: {
         Lifestyle:'',
@@ -1200,159 +1198,134 @@ export default {
         'Taguig City',
         'Valenzuela City',
       ],
-
       columns: [
         {
           title: 'BCG',
-          key: 'bcg',
+          key: 'BCGdate',
         },
         {
           title: 'HEPA B1-1',
-          key: 'hepa1',
+          key: 'HEPAwithdate',
         },
         {
           title: 'HEPA B1-2',
-          key: 'hepa2',
+          key: 'HEPAmoredate',
         },
         {
           title: 'OPV 1',
-          key: 'opv1',
+          key: 'OPV1date',
         },
         {
           title: 'OPV 2',
-          key: 'opv2',
+          key: 'OPV2date',
         },
         {
           title: 'OPV 3',
-          key: 'opv3',
+          key: 'OPV3date',
         },
         {
           title: 'PENTA 1',
-          key: 'penta1',
+          key: 'PENTA1date',
         },
         {
           title: 'PENTA 2',
-          key: 'penta2',
+          key: 'PENTA2date',
         },
         {
           title: 'PENTA 3',
-          key: 'penta3',
+          key: 'PENTA3date',
         },
         {
           title: 'PCV 1',
-          key: 'pcv1',
+          key: 'PCV1date',
         },
         {
           title: 'PCV 2',
-          key: 'pcv2',
+          key: 'PCV2date',
         },
         {
           title: 'PCV 3',
-          key: 'pcv3',
+          key: 'PCV3date',
         },
         {
           title: 'MCV 1',
-          key: 'mcv1',
+          key: 'MCV1date',
         },
         {
           title: 'MCV 2',
-          key: 'mcv2',
+          key: 'MCV2date',
         },
       ],
       loadedData: [
         {
-          bcg: '2020-02-03',
-          hepa1: '2020-02-03',
-          hepa2: '',
-          opv1: '2020-02-03',
-          opv2: '2020-02-03',
-          opv3: '2020-02-03',
-          penta1: '2020-02-03',
-          penta2: '2020-02-03',
-          penta3: '2020-02-03',
-          pcv1: '2020-02-03',
-          pcv2: '2020-02-03',
-          pcv3: '',
-          mcv1: '2020-02-03',
-          mcv2: '2020-02-03',
-          dengue1: '',
-          dengue2: '',
-          dengue3: '',
+          BCGdate: '',
+          HEPAwithdate: '',
+          HEPAmoredate: '',
+          OPV1date: '',
+          OPV2date: '',
+          OPV3date: '',
+          PENTA1date: '',
+          PENTA2date: '',
+          PENTA3date: '',
+          PCV1date: '',
+          PCV2date: '',
+          PCV3date: '',
+          MCV1date: '',
+          MCV2date: '',
+          Dengue1date: '',
+          Dengue2date: '',
+          Dengue3date: '',
         },
       ],
       dataSets: [
         {
-          bcg: '',
-          hepa1: '',
-          hepa2: '',
-          opv1: '',
-          opv2: '',
-          opv3: '',
-          penta1: '',
-          penta2: '',
-          penta3: '',
-          pcv1: '',
-          pcv2: '',
-          pcv3: '',
-          mcv1: '',
-          mcv2: '',
-          dengue1: '',
-          dengue2: '',
-          dengue3: '',
+          BCGdate: '',
+          HEPAwithdate: '',
+          HEPAmoredate: '',
+          OPV1date: '',
+          OPV2date: '',
+          OPV3date: '',
+          PENTA1date: '',
+          PENTA2date: '',
+          PENTA3date: '',
+          PCV1date: '',
+          PCV2date: '',
+          PCV3date: '',
+          MCV1date: '',
+          MCV2date: '',
+          Dengue1date: '',
+          Dengue2date: '',
+          Dengue3date: '',
         },
       ],
-
-      patientResult:[],
-      patients:[],
+      patientResult: [],
+      patients: [],
     }
   },
   async fetch() {
-    let rows = (await axios.get('http://localhost:8080/api/getCaseDefs?diseaseID=' + this.diseaseID)).data;
-    for (let i = 0; i < rows.length; i++) {
-      this.classification[rows[i].class] = rows[i].definition;
-    }
-    rows = (await axios.get('http://localhost:8080/api/getPatients')).data;
-    this.patients = rows;
-    rows = (await axios.get('http://localhost:8080/api/getLabUsers')).data;
-    this.labList = rows;
+    this.patients = (await axios.get('http://localhost:8080/api/getPatients')).data;
   },
   computed: {},
   mounted() {
-    const today = new Date();
-    let dd = today.getDate();
-    let mm = today.getMonth()+1;
-    const yyyy = today.getFullYear();
-    if(dd<10){
-      dd='0'+dd
-    } 
-    if(mm<10){
-      mm='0'+mm
-    } 
-    this.today = yyyy+'-'+mm+'-'+dd;
-    // document.getElementById('birthdate').setAttribute('max', today);
-    // console.log(today);
+    this.today = this.convDatePHT(new Date());
 
-    console.log(this.loadedData[0])
-
-    this.dataSets[0].bcg = this.loadedData[0].bcg;
-    this.dataSets[0].hepa1 = this.loadedData[0].hepa1;
-    this.dataSets[0].hepa2 = this.loadedData[0].hepa2;
-    this.dataSets[0].opv1 = this.loadedData[0].opv1;
-    this.dataSets[0].opv2 = this.loadedData[0].opv2;
-    this.dataSets[0].opv3 = this.loadedData[0].opv3;
-    this.dataSets[0].penta1 = this.loadedData[0].penta1;
-    this.dataSets[0].penta2 = this.loadedData[0].penta2;
-    this.dataSets[0].penta3 = this.loadedData[0].penta3;
-    this.dataSets[0].pcv1 = this.loadedData[0].pcv1;
-    this.dataSets[0].pcv2 = this.loadedData[0].pcv2;
-    this.dataSets[0].cv3 = this.loadedData[0].pcv3;
-    this.dataSets[0].mcv1 = this.loadedData[0].mcv1;
-    this.dataSets[0].mcv2 = this.loadedData[0].mcv2;
-    this.dataSets[0].dengue1 = this.loadedData[0].dengue1;
-    this.dataSets[0].dengue2 = this.loadedData[0].dengue2;
-    this.dataSets[0].dengue3 = this.loadedData[0].dengue3;
-
-    console.log(this.dataSets[0]);
+    this.dataSets[0].BCGdate = this.loadedData[0].BCGdate;
+    this.dataSets[0].HEPAwithdate = this.loadedData[0].HEPAwithdate;
+    this.dataSets[0].HEPAmoredate = this.loadedData[0].HEPAmoredate;
+    this.dataSets[0].OPV1date = this.loadedData[0].OPV1date;
+    this.dataSets[0].OPV2date = this.loadedData[0].OPV2date;
+    this.dataSets[0].OPV3date = this.loadedData[0].OPV3date;
+    this.dataSets[0].PENTA1date = this.loadedData[0].PENTA1date;
+    this.dataSets[0].PENTA2date = this.loadedData[0].PENTA2date;
+    this.dataSets[0].PENTA3date = this.loadedData[0].PENTA3date;
+    this.dataSets[0].PCV1date = this.loadedData[0].PCV1date;
+    this.dataSets[0].PCV2date = this.loadedData[0].PCV2date;
+    this.dataSets[0].PCV3date = this.loadedData[0].PCV3date;
+    this.dataSets[0].MCV1date = this.loadedData[0].MCV1date;
+    this.dataSets[0].MCV2date = this.loadedData[0].MCV2date;
+    this.dataSets[0].Dengue1date = this.loadedData[0].Dengue1date;
+    this.dataSets[0].Dengue2date = this.loadedData[0].Dengue2date;
+    this.dataSets[0].Dengue3date = this.loadedData[0].Dengue3date;
     // this.$forceUpdate();
   },
   methods: {
@@ -1390,16 +1363,14 @@ export default {
       if (this.formData.patient.ageNo<0) this.formData.patient.ageNo = 0;
     },
     async save() {
-      // TODO: this submit is the "save" type, the cases should only be visible to the DRU, not yet submitted to MMCHD
-      const now = new Date();
-      this.formData.cases.diseaseID = this.diseaseID;
-      this.formData.cases.reportedBy = this.$auth.user.userID;
-      this.formData.cases.reportDate = now.getFullYear() + '-' + (now.getMonth()+1) + '-' + now.getDate();
-      const result = await axios.post('http://localhost:8080/api/newCase', {formData: this.formData, CRFID: this.$route.query.CRFID});
+	  const result = await axios.post('http://localhost:8080/api/newImmuProgEntry', {
+	    formData: this.formData,
+		immunisationData: this.loadedData[0],
+		TCLID: this.$route.query.TCLID
+      });
       if (result.status === 200) {
         // alert('CRF case submitted!');
         this.$toast.success('Case saved!', {duration: 4000, icon: 'check_circle'});
-        window.location.href = '/allCases';
       } else {
         // eslint-disable-next-line no-console
         console.log(result);
@@ -1407,25 +1378,25 @@ export default {
       }
     },
     saveData() {
-      this.loadedData[0].bcg = this.dataSets[0].bcg;
-      this.loadedData[0].hepa1 = this.dataSets[0].hepa1;
-      this.loadedData[0].hepa2 = this.dataSets[0].hepa2;
-      this.loadedData[0].opv1 = this.dataSets[0].opv1;
-      this.loadedData[0].opv2 = this.dataSets[0].opv2;
-      this.loadedData[0].opv3 = this.dataSets[0].opv3;
-      this.loadedData[0].penta1 = this.dataSets[0].penta1;
-      this.loadedData[0].penta2 = this.dataSets[0].penta2;
-      this.loadedData[0].penta3 = this.dataSets[0].penta3;
-      this.loadedData[0].pcv1 = this.dataSets[0].pcv1;
-      this.loadedData[0].pcv2 = this.dataSets[0].pcv2;
-      this.loadedData[0].pcv3 = this.dataSets[0].pcv3;
-      this.loadedData[0].mcv1 = this.dataSets[0].mcv1;
-      this.loadedData[0].mcv2 = this.dataSets[0].mcv2;
-      this.loadedData[0].dengue1 = this.dataSets[0].dengue1;
-      this.loadedData[0].dengue2 = this.dataSets[0].dengue2;
-      this.loadedData[0].dengue3 = this.dataSets[0].dengue3;
+      this.loadedData[0].BCGdate = this.dataSets[0].BCGdate;
+      this.loadedData[0].HEPAwithdate = this.dataSets[0].HEPAwithdate;
+      this.loadedData[0].HEPAmoredate = this.dataSets[0].HEPAmoredate;
+      this.loadedData[0].OPV1date = this.dataSets[0].OPV1date;
+      this.loadedData[0].OPV2date = this.dataSets[0].OPV2date;
+      this.loadedData[0].OPV3date = this.dataSets[0].OPV3date;
+      this.loadedData[0].PENTA1date = this.dataSets[0].PENTA1date;
+      this.loadedData[0].PENTA2date = this.dataSets[0].PENTA2date;
+      this.loadedData[0].PENTA3date = this.dataSets[0].PENTA3date;
+      this.loadedData[0].PCV1date = this.dataSets[0].PCV1date;
+      this.loadedData[0].PCV2date = this.dataSets[0].PCV2date;
+      this.loadedData[0].PCV3date = this.dataSets[0].PCV3date;
+      this.loadedData[0].MCV1date = this.dataSets[0].MCV1date;
+      this.loadedData[0].MCV2date = this.dataSets[0].MCV2date;
+      this.loadedData[0].Dengue1date = this.dataSets[0].Dengue1date;
+      this.loadedData[0].Dengue2date = this.dataSets[0].Dengue2date;
+      this.loadedData[0].Dengue3date = this.dataSets[0].Dengue3date;
     },
-    move(page) {
+    async move(page) {
       this.validateForm(this.pageNum);
       this.pageColor[this.pageNum] = this.pageDone[this.pageNum];
       this.validateForm(page);
@@ -1443,9 +1414,9 @@ export default {
       else if (page===4) {
         if (this.patientExist || (this.pageDone[1] && this.pageDone[2] && this.pageColor[1] && this.Color[2])) {
           this.saveData();
-          // this.save();
+          await this.save();
           // redirect to view page with update action
-          window.location.href = "/viewImmunizationProgEntry";
+		  window.location.href = "/addImmunizationProg";
         }
         else {
           // alert('Please fill up the required fields');
@@ -1690,6 +1661,9 @@ export default {
       console.log(this.formData.patient.permBrgy)
       // eslint-disable-next-line no-console
       console.log(this.formData.patient.currBrgy)
+    },
+    convDatePHT(d) { // only accepts Date object; includes checking
+      return !isNaN(Date.parse(d)) ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10) : "N/A";
     },
   },
 }

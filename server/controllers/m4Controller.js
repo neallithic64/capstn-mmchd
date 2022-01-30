@@ -275,13 +275,63 @@ const indexFunctions = {
 	
 	getTCL: async function(req, res) {
 		try {
-			let match = await db.exec(`SELECT t.*, td.*, p.*, a.city
-					FROM mmchddb.TCLS
-					LEFT JOIN mmchddb.TCL_DATA td ON td.TCLID = t.TCLID
-					LEFT JOIN mmchddb.PATIENTS p ON p.patientID = td.patientID
-					LEFT JOIN mmchddb.ADDRESS a ON a.addressID = p.caddressID
-					WHERE t.TCLID = ${ req.query.TCLID };`);
-			res.status(200).send(match);
+			let userSettings = await db.findRows("mmchddb.USER_SETTINGS", {userID: req.query.userID});
+			let userData = await db.exec(`SELECT u.userType AS druType, u.druName, a.*
+					FROM mmchddb.USERS u
+					LEFT JOIN mmchddb.ADDRESSES a ON a.addressID = u.addressID
+					WHERE u.userID = '${ req.query.userID }';`);
+			if (!!req.query.TCLID) { // getting for view page
+				let match = await db.exec(`SELECT t.*, td.*, p.*, a1.city AS patientCity,
+						a1.brgy AS patientCity
+						FROM mmchddb.TCLS t
+						LEFT JOIN mmchddb.TCL_DATA td ON td.TCLID = t.TCLID
+						LEFT JOIN mmchddb.PATIENTS p ON p.patientID = td.patientID
+						LEFT JOIN mmchddb.ADDRESSES a1 ON a1.addressID = p.caddressID
+						LEFT JOIN mmchddb.USERS u ON u.userID = t.userID
+						LEFT JOIN mmchddb.ADDRESSES a2 ON a2.addressID = u.addressID
+						WHERE t.TCLID = '${ req.query.TCLID }';`);
+				res.status(200).send({
+					TCLentries: match,
+					pushDataAccept: userSettings[0].pushDataAccept,
+					userData: userData[0]
+				});
+			} else { // getting for add page
+				let r = await db.findRows("mmchddb.TCLS", {
+					diseaseID: req.query.diseaseID,
+					userID: req.query.userID
+				});
+				if (r.length > 0) {
+					// collect the patients and TCL data with that TCLID
+					let data = await db.exec(`SELECT CONCAT(p.lastName, ", ", p.firstName, " ", p.midName)
+							AS patientName, p.ageNo, p.sex, a.city, td.dateAdded
+							FROM mmchddb.TCL_DATA td
+							LEFT JOIN mmchddb.PATIENTS p ON p.patientID = td.patientID
+							LEFT JOIN mmchddb.ADDRESSES a ON a.addressID = p.caddressID
+							WHERE td.TCLID = '${r[r.length - 1].TCLID}'
+							GROUP BY td.TCLID;`);
+					res.status(200).send({
+						TCL: r[r.length - 1],
+						tclData: data,
+						pushDataAccept: userSettings[0].pushDataAccept,
+						userData: userData[0]
+					});
+				} else {
+					let thisDate = new Date(), firstTCL = {
+						TCLID: (await generateID("mmchddb.TCLS")).id,
+						diseaseID: req.query.diseaseID,
+						userID: req.query.userID,
+						month: thisDate.getMonth(),
+						year: thisDate.getFullYear()
+					};
+					let firstR = await db.insertOne("mmchddb.TCLS", firstTCL);
+					res.status(200).send({
+						TCL: firstTCL,
+						tclData: [],
+						pushDataAccept: userSettings[0].pushDataAccept,
+						userData: userData[0]
+					});
+				}
+			}
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
@@ -344,6 +394,72 @@ const indexFunctions = {
 			res.status(500).send("Server error");
 		}
 	},
+	
+	postNewImmuProgEntry: async function(req, res) {
+		let { formData, immunisationData, TCLID } = req.body;
+		try {
+			console.log(formData);
+			
+			// inserting current address
+			let currAddrID = await generateID("mmchddb.ADDRESSES", {
+				houseStreet: formData.patient.currHouseStreet,
+				brgy: formData.patient.currBrgy,
+				city: formData.patient.currCity
+			});
+			formData.patient.caddressID = currAddrID.id;
+			if (!currAddrID.exists) {
+				let currAddr = new Address(formData.patient.caddressID, formData.patient.currHouseStreet, formData.patient.currBrgy, formData.patient.currCity);
+				await db.insertOne("mmchddb.ADDRESSES", currAddr);
+			}
+			
+			// inserting permanent address
+			let permAddrID = await generateID("mmchddb.ADDRESSES", {
+				houseStreet: formData.patient.permHouseStreet,
+				brgy: formData.patient.permBrgy,
+				city: formData.patient.permCity
+			});
+			formData.patient.paddressID = permAddrID.id;
+			if (!permAddrID.exists) {
+				let permAddr = new Address(formData.patient.paddressID, formData.patient.permHouseStreet, formData.patient.permBrgy, formData.patient.permCity);
+				await db.insertOne("mmchddb.ADDRESSES", permAddr);
+			}
+			
+			// delete fields
+			delete formData.patient.currHouseStreet;
+			delete formData.patient.currBrgy;
+			delete formData.patient.currCity;
+			delete formData.patient.permHouseStreet;
+			delete formData.patient.permBrgy;
+			delete formData.patient.permCity;
+			
+			// adding patient's data
+			let genPatientID = await generateID("mmchddb.PATIENTS", {
+				lastName: formData.patient.lastName,
+				firstName: formData.patient.firstName,
+				midName: formData.patient.midName
+			});
+			formData.patient.patientID = genPatientID.id;
+			if (!genPatientID.exists) {
+				result = await db.insertOne("mmchddb.PATIENTS", formData.patient);
+			}
+			
+			let insertObj = {
+				TCLID: TCLID,
+				patientID: formData.patient.patientID,
+				dateAdded: new Date(),
+				immunizationStatus: "Ongoing",
+				...immunisationData
+			};
+			await db.insertOne("mmchddb.TCL_DATA", insertObj);
+			res.status(200).send("Update targets successful!");
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
+	
+	/** ignore below
+	 */
 
 	postFileTest: async function(req, res) {
 		let { file } = req.body;
@@ -359,15 +475,15 @@ const indexFunctions = {
 			res.status(500).send("Server error");
 		}
 	},
-
+	
 	getFileTest: async function(req, res) {
-    try {
-        let match = await db.exec(`SELECT * FROM mmchddb.zzzREPORT_COMMENTS;`);
-        res.status(200).send(match[0].file);
-    } catch (e) {
-        console.log(e);
-        res.status(500).send("Server error");
-    }
+		try {
+			let match = await db.exec(`SELECT * FROM mmchddb.zzzREPORT_COMMENTS;`);
+			res.status(200).send(match[0].file);
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
 	},
 
 };

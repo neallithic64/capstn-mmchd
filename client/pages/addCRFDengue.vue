@@ -223,7 +223,10 @@ export default {
     async popup(change) {
       try {
         this.popupOpen = !this.popupOpen
-        const result = await axios.post('http://localhost:8080/api/updatePushData', {userID: this.$auth.user.userID, pushDataAccept: change});
+        const result = await axios.post('http://localhost:8080/api/updatePushData', {
+		  userID: this.$auth.user.userID,
+		  pushDataAccept: change
+		});
         if (result.status === 200) {
           this.$toast.success('User Settings Updated!', {duration: 4000, icon: 'check_circle'});
         } else {

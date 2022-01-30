@@ -1228,14 +1228,9 @@ export default {
     }
   },
   async fetch() {
-    let rows = (await axios.get('http://localhost:8080/api/getCaseDefs?diseaseID=' + this.diseaseID)).data;
-    for (let i = 0; i < rows.length; i++) {
-      this.classification[rows[i].class] = rows[i].definition;
-    }
-    rows = (await axios.get('http://localhost:8080/api/getPatients')).data;
-    this.patients = rows;
-    rows = (await axios.get('http://localhost:8080/api/getLabUsers')).data;
-    this.labList = rows;
+	this.formData = (await axios.get('http://localhost:8080/api/getPatientData', {
+      patientID: this.$route.query.patientID
+    })).data;
   },
   head() {
     return {
@@ -1244,22 +1239,8 @@ export default {
   },
   computed: {},
   mounted() {
-    const today = new Date();
-    let dd = today.getDate();
-    let mm = today.getMonth()+1;
-    const yyyy = today.getFullYear();
-    if(dd<10){
-      dd='0'+dd
-    } 
-    if(mm<10){
-      mm='0'+mm
-    } 
-    this.today = yyyy+'-'+mm+'-'+dd;
-    // document.getElementById('birthdate').setAttribute('max', today);
-    // console.log(today);
-
-    console.log(this.loadedData[0])
-
+    this.today = this.convDatePHT(new Date());
+	
     this.dataSets[0].BCGdate = this.loadedData[0].BCGdate;
     this.dataSets[0].HEPAwithdate = this.loadedData[0].HEPAwithdate;
     this.dataSets[0].HEPAmoredate = this.loadedData[0].HEPAmoredate;
@@ -1443,21 +1424,7 @@ export default {
 
       this.patientExist = false;
     },
-    searchPatient(event) {
-      this.patientResult = [];
-      if (event.target.value !== '') {
-        let ctr = 0;
-        for (let i = 0; i < this.patients.length && ctr < 5; i++) {
-          // eslint-disable-next-line no-useless-escape
-          const reg = new RegExp('^' + event.target.value + 'w*', 'i');
-          if ((this.patients[i].firstName + ' ' + this.patients[i].midName + ' ' + this.patients[i].lastName).match(reg)) {
-            this.patientResult.push(this.patients[i]);
-            ctr++;
-          }
-        }
-      }
-    },
-    getAddress() {
+	getAddress() {
       if (this.sameAddress) {
         this.formData.patient.permHouseStreet = this.formData.patient.currHouseStreet;
         this.formData.patient.permCity = this.formData.patient.currCity;
@@ -1514,6 +1481,9 @@ export default {
       console.log(this.formData.patient.permBrgy)
       // eslint-disable-next-line no-console
       console.log(this.formData.patient.currBrgy)
+    },
+	convDatePHT(d) { // only accepts Date object; includes checking
+      return !isNaN(Date.parse(d)) ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10) : "N/A";
     },
   },
 }

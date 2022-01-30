@@ -100,23 +100,8 @@ const indexFunctions = {
 		else res.status(500).send("problems");
 	},
 	
-	getAllProgTargets: async function(req, res) {
-		try {
-			let match = await db.exec(`SELECT t.*, tr.*, d.diseaseName FROM mmchddb.TARGETS t
-					LEFT JOIN mmchddb.TARGETS_REF tr ON tr.targetID = t.targetID
-					LEFT JOIN mmchddb.DISEASES d ON tr.diseaseID = d.diseaseID
-					WHERE t.userID = '${req.query.userID}';`);
-			let adjMatch = match.reduce((acc, obj) => {
-				let diseaseName = obj["diseaseName"];
-				if (acc.find(e => e.disease === diseaseName) === undefined) acc.push({disease: diseaseName, indicators: [obj]});
-				else acc[acc.map(e => e.disease).indexOf(diseaseName)].indicators.push(obj);
-				return acc;
-			}, []);
-			res.status(200).send(adjMatch);
-		} catch (e) {
-			console.log(e);
-			res.status(500).send("Server error");
-		}
+	getIndexData: async function(req, res){
+		
 	},
 	
 	/*

@@ -122,52 +122,52 @@ export default {
       },
       dataSets: [
         {
-          immunizationProgNo: '124',
+          TCLID: '124',
           city: 'ad',
-          barangay: '',
+          brgy: '',
           year: '2020',
           month: 'Feb',
           immunizedPatients: '10',
           totalPatients: '30',
           updateDate: '',
+          submitStatus: '',
         },
         {
-          immunizationProgNo: '124',
+          TCLID: '124',
           city: 'ad',
-          barangay: '',
+          brgy: '',
           year: '2020',
           month: 'Feb',
           immunizedPatients: '10',
           totalPatients: '30',
           updateDate: '',
+          submitStatus: '',
         },
         {
-          immunizationProgNo: '124',
+          TCLID: '124',
           city: 'ad',
-          barangay: '',
+          brgy: '',
           year: '2020',
           month: 'Feb',
           immunizedPatients: '10',
           totalPatients: '30',
           updateDate: '',
+          submitStatus: '',
         },
       ],
     }
   },
-  mounted() {
-    // if (this.dataSets.length === 0) {
-    //   this.$toast.show('Loading...', {className: 'blink', icon: 'hourglass_top'});
-    // }
-    const today = new Date();
-    const monthsList = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Aug', 'Oct', 'Nov', 'Dec'];
-    const hour = today.getHours()>9 ? today.getHours() : '0'+today.getHours()
-    const mins = today.getMinutes()>9 ? today.getMinutes() : '0'+today.getMinutes()
-    this.dayTime = monthsList[today.getMonth()] + ' ' + today.getDate() + ', ' + today.getFullYear()
-                     + ' ' + hour + ':' + mins;
-    // if (this.dataSets.length > 0) {
-    //   this.$toast.clear();
-    //   this.$toast.success('All TCLs loaded!', {duration: 4000, icon: 'check_circle'});
-    // }
+  async mounted() {
+    if (this.dataSets.length === 0) {
+      this.$toast.show('Loading...', {className: 'blink', icon: 'hourglass_top'});
+    }
+    this.dayTime = (new Date()).toString().split(":").slice(0, 2).join(":");
+	const data = (await axios.get('http://localhost:8080/api/getAllTCLs')).data;
+	this.dataSets = data;
+    if (this.dataSets.length > 0) {
+      this.$toast.clear();
+      this.$toast.success('All TCLs loaded!', {duration: 4000, icon: 'check_circle'});
+    }
   },
   methods: {
     editInput() {
