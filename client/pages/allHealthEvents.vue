@@ -1,21 +1,21 @@
 <template>
-  <div id="viewevents">
+  <div id="viewevents" class="AHEbody">
     <!--Top Bar of the screen-->
     <TopNav/>
     <div ref="content" class="allevents-container">
-      <div class="exportButtons">
-        <h1 class="pageHeader">All Health Events</h1>
-        <div v-show="!isPrint" class="actionButtons">
+      <div class="AHEexport">
+        <h1 class="AHEpageHeader">All Health Events</h1>
+        <div v-show="!isPrint" class="AHEaction">
           <ul class="HEActionButton" @click="downloadPDF">
           <img
             src="~/assets/img/pdf.png"
-            class="printButton"
+            class="AHEprint"
             @click="downloadPDF()"
           />
           </ul>
           <ul class="HEActionButton">
             <img src="~/assets/img/csv.png" 
-            class="printButton"
+            class="AHEprint"
             @click="csvExport(getTable())"
           />
           </ul>
@@ -202,7 +202,7 @@ export default {
 </script>
 
 <style>
-body {
+.AHEbody {
   font-family: 'Work Sans', sans-serif;
   font-weight: 300;
   padding: 0px;
@@ -210,7 +210,7 @@ body {
   background-image: none;
 }
 
-.pageHeader {
+.AHEAHEpageHeader {
   font-weight: 800;
   font-size: 32px;
   color: #346083;
@@ -283,33 +283,24 @@ body {
   }
 }
 
-.events-SummaryContainer {
-  display: flex;
-  flex-direction: row;
-  overflow-x: auto;
-  overflow-y: hidden;
-  z-index: 1;
-  margin-left: 5px;
-}
-
 #datatabale {
   width: -webkit-fill-available;
 }
 
-.actionButtons {
+.AHEaction {
   display: inline-flex;
   flex-direction: row;
   cursor: pointer;
 }
 
-.printButton {
+.AHEprint {
   width: 30px;
   height: 30px;
   /* margin: 0 5px; */
   margin: 5px;
 }
 
-.exportButtons {
+.AHEexport {
   display: flex;
   flex-direction: row;
   justify-content: space-between;

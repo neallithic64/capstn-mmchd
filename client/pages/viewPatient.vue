@@ -1111,24 +1111,11 @@ export default {
         druName:'',
         druType:'',
         druCity:'',
-        druAddress:''
+        druBrgy:'',
+        druHouseStreet:''
       }, 
       formData: {
-        cases: {
-          caseID: 123,
-          diseaseID: '',
-          reportedBy: '',
-          caseLevel: 'Suspected Case',
-          reportDate: '11/30/2021',
-          investigationDate: '',
-          dateAdmitted: '',
-          dateOnset: '',
-          reporterName: 'me',
-          reporterContact: '',
-          investigatorLab: '',
-          investigatorName: '',
-          investigatorContact: '',
-        },
+        cases: {},
         patient: {
           patientID: 123,
           epiID: '',
@@ -1233,16 +1220,24 @@ export default {
   },
   async fetch() {
     const data = (await axios.get('http://localhost:8080/api/getPatientData', {
-	  params: {
-	    patientID: this.$route.query.patientID,
-		userID: this.$auth.user.userID
+      params: {
+        patientID: this.$route.query.patientID,
+        userID: this.$auth.user.userID
       }
-	})).data;
+    })).data;
     this.formData.patient = data.patient;
     this.formData.riskFactors = data.riskFactors; // working already
     this.DRUData = data.DRUData;
     this.allData = data.rowData;
-    this.update('cancel')
+	if ((!['Chief', 'Staff', 'resuHead', 'chdDirector'].some(e => this.$auth.user.userType.includes(e)) && !this.DRUData.pushDataAccept) ||
+	    (this.$auth.user.druName !== this.DRUData.druName)) {
+	  this.formData.patient.firstName = "";
+	  this.formData.patient.midName = "";
+	  this.formData.patient.lastName = "";
+	  this.formData.patient.currHouseStreet = "";
+	  this.formData.patient.permHouseStreet = "";
+	}
+    this.update('cancel');
   }, 
   head() {
     return {

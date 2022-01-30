@@ -1,17 +1,17 @@
 <template>
-  <div id="addCRF">
+  <div id="addCRF" class="addCRFbody">
     <!--Top Bar of the screen-->
     <TopNav />
-    <div class="viewcases-container">
-      <div class="viewCRF-details" style="align-text: left">
-        <div class="CRFnumbers">
-          <h1 style="margin-top: -1px">{{ disease }} Case Report Form </h1>
-          <h2 style="margin-top: -7px">Week No: {{ weekNo }}</h2>
-          <h3>Last updated: {{ updatedDate }}</h3>
+    <div class="addCRF-viewCasesContainer">
+      <div class="addCRF-details" style="align-text: left">
+        <div class="addCRFnumbers">
+          <h1 class="addCRFh1" style="margin-top: -1px">{{ disease }} Case Report Form </h1>
+          <h2 class="addCRFh2" style="margin-top: -7px">Week No: {{ weekNo }}</h2>
+          <h3 class="addCRFh3">Last updated: {{ updatedDate }}</h3>
         </div>
       </div>
       <div style="margin-top: 20px;">
-        <div class="viewcases-component">
+        <div class="addCRF-viewCasesComponent">
           <div id="vue-root">
             <dataTable
               :options="tableOptions"
@@ -20,29 +20,28 @@
             />
           </div>
         </div>
-        <div class="additionalButtons">
-          <button class="addText"><a :href="'/addCRFDengueCase?CRFID=' + CRFID">+ Add a Case</a></button>
+        <div class="addCRFadditionalButtons">
+          <button class="addCRF-addText"><a :href="'/addCRFDengueCase?CRFID=' + CRFID">+ Add a Case</a></button>
         </div>
-        <div class="CRFendButton">
+        <div class="addCRF-endButton">
           <button class="submit-button" type="button" @click="submit()">
             Submit
           </button>
         </div>
       </div>
     </div>
-    <div v-show="popupOpen" class="overlay">
-      <div class="overlay-form">
-        <!-- <button class="close" @click="popup()">x</button> -->
+    <div v-show="popupOpen" class="addCRFoverlay">
+      <div class="addCRF-overlayForm">
         <h2 style="color:red; text-align:center"> PUSH DATA APPROACH CONSENT </h2>
-        <hr style="border-color: inherit;"/>
+        <hr style="border-color: inherit;" class="addCRFhr"/>
         <div style="padding:10px; text-align:justify;">
           <p style="margin:10px 5px; font-size:16px"> If you agree, all details will be pushed to MMCHD-RESU.
              Otherwise, data that will identify the person 
              (e.g. patient name, complete address) will not be pushed.</p>
           <p style="margin:10px 5px; font-size:16px"> Only data that is necessary for 
             time, place, and person analysis will be pushed.</p>
-          <p style="margin:10px 5px; font-size:12px"> You can update this in your settings anytime.</p>
-          <div class="popupButtons">
+          <!--p style="margin:10px 5px; font-size:12px"> You can update this in your settings anytime.</p-->
+          <div class="addCRFpopupButtons">
             <button class="back-button" type="button" @click="popup(false)">
               Disagree
             </button>
@@ -210,9 +209,8 @@ export default {
     this.crfData = rows.crfData;
     this.weekNo = rows.CRF.year + "-" + rows.CRF.week;
     this.CRFID = rows.CRF.CRFID;
-  if(rows.pushDataAccept === null)
-    this.popupOpen = true;
-  else this.popupOpen = false;
+    if (!rows.pushDataAccept) this.popupOpen = true;
+    else this.popupOpen = false;
   },
   compute: {},
   head() {
@@ -227,15 +225,13 @@ export default {
         this.popupOpen = !this.popupOpen
         const result = await axios.post('http://localhost:8080/api/updatePushData', {userID: this.$auth.user.userID, pushDataAccept: change});
         if (result.status === 200) {
-          // alert('Health event submitted!');
           this.$toast.success('User Settings Updated!', {duration: 4000, icon: 'check_circle'});
-          window.location.href = '/allHealthEvents';
         } else {
           // eslint-disable-next-line no-console
           console.log(result);
           this.$toast.error('Something went wrong!', {duration: 4000, icon: 'error'});
         }
-        location.reload()
+        this.popupOpen = false;
       } catch(e) {
         // eslint-disable-next-line no-console
         console.log(e);
@@ -309,7 +305,7 @@ export default {
 
 <style>
 
-body {
+.addCRFbody {
   font-family: 'Work Sans', sans-serif;
   font-weight: 300;
   padding: 0px;
@@ -317,21 +313,13 @@ body {
   background-image: none;
 }
 
-hr {
+.addCRFhr {
   border-top-width: 5px;
   border-color: #008d41;
   margin: 10px 0;
 }
 
-.close {
-  color: red;
-  position: relative;
-  float: right;
-  top: -15px;
-  font-weight: 800;
-}
-
-.overlay {
+.addCRFoverlay {
   display: block;
   z-index: 11;
   margin: 0px;
@@ -348,12 +336,12 @@ hr {
 }
 
 @media only screen and (max-width:1000px) {
-  .overlay  {
+  .addCRFoverlay  {
     padding: 20% 15%;
   }
 }
 
-.overlay-form {
+.addCRF-overlayForm {
   padding: 30px;
   border-radius: 40px;
   background: white;
@@ -363,89 +351,60 @@ hr {
   box-shadow: 1px 4px 8px rgb(0 0 0 / 40%);
 }
 
-.popupButtons {
+.addCRFaddCRFpopupButtons {
   /* margin: -10px 0 5px; */
   margin: 10px auto;
   text-align: center;
 }
 
-.pageHeader {
+.addCRFpageHeader {
   font-weight: 800;
   font-size: 32px;
   color: #346083;
 }
 
-.viewCRF-details {
+.addCRF-details {
   display: flex;
   flex-direction: row;
   margin-bottom: 10px;
   justify-content: space-between;
 }
-.CRFnumbers,
-.CRFstatus {
+.addaddCRFnumbers {
   display: inline-flex;
   flex-direction: column;
 }
 
-.CRFActionButtons {
-  display: inline-flex;
-  flex-direction: row;
-  justify-content: flex-end;
-  align-items: center;
-}
-
-h1 {
+.addCRFh1 {
   color: #008d41;
   font-size: 40px;
   font-weight: 800;
 }
 
-h2 {
+.addCRFh2 {
   color: #346083;
   font-size: 25px;
   font-weight: 600;
 }
 
-h3 {
+.addCRFh3 {
   font-size: 15px;
   font-weight: 600;
 }
 
-.printButton {
-  width: 30px;
-  height: 30px;
-}
-
-.viewcases-container {
+.addCRF-viewCasesContainer {
   padding: 80px 20px 5px 20px;
   width: 100%;
 }
 
 @media only screen and (max-width: 800px) {
-  .viewcases-container {
+  .addCRF-viewCasesContainer {
     width: 100%;
     align-items: center;
     margin: 0px;
   }
 }
 
-.viewcases-section-container {
-  /* left: 275px; */
-  /* position: relative; */
-  /* width: calc(100vw - 320px); */
-  /* margin: 5px; */
-  width: 100%;
-  padding: 5px;
-  margin: 10px;
-}
-
-@media only screen and (max-width: 800px) {
-  .viewcases-section-container {
-    width: 95%;
-  }
-}
-
-.viewcases-component {
+.addCRF-viewCasesComponent {
   /* position: relative;
   display: inline-flex;
   flex-direction: row; */
@@ -460,20 +419,11 @@ h3 {
   margin-bottom: 40px;
 }
 @media only screen and (max-width: 800px) {
-  .viewcases-component {
+  .addCRF-viewCasesComponent {
     position: relative;
     top: 0px;
     min-height: fit-content;
   }
-}
-
-.CRF-SummaryContainer {
-  display: flex;
-  flex-direction: row;
-  overflow-x: auto;
-  overflow-y: hidden;
-  z-index: 1;
-  margin-left: 5px;
 }
 
 .formSummaryItems {
@@ -495,24 +445,20 @@ h3 {
   pointer-events: none;
 }
 
-#datatabale {
-  width: -webkit-fill-available;
-}
-
-.additionalButtons {
+.addCRFadditionalButtons {
   /* position: relative; */
   position: absolute;
   margin-top: -110px;
   margin-left: 20px;
 }
 
-.addText {
+.addCRF-addText {
   color: #346083;
   font-size: 16px;
   font-weight: 600;
 }
 
-.CRFendButton {
+.addCRF-endButton {
   /* margin: -10px 0 5px; */
   float: right;
   margin-top: -40px;
@@ -553,265 +499,4 @@ h3 {
   border: #346083 solid 1px;
 }
 
-/* SEARCH BAR ALL BELOW */
-
-.CRFcontainer {
-  background: white;
-  /* border-radius: 40px; */
-  border-radius: 20px;
-  width: 60%;
-  margin: 0 auto;
-  margin-bottom: 15px;
-}
-
-.CRFsearchbar {
-  /* background: #ffffff; */
-  background: #f2f2f2;
-  border: 1px solid #a3a3a3;
-  box-sizing: border-box;
-  /* border-radius: 40px; */
-  border-radius: 20px;
-  width: 100%;
-  height: 40px;
-  padding: 10px 20px 10px 40px;
-
-  height: 46px;
-  font-size: 16px;
-  outline: none;
-  margin-top: -1px;
-
-  /* background-image: url(../assets/img/search.svg); */
-  background-image: url(https://cdn1.iconfinder.com/data/icons/hawcons/32/698956-icon-111-search-512.png);
-  background-size: 20px;
-  background-repeat: no-repeat;
-  background-position: 15px 12.5px;
-}
-
-.CRFbar {
-  margin: 0 auto;
-  width: 100%;
-  height: 46px;
-  /* border-radius: 40px; */
-  border-radius: 20px;
-  /* border: 1px solid #dcdcdc; */
-
-  position: relative;
-}
-.CRFbar:hover {
-  box-shadow: 1px 1px 8px 1px #dcdcdc;
-}
-.CRFbar:focus-within {
-  box-shadow: 1px 1px 8px 1px #dcdcdc;
-  outline: none;
-}
-
-#CRFinput_img {
-  position: absolute;
-  bottom: 8px;
-  left: 10px;
-  width: 30px;
-  height: 30px;
-}
-
-.CRFsearchPatientValues {
-  /* background: white; */
-  background: #f2f2f2;
-  height: fit-content;
-  /* border-radius: 0 0 25px 25px; */
-  border-radius: 0 0 20px 20px;
-  margin-top: -16px;
-  padding: 10px;
-  display: grid;
-  width: 100%;
-  position: absolute;
-  border: 1px solid #a3a3a3;
-  border-top-color: transparent;
-}
-
-.CRFsearchResult {
-  padding: 5px 10px;
-  border-top: 1px solid lightgray;
-  display: inline-flex;
-  flex-direction: row;
-}
-
-.CRFsearchResult:hover {
-  background: #eeeeee;
-}
-
-.CRFsearchResultInfo {
-  display: inline-flex;
-  flex-direction: column;
-}
-
-.CRFsearchPerson {
-  font-size: 16px;
-  margin-bottom: -5px;
-  font-weight: 400;
-}
-
-.CRFsearchAddress {
-  font-size: 12px;
-  font-weight: 200;
-}
-
-/* ALL FROM FORMS */
-
-.field-row-straight {
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  margin: 0 7px 6px 5px;
-}
-
-@media only screen and (max-width: 950px) {
-  .field-row-straight {
-    /* flex-direction: column; */
-    margin: 0;
-    width: 98%;
-  }
-}
-
-.field-row {
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  margin: 0 7px 6px 5px;
-}
-
-@media only screen and (max-width: 950px) {
-  .field-row {
-    flex-direction: column;
-    margin: 0 0 10px;
-  }
-}
-
-.name-field {
-  width: 100%;
-  padding: 0px 7px;
-  font-size: 14px;
-  display: flex;
-  flex-direction: column;
-  padding-bottom: 5px;
-}
-
-.field {
-  width: 100%;
-  padding: 0px 7px;
-  font-size: 14px;
-  display: flex;
-  flex-direction: column;
-  padding-bottom: 5px;
-}
-
-.halffield {
-  width: 50%;
-  padding: 0px 7px;
-  font-size: 14px;
-  display: flex;
-  padding-bottom: 5px;
-}
-
-@media only screen and (max-width: 950px) {
-  .name-field {
-    width: 98%;
-  }
-
-  .halffield {
-    width: 100%;
-    flex-direction: column;
-  }
-}
-
-.input-form-field,
-select {
-  width: 100%;
-  height: 30px;
-  font-size: 16px;
-  font-family: 'Work Sans', sans-serif;
-  padding-right: 5px;
-  padding-left: 5px;
-  /* border: 1p x solid rgba(0, 0, 0, 0.25); */
-  border: 1px solid #a3a3a3;
-  box-sizing: border-box;
-  border-radius: 9px;
-}
-
-.input-radio {
-  /* width: 10%; */
-  height: 15px;
-  font-size: 16px;
-  font-family: 'Work Sans', sans-serif;
-  padding-right: 5px;
-  padding-left: 5px;
-  /* border: 1p x solid rgba(0, 0, 0, 0.25); */
-  border: 1px solid #a3a3a3;
-  box-sizing: border-box;
-  border-radius: 9px;
-  margin: 0 5px;
-}
-
-.input-checkbox {
-  /* width: 10%; */
-  height: 15px;
-  font-size: 16px;
-  font-family: 'Work Sans', sans-serif;
-  padding-right: 5px;
-  padding-left: 5px;
-  /* border: 1p x solid rgba(0, 0, 0, 0.25); */
-  border: 1px solid #a3a3a3;
-  box-sizing: border-box;
-  border-radius: 9px;
-  margin: 0 5px;
-}
-
-.half-half {
-  display: inline-flex;
-}
-
-.half-half1 {
-  width: 45%;
-}
-
-.half-half2 {
-  width: 55%;
-}
-
-.birthday-field {
-  /* width: 30%; */
-  width: 66.67%;
-}
-.age-field {
-  /* width: 15%; */
-  width: 33.33%;
-}
-.sex-field {
-  /* width: 15%; */
-  width: 27.27%;
-}
-.status-field {
-  /* width: 40%; */
-  width: 72.73%;
-}
-
-@media only screen and (max-width: 950px) {
-  .half-half,
-  .half-half1,
-  .half-half2 {
-    width: 100%;
-  }
-
-  .birthday-field {
-    width: 59%;
-  }
-  .age-field {
-    width: 39%;
-  }
-  .sex-field {
-    width: 39%;
-  }
-  .status-field {
-    width: 59%;
-  }
-}
 </style>

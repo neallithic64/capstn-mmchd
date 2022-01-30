@@ -154,7 +154,7 @@ export default {
     move(page) {
       if (!this.isEdit) {
         this.pageNum = page;
-		this.newIndicators = this.formSection[this.pageNum].indicators;
+        this.newIndicators = this.formSection[this.pageNum].indicators;
       }
     },
     edit() {

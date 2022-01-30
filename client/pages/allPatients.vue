@@ -109,11 +109,11 @@ export default {
       this.$toast.show('Loading...', {className: 'blink', icon: 'hourglass_top'});
     }
     const rows = (await axios.get('http://localhost:8080/api/getPatients', {
-	    params: { userID: this.$auth.user.userID }
-	  })).data;
+      params: { userID: this.$auth.user.userID }
+    })).data;
     for (let i = 0; i < rows.length; i++) {
       rows[i].patientName = rows[i].lastName + ", " + rows[i].firstName + " " + rows[i].midName;
-      rows[i].updatedDate = rows[i].updatedDate ? rows[i].updatedDate.substr(0, 10) : "N/A";
+      rows[i].updatedDate = rows[i].updatedDate ? this.convDatePHT(new Date(rows[i].updatedDate)) : "N/A";
     }
     this.allPatients = rows;
     if (this.allOutbreaks.length > 0) {
@@ -147,7 +147,7 @@ export default {
       // doc.save('test.pdf')
       console.log(this.$refs.content)
       setTimeout(() => (this.isPrint = !this.isPrint), 3000)
-   },
+    },
     csvExport(arrData) {
       let csvContent = "data:text/csv;charset=utf-8,";
       // let header = this.getCols();
@@ -185,7 +185,10 @@ export default {
       }
       return data;
       */
-    }
+    },
+    convDatePHT(d) { // only accepts Date object; includes checking
+      return !isNaN(Date.parse(d)) ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10) : "N/A";
+    },
   },
 }
 </script>

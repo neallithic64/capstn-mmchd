@@ -11,6 +11,16 @@ Date.prototype.getWeek = function() {
 	return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
 }
 
+/** This helper function only accepts Date objects. Function also includes checking
+ * if the object itself is valid. If the object-to-be-converted is itself a String, it
+ * is advised to pass it through `new Date()` first before passing to this function.
+ * This will return a String representation of the corrected date in Philippine Standard
+ * Time. This is done by offsetting the date by a constant of 8 hours in miliseconds.
+ */
+function convDatePHT (d) {
+	return !isNaN(Date.parse(d)) ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10) : "N/A";
+}
+
 /** ON ID CREATION
 */
 function getPrefix(table) {
@@ -334,6 +344,32 @@ const indexFunctions = {
 			res.status(500).send("Server error");
 		}
 	},
+
+	postFileTest: async function(req, res) {
+		let { file } = req.body;
+		try {
+			console.log(file);
+			let insert = await db.insertOne("mmchddb.zzzREPORT_COMMENTS", {
+				reportID: "001",
+				file: file
+			});
+			if (insert) res.status(200).send("success!");
+			else res.status(500).send("error!");
+		} catch(e) {
+			res.status(500).send("Server error");
+		}
+	},
+
+	getFileTest: async function(req, res) {
+    try {
+        let match = await db.exec(`SELECT * FROM mmchddb.zzzREPORT_COMMENTS;`);
+        res.status(200).send(match[0].file);
+    } catch (e) {
+        console.log(e);
+        res.status(500).send("Server error");
+    }
+	},
+
 };
 
 module.exports = indexFunctions;

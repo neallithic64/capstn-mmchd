@@ -229,13 +229,13 @@ export default {
         }
       })).data;
     } else {
-	  data = (await axios.get('http://localhost:8080/api/getViewProgAccomp', {
+      data = (await axios.get('http://localhost:8080/api/getViewProgAccomp', {
         params: {
           userID: this.$auth.user.userID,
           diseaseID: 'DI-0000000000002'
         }
       })).data;
-	}
+    }
     this.druName = data.druName;
     this.dataSets = data.dataSets;
     this.dayTime = (new Date()).toString().split(":").slice(0, 2).join(":");

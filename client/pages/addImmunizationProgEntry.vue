@@ -1,5 +1,5 @@
 <template>
-  <div id="addCRFDengue">
+  <div id="addCRFDengue" class="addIPentryBody">
     <!--Top Bar of the screen-->
     <TopNav />
 
@@ -25,7 +25,7 @@
       </div>
 
       <!--Everything in the right-->
-      <div class="form-section-container">
+      <div class="IPentry-formSectionContainer">
         <!--Name of form-->
         <div class="AIPE-name">
           <h1 style="margin: 0; font-weight: 600; font-size: 24px">
@@ -41,7 +41,7 @@
 
           <form v-if="pageNum == 0" id="dengue0" type="submit">
             <div id="AIPE-case-form" class="center">
-              <h2 id="form-header">
+              <h2 id="AIPE-formHeader">
                 {{ Object.values(disease.formNames)[0] }}
               </h2>
 
@@ -81,7 +81,7 @@
           <form v-if="pageNum == 1 || pageNum == Object.keys(disease.formNames).length" id="dengue1" type="submit">
             <div id="AIPE-case-form" class="center">
               <div style="display:flex; flex-direction:row; justify-content: space-between;">
-                <h2 id="form-header">
+                <h2 id="AIPE-formHeader">
                   {{ Object.values(disease.formNames)[1] }}
                 </h2>
                 <div v-if="patientExist" style="display:inline-flex; flex-direction:row;">
@@ -93,7 +93,7 @@
 
               <div class="field-row-straight">
                 <div class="name-field">
-                  <label for="lastname" class="required"> Last Name </label>
+                  <label for="lastname" class="required AIPElabel"> Last Name </label>
                   <input
                     id="lastname"
                     v-model="formData.patient.lastName"
@@ -105,7 +105,7 @@
                   />
                 </div>
                 <div class="name-field">
-                  <label for="firstname" class="required"> First Name </label>
+                  <label for="firstname" class="required AIPElabel"> First Name </label>
                   <input
                     id="firstname"
                     v-model="formData.patient.firstName"
@@ -117,7 +117,7 @@
                   />
                 </div>
                 <div class="name-field">
-                  <label for="middlename" class="required"> Middle Name </label>
+                  <label for="middlename" class="required AIPElabel"> Middle Name </label>
                   <input
                     id="middlename"
                     v-model="formData.patient.midName"
@@ -133,7 +133,7 @@
               <div class="field-row" style="display: inline-flex; margin-bottom: -1 px">
                 <div class="half-half half-half1">
                   <div class="birthday-field field">
-                    <label for="birthdate" class="required"> Date of Birth </label>
+                    <label for="birthdate" class="required AIPElabel"> Date of Birth </label>
                     <input
                       id="birthdate"
                       v-model="formData.patient.birthDate"
@@ -147,7 +147,7 @@
                     />
                   </div>
                   <div class="age-field field">
-                    <label for="age" class="required"> Age </label>
+                    <label for="age" class="required AIPElabel"> Age </label>
                     <input
                       id="age"
                       v-model="formData.patient.ageNo"
@@ -163,7 +163,7 @@
 
                 <div class="half-half half-half2">
                   <div class="sex-field field">
-                    <label class="required"> Sex </label>
+                    <label class="required AIPElabel"> Sex </label>
                     <div style="display: inline-flex; align-items: center">
                       <input
                         id="Female"
@@ -194,7 +194,7 @@
                     </div>
                   </div>
                   <div class="pregnancy-field field">
-                    <label class="required"> Pregnancy </label>
+                    <label class="required AIPElabel"> Pregnancy </label>
                     <div style="display: inline-flex; align-items: center">
                       <input
                         id="Not Pregnant"
@@ -241,7 +241,7 @@
 
               <div class="field-row-straight">
                 <div class="status-field field">
-                  <label for="civilStatus" class="required">
+                  <label for="civilStatus" class="required AIPElabel">
                     Civil Status
                   </label>
                   <select
@@ -260,7 +260,7 @@
                   </select>
                 </div>
                 <div class="field">
-                  <label for="indigenousGroup"> Indigenous Group </label>
+                  <label for="indigenousGroup AIPElabel"> Indigenous Group </label>
                   <input
                     id="indigenousGroup"
                     v-model="formData.patient.indGroup"
@@ -273,7 +273,7 @@
 
               <div class="field-row-straight">
                 <div class="field">
-                  <label for="occupation" class="required"> Occupation </label>
+                  <label for="occupation" class="required AIPElabel"> Occupation </label>
                   <input
                     id="occupation"
                     v-model="formData.patient.occupation"
@@ -285,7 +285,7 @@
                   />
                 </div>
                 <div class="field">
-                  <label for="occuLoc" class="required"> Occupation Location (Work/School) </label>
+                  <label for="occuLoc" class="required AIPElabel"> Occupation Location (Work/School) </label>
                   <input
                     id="occuLoc"
                     v-model="formData.patient.occuLoc"
@@ -298,11 +298,11 @@
                 </div>
               </div>
 
-              <hr/>
+              <hr class="AIPEhr"/>
 
               <div class="field-row">
                 <div class="field">
-                  <label for="occuStreet" class="required"> Occupation Address: Street / House No. </label>
+                  <label for="occuStreet" class="required AIPElabel"> Occupation Address: Street / House No. </label>
                   <input
                     id="occuStreet"
                     v-model="formData.patient.occuStreet"
@@ -317,7 +317,7 @@
 
               <div class="field-row-straight">
                 <div class="name-field">
-                  <label for="occuCity" class="required"> City </label>
+                  <label for="occuCity" class="required AIPElabel"> City </label>
                   <select id="occuCity" 
                     v-model="formData.patient.occuCity" 
                     name="occuCity" 
@@ -331,7 +331,7 @@
                   </select>
                 </div>
                 <div class="field">
-                  <label for="occuBrgy" class="required"> Barangay </label>
+                  <label for="occuBrgy" class="required AIPElabel"> Barangay </label>
                   <select
                     id="occuBrgy"
                     v-model="formData.patient.occuBrgy"
@@ -347,7 +347,7 @@
 
               <div class="field-row">
                 <div class="field">
-                  <label for="currentAddress" class="required"> Current Address: Street / House No. </label>
+                  <label for="currentAddress" class="required AIPElabel"> Current Address: Street / House No. </label>
                   <input
                     id="currentAddress"
                     v-model="formData.patient.currHouseStreet"
@@ -362,7 +362,7 @@
 
               <div class="field-row-straight">
                 <div class="name-field">
-                  <label for="currCity" class="required"> City </label>
+                  <label for="currCity" class="required AIPElabel"> City </label>
                   <select id="currCity" 
                     v-model="formData.patient.currCity" 
                     class="input-form-field "
@@ -376,7 +376,7 @@
                   </select>
                 </div>
                 <div class="field">
-                  <label for="currBarangay" class="required"> Barangay </label>
+                  <label for="currBarangay" class="required AIPElabel"> Barangay </label>
                   <select
                     id="currBarangay"
                     v-model="formData.patient.currBrgy"
@@ -407,7 +407,7 @@
 
               <div class="field-row">
                 <div class="field">
-                  <label for="permAddress"> Permanent Address: Street / House No. </label>
+                  <label for="permAddress AIPElabel"> Permanent Address: Street / House No. </label>
                   <input
                     id="permAddress"
                     v-model="formData.patient.permHouseStreet"
@@ -420,7 +420,7 @@
 
               <div class="field-row-straight">
                 <div class="name-field">
-                  <label for="permCity"> City </label>
+                  <label for="permCity" class="AIPElabel"> City </label>
                   <select
                     id="permCity"
                     v-model="formData.patient.permCity"
@@ -432,7 +432,7 @@
                   </select>
                 </div>
                 <div class="field">
-                  <label for="permBarangay"> Barangay </label>
+                  <label for="permBarangay" class="AIPElabel"> Barangay </label>
                   <select
                     id="permBarangay"
                     v-model="formData.patient.permBrgy"
@@ -445,11 +445,11 @@
                 </div>
               </div>
 
-              <hr/>
+              <hr class="AIPEhr"/>
 
               <div class="field-row-straight">
                 <div class="field">
-                  <label for="contactperson" class="required"> Parent / Caregiver </label>
+                  <label for="contactperson" class="required AIPElabel"> Parent / Caregiver </label>
                   <input
                     id="contactperson"
                     v-model="formData.patient.guardianName"
@@ -461,7 +461,7 @@
                   />
                 </div>
                 <div class="name-field">
-                  <label for="contactpersonNum" class="required"> Contact No. </label>
+                  <label for="contactpersonNum" class="required AIPElabel"> Contact No. </label>
                   <input
                     id="contactpersonNum"
                     v-model="formData.patient.guardianContact"
@@ -476,7 +476,7 @@
 
               <div class="field-row-straight">
                 <div class="field">
-                  <label for="HCPN"> HCPN </label>
+                  <label for="HCPN" class="AIPElabel"> HCPN </label>
                   <input
                     id="HCPN"
                     v-model="formData.patient.HCPN"
@@ -487,7 +487,7 @@
                   />
                 </div>
                 <div class="field">
-                  <label for="ILHZ"> ILHZ </label>
+                  <label for="ILHZ" class="AIPElabel"> ILHZ </label>
                   <input
                     id="ILHZ"
                     v-model="formData.patient.ILHZ"
@@ -500,11 +500,11 @@
               </div>
             </div>
           </form>
-          <hr v-if="pageNum == Object.keys(disease.formNames).length" />
+          <hr v-if="pageNum == Object.keys(disease.formNames).length" class="AIPEhr"/>
 
           <form v-if="pageNum == 2 || pageNum == Object.keys(disease.formNames).length" id="dengue2" type="submit">
             <div id="AIPE-case-form" class="center">
-              <h2 id="form-header"> {{ Object.values(disease.formNames)[2] }} </h2>
+              <h2 id="AIPE-formHeader"> {{ Object.values(disease.formNames)[2] }} </h2>
 
               <div class="risk-flex">
                 <div style="display: inline-flex;flex-direction: row;">
@@ -512,7 +512,7 @@
                   <div style="display: block">
                     <div class="risk-factors" style="display: inline-flex; margin-bottom: -1 px; flex-direction: column;">
                       <div class="field">
-                        <h3 class="required">Lifestyle:</h3>
+                        <h3 class="required AIPEh3">Lifestyle:</h3>
                         <div style="flex-direction: column; align-items: center">
 
                           <div style="display: flex; align-items: center;">
@@ -527,7 +527,7 @@
                               :class="isRequired()"
                               required
                             />
-                            <label for="LNone">None</label>
+                            <label for="LNone" class="AIPElabel">None</label>
                           </div>
 
                           <div style="display: flex; align-items: center;">
@@ -540,7 +540,7 @@
                               :disabled="inputEdit()"
                               class="input-radio"
                             />
-                            <label for="LSmoking">Smoking</label>
+                            <label for="LSmoking" class="AIPElabel">Smoking</label>
                           </div>
 
                           <div style="display: flex; align-items: center;">
@@ -553,7 +553,7 @@
                               :disabled="inputEdit()"
                               class="input-radio"
                             />
-                            <label for="LAlcoholism">Alcoholism</label>
+                            <label for="LAlcoholism" class="AIPElabel">Alcoholism</label>
                           </div>
 
                           <div style="display: flex; align-items: center;">
@@ -566,7 +566,7 @@
                               :disabled="inputEdit()"
                               class="input-radio"
                             />
-                            <label for="LDrugUse">Drug Use</label>
+                            <label for="LDrugUse" class="AIPElabel">Drug Use</label>
                           </div>
 
                           <div style="display: flex; align-items: center;">
@@ -579,7 +579,7 @@
                               :disabled="inputEdit()"
                               class="input-radio"
                             />
-                            <label for="LPhysicalInactivity"
+                            <label for="LPhysicalInactivity" class="AIPElabel"
                               >Physical Inactivity</label
                             >
                           </div>
@@ -593,7 +593,7 @@
                               type="checkbox"
                               :disabled="inputEdit()"
                             />
-                            <label for="LifestyleOthers">
+                            <label for="LifestyleOthers" class="AIPElabel">
                               <div style="display: inline-flex">
                                 Others:
                                 <input
@@ -614,7 +614,7 @@
                   <div style="display: block">
                     <div class="risk-factors" style="display: inline-flex; margin-bottom: -1 px; flex-direction: column;">
                       <div class="field">
-                        <h3 class="required">Current Health Conditions:</h3>
+                        <h3 class="required AIPEh3">Current Health Conditions:</h3>
                         <div style="flex-direction: column; align-items: center">
 
                           <div style="display: flex; align-items: center;">
@@ -629,7 +629,7 @@
                               :class="isRequired()"
                               required
                             />
-                            <label for="CNone">None</label>
+                            <label for="CNone" class="AIPElabel">None</label>
                           </div>
 
                           <div style="display: flex; align-items: center">
@@ -642,7 +642,7 @@
                               type="checkbox"
                               :disabled="inputEdit()"
                             />
-                            <label for="CAsthma"> Asthma </label>
+                            <label for="CAsthma" class="AIPElabel"> Asthma </label>
                           </div>
 
                           <div style="display: flex; align-items: center">
@@ -655,7 +655,7 @@
                               type="checkbox"
                               :disabled="inputEdit()"
                             />
-                            <label for="CHereditary"> Hereditary </label>
+                            <label for="CHereditary" class="AIPElabel"> Hereditary </label>
                           </div>
 
                           <div style="display: flex; align-items: center">
@@ -667,7 +667,7 @@
                               type="checkbox"
                               :disabled="inputEdit()"
                             />
-                            <label for="ConditionOthers">
+                            <label for="ConditionOthers" class="AIPElabel">
                               <div style="display: inline-flex">
                                 Others:
                                 <input
@@ -688,7 +688,7 @@
                   <div style="display: block">
                     <div class="risk-factors" style="display: inline-flex; margin-bottom: -1 px; flex-direction: column;">
                       <div class="field">
-                        <h3 class="required">Historical Health Data:</h3>
+                        <h3 class="required AIPEh3">Historical Health Data:</h3>
                         <div style="flex-direction: column; align-items: center">
 
                           <div style="display: flex; align-items: center;">
@@ -703,7 +703,7 @@
                               :class="isRequired()"
                               required
                             />
-                            <label for="HNone">None</label>
+                            <label for="HNone" class="AIPElabel">None</label>
                           </div>
 
                           <div style="display: flex; align-items: center">
@@ -716,7 +716,7 @@
                               type="checkbox"
                               :disabled="inputEdit()"
                             />
-                            <label for="HDiabetes"> Diabetes </label>
+                            <label for="HDiabetes" class="AIPElabel"> Diabetes </label>
                           </div>
 
                           <div style="display: flex; align-items: center">
@@ -729,7 +729,7 @@
                               type="checkbox"
                               :disabled="inputEdit()"
                             />
-                            <label for="HHeartDisease"> Heart Disease </label>
+                            <label for="HHeartDisease" class="AIPElabel"> Heart Disease </label>
                           </div>
 
                           <div style="display: flex; align-items: center">
@@ -742,7 +742,7 @@
                               type="checkbox"
                               :disabled="inputEdit()"
                             />
-                            <label for="HHypertension"> Hypertension </label>
+                            <label for="HHypertension" class="AIPElabel"> Hypertension </label>
                           </div>
 
                           <div style="display: flex; align-items: center">
@@ -755,7 +755,7 @@
                               type="checkbox"
                               :disabled="inputEdit()"
                             />
-                            <label for="HObesity"> Obesity </label>
+                            <label for="HObesity" class="AIPElabel"> Obesity </label>
                           </div>
 
                           <div style="display: flex; align-items: center">
@@ -767,7 +767,7 @@
                               type="checkbox"
                               :disabled="inputEdit()"
                             />
-                            <label for="HistoricalOthers">
+                            <label for="HistoricalOthers" class="AIPElabel">
                               <div style="display: inline-flex">
                                 Others:
                                 <input
@@ -787,7 +787,7 @@
 
                   <div class="risk-factors" style="display: block; margin-bottom: -1 px">
                     <div class="field" style="display: block">
-                      <h3 class="required">Other Risks:</h3>
+                      <h3 class="required AIPEh3">Other Risks:</h3>
                       <div style="display:inline-flex; flex-direction:row">
                         <div class="otherRisk" style="margin-right: 10px;">
 
@@ -803,7 +803,7 @@
                               :class="isRequired()"
                               required
                             />
-                            <label for="ONone">None</label>
+                            <label for="ONone" class="AIPElabel">None</label>
                           </div>
 
                           <div style="display: flex; align-items: center">
@@ -816,7 +816,7 @@
                               type="checkbox"
                               :disabled="inputEdit()"
                             />
-                            <label for="OAirPollution"> Air Pollution </label>
+                            <label for="OAirPollution" class="AIPElabel"> Air Pollution </label>
                           </div>
 
                           <div style="display: flex; align-items: center">
@@ -829,7 +829,7 @@
                               type="checkbox"
                               :disabled="inputEdit()"
                             />
-                            <label for="OCleanWater">
+                            <label for="OCleanWater" class="AIPElabel">
                               No access to clean water
                             </label>
                           </div>
@@ -844,7 +844,7 @@
                               type="checkbox"
                               :disabled="inputEdit()"
                             />
-                            <label for="OFlooding"> Flooding </label>
+                            <label for="OFlooding" class="AIPElabel"> Flooding </label>
                           </div>
 
                           <div style="display: flex; align-items: center">
@@ -857,7 +857,7 @@
                               type="checkbox"
                               :disabled="inputEdit()"
                             />
-                            <label for="OHealthEdu"> Lack of health education </label>
+                            <label for="OHealthEdu" class="AIPElabel"> Lack of health education </label>
                           </div>
 
                           <div style="display: flex; align-items: center">
@@ -870,7 +870,7 @@
                               type="checkbox"
                               :disabled="inputEdit()"
                             />
-                            <label for="OHealthFacility">
+                            <label for="OHealthFacility" class="AIPElabel">
                               Lack of health facilities
                             </label>
                           </div>
@@ -886,7 +886,7 @@
                               type="checkbox"
                               :disabled="inputEdit()"
                             />
-                            <label for="OPoverty"> Poverty </label>
+                            <label for="OPoverty" class="AIPElabel"> Poverty </label>
                           </div>
 
                           <div style="display: flex; align-items: center">
@@ -898,7 +898,7 @@
                               type="checkbox"
                               :disabled="inputEdit()"
                             />
-                            <label for="OShelter"> Inadequate shelter </label>
+                            <label for="OShelter" class="AIPElabel"> Inadequate shelter </label>
                           </div>
 
                           <div style="display: flex; align-items: center">
@@ -911,7 +911,7 @@
                               type="checkbox"
                               :disabled="inputEdit()"
                             />
-                            <label for="OWasteMgmt"> Lack of waste management </label>
+                            <label for="OWasteMgmt" class="AIPElabel"> Lack of waste management </label>
                           </div>
 
                           <div style="display: flex; align-items: center">
@@ -924,7 +924,7 @@
                               type="checkbox"
                               :disabled="inputEdit()"
                             />
-                            <label for="OVacCoverage">
+                            <label for="OVacCoverage" class="AIPElabel">
                               Insufficient vaccination coverage
                             </label>
                           </div>
@@ -938,7 +938,7 @@
                               type="checkbox"
                               :disabled="inputEdit()"
                             />
-                            <label for="OtherOthers">
+                            <label for="OtherOthers" class="AIPElabel">
                               <div style="display: inline-flex">
                                 Others:
                                 <input
@@ -961,11 +961,11 @@
               </div>
             </div>
           </form>
-          <hr v-if="pageNum == Object.keys(disease.formNames).length" />
+          <hr v-if="pageNum == Object.keys(disease.formNames).length" class="AIPEhr"/>
 
           <form v-if="pageNum == 3 || pageNum == Object.keys(disease.formNames).length" id="dengue3" type="submit">
             <div id="AIPE-case-form" class="center">
-              <h2 id="form-header"> {{ Object.values(disease.formNames)[3] }} </h2>
+              <h2 id="AIPE-formHeader"> {{ Object.values(disease.formNames)[3] }} </h2>
               <div class="viewcases-component">
                 <div id="vue-root">
                   <table v-if="dataSets[0]" id="datatable">
@@ -974,13 +974,13 @@
                             <tr>
                               <th colspan="2">BCG</th>
                               <td> <input v-if="loadedData[0].bcg != '' || action!='view'" v-model="dataSets[0].bcg" type="date" max="today" :disabled="loadedData[0].bcg != '' || inputEdit()"/> </td>
-                              <td> <span v-if="loadedData[0].bcg != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="complete"/> COMPLETE </span> </td>
+                              <td> <span v-if="loadedData[0].bcg != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="IPentryComplete"/> COMPLETE </span> </td>
                             </tr>
                             <tr>
                               <th rowspan="2"> HEPA B1</th>
                               <th> w/in 24 hrs </th>
                               <td> <input v-if="loadedData[0].hepa1 != '' || action!='view'" v-model="dataSets[0].hepa1" type="date" max="today" :disabled="loadedData[0].hepa1 != '' || inputEdit()"/> </td>
-                              <td rowspan="2"> <span v-if="loadedData[0].hepa1 != '' && loadedData[0].hepa2 != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="complete"/> COMPLETE </span></td>
+                              <td rowspan="2"> <span v-if="loadedData[0].hepa1 != '' && loadedData[0].hepa2 != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="IPentryComplete"/> COMPLETE </span></td>
                             </tr>
                             <tr>
                               <th>more than 24 hrs</th>
@@ -990,7 +990,7 @@
                               <th rowspan="3"> OPV </th>
                               <th> 1 </th>
                               <td> <input v-if="loadedData[0].opv1 != '' || action!='view'" v-model="dataSets[0].opv1" type="date" max="today" :disabled="loadedData[0].opv1 != '' || inputEdit()"/> </td>
-                              <td rowspan="3"> <span v-if="loadedData[0].opv1 != '' && loadedData[0].opv2 != '' && loadedData[0].opv3 != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="complete"/> COMPLETE </span> </td>
+                              <td rowspan="3"> <span v-if="loadedData[0].opv1 != '' && loadedData[0].opv2 != '' && loadedData[0].opv3 != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="IPentryComplete"/> COMPLETE </span> </td>
                             </tr>
                             <tr>
                               <th> 2 </th>
@@ -1004,7 +1004,7 @@
                               <th rowspan="3"> PENTA </th>
                               <th> 1 </th>
                               <td> <input v-if="loadedData[0].penta1 != '' || action!='view'" v-model="dataSets[0].penta1" type="date" max="today" :disabled="loadedData[0].penta1 != '' || inputEdit()"/> </td>
-                              <td rowspan="3"> <span v-if="loadedData[0].penta1 != '' && loadedData[0].penta2 != '' && loadedData[0].penta3 != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="complete"/> COMPLETE </span> </td>
+                              <td rowspan="3"> <span v-if="loadedData[0].penta1 != '' && loadedData[0].penta2 != '' && loadedData[0].penta3 != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="IPentryComplete"/> COMPLETE </span> </td>
                             </tr>
                             <tr>
                               <th> 2 </th>
@@ -1018,7 +1018,7 @@
                               <th rowspan="3"> PCV </th>
                               <th> 1 </th>
                               <td> <input v-if="loadedData[0].pcv1 != '' || action!='view'" v-model="dataSets[0].pcv1" type="date" max="today" :disabled="loadedData[0].pcv1 != '' || inputEdit()"/> </td>
-                              <td rowspan="3"> <span v-if="loadedData[0].pcv1 != '' && loadedData[0].pcv2 != '' && loadedData[0].pcv3 != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="complete"/> </span> </td>
+                              <td rowspan="3"> <span v-if="loadedData[0].pcv1 != '' && loadedData[0].pcv2 != '' && loadedData[0].pcv3 != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="IPentryComplete"/> </span> </td>
                             </tr>
                             <tr>
                               <th> 2 </th>
@@ -1032,7 +1032,7 @@
                               <th rowspan="2">MCV</th>
                               <th> MCV 1 (AMV)</th>
                               <td> <input v-if="loadedData[0].mcv1 != '' || action!='view'" v-model="dataSets[0].mcv1" type="date" max="today" :disabled="loadedData[0].mcv1 != '' || inputEdit()"/> </td>
-                              <td rowspan="2"> <span v-if="loadedData[0].mcv1 != '' && loadedData[0].mcv2 != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="complete"/> COMPLETE </span> </td>
+                              <td rowspan="2"> <span v-if="loadedData[0].mcv1 != '' && loadedData[0].mcv2 != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="IPentryComplete"/> COMPLETE </span> </td>
                             </tr>
                             <tr>
                               <th> MCV 2 (MMR)</th>
@@ -1042,7 +1042,7 @@
                               <th rowspan="3"> Dengue </th>
                               <th> 1 </th>
                               <td> <input v-if="loadedData[0].dengue1 != '' || action!='view'" v-model="dataSets[0].dengue1" type="date" max="today" :disabled="loadedData[0].dengue1 != '' || inputEdit()"/> </td>
-                              <td rowspan="3"> <span v-if="loadedData[0].dengue1 != '' && loadedData[0].dengue2 != '' && loadedData[0].dengue3 != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="complete"/> COMPLETE </span> </td>
+                              <td rowspan="3"> <span v-if="loadedData[0].dengue1 != '' && loadedData[0].dengue2 != '' && loadedData[0].dengue3 != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="IPentryComplete"/> COMPLETE </span> </td>
                             </tr>
                             <tr>
                               <th> 2 </th>
@@ -1060,7 +1060,7 @@
             </div>
 
           </form>
-          <hr v-if="pageNum == Object.keys(disease.formNames).length" />
+          <hr v-if="pageNum == Object.keys(disease.formNames).length" class="AIPEhr"/>
 
         </div>
 
@@ -1183,22 +1183,22 @@ export default {
         },
       },
       cityList: [
-        'Caloocan',
-        'Las Piñas',
-        'Makati',
-        'Malabon',
-        'Mandaluyong',
-        'Manila',
-        'Marikina',
-        'Muntinlupa',
-        'Navotas',
-        'Parañaque',
-        'Pasay',
-        'Pasig',
+        'Caloocan City',
+        'Las Piñas City',
+        'Makati City',
+        'Malabon City',
+        'Mandaluyong City',
+        'Manila City',
+        'Marikina City',
+        'Muntinlupa City',
+        'Navotas City',
+        'Parañaque City',
+        'Pasay City',
+        'Pasig City',
         'Quezon City',
-        'San Juan',
-        'Taguig',
-        'Valenzuela',
+        'San Juan City',
+        'Taguig City',
+        'Valenzuela City',
       ],
 
       columns: [
@@ -1697,7 +1697,7 @@ export default {
 
 <style>
 
-.complete {
+.IPentryComplete {
   width: 20px;
   height: 20px;
   margin-right: 5px;
@@ -1713,7 +1713,7 @@ export default {
   border-color: hsl(0, 76%, 50%);
 }
 
-body {
+.addIPentryBody {
   font-family: 'Work Sans', sans-serif;
   font-weight: 300;
   padding: 0px;
@@ -1775,17 +1775,6 @@ body {
   }
 }
 
-.disease {
-  font-family: Work Sans;
-  font-style: normal;
-  font-weight: 500;
-  font-size: 20px;
-  line-height: 33px;
-  margin: 0;
-  color: #000000;
-  text-align: center;
-}
-
 .formnum {
   width: 200px;
   height: fit-content;
@@ -1804,11 +1793,6 @@ body {
   font-size: 16px;
   display: flex;
 }
-
-/* .formnum:hover {
-  color: #000000;
-  font-weight: 800;
-} */
 
 @media only screen and (max-width: 800px) {
   .formnum {
@@ -1832,7 +1816,7 @@ body {
   color: white;
 }
 
-.form-section-container {
+.IPentry-formSectionContainer {
   left: 275px;
   position: relative;
   width: calc(100vw - 320px);
@@ -1841,7 +1825,7 @@ body {
 }
 
 @media only screen and (max-width: 800px) {
-  .form-section-container {
+  .IPentry-formSectionContainer {
     left: 0px;
     width: 95%;
   }
@@ -1885,7 +1869,7 @@ body {
   width: 100%;
 }
 
-#form-header {
+#AIPE-formHeader {
   text-align: left;
   padding-left: 5px;
   margin-bottom: 5px;
@@ -1900,7 +1884,7 @@ body {
 }
 
 @media only screen and (max-width: 950px) {
-  #form-header {
+  #AIPE-formHeader {
     text-align: center;
   }
 }
@@ -2161,7 +2145,7 @@ select {
   border-radius: 9px;
 }
 
-label {
+.AIPElabel {
   display: inline-flex;
   flex-direction: row;
   align-items: center;
@@ -2173,7 +2157,7 @@ label {
   color: red;
 }
 
-h3 {
+.AIPEh3 {
   font-size: 15px;
   font-weight: 600;
 }
@@ -2216,7 +2200,7 @@ select:disabled {
   background: none;
 }
 
-hr {
+.AIPEhr {
   margin: 20px 0;
 }
 

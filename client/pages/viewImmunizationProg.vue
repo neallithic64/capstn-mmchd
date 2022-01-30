@@ -181,14 +181,14 @@ export default {
     const rows = (await axios.get('http://localhost:8080/api/getCRFPage', {
       params: {
         CRFID: this.$route.query.CRFID,
-		diseaseID: "DI-0000000000003",
-		userID: this.$auth.user.userID
+        diseaseID: "DI-0000000000003",
+        userID: this.$auth.user.userID
       }
     })).data;
     console.log(rows);
     for (let i = 0; i < rows.dataSets.length; i++) {
-      rows.dataSets[i].updatedDate = rows.dataSets[i].updatedDate ? rows.dataSets[i].updatedDate.substr(0, 10) : "N/A";
-      rows.dataSets[i].reportDate = rows.dataSets[i].reportDate.substr(0, 10);
+      rows.dataSets[i].updatedDate = rows.dataSets[i].updatedDate ? this.convDatePHT(new Date(rows.dataSets[i].updatedDate)) : "N/A";
+      rows.dataSets[i].reportDate = this.convDatePHT(new Date(rows.dataSets[i].reportDate));
     }
     this.dataSets = rows.dataSets;
     this.weekNo = rows.CRF.year + "-" + rows.CRF.week;
@@ -239,6 +239,9 @@ export default {
       link.setAttribute("href", data);
       link.setAttribute("download", "ImmunizationProgram.csv");
       link.click();
+    },
+    convDatePHT(d) { // only accepts Date object; includes checking
+      return !isNaN(Date.parse(d)) ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10) : "N/A";
     },
   },
 }
