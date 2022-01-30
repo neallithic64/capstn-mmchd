@@ -113,7 +113,7 @@
             <!-- v-if w/ latest health event show this -->
             <a :href="'/allHealthEvents'">
               <div class="dboard-right-content" style="border-left-color: #e09922;">
-                <span style="padding-top: 5px; font-weight: 900"> {{ latestEvent.leCity }}, {{ latestEvent.leSource }} Source, <span :class="caseStatusClass(latestEvent.leStatus)"> {{ latestEvent.leStatus }} </span> </span>
+                <span style="padding-top: 5px; font-weight: 900"> {{ latestEvent.leCity }}, <span :class="caseStatusClass(latestEvent.leStatus)">{{ latestEvent.leStatus }}</span>, <span :class="caseStatusClass(latestEvent.leAssess)"> {{ latestEvent.leAssess }} </span> </span>
                 <span style="color: red; font-size: 16px; font-weight: 600"> {{ latestEvent.leNoCases }} cases, {{ latestEvent.leNoDeaths }} deaths </span>
               </div>
             </a>
@@ -268,8 +268,8 @@ export default {
       },
       latestEvent: {
         leCity: 'Malabon',
-        leSource: 'Internet',
-        leStatus: 'For Verification',
+        leStatus: 'Ongoing',
+        leAssess: 'PHELC',
         leNoCases: '5',
         leNoDeaths: '2'
       },
@@ -366,6 +366,10 @@ export default {
       else if (c.toString().includes('Ongoing')) return 'caseStatus confirmedCase';
       else if (c.toString().includes('Controlled')) return 'caseStatus suspectedCase';
       else if (c.toString().includes('Closed')) return 'caseStatus closedCase';
+      else if (c.toString().includes('PHELC')) return 'caseStatus confirmedCase';
+      else if (c.toString().includes('PHERC')) return 'caseStatus confirmedCase';
+      else if (c.toString().includes('PHENC')) return 'caseStatus confirmedCase';
+      else if (c.toString().includes('PHEIC')) return 'caseStatus confirmedCase';
     },
     moveProgress() {
       for (let i = 0; i < this.cities.length; i++) {
