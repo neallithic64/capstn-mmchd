@@ -1258,20 +1258,20 @@ export default {
       ],
       loadedData: [
         {
-          BCGdate: '2020-02-03',
-          HEPAwithdate: '2020-02-03',
+          BCGdate: '',
+          HEPAwithdate: '',
           HEPAmoredate: '',
-          OPV1date: '2020-02-03',
-          OPV2date: '2020-02-03',
-          OPV3date: '2020-02-03',
-          PENTA1date: '2020-02-03',
-          PENTA2date: '2020-02-03',
-          PENTA3date: '2020-02-03',
-          PCV1date: '2020-02-03',
-          PCV2date: '2020-02-03',
+          OPV1date: '',
+          OPV2date: '',
+          OPV3date: '',
+          PENTA1date: '',
+          PENTA2date: '',
+          PENTA3date: '',
+          PCV1date: '',
+          PCV2date: '',
           PCV3date: '',
-          MCV1date: '2020-02-03',
-          MCV2date: '2020-02-03',
+          MCV1date: '',
+          MCV2date: '',
           Dengue1date: '',
           Dengue2date: '',
           Dengue3date: '',
@@ -1363,19 +1363,14 @@ export default {
       if (this.formData.patient.ageNo<0) this.formData.patient.ageNo = 0;
     },
     async save() {
-      const now = new Date();
-      this.formData.cases.diseaseID = this.diseaseID;
-      this.formData.cases.reportedBy = this.$auth.user.userID;
-      this.formData.cases.reportDate = now.getFullYear() + '-' + (now.getMonth()+1) + '-' + now.getDate();
-      const result = await axios.post('http://localhost:8080/api/newImmuProgEntry', {
+	  const result = await axios.post('http://localhost:8080/api/newImmuProgEntry', {
 	    formData: this.formData,
 		immunisationData: this.loadedData[0],
-		TCLID: this.$route.query.ID
+		TCLID: this.$route.query.TCLID
       });
       if (result.status === 200) {
         // alert('CRF case submitted!');
         this.$toast.success('Case saved!', {duration: 4000, icon: 'check_circle'});
-        window.location.href = '/allCases';
       } else {
         // eslint-disable-next-line no-console
         console.log(result);
@@ -1401,7 +1396,7 @@ export default {
       this.loadedData[0].Dengue2date = this.dataSets[0].Dengue2date;
       this.loadedData[0].Dengue3date = this.dataSets[0].Dengue3date;
     },
-    move(page) {
+    async move(page) {
       this.validateForm(this.pageNum);
       this.pageColor[this.pageNum] = this.pageDone[this.pageNum];
       this.validateForm(page);
@@ -1419,9 +1414,9 @@ export default {
       else if (page===4) {
         if (this.patientExist || (this.pageDone[1] && this.pageDone[2] && this.pageColor[1] && this.Color[2])) {
           this.saveData();
-          // this.save();
+          await this.save();
           // redirect to view page with update action
-          window.location.href = "/viewImmunizationProgEntry";
+		  window.location.href = "/addImmunizationProg";
         }
         else {
           // alert('Please fill up the required fields');

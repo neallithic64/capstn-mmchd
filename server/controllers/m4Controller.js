@@ -398,6 +398,8 @@ const indexFunctions = {
 	postNewImmuProgEntry: async function(req, res) {
 		let { formData, immunisationData, TCLID } = req.body;
 		try {
+			console.log(formData);
+			
 			// inserting current address
 			let currAddrID = await generateID("mmchddb.ADDRESSES", {
 				houseStreet: formData.patient.currHouseStreet,
@@ -447,7 +449,7 @@ const indexFunctions = {
 				dateAdded: new Date(),
 				immunizationStatus: "Ongoing",
 				...immunisationData
-			}
+			};
 			await db.insertOne("mmchddb.TCL_DATA", insertObj);
 			res.status(200).send("Update targets successful!");
 		} catch (e) {

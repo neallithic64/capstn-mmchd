@@ -50,7 +50,7 @@
           :casetype="'immunProg'"
         />
         <div v-if="year+'' === new Date().getFullYear()+'' && month+'' === new Date().getMonth()+''" class="addIPaddButton">
-          <button class="addIPaddText"><a href="/addImmunizationProgEntry">+ add an entry</a></button></div>
+          <button class="addIPaddText"><a :href="'/addImmunizationProgEntry?TCLID=' + TCLID">+ add an entry</a></button></div>
       </div>
         <div v-if="year+'' === new Date().getFullYear()+'' && month+'' === new Date().getMonth()+''" class="addIPendButt">
           <button class="back-button" type="button" @click="save()">
@@ -189,28 +189,7 @@ export default {
         // source: 'http://demo.datatable/api/users',
         search: true,
       },
-      dataSets: [
-        {
-          patientID: 'me',
-          city: 'Manila',
-          ageNo: '9',
-          sex: 'F',
-          addDate: '',
-          updatedDate: '',
-          immunStatus: 'Complete',
-          action: 'view',
-        },
-        {
-          patientID: 'me',
-          city: 'Manila',
-          ageNo: '9',
-          sex: 'F',
-          addDate: '',
-          updatedDate: '',
-          immunStatus: 'Ongoing',
-          action: 'update',
-        },
-      ],
+      dataSets: [],
     }
   },
   async mounted() {
@@ -221,6 +200,9 @@ export default {
 		userID: this.$auth.user.userID
 	  }
 	})).data;
+	console.log(rows);
+	this.city = rows.userData.city;
+	this.barangay = rows.userData.brgy;
 	this.dataSets = rows.tclData;
     this.year = rows.TCL.year;
     this.month = rows.TCL.month;
