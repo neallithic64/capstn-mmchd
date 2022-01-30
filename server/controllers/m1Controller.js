@@ -437,12 +437,11 @@ async function getOutbreakData(outbreakID) {
 				let seconds = Math.floor(outbreaks.outbreak.responseTime / 1000);
 				outbreaks.outbreak.responseTime = Math.floor(seconds / 3600) + "h ";
 				seconds %= 3600;
-				outbreaks.outbreak.responseTime += Math.floor(seconds * 60) + "min ";
+				outbreaks.outbreak.responseTime += Math.floor(seconds / 60) + "min ";
 				seconds %= 60;
-				outbreaks.outbreak.responseTime += Math.floor(seconds * 60) + "s";
+				outbreaks.outbreak.responseTime += seconds + "s";
 				console.log("response time: " + outbreaks.outbreak.responseTime);
-			}
-			else outbreaks.outbreak.responseTime = "N/A";
+			} else outbreaks.outbreak.responseTime = "N/A";
 		} else {
 			caseCount = await db.exec(`SELECT o.*, d.diseaseName, COUNT(c.caseID) + IFNULL(d.epiThreshold, 0) AS numCases
 					FROM mmchddb.OUTBREAKS o
@@ -490,6 +489,15 @@ async function getOutbreakData(outbreakID) {
 				tempOutbreak.numDeaths = deathCount[i].numDeaths;
 				tempOutbreak.growthRate = growth[i].growthRate;
 				tempOutbreak.attackRate = attack[i].attackRate;
+				if (!!caseCount[i].responseTime) {
+					let seconds = caseCount[i].responseTime;
+					caseCount[i].responseTime = Math.floor(seconds / 3600) + "h ";
+					seconds %= 3600;
+					caseCount[i].responseTime += Math.floor(seconds / 60) + "min ";
+					seconds %= 60;
+					caseCount[i].responseTime += seconds + "s";
+					console.log("response time: " + caseCount[i].responseTime);
+				} else outbreaks.outbreak.responseTime = "N/A";
 				outbreaks.push(tempOutbreak);
 			}
 		}
