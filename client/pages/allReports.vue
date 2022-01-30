@@ -1,10 +1,10 @@
 <template>
-  <div id="viewevents">
+  <div id="viewevents" class="allRepBody">
     <!--Top Bar of the screen-->
     <TopNav/>
-    <div ref="content" class="all-reports-container">
+    <div ref="content" class="allRepContainers">
       <div class="exportButtons">
-        <h1 class="pageHeader">All Reports</h1>
+        <h1 class="allRepPageHeader">All Reports</h1>
         <div v-show="!isPrint" class="actionButtons">
           <ul class="rep-action-button" @click="downloadPDF">
           <img
@@ -16,7 +16,7 @@
           <ul class="rep-action-button">
             <img src="~/assets/img/csv.png" 
             class="printButton"
-            @click="csvExport(getTable())"
+            @click="csvExport(allReports)"
           />
           </ul>
         </div>
@@ -196,8 +196,8 @@ export default {
    },
     csvExport(arrData) {
       let csvContent = "data:text/csv;charset=utf-8,";
-      let header = this.getCols();
-      // let header = Object.keys(arrData[0]).join(",");
+      // let header = this.getCols();
+      let header = Object.keys(arrData[0]).join(",");
       csvContent += [
         header,
         ...arrData.map(item => Object.values(item).join(","))
@@ -208,7 +208,7 @@ export default {
       const data = encodeURI(csvContent);
       const link = document.createElement("a");
       link.setAttribute("href", data);
-      link.setAttribute("download", this.caseTab+".csv");
+      link.setAttribute("download", "AllReports.csv");
       link.click();
     },
   },
@@ -216,7 +216,7 @@ export default {
 </script>
 
 <style>
-body {
+.allRepBody {
   font-family: 'Work Sans', sans-serif;
   font-weight: 300;
   padding: 0px;
@@ -224,13 +224,13 @@ body {
   background-image: none;
 }
 
-.pageHeader {
+.allRepPageHeader {
   font-weight: 800;
   font-size: 32px;
   color: #346083;
 }
 
-.all-reports-container {
+.allRepContainers {
   padding: 80px 20px 5px 20px;
   width: 100%;
 }
@@ -252,14 +252,14 @@ body {
 }
 
 @media only screen and (max-width: 800px) {
-  .allevents-ontainer {
+  .allRepContainers {
     width: 100%;
     align-items: center;
     margin: 0px;
   }
 }
 
-.allevents-section-container {
+.allRepSectionContainer {
   /* left: 275px; */
   /* position: relative; */
   /* width: calc(100vw - 320px); */
@@ -270,7 +270,7 @@ body {
 }
 
 @media only screen and (max-width: 800px) {
-  .allevents-section-container {
+  .allRepSectionContainer {
     width: 95%;
   }
 }
@@ -295,19 +295,6 @@ body {
     top: 0px;
     min-height: fit-content;
   }
-}
-
-.events-SummaryContainer {
-  display: flex;
-  flex-direction: row;
-  overflow-x: auto;
-  overflow-y: hidden;
-  z-index: 1;
-  margin-left: 5px;
-}
-
-#datatabale {
-  width: -webkit-fill-available;
 }
 
 .actionButtons {

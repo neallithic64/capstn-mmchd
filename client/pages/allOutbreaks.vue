@@ -73,6 +73,7 @@ export default {
             key: 'disease',
             type: 'text',
             source: 'outbreaks',
+            filter: true,
           },
           {
             title: 'Type',
@@ -119,6 +120,7 @@ export default {
             type: 'text',
             source: 'events',
             sortable: true,
+            filter: true,
           },
           {
             title: 'End',
@@ -208,7 +210,7 @@ export default {
       const data = encodeURI(csvContent);
       const link = document.createElement("a");
       link.setAttribute("href", data);
-      link.setAttribute("download", "outbreaks.csv");
+      link.setAttribute("download", "Outbreaks.csv");
       link.click();
     },
     getTable() {
@@ -274,7 +276,7 @@ body {
 }
 
 @media only screen and (max-width: 800px) {
-  .alloutbreaks-ontainer {
+  .alloutbreaks-container {
     width: 100%;
     align-items: center;
     margin: 0px;
@@ -317,15 +319,6 @@ body {
     top: 0px;
     min-height: fit-content;
   }
-}
-
-.events-SummaryContainer {
-  display: flex;
-  flex-direction: row;
-  overflow-x: auto;
-  overflow-y: hidden;
-  z-index: 1;
-  margin-left: 5px;
 }
 
 #datatabale {

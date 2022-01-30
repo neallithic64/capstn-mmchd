@@ -1,12 +1,12 @@
 <template>
-  <div id="viewCIF">
+  <div id="viewCIF" class="viewCIFbody">
     <!--Top Bar of the screen-->
     <TopNav />
     <div ref="content" class="viewCIF-container">
       <div class="viewCIF-details" style="align-text: left">
         <div class="CIFnumbers">
-          <h1 style="margin: -10px 0">Case No. {{ formData.cases.caseID }}</h1>
-          <h2 style="margin-top: -1px">
+          <h1 class="viewCIFh1" style="margin: -10px 0">Case No. {{ formData.cases.caseID }}</h1>
+          <h2 class="viewCIFh2" style="margin-top: -1px">
             Patient No. <a :href="'/viewPatient?patientID=' + formData.patient.patientID" class="patientlink"> {{ formData.patient.patientID }} </a>
           </h2>
         </div>
@@ -14,7 +14,7 @@
           <span style="display: inline-flex; align-items: center"
             >Case Status:&nbsp;
             <div v-show="!editStatus" class="CIFActionButtons">
-              <h1 style="line-height: 1; align-items: center">
+              <h1 class="viewCIFh1" style="line-height: 1; align-items: center">
                 {{ formData.cases.caseLevel }}
               </h1>
               <ul
@@ -37,10 +37,10 @@
       </div>
       <div class="viewCIF-details" style="align-text: left">
         <div class="CIFnumbers">
-          <p>DRU City: <b>{{ DRUData.druCity }}</b></p>
-          <p>DRU Name: <b> {{ DRUData.druName }} </b></p>
-          <p>DRU Type: <b> {{ DRUData.druType }} </b></p>
-          <p>DRU Address: <b> {{ DRUData.druAddress }} </b></p>
+          <p>DRU City: <b class="viewCIFb">{{ DRUData.druCity }}</b></p>
+          <p>DRU Name: <b class="viewCIFb"> {{ DRUData.druName }} </b></p>
+          <p>DRU Type: <b class="viewCIFb"> {{ DRUData.druType }} </b></p>
+          <p>DRU Address: <b class="viewCIFb"> {{ DRUData.druAddress }} </b></p>
         </div>
         <div class="CIFstatus" style="align-text: right">
           
@@ -66,7 +66,7 @@
       <div class="viewCIF-component">
         <form v-if="pageNum == 1 || isPrint" id="measles1" type="submit">
           <div id="case-investigation-form" class="center">
-            <h2 id="form-header">
+            <h2 class="viewCIFh2" id="form-header">
               {{ Object.values(disease.formNames)[1] }}
             </h2>
 
@@ -253,7 +253,7 @@
               </div>
             </div>
 
-            <hr/>
+            <hr class="viewCIFhr"/>
 
             <div class="field-row">
               <div class="field">
@@ -371,7 +371,7 @@
               </div>
             </div>
 
-            <hr/>
+            <hr class="viewCIFhr"/>
 
             <div class="field-row-straight">
               <div class="field">
@@ -425,11 +425,11 @@
 
           </div>
         </form>
-        <hr v-if="isPrint" />
+        <hr v-if="isPrint" class="viewCIFhr"/>
 
         <form v-if="pageNum == 2 || isPrint" id="measles1" type="submit">
           <div id="case-investigation-form" class="center">
-            <h2 id="form-header">
+            <h2 id="form-header" class="viewCIFh2">
               {{ Object.values(disease.formNames)[2] }}
             </h2>
 
@@ -514,10 +514,10 @@
             </div>
           </div>
 
-          <hr />
+          <hr class="viewCIFhr"/>
 
           <div id="case-investigation-form" class="center">
-            <h2 id="form-header">Risk Factors</h2>
+            <h2 id="form-header" class="viewCIFh2">Risk Factors</h2>
             
             <div class="risk-flex">
               <div style="display: inline-flex;flex-direction: row;">
@@ -525,7 +525,7 @@
                 <div style="display: block">
                   <div class="risk-factors" style="display: inline-flex; margin-bottom: -1 px; flex-direction: column;">
                     <div class="field">
-                      <h3 class="required">Lifestyle:</h3>
+                      <h3 class="required viewCIFh3">Lifestyle:</h3>
                       <div style="flex-direction: column; align-items: center">
 
                         <div style="display: flex; align-items: center;">
@@ -612,7 +612,7 @@
                 <div style="display: block">
                   <div class="risk-factors" style="display: inline-flex; margin-bottom: -1 px; flex-direction: column;">
                     <div class="field">
-                      <h3 class="required">Current Health Conditions:</h3>
+                      <h3 class="required viewCIFh3">Current Health Conditions:</h3>
                       <div style="flex-direction: column; align-items: center">
 
                         <div style="display: flex; align-items: center">
@@ -671,7 +671,7 @@
                 <div style="display: block">
                   <div class="risk-factors" style="display: inline-flex; margin-bottom: -1 px; flex-direction: column;">
                     <div class="field">
-                      <h3 class="required">Historical Health Data:</h3>
+                      <h3 class="required viewCIFh3">Historical Health Data:</h3>
                       <div style="flex-direction: column; align-items: center">
 
                         <div style="display: flex; align-items: center">
@@ -755,7 +755,7 @@
 
                 <div class="risk-factors" style="display: block; margin-bottom: -1 px">
                   <div class="field" style="display: block">
-                    <h3 class="required">Other Risks:</h3>
+                    <h3 class="required viewCIFh3">Other Risks:</h3>
                     <div style="display:inline-flex; flex-direction:row">
                       <div class="otherRisk" style="margin-right: 10px;">
 
@@ -914,11 +914,11 @@
             </div>
           </div>
         </form>
-        <hr v-if="isPrint" />
+        <hr v-if="isPrint" class="viewCIFhr"/>
 
         <form v-if="pageNum == 3 || isPrint" id="measles3" type="submit">
           <div id="case-investigation-form" class="center">
-            <h2 id="form-header">
+            <h2 id="form-header" class="viewCIFh2">
               {{ Object.values(disease.formNames)[3] }}
             </h2>
 
@@ -1113,11 +1113,11 @@
             </div>
           </div>
         </form>
-        <hr v-if="isPrint" />
+        <hr v-if="isPrint" class="viewCIFhr"/>
 
         <form v-if="pageNum == 4 || isPrint" id="measles4" type="submit">
           <div id="case-investigation-form" class="center">
-            <h2 id="form-header">
+            <h2 id="form-header" class="viewCIFh2">
               {{ Object.values(disease.formNames)[4] }}
             </h2>
           </div>
@@ -1427,11 +1427,11 @@
             </div>
           </div>
         </form>
-        <hr v-if="isPrint" />
+        <hr v-if="isPrint" class="viewCIFhr"/>
 
         <form v-if="pageNum == 5 || isPrint" id="measles5" type="submit">
           <div id="case-investigation-form" class="center">
-            <h2 id="form-header">
+            <h2 id="form-header" class="viewCIFh2">
               {{ Object.values(disease.formNames)[5] }}
             </h2>
 
@@ -1824,11 +1824,11 @@
             </div>
           </div>
         </form>
-        <hr v-if="isPrint" />
+        <hr v-if="isPrint" class="viewCIFhr"/>
 
         <form v-if="pageNum == 6 || isPrint" id="measles6" type="submit">
           <div id="case-investigation-form" class="center">
-            <h2 id="form-header">
+            <h2 id="form-header" class="viewCIFh2">
               {{ Object.values(disease.formNames)[6] }}
             </h2>
 
@@ -1876,11 +1876,11 @@
             </div>
           </div>
         </form>
-        <hr v-if="isPrint" />
+        <hr v-if="isPrint" class="viewCIFhr"/>
 
         <form v-if="pageNum == 7 || isPrint" id="measles7" type="submit">
           <div id="case-investigation-form" class="center">
-            <h2 id="form-header">
+            <h2 id="form-header" class="viewCIFh2">
               {{ Object.values(disease.formNames)[7] }}
             </h2>
 
@@ -1912,11 +1912,11 @@
             </div>
           </div>
         </form>
-        <hr v-if="isPrint" />
+        <hr v-if="isPrint" class="viewCIFhr"/>
 
         <form v-if="pageNum == 8 || isPrint" id="measles8" type="submit">
           <div id="case-investigation-form" class="center">
-            <h2 id="form-header" style="display: inline-flex;">
+            <h2 id="form-header" class="viewCIFh2" style="display: inline-flex;">
               {{ Object.values(disease.formNames)[8] }}
               <ul
                 v-show="!isPrint && !editLab && !editOutcome"
@@ -2030,7 +2030,7 @@
 
         <form v-if="pageNum == 9 || isPrint" id="measles9" type="submit">
           <div id="case-investigation-form" class="center">
-            <h2 id="form-header" style="display: inline-flex;">
+            <h2 id="form-header" class="viewCIFh2" style="display: inline-flex;">
               {{ Object.values(disease.formNames)[9] }}
               <!-- ADD this in ul v-show below: 
                 && $auth.user.userID === formData.cases.investigatorLab -->
@@ -2293,11 +2293,11 @@
             </div>
           </div>
         </form>
-        <hr v-if="isPrint" />
+        <hr v-if="isPrint" class="viewCIFhr"/>
       </div>
       <div class="CIF-statusHistory">
         <div class="CIF-statusHistory">
-        <h2 style="border-bottom: gray solid; width: fit-content; padding: 0 7px 0 5px;">Case Status History</h2>
+        <h2 class="viewCIFh2" style="border-bottom: gray solid; width: fit-content; padding: 0 7px 0 5px;">Case Status History</h2>
         <!-- <div style="border-top: gray solid;">
           <table style="width: 100%;">
             <thead>
@@ -2322,7 +2322,7 @@
         <button class="close" @click="status('cancel')">x</button>
         <div class="field-row" style="display: inline-flex; margin-bottom: -1 px">
           <div class="field">
-            <h2 id="form-header" class="required">
+            <h2 id="form-header" class="required viewCIFh2">
               Please select the final classification
             </h2>
             <div>
@@ -2912,7 +2912,7 @@ export default {
   border-color: hsl(0, 76%, 50%);
 }
 
-body {
+.viewCIFbody {
   font-family: 'Work Sans', sans-serif;
   font-weight: 300;
   padding: 0px;
@@ -2920,7 +2920,7 @@ body {
   background-image: none;
 }
 
-h3 {
+.viewCIFh3 {
   font-size: 15px;
   font-weight: 600;
 }
@@ -2940,7 +2940,7 @@ h3 {
 }
 
 @media only screen and (max-width: 800px) {
-  .viewCIF-ontainer {
+  .viewCIF-container {
     width: 100%;
     align-items: center;
     margin: 0px;
@@ -3029,19 +3029,19 @@ h3 {
   flex-direction: column;
 }
 
-h1 {
+.viewCIFh1 {
   color: #008d41;
   font-size: 40px;
   font-weight: 800;
 }
 
-h2 {
+.viewCIFh2 {
   color: #346083;
   font-size: 25px;
   font-weight: 600;
 }
 
-b {
+.viewCIFb {
   /* color: #346083; */
   font-size: 18px;
   font-weight: 600;
@@ -3095,16 +3095,6 @@ b {
 .CIF-statusHistory {
   margin-top:10px;
   margin-bottom:30px;
-}
-
-table {
-  border-collapse: collapse;
-  width: 100%;
-}
-
-th, td {
-  text-align: left;
-  padding: 8px;
 }
 
 tr:nth-child(odd) {background-color: #f2f2f2;}
@@ -3510,7 +3500,7 @@ label {
   color: red;
 }
 
-h3 {
+.viewCIFh3 {
   font-size: 15px;
   font-weight: 600;
 }
@@ -3553,7 +3543,7 @@ select:disabled {
   background: #dddddd;
 }
 
-hr {
+.viewCIFhr {
   margin: 20px 0;
 }
 
