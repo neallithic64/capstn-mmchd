@@ -1,5 +1,5 @@
 <template>
-  <div id="viewpatients">
+  <div id="viewpatients" class="allPatientsBody">
     <!--Top Bar of the screen-->
     <TopNav />
     <div ref="content" class="viewpatients-container">
@@ -187,7 +187,7 @@ export default {
 </script>
 
 <style>
-body {
+.allPatientsBody {
   font-family: 'Work Sans', sans-serif;
   font-weight: 300;
   padding: 0px;
@@ -250,15 +250,6 @@ body {
     top: 0px;
     min-height: fit-content;
   }
-}
-
-.patient-SummaryContainer {
-  display: flex;
-  flex-direction: row;
-  overflow-x: auto;
-  overflow-y: hidden;
-  z-index: 1;
-  margin-left: 5px;
 }
 
 #datatabale {

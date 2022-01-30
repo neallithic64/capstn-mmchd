@@ -258,7 +258,7 @@ body {
 }
 
 @media only screen and (max-width: 800px) {
-  .alloutbreaks-ontainer {
+  .alloutbreaks-container {
     width: 100%;
     align-items: center;
     margin: 0px;
@@ -301,15 +301,6 @@ body {
     top: 0px;
     min-height: fit-content;
   }
-}
-
-.events-SummaryContainer {
-  display: flex;
-  flex-direction: row;
-  overflow-x: auto;
-  overflow-y: hidden;
-  z-index: 1;
-  margin-left: 5px;
 }
 
 #datatabale {

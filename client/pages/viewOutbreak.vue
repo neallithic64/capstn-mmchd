@@ -69,7 +69,7 @@
       <div class="viewOBform-component">
 
         <form v-show="pageNum == 0 || isPrint" id="ob1" type="submit">
-          <div id="case-report-form" class="center">
+          <div id="case-report-form" class="center" style="margin-bottom: 45px;">
             <h2 id="form-header">
               {{ Object.values(formSection.formNames)[0] }}
             </h2>
@@ -87,7 +87,7 @@
         <hr v-if="isPrint" />
 
         <form v-show="pageNum == 1 || isPrint" id="ob2" type="submit">
-          <div id="case-report-form" class="center">
+          <div id="case-report-form" class="center" style="margin-bottom: 45px;">
             <h2 id="form-header"> {{ Object.values(formSection.formNames)[1] }} </h2>
 
             <div class="OB-cases">

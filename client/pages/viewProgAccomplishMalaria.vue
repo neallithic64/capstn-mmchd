@@ -97,6 +97,14 @@
         </div>
       </div>
       </div>
+      <div>
+        <div v-show="!isEdit" style="margin: -15px 10px 50px; text-align: -webkit-right;">
+          <button class="cancel-button" type="button" @click="save('Save')">
+            Save </button>
+          <button class="save-button" type="button" @click="save('Submit')">
+            Submit </button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -321,6 +329,14 @@ export default {
       link.setAttribute("download", this.caseTab.toUpperCase()+".csv");
       link.click();
     },
+    save(action) {
+      if (action==='Save') {
+        // TO DO
+      }
+      else if (action === 'Submit') {
+        // TO DO
+      }
+    }
   },
 }
 </script>

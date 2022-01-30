@@ -1,19 +1,19 @@
 <template>
-  <div id="viewCRF">
+  <div id="viewCRF" class="VIPbody">
     <!--Top Bar of the screen-->
     <TopNav />
-    <div ref="content" class="viewcases-container">
-      <div class="viewCRF-details" style="align-text: left">
-        <div class="CRFnumbers">
-          <h1 style="margin: -10px 0">Program Immunization Report No. {{immunProgNo}}</h1>
-          <h2 style="margin-top: -1px">{{ city }}, {{ barangay }}</h2>
-          <h3>{{ month }} {{ year }} </h3>
-          <p>Submitted by: <b> {{ submittedBy }} </b> </p>
+    <div ref="content" class="VIPcontainer">
+      <div class="VIPdetails" style="align-text: left">
+        <div class="VIPnumbers">
+          <h1 class="VIPh1" style="margin: -10px 0">Program Immunization Report No. {{immunProgNo}}</h1>
+          <h2 class="VIPh2" style="margin-top: -1px">{{ city }}, {{ barangay }}</h2>
+          <h3 class="VIPh3">{{ month }} {{ year }} </h3>
+          <p>Submitted by: <b class="VIPb"> {{ submittedBy }} </b> </p>
         </div>
          
-        <div class="CRFstatus" style="align-text: right; place-content: end;">
+        <div class="VIPstatus" style="align-text: right; place-content: end;">
           
-          <div v-show="!isPrint" class="CRFActionButtons">
+          <div v-show="!isPrint" class="VIPactionButts">
             <ul class="CRFActionButton">
               <img
                 src="~/assets/img/pdf.png"
@@ -28,12 +28,12 @@
             />
             </ul>
           </div>
-          <p>Submitted on: <b> {{ submittedDate }} </b> </p>
-          <p>Last updated: <b> {{ updatedDate }} </b> </p>
+          <p>Submitted on: <b class="VIPb"> {{ submittedDate }} </b> </p>
+          <p>Last updated: <b class="VIPb"> {{ updatedDate }} </b> </p>
         </div>
       </div>
 
-      <div class="viewcases-component">
+      <div class="VIPcomponent">
         <div id="vue-root">
           <dataTable
             :options="tableOptions"
@@ -248,7 +248,7 @@ export default {
 </script>
 
 <style>
-body {
+.VIPbody {
   font-family: 'Work Sans', sans-serif;
   font-weight: 300;
   padding: 0px;
@@ -256,25 +256,19 @@ body {
   background-image: none;
 }
 
-.pageHeader {
-  font-weight: 800;
-  font-size: 32px;
-  color: #346083;
-}
-
-.viewCRF-details {
+.VIPdetails {
   display: flex;
   flex-direction: row;
   margin-bottom: 10px;
   justify-content: space-between;
 }
-.CRFnumbers,
-.CRFstatus {
+.VIPnumbers,
+.VIPstatus {
   display: inline-flex;
   flex-direction: column;
 }
 
-.CRFActionButtons {
+.VIPactionButts {
   display: inline-flex;
   flex-direction: row;
   justify-content: flex-end;
@@ -289,24 +283,24 @@ body {
   margin: 5px;
 }
 
-h1 {
+.VIPh1 {
   color: #008d41;
   font-size: 40px;
   font-weight: 800;
 }
 
-h2 {
+.VIPh2 {
   color: #346083;
   font-size: 25px;
   font-weight: 600;
 }
 
-h3 {
+.VIPh3 {
   font-size: 24px;
   font-weight: 600;
 }
 
-b {
+.VIPb {
   /* color: #346083; */
   font-size: 18px;
   font-weight: 600;
@@ -319,36 +313,20 @@ b {
   margin-bottom: -15px;
 }
 
-.viewcases-container {
+.VIPcontainer {
   padding: 80px 20px 5px 20px;
   width: 100%;
 }
 
 @media only screen and (max-width: 800px) {
-  .viewcases-container {
+  .VIPcontainer {
     width: 100%;
     align-items: center;
     margin: 0px;
   }
 }
 
-.viewcases-section-container {
-  /* left: 275px; */
-  /* position: relative; */
-  /* width: calc(100vw - 320px); */
-  /* margin: 5px; */
-  width: 100%;
-  padding: 5px;
-  margin: 10px;
-}
-
-@media only screen and (max-width: 800px) {
-  .viewcases-section-container {
-    width: 95%;
-  }
-}
-
-.viewcases-component {
+.VIPcomponent {
   /* position: relative;
   display: inline-flex;
   flex-direction: row; */
@@ -363,20 +341,11 @@ b {
   margin-bottom: 40px;
 }
 @media only screen and (max-width: 800px) {
-  .viewcases-component {
+  .VIPcomponent {
     position: relative;
     top: 0px;
     min-height: fit-content;
   }
-}
-
-.CRF-SummaryContainer {
-  display: flex;
-  flex-direction: row;
-  overflow-x: auto;
-  overflow-y: hidden;
-  z-index: 1;
-  margin-left: 5px;
 }
 
 .formSummaryItems {
@@ -397,22 +366,6 @@ b {
   font-weight: 600;
   pointer-events: none;
 }
-
-#datatabale {
-  width: -webkit-fill-available;
-}
-
-/* h2 {
-  text-align: center;
-  font-weight: 600;
-  font-size: 20px;
-  background-color: #008d41;
-  color: transparent;
-  text-shadow: 1px 1px, -1px -1px rgba(0, 0, 0, 0.25);
-  -webkit-background-clip: text;
-  -moz-background-clip: text;
-  background-clip: text;
-} */
 
 </style>
 

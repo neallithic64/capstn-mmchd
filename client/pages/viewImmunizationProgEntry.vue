@@ -1,15 +1,15 @@
 <template>
-  <div id="addCRFDengue">
+  <div id="addCRFDengue" class="VIPEbody">
     <!--Top Bar of the screen-->
     <TopNav />
 
     <!--Everything below = main screen-->
-    <div class="case-container">
+    <div class="VIPEcaseContainer">
       <!--SUMMARY: left side-->
       <div class="form-summary-container">
         <div class="form-summary">
           <button id="login-submit" type="submit" style="width: 210px; text-align: left" @click="isOpen = !isOpen">
-            <h2 style="font-weight: 600"> Form Summary </h2>
+            <h2 class="VIPEh2" style="font-weight: 600"> Form Summary </h2>
           </button>
 
           <div v-if="isOpen" class="form-contents">
@@ -27,9 +27,9 @@
       <!--Everything in the right-->
       <div class="form-section-container">
         <!--Name of form-->
-        <div class="disease-name" style="display: flex; flex-direction:row;justify-content: space-between;">
+        <div class="VIPE-diseaseName" style="display: flex; flex-direction:row;justify-content: space-between;">
           <div>
-            <h1 style="margin: 0; font-weight: 600; font-size: 24px">
+            <h1 class="VIPEh1" style="margin: 0; font-weight: 600; font-size: 24px">
               Immunization Program Form
             </h1>
             <p style="margin: 0 5px 5px 5px; font-size: 16px">
@@ -45,12 +45,12 @@
         </div>
 
         <!--Form itself-->
-        <div class="form-component">
+        <div class="VIPE-formComponent">
 
           <form v-if="pageNum == 1 || pageNum == Object.keys(disease.formNames).length" id="Dengue1date" type="submit">
-            <div id="case-report-form" class="center">
+            <div id="VIPE-form" class="center">
               <div style="display:flex; flex-direction:row; justify-content: space-between;">
-                <h2 id="form-header">
+                <h2 class="VIPEh2" id="VIPE-formheader">
                   {{ Object.values(disease.formNames)[1] }}
                 </h2>
                 <div v-if="patientExist" style="display:inline-flex; flex-direction:row;">
@@ -267,7 +267,7 @@
                 </div>
               </div>
 
-              <hr/>
+              <hr class="VIPEhr"/>
 
               <div class="field-row">
                 <div class="field">
@@ -414,7 +414,7 @@
                 </div>
               </div>
 
-              <hr/>
+              <hr class="VIPEhr"/>
 
               <div class="field-row-straight">
                 <div class="field">
@@ -469,11 +469,11 @@
               </div>
             </div>
           </form>
-          <hr v-if="pageNum == Object.keys(disease.formNames).length" />
+          <hr v-if="pageNum == Object.keys(disease.formNames).length" class="VIPEhr"/>
 
           <form v-if="pageNum == 2 || pageNum == Object.keys(disease.formNames).length" id="Dengue2date" type="submit">
-            <div id="case-report-form" class="center">
-              <h2 id="form-header"> {{ Object.values(disease.formNames)[2] }} </h2>
+            <div id="VIPE-form" class="center">
+              <h2 id="VIPE-formheader" class="VIPEh2"> {{ Object.values(disease.formNames)[2] }} </h2>
 
               <div class="risk-flex">
                 <div style="display: inline-flex;flex-direction: row;">
@@ -481,7 +481,7 @@
                   <div style="display: block">
                     <div class="risk-factors" style="display: inline-flex; margin-bottom: -1 px; flex-direction: column;">
                       <div class="field">
-                        <h3 class="required">Lifestyle:</h3>
+                        <h3 class="required VIPEh3">Lifestyle:</h3>
                         <div style="flex-direction: column; align-items: center">
 
                           <div style="display: flex; align-items: center;">
@@ -583,7 +583,7 @@
                   <div style="display: block">
                     <div class="risk-factors" style="display: inline-flex; margin-bottom: -1 px; flex-direction: column;">
                       <div class="field">
-                        <h3 class="required">Current Health Conditions:</h3>
+                        <h3 class="required VIPEh3">Current Health Conditions:</h3>
                         <div style="flex-direction: column; align-items: center">
 
                           <div style="display: flex; align-items: center;">
@@ -657,7 +657,7 @@
                   <div style="display: block">
                     <div class="risk-factors" style="display: inline-flex; margin-bottom: -1 px; flex-direction: column;">
                       <div class="field">
-                        <h3 class="required">Historical Health Data:</h3>
+                        <h3 class="required VIPEh3">Historical Health Data:</h3>
                         <div style="flex-direction: column; align-items: center">
 
                           <div style="display: flex; align-items: center;">
@@ -756,7 +756,7 @@
 
                   <div class="risk-factors" style="display: block; margin-bottom: -1 px">
                     <div class="field" style="display: block">
-                      <h3 class="required">Other Risks:</h3>
+                      <h3 class="required VIPEh3">Other Risks:</h3>
                       <div style="display:inline-flex; flex-direction:row">
                         <div class="otherRisk" style="margin-right: 10px;">
 
@@ -930,11 +930,11 @@
               </div>
             </div>
           </form>
-          <hr v-if="pageNum == Object.keys(disease.formNames).length" />
+          <hr v-if="pageNum == Object.keys(disease.formNames).length" class="VIPEhr"/>
 
           <form v-if="pageNum == 3 || pageNum == Object.keys(disease.formNames).length" id="Dengue3date" type="submit">
-            <div id="case-report-form" class="center">
-              <h2 id="form-header"> {{ Object.values(disease.formNames)[3] }} </h2>
+            <div id="VIPE-form" class="center">
+              <h2 id="VIPE-formheader" class="VIPEh2"> {{ Object.values(disease.formNames)[3] }} </h2>
               <div class="viewcases-component">
                 <div id="vue-root">
                   <table v-if="dataSets[0]" id="datatable">
@@ -1029,7 +1029,7 @@
             </div>
 
           </form>
-          <hr v-if="pageNum == Object.keys(disease.formNames).length" />
+          <hr v-if="pageNum == Object.keys(disease.formNames).length" class="VIPEhr"/>
 
         </div>
 
@@ -1528,21 +1528,27 @@ export default {
 } */
 
 .immunComplete {
+    color: white;
+    padding: 5px 10px;
+    border-radius: 25px;
+    font-weight: 525;
+    font-size: 18px;
   border: #53a262;
   background: #53a262;
-  padding: 8px;
   margin: 10px;
-  color: white;
   font-weight: 900;
   font-size: 20px;
 }
 
 .immunOngoing {
+    color: white;
+    padding: 5px 10px;
+    border-radius: 25px;
+    font-weight: 525;
+    font-size: 18px;
   border: #346083;
   background: #346083;
-  padding: 8px;
   margin: 10px;
-  color: white;
   font-weight: 900;
   font-size: 20px;
 }
@@ -1563,30 +1569,12 @@ export default {
   border-color: hsl(0, 76%, 50%);
 }
 
-body {
+.VIPEbody {
   font-family: 'Work Sans', sans-serif;
   font-weight: 300;
   padding: 0px;
   margin: 0px;
   background-image: none;
-}
-
-.case-container {
-  margin: 70px 20px 5px 20px;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  width: max-content;
-}
-
-@media only screen and (max-width: 800px) {
-  .case-container {
-    width: 100%;
-    flex-direction: column;
-    align-items: center;
-    margin: 0px;
-    margin-top: 85px;
-  }
 }
 
 .form-summary {
@@ -1607,6 +1595,24 @@ body {
     position: unset;
     height: fit-content;
     z-index: 3;
+  }
+}
+
+.VIPEcaseContainer {
+  margin: 70px 20px 5px 20px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  width: max-content;
+}
+
+@media only screen and (max-width: 800px) {
+  .VIPEcaseContainer {
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    margin: 0px;
+    margin-top: 85px;
   }
 }
 
@@ -1697,19 +1703,19 @@ body {
   }
 }
 
-.disease-name {
+.VIPE-diseaseName {
   position: relative;
   top: -3px;
   z-index: 2;
 }
 @media only screen and (max-width: 800px) {
-  .disease-name {
+  .VIPE-diseaseName {
     position: relative;
     top: 0px;
   }
 }
 
-.form-component {
+.VIPE-formComponent {
   position: relative;
   height: fit-content;
   width: 100%;
@@ -1723,19 +1729,19 @@ body {
   min-height: calc(100vh - 220px);
 }
 @media only screen and (max-width: 800px) {
-  .form-component {
+  .VIPE-formComponent {
     position: relative;
     top: 0px;
     min-height: fit-content;
   }
 }
 
-.case-report-form {
+.VIPE-form {
   margin-top: 5px;
   width: 100%;
 }
 
-#form-header {
+#VIPE-formheader {
   text-align: left;
   padding-left: 5px;
   margin-bottom: 5px;
@@ -1750,7 +1756,7 @@ body {
 }
 
 @media only screen and (max-width: 950px) {
-  #form-header {
+  #VIPE-formheader {
     text-align: center;
   }
 }
@@ -2023,7 +2029,7 @@ label {
   color: red;
 }
 
-h3 {
+.VIPEh3 {
   font-size: 15px;
   font-weight: 600;
 }
@@ -2066,7 +2072,7 @@ select:disabled {
   background: none;
 }
 
-hr {
+.VIPEhr {
   margin: 20px 0;
 }
 
@@ -2074,14 +2080,6 @@ hr {
   display: inline-flex;
   flex-direction: row;
   align-items: center;
-}
-
-.show {
-  display: unset;
-}
-
-.hide {
-  display: none;
 }
 
 </style>

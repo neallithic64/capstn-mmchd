@@ -1,16 +1,16 @@
 <template>
-  <div id="viewCRF">
+  <div id="viewCRF" class="viewCRFDbody">
     <!--Top Bar of the screen-->
     <TopNav />
-    <div ref="content" class="viewcases-container">
+    <div ref="content" class="viewCRFDcontainer">
       <div class="viewCRF-details" style="align-text: left">
         <div class="CRFnumbers">
-          <h1 style="margin: -10px 0">Case No. {{ CRFID }}</h1>
-          <h2 style="margin-top: -1px">Disease: {{ disease }}</h2>
+          <h1 class="viewCRFDh1" style="margin: -10px 0">Case No. {{ CRFID }}</h1>
+          <h2 class="viewCRFDh2" style="margin-top: -1px">Disease: {{ disease }}</h2>
         </div>
          
         <div class="CRFstatus" style="align-text: right">
-          <h3>Week No: {{ weekNo }} </h3>
+          <h3 class="viewCRFDh3">Week No: {{ weekNo }} </h3>
           <div v-show="!isPrint" class="CRFActionButtons">
             <ul class="CRFActionButton">
               <img
@@ -31,18 +31,18 @@
 
       <div class="viewCRF-details" style="align-text: left">
         <div class="CIFnumbers">
-          <p>DRU City: <b>{{ druCity }}</b></p>
-          <p>DRU Name: <b>{{ druName }}</b></p>
-          <p>DRU Type: <b>{{ druType }}</b></p>
-          <p>DRU Address: <b>{{ druAddr }}</b></p>
+          <p>DRU City: <b class="viewCRFDb">{{ druCity }}</b></p>
+          <p>DRU Name: <b class="viewCRFDb">{{ druName }}</b></p>
+          <p>DRU Type: <b class="viewCRFDb">{{ druType }}</b></p>
+          <p>DRU Address: <b class="viewCRFDb">{{ druAddr }}</b></p>
         </div>
         <div class="CRFstatus" style="align-text: right">
-          <p>Submitted on: <b> {{ submittedDate }} </b> </p>
-          <p>Last updated: <b> {{ updatedDate }} </b> </p>
+          <p>Submitted on: <b class="viewCRFDb"> {{ submittedDate }} </b> </p>
+          <p>Last updated: <b class="viewCRFDb"> {{ updatedDate }} </b> </p>
         </div>
       </div>
 
-      <div class="viewcases-component">
+      <div class="viewCRFD-caseComponent">
         <div id="vue-root">
           <dataTable
             :options="tableOptions"
@@ -282,18 +282,12 @@ export default {
 </script>
 
 <style>
-body {
+.viewCRFDbody {
   font-family: 'Work Sans', sans-serif;
   font-weight: 300;
   padding: 0px;
   margin: 0px;
   background-image: none;
-}
-
-.pageHeader {
-  font-weight: 800;
-  font-size: 32px;
-  color: #346083;
 }
 
 .viewCRF-details {
@@ -323,24 +317,24 @@ body {
   margin: 5px;
 }
 
-h1 {
+.viewCRFDh1 {
   color: #008d41;
   font-size: 40px;
   font-weight: 800;
 }
 
-h2 {
+.viewCRFDh2 {
   color: #346083;
   font-size: 25px;
   font-weight: 600;
 }
 
-h3 {
+.viewCRFDh3 {
   font-size: 24px;
   font-weight: 600;
 }
 
-b {
+.viewCRFDb {
   /* color: #346083; */
   font-size: 18px;
   font-weight: 600;
@@ -353,9 +347,48 @@ b {
   margin-bottom: -15px;
 }
 
-.viewcases-container {
+.viewCRFDcontainer {
   padding: 80px 20px 5px 20px;
   width: 100%;
+}
+
+@media only screen and (max-width: 800px) {
+  .viewCRFDcontainer {
+    width: 100%;
+    align-items: center;
+    margin: 0px;
+  }
+}
+
+.viewCRFD-caseComponent {
+  /* position: relative;
+  display: inline-flex;
+  flex-direction: row; */
+  height: fit-content;
+  width: 100%;
+
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.25));
+  background-color: #f2f2f2;
+  border-radius: 10px;
+  padding: 15px;
+  padding-bottom: 75px;
+  margin-bottom: 40px;
+}
+@media only screen and (max-width: 800px) {
+  .viewCRFD-caseComponent {
+    position: relative;
+    top: 0px;
+    min-height: fit-content;
+  }
+}
+
+.CRF-SummaryContainer {
+  display: flex;
+  flex-direction: row;
+  overflow-x: auto;
+  overflow-y: hidden;
+  z-index: 1;
+  margin-left: 5px;
 }
 
 .additionalButtons {
@@ -395,96 +428,6 @@ b {
 .submit-button:hover, .next-button:hover {
   background-color: #346083;
 }
-
-@media only screen and (max-width: 800px) {
-  .viewcases-container {
-    width: 100%;
-    align-items: center;
-    margin: 0px;
-  }
-}
-
-.viewcases-section-container {
-  /* left: 275px; */
-  /* position: relative; */
-  /* width: calc(100vw - 320px); */
-  /* margin: 5px; */
-  width: 100%;
-  padding: 5px;
-  margin: 10px;
-}
-
-@media only screen and (max-width: 800px) {
-  .viewcases-section-container {
-    width: 95%;
-  }
-}
-
-.viewcases-component {
-  /* position: relative;
-  display: inline-flex;
-  flex-direction: row; */
-  height: fit-content;
-  width: 100%;
-
-  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.25));
-  background-color: #f2f2f2;
-  border-radius: 10px;
-  padding: 15px;
-  padding-bottom: 75px;
-  margin-bottom: 40px;
-}
-@media only screen and (max-width: 800px) {
-  .viewcases-component {
-    position: relative;
-    top: 0px;
-    min-height: fit-content;
-  }
-}
-
-.CRF-SummaryContainer {
-  display: flex;
-  flex-direction: row;
-  overflow-x: auto;
-  overflow-y: hidden;
-  z-index: 1;
-  margin-left: 5px;
-}
-
-.formSummaryItems {
-  background: white;
-  border: 1px #f2f2f2 solid;
-  border-radius: 10px 10px 0 0;
-  margin: 0 -1px -1px 0;
-  padding: 5px 10px;
-  cursor: pointer;
-}
-
-.formSummaryItems:hover {
-  background: #f2f2f2;
-}
-
-.formSummaryItems.selected {
-  background: #f2f2f2;
-  font-weight: 600;
-  pointer-events: none;
-}
-
-#datatabale {
-  width: -webkit-fill-available;
-}
-
-/* h2 {
-  text-align: center;
-  font-weight: 600;
-  font-size: 20px;
-  background-color: #008d41;
-  color: transparent;
-  text-shadow: 1px 1px, -1px -1px rgba(0, 0, 0, 0.25);
-  -webkit-background-clip: text;
-  -moz-background-clip: text;
-  background-clip: text;
-} */
 
 </style>
 
