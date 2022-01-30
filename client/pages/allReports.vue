@@ -151,12 +151,21 @@ export default {
     }
   },
   async mounted() {
+    // if (this.dataSets.length === 0) {
+    //   this.$toast.show('Loading...', {className: 'blink', icon: 'hourglass_top'});
+    // }
+    
     // const DRUUserTypes = ['BHS', 'RHU', 'CHO', 'govtHosp', 'privHosp', 'clinic', 'govtLab', 'privLab', 'airseaPort', 'fhsis'];
     // const rows = (await axios.get('http://localhost:8080/api/getAllEvents')).data;
     
     // if (DRUUserTypes.includes(this.$auth.user.userType)) {
     //   this.allEvents = rows.filter(e => e.userID === this.$auth.user.userID);
     // } else this.allEvents = rows;
+    
+    // if (this.dataSets.length > 0) {
+    //   this.$toast.clear();
+    //   this.$toast.success('All TCLs loaded!', {duration: 4000, icon: 'check_circle'});
+    // }
   },
   methods: {
     downloadPDF() {
@@ -224,6 +233,22 @@ body {
 .all-reports-container {
   padding: 80px 20px 5px 20px;
   width: 100%;
+}
+
+.blink {
+  animation: blink 2s steps(3, end) infinite;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 @media only screen and (max-width: 800px) {

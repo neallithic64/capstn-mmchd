@@ -1,13 +1,13 @@
 <template>
-  <div id="addCRFDengue">
+  <div id="addCRFDengue" class="addCRFD-body">
     <!--Top Bar of the screen-->
     <TopNav />
 
     <!--Everything below = main screen-->
-    <div class="case-container">
+    <div class="addCRFD-caseContainer">
       <!--SUMMARY: left side-->
-      <div class="form-summary-container">
-        <div class="form-summary">
+      <div class="addCRFD-formSummary-container">
+        <div class="addCRFD-formSummary">
           <button id="login-submit" type="submit" style="width: 210px; text-align: left" @click="isOpen = !isOpen">
             <h2 style="font-weight: 600">Case Registration Form</h2>
           </button>
@@ -25,9 +25,9 @@
       </div>
 
       <!--Everything in the right-->
-      <div class="form-section-container">
+      <div class="faddCRFD-formSectionContainer">
         <!--Name of form-->
-        <div class="disease-name">
+        <div class="addCRFD-diseaseName">
           <h1 style="margin: 0; font-weight: 600; font-size: 24px">
             {{ disease.name }}
           </h1>
@@ -37,10 +37,10 @@
         </div>
 
         <!--Form itself-->
-        <div class="form-component">
+        <div class="addCRFD-formComponent">
           <form v-if="pageNum == 0" id="dengue0" type="submit">
             <div id="case-report-form" class="center">
-              <h2 id="form-header">
+              <h2 id="addCRFD-formHeader">
                 {{ Object.values(disease.formNames)[0] }}
               </h2>
 
@@ -80,7 +80,7 @@
           <form v-if="pageNum == 1 || pageNum == Object.keys(disease.formNames).length" id="dengue1" type="submit">
             <div id="case-report-form" class="center">
               <div style="display:flex; flex-direction:row; justify-content: space-between;">
-                <h2 id="form-header">
+                <h2 id="addCRFD-formHeader">
                   {{ Object.values(disease.formNames)[1] }}
                 </h2>
                 <div v-if="patientExist" style="display:inline-flex; flex-direction:row;">
@@ -297,7 +297,7 @@
                 </div>
               </div>
 
-              <hr/>
+              <hr class="addCRF-hr"/>
 
               <div class="field-row">
                 <div class="field">
@@ -444,7 +444,7 @@
                 </div>
               </div>
 
-              <hr/>
+              <hr class="addCRF-hr"/>
 
               <div class="field-row-straight">
                 <div class="field">
@@ -499,11 +499,11 @@
               </div>
             </div>
           </form>
-          <hr v-if="pageNum == Object.keys(disease.formNames).length" />
+          <hr v-if="pageNum == Object.keys(disease.formNames).length" class="addCRF-hr" />
 
           <form v-if="pageNum == 2 || pageNum == Object.keys(disease.formNames).length" id="dengue2" type="submit">
             <div id="case-report-form" class="center">
-              <h2 id="form-header"> {{ Object.values(disease.formNames)[2] }} </h2>
+              <h2 id="addCRFD-formHeader"> {{ Object.values(disease.formNames)[2] }} </h2>
 
               <div class="field-row">
                 <div class="thirtyDesk" style="display: inline-flex; flex-direction: row">
@@ -638,11 +638,11 @@
               </div>
             </div>
 
-            <hr />
+            <hr class="addCRF-hr"/>
 
             <div id="case-report-form" class="center">
               <div style="display: flex; flex-direction: row;">
-                <h2 id="form-header">Risk Factors</h2>
+                <h2 id="addCRFD-formHeader">Risk Factors</h2>
                 <button
                   class="tooltip"
                   data-tooltip="Identify all possible risk factors that may contribute to the analysis of disease spread"
@@ -657,7 +657,7 @@
                   <div style="display: block">
                     <div class="risk-factors" style="display: inline-flex; margin-bottom: -1 px; flex-direction: column;">
                       <div class="field">
-                        <h3 class="required">Lifestyle:</h3>
+                        <h3 class="required addCRFDh3">Lifestyle:</h3>
                         <div style="flex-direction: column; align-items: center">
 
                           <div style="display: flex; align-items: center;">
@@ -759,7 +759,7 @@
                   <div style="display: block">
                     <div class="risk-factors" style="display: inline-flex; margin-bottom: -1 px; flex-direction: column;">
                       <div class="field">
-                        <h3 class="required">Current Health Conditions:</h3>
+                        <h3 class="required addCRFDh3">Current Health Conditions:</h3>
                         <div style="flex-direction: column; align-items: center">
 
                           <div style="display: flex; align-items: center;">
@@ -833,7 +833,7 @@
                   <div style="display: block">
                     <div class="risk-factors" style="display: inline-flex; margin-bottom: -1 px; flex-direction: column;">
                       <div class="field">
-                        <h3 class="required">Historical Health Data:</h3>
+                        <h3 class="required addCRFDh3">Historical Health Data:</h3>
                         <div style="flex-direction: column; align-items: center">
 
                           <div style="display: flex; align-items: center;">
@@ -932,7 +932,7 @@
 
                   <div class="risk-factors" style="display: block; margin-bottom: -1 px">
                     <div class="field" style="display: block">
-                      <h3 class="required">Other Risks:</h3>
+                      <h3 class="required addCRFDh3">Other Risks:</h3>
                       <div style="display:inline-flex; flex-direction:row">
                         <div class="otherRisk" style="margin-right: 10px;">
 
@@ -1106,11 +1106,11 @@
               </div>
             </div>
           </form>
-          <hr v-if="pageNum == Object.keys(disease.formNames).length" />
+          <hr v-if="pageNum == Object.keys(disease.formNames).length" class="addCRF-hr"/>
 
           <form v-if="pageNum == 3 || pageNum == Object.keys(disease.formNames).length" id="dengue3" type="submit">
             <div id="case-report-form" class="center">
-              <h2 id="form-header"> {{ Object.values(disease.formNames)[3] }} </h2>
+              <h2 id="addCRFD-formHeader"> {{ Object.values(disease.formNames)[3] }} </h2>
 
               <div class="field-row">
                 <div class="thirtyDesk" style="display: inline-flex; flex-direction: row; width:22%">
@@ -1179,11 +1179,11 @@
               </div>
             </div>
           </form>
-          <hr v-if="pageNum == Object.keys(disease.formNames).length" />
+          <hr v-if="pageNum == Object.keys(disease.formNames).length" class="addCRF-hr"/>
 
           <form v-if="pageNum == 4 || pageNum == Object.keys(disease.formNames).length" id="dengue4" type="submit">
             <div id="case-investigation-form" class="center">
-              <h2 id="form-header">
+              <h2 id="addCRFD-formHeader">
                 {{ Object.values(disease.formNames)[4] }}
               </h2>
 
@@ -1231,11 +1231,11 @@
               </div>
             </div>
           </form>
-          <hr v-if="pageNum == Object.keys(disease.formNames).length" />
+          <hr v-if="pageNum == Object.keys(disease.formNames).length" class="addCRF-hr"/>
 
           <form v-if="pageNum == 5 || pageNum == Object.keys(disease.formNames).length" id="dengue5" type="submit">
             <div id="case-investigation-form" class="center">
-              <h2 id="form-header">
+              <h2 id="addCRFD-formHeader">
                 {{ Object.values(disease.formNames)[5] }}
               </h2>
 
@@ -1312,11 +1312,11 @@
               </div>
             </div>
           </form>
-          <hr v-if="pageNum == Object.keys(disease.formNames).length" />
+          <hr v-if="pageNum == Object.keys(disease.formNames).length" class="addCRF-hr"/>
 
           <form v-if="pageNum == 6 || pageNum == Object.keys(disease.formNames).length" id="dengue6" type="submit">
             <div id="case-investigation-form" class="center">
-              <h2 id="form-header">
+              <h2 id="addCRFD-formHeader">
                 {{ Object.values(disease.formNames)[6] }}
               </h2>
 
@@ -1545,11 +1545,11 @@
               
             </div>
           </form>
-          <hr v-if="pageNum == Object.keys(disease.formNames).length" />
+          <hr v-if="pageNum == Object.keys(disease.formNames).length" class="addCRF-hr"/>
 
           <form v-if="pageNum == 7 || pageNum == Object.keys(disease.formNames).length" id="dengue7" type="submit">
             <div id="case-investigation-form" class="center">
-              <h2 id="form-header">
+              <h2 id="addCRFD-formHeader">
                 {{ Object.values(disease.formNames)[7] }}
               </h2>
 
@@ -1773,22 +1773,22 @@ export default {
       },
       classification: {},
       cityList: [
-        'Caloocan',
-        'Las Piñas',
-        'Makati',
-        'Malabon',
-        'Mandaluyong',
-        'Manila',
-        'Marikina',
-        'Muntinlupa',
-        'Navotas',
-        'Parañaque',
-        'Pasay',
-        'Pasig',
+        'Caloocan City',
+        'Las Piñas City',
+        'Makati City',
+        'Malabon City',
+        'Mandaluyong City',
+        'Manila City',
+        'Marikina City',
+        'Muntinlupa City',
+        'Navotas City',
+        'Parañaque City',
+        'Pasay City',
+        'Pasig City',
         'Quezon City',
-        'San Juan',
-        'Taguig',
-        'Valenzuela',
+        'San Juan City',
+        'Taguig City',
+        'Valenzuela City',
       ],
       clinicalClassification: [
         {name: 'Dengue Without Warning Signs',
@@ -1912,6 +1912,36 @@ export default {
           this.pageDone[page] = true;
           this.pageNum = page;
         }
+
+        this.$nextTick(() => {
+        if ((this.pageNum === 1) && this.formData.patient.occuBrgy != null) {
+          const dropdown = document.getElementById('occuBrgy');
+          while (dropdown.firstChild) dropdown.removeChild(dropdown.firstChild);
+          const defaultOption = document.createElement('option');
+          defaultOption.text = this.formData.patient.occuBrgy;
+          dropdown.add(defaultOption);
+          dropdown.selectedIndex = 0;
+        }
+
+        if ((this.pageNum === 1) && this.formData.patient.currBrgy != null) {
+          const dropdown = document.getElementById('currBarangay');
+          while (dropdown.firstChild) dropdown.removeChild(dropdown.firstChild);
+          const defaultOption = document.createElement('option');
+          defaultOption.text = this.formData.patient.currBrgy;
+          dropdown.add(defaultOption);
+          dropdown.selectedIndex = 0;
+        }
+
+        if ((this.pageNum === 1) && this.formData.patient.permBrgy != null) {
+          const dropdown = document.getElementById('permBarangay');
+          while (dropdown.firstChild) dropdown.removeChild(dropdown.firstChild);
+          const defaultOption = document.createElement('option');
+          defaultOption.text = this.formData.patient.permBrgy;
+          dropdown.add(defaultOption);
+          dropdown.selectedIndex = 0;
+        }
+      })
+    
       }
       else {
         // alert('Please fill up the required fields');
@@ -1921,35 +1951,7 @@ export default {
       }
       // console.log(this.pageDone)
 
-      this.$nextTick(() => {
-        if ((page === 1 || page === 8) && this.formData.patient.occuBrgy != null) {
-          const dropdown = document.getElementById('occuBrgy');
-          while (dropdown.firstChild) dropdown.removeChild(dropdown.firstChild);
-          const defaultOption = document.createElement('option');
-          defaultOption.text = this.formData.patient.occuBrgy;
-          dropdown.add(defaultOption);
-          dropdown.selectedIndex = 0;
-        }
-
-        if ((page === 1 || page === 8) && this.formData.patient.currBrgy != null) {
-          const dropdown = document.getElementById('currBarangay');
-          while (dropdown.firstChild) dropdown.removeChild(dropdown.firstChild);
-          const defaultOption = document.createElement('option');
-          defaultOption.text = this.formData.patient.currBrgy;
-          dropdown.add(defaultOption);
-          dropdown.selectedIndex = 0;
-        }
-
-        if ((page === 1 || page === 8) && this.formData.patient.permBrgy != null) {
-          const dropdown = document.getElementById('permBarangay');
-          while (dropdown.firstChild) dropdown.removeChild(dropdown.firstChild);
-          const defaultOption = document.createElement('option');
-          defaultOption.text = this.formData.patient.permBrgy;
-          dropdown.add(defaultOption);
-          dropdown.selectedIndex = 0;
-        }
-      })
-    },
+      },
     validateForm(page) {
       switch (page) {
         case 1:
@@ -2231,12 +2233,6 @@ export default {
 </script>
 
 <style>
-/* .form-summary:active {
-  height: 64px;
-  transition: transform 1000ms;
-  transition-delay: 5000ms;
-  transition-timing-function: linear;
-} */
 
 .input-required:invalid, textarea:invalid { 
     box-shadow: 0 0 5px #d45252;
@@ -2248,7 +2244,7 @@ export default {
   border-color: hsl(0, 76%, 50%);
 }
 
-body {
+.addCRFD-body {
   font-family: 'Work Sans', sans-serif;
   font-weight: 300;
   padding: 0px;
@@ -2256,7 +2252,7 @@ body {
   background-image: none;
 }
 
-.case-container {
+.addCRFD-caseContainer {
   margin: 70px 20px 5px 20px;
   display: flex;
   flex-direction: row;
@@ -2265,7 +2261,7 @@ body {
 }
 
 @media only screen and (max-width: 800px) {
-  .case-container {
+  .addCRFD-caseContainer {
     width: 100%;
     flex-direction: column;
     align-items: center;
@@ -2274,7 +2270,7 @@ body {
   }
 }
 
-.form-summary {
+.addCRFD-formSummary {
   width: fit-content;
   height: fit-content;
   left: 23px;
@@ -2287,7 +2283,7 @@ body {
   border-radius: 10px;
 }
 @media only screen and (max-width: 800px) {
-  .form-summary {
+  .addCRFD-formSummary {
     width: 100%;
     position: unset;
     height: fit-content;
@@ -2295,7 +2291,7 @@ body {
   }
 }
 
-.form-summary-container {
+.addCRFD-formSummary-container {
   position: fixed;
   width: fit-content;
   margin: 5px;
@@ -2303,22 +2299,11 @@ body {
 }
 
 @media only screen and (max-width: 800px) {
-  .form-summary-container {
+  .addCRFD-formSummary-container {
     width: 95%;
     position: sticky;
     margin: 0px;
   }
-}
-
-.disease {
-  font-family: Work Sans;
-  font-style: normal;
-  font-weight: 500;
-  font-size: 20px;
-  line-height: 33px;
-  margin: 0;
-  color: #000000;
-  text-align: center;
 }
 
 .formnum {
@@ -2340,11 +2325,6 @@ body {
   display: flex;
 }
 
-/* .formnum:hover {
-  color: #000000;
-  font-weight: 800;
-} */
-
 @media only screen and (max-width: 800px) {
   .formnum {
     width: 98%;
@@ -2362,7 +2342,7 @@ body {
   color: white;
 }
 
-.form-section-container {
+.faddCRFD-formSectionContainer {
   left: 275px;
   position: relative;
   width: calc(100vw - 320px);
@@ -2371,25 +2351,25 @@ body {
 }
 
 @media only screen and (max-width: 800px) {
-  .form-section-container {
+  .faddCRFD-formSectionContainer {
     left: 0px;
     width: 95%;
   }
 }
 
-.disease-name {
+.addCRFD-diseaseName {
   position: relative;
   top: -3px;
   z-index: 2;
 }
 @media only screen and (max-width: 800px) {
-  .disease-name {
+  .addCRFD-diseaseName {
     position: relative;
     top: 0px;
   }
 }
 
-.form-component {
+.addCRFD-formComponent {
   position: relative;
   height: fit-content;
   width: 100%;
@@ -2403,7 +2383,7 @@ body {
   min-height: calc(100vh - 220px);
 }
 @media only screen and (max-width: 800px) {
-  .form-component {
+  .addCRFD-formComponent {
     position: relative;
     top: 0px;
     min-height: fit-content;
@@ -2415,7 +2395,7 @@ body {
   width: 100%;
 }
 
-#form-header {
+#addCRFD-formHeader {
   text-align: left;
   padding-left: 5px;
   margin-bottom: 5px;
@@ -2430,7 +2410,7 @@ body {
 }
 
 @media only screen and (max-width: 950px) {
-  #form-header {
+  #addCRFD-formHeader {
     text-align: center;
   }
 }
@@ -2900,7 +2880,7 @@ label {
   color: red;
 }
 
-h3 {
+.addCRFDh3 {
   font-size: 15px;
   font-weight: 600;
 }
@@ -2943,7 +2923,7 @@ select:disabled {
   background: #dddddd;
 }
 
-hr {
+.addCRF-hr {
   margin: 20px 0;
 }
 

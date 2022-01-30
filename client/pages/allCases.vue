@@ -1,11 +1,11 @@
 <template>
-  <div id="viewCases">
+  <div id="viewCases" class="allCaseBody">
     <!--Top Bar of the screen-->
     <TopNav />
-    <div ref="content" class="viewcases-container">
-      <h1 class="pageHeader">All Case Reports</h1>
-      <div class="exportButtons">
-        <div class="CIF-SummaryContainer">
+    <div ref="content" class="allCases-viewcasesContainer">
+      <h1 class="allCasesHeader">All Case Reports</h1>
+      <div class="allCasesExport">
+        <div class="allCases-summaryContainer">
           <ul :class="formListClass('all')" @click="clickTab('all')">
             ALL
           </ul>
@@ -18,26 +18,26 @@
           </ul>
           <ul v-if="['Chief', 'Staff', 'resuHead', 'chdDirector'].some(e => $auth.user.userType.includes(e))"
             :class="formListClass('crfCHD')" @click="clickTab('crfCHD')">
-           CRF
+            CRF
           </ul>
         </div>
-        <div v-show="!isPrint" class="CRFActionButtons">
+        <div v-show="!isPrint" class="allCasesActionButtons">
           <ul class="CRFActionButton">
           <img
             src="~/assets/img/pdf.png"
-            class="printButton"
+            class="allCasesPrint"
             @click="downloadPDF"
           />
           </ul>
           <ul class="CRFActionButton">
             <img src="~/assets/img/csv.png" 
-            class="printButton"
+            class="allCasesPrint"
             @click="csvExport(getTable())"
           />
           </ul>
         </div>
       </div>
-      <div class="viewcases-component">
+      <div class="allCases-viewcasesComponent">
         <div v-if="allData.length > 0" id="vue-root">
           <dataTable
             v-show="caseTab === 'all'"
@@ -378,13 +378,21 @@ export default {
     }
   },
   async mounted() {
+
+    if (this.allData.length === 0) {
+      this.$toast.show('Loading...', {className: 'blink', icon: 'hourglass_top'});
+    }
     const CHDtypes = ['Chief', 'Staff', 'resuHead', 'chdDirector'];
-    const cifRows = (await axios.get('http://localhost:8080/api/getCases')).data;
-    const crfRows = (await axios.get('http://localhost:8080/api/getAllCRFs')).data;
+    const cifRows = (await axios.get('http://localhost:8080/api/getCases', {
+      params: {userID: this.$auth.user.userID}
+    })).data;
+    const crfRows = (await axios.get('http://localhost:8080/api/getAllCRFs', {
+      params: {userID: this.$auth.user.userID}
+    })).data;
     for (let i = 0; i < cifRows.length; i++) {
-      cifRows[i].reportDate = cifRows[i].reportDate ? cifRows[i].reportDate.substr(0, 10) : "undefined";
+      cifRows[i].reportDate = cifRows[i].reportDate ? this.convDatePHT(new Date(cifRows[i].reportDate)) : "undefined";
       // default to reportDate if updatedDate is null
-      cifRows[i].updatedDate = cifRows[i].updatedDate ? cifRows[i].updatedDate.substr(0, 10) : cifRows[i].reportDate;
+      cifRows[i].updatedDate = cifRows[i].updatedDate ? this.convDatePHT(new Date(cifRows[i].updatedDate)) : cifRows[i].reportDate;
     }
     this.cifData = cifRows.filter(e => e.type === "CIF");
     
@@ -406,6 +414,10 @@ export default {
     } else { // is not-CHD; CIF, or CRF whose CRFID matches a CRF that matches the user's ID
       this.allData = cifRows.filter(e1 => e1.type === "CIF" ||
             !!this.crfDRUData.find(e2 => e2.CRFID === e1.CRFID && e2.userID === this.$auth.user.userType));
+    }
+    if (this.allData.length > 0) {
+      this.$toast.clear();
+      this.$toast.success('All cases loaded!', {duration: 4000, icon: 'check_circle'});
     }
   },
   methods: {
@@ -546,13 +558,16 @@ export default {
         }
         return data;
       }
-    }
+    },
+    convDatePHT(d) { // only accepts Date object; includes checking
+      return !isNaN(Date.parse(d)) ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10) : "N/A";
+    },
   },
 }
 </script>
 
 <style>
-body {
+.allCaseBody {
   font-family: 'Work Sans', sans-serif;
   font-weight: 300;
   padding: 0px;
@@ -560,42 +575,26 @@ body {
   background-image: none;
 }
 
-.pageHeader {
+.allCasesHeader {
   font-weight: 800;
   font-size: 32px;
   color: #346083;
 }
 
-.viewcases-container {
+.allCases-viewcasesContainer {
   padding: 80px 20px 5px 20px;
   width: 100%;
 }
 
 @media only screen and (max-width: 800px) {
-  .viewcases-ontainer {
+  .allCases-viewcasesContainer {
     width: 100%;
     align-items: center;
     margin: 0px;
   }
 }
 
-.viewcases-section-container {
-  /* left: 275px; */
-  /* position: relative; */
-  /* width: calc(100vw - 320px); */
-  /* margin: 5px; */
-  width: 100%;
-  padding: 5px;
-  margin: 10px;
-}
-
-@media only screen and (max-width: 800px) {
-  .viewcases-section-container {
-    width: 95%;
-  }
-}
-
-.viewcases-component {
+.allCases-viewcasesComponent {
   /* position: relative;
   display: inline-flex;
   flex-direction: row; */
@@ -610,14 +609,14 @@ body {
   margin-bottom: 40px;
 }
 @media only screen and (max-width: 800px) {
-  .viewcases-component {
+  .allCases-viewcasesComponent {
     position: relative;
     top: 0px;
     min-height: fit-content;
   }
 }
 
-.CIF-SummaryContainer {
+.allCases-summaryContainer {
   display: flex;
   flex-direction: row;
   overflow-x: auto;
@@ -649,23 +648,39 @@ body {
   width: -webkit-fill-available;
 }
 
-.CRFActionButtons {
+.allCasesActionButtons {
   display: inline-flex;
   flex-direction: row;
   cursor: pointer;
 }
 
-.printButton {
+.allCasesPrint {
   width: 30px;
   height: 30px;
   /* margin: 0 5px; */
   margin: -5px 5px 5px;
 }
 
-.exportButtons {
+.allCasesExport {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+}
+
+.blink {
+  animation: blink 2s steps(3, end) infinite;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 /* h2 {

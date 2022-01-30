@@ -1,6 +1,6 @@
 <template>
   <div class="datatable">
-    <div v-if="pageType !== 'patient'" class="search">
+    <div v-if="pageType !== 'patient' && pageType !== 'feedbackReport' " class="search">
       Show
       <select id="rows" v-model="showDataAmount" class="form-control" @change="selectedDataAmount">
         <option value="10">10</option>
@@ -300,11 +300,9 @@
                   :href="'/viewImmunizationProg'">
                   {{ data[column.key] }}
                 </a>
-                <a v-else-if="(column.key === 'progAccomplishID')"
+                <a v-else-if="(column.key === 'progAccompID')"
                   style="color: #346083; text-decoration-line: underline"
-                  :href="'/viewProgAccomplishMalaria'">
-                  <!-- :href="'/addProgAccomplish' + DISEASE + YEAR + data[column.key]"> -->
-                  <!-- ALSO NEED TO INCLUDE DISEASE AND YEAR IN LINK TO REDIRECT TO THAT PAGE -->
+                  :href="'/viewProgAccomplishMalaria?paID=' + data[column.key]">
                   {{ data[column.key] }}
                 </a>
                 <!-- <a
@@ -504,6 +502,7 @@ export default {
         else if (c.toString().includes('Submitted')) return 'caseStatus green';
         else if (c.toString().includes('Pushed')) return 'caseStatus orange';
         else if (c.toString().includes('Zero Report')) return 'caseStatus red';
+        else if (c.toString().includes('Late Cases')) return 'caseStatus red';
 
         else if (c.toString().includes('For Approval')) return 'caseStatus orange';
         else if (c.toString().includes('For Revision')) return 'caseStatus red';

@@ -90,7 +90,7 @@ export default {
             sortable: true,
           },
           {
-            title: 'Active Cases',
+            title: 'Cases',
             key: 'numCases',
             type: 'text',
             source: 'events'
@@ -129,7 +129,7 @@ export default {
             expectFormat: 'DD MMM YYYY',
           },
           {
-            title: 'Response Time',
+            title: 'Response',
             key: 'responseTime',
             type: 'text',
             source: 'events'
@@ -147,18 +147,25 @@ export default {
     }
   },
   async mounted() {
+    if (this.allOutbreaks.length === 0) {
+      this.$toast.show('Loading...', {className: 'blink', icon: 'hourglass_top'});
+    }
     const rows = (await axios.get('http://localhost:8080/api/getAllOutbreaks')).data;
     console.log(rows[0]);
     for (let i = 0; i < rows.length; i++) {
       rows[i].disease = rows[i].diseaseName;
-	  delete rows[i].diseaseID;
-	  rows[i].dateStarted = rows[i].startDate.substr(0, 10);
-	  rows[i].dateClosed = rows[i].endDate ? rows[i].endDate.substr(0, 10) : "N/A";
-	  rows[i].responseTime = rows[i].responseTime ? rows[i].responseTime : "N/A";
-	  rows[i].attackRate = rows[i].attackRate ? rows[i].attackRate : "0.0";
-	  rows[i].growthRate = rows[i].growthRate ? (parseFloat(rows[i].growthRate) * 100).toFixed(2) + "%" : "0.00%";
+      delete rows[i].diseaseID;
+      rows[i].dateStarted = this.convDatePHT(new Date(rows[i].startDate));
+      rows[i].dateClosed = rows[i].endDate ? this.convDatePHT(new Date(rows[i].endDate)) : "N/A";
+      rows[i].responseTime = rows[i].responseTime ? rows[i].responseTime : "N/A";
+      rows[i].attackRate = !isNaN(rows[i].attackRate) ? rows[i].attackRate : "0.0";
+      rows[i].growthRate = !isNaN(rows[i].growthRate) ? (parseFloat(rows[i].growthRate) * 100).toFixed(2) + "%" : "0.00%";
     }
     this.allOutbreaks = rows;
+    if (this.allOutbreaks.length > 0) {
+      this.$toast.clear();
+      this.$toast.success('All outbreaks loaded!', {duration: 4000, icon: 'check_circle'});
+    }
   },
   methods: {
     downloadPDF() {
@@ -186,7 +193,7 @@ export default {
       // doc.save('test.pdf')
       console.log(this.$refs.content)
       setTimeout(() => (this.isPrint = !this.isPrint), 3000)
-   },
+    },
     csvExport(arrData) {
       let csvContent = "data:text/csv;charset=utf-8,";
       // let header = this.getCols();
@@ -222,7 +229,10 @@ export default {
       }
       return data;
       */
-    }
+    },
+    convDatePHT(d) { // only accepts Date object; includes checking
+      return !isNaN(Date.parse(d)) ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10) : "N/A";
+    },
   },
 }
 </script>
@@ -240,6 +250,22 @@ body {
   font-weight: 800;
   font-size: 32px;
   color: #346083;
+}
+
+.blink {
+  animation: blink 2s steps(3, end) infinite;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 .alloutbreaks-container {

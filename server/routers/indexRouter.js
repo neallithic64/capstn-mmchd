@@ -38,6 +38,11 @@ router.get("/getAllEvents", m1Cont.getAllEvents);
 router.get("/getEvent", m1Cont.getEvent);
 
 router.get("/getProgTargets", m4Cont.getAllProgTargets);
+router.get("/getProgAccomps", m4Cont.getAllProgAccomps);
+router.get("/getViewProgAccomp", m4Cont.getProgAccomps);
+router.get("/getTCLEntry", m4Cont.getTCLEntry);
+router.get("/getTCL", m4Cont.getTCL);
+router.get("/getAllTCLs", m4Cont.getAllTCLs);
 
 
 // POST Routes
@@ -61,7 +66,10 @@ router.post("/updatePushData", m1Cont.postUpdatePushData);
 router.post("/updateOutbreakStatus", m1Cont.postUpdateOutbreakStatus);
 
 router.post("/editProgTargets", m4Cont.postEditProgTargets);
+router.post("/editProgAccomp", m4Cont.postEditProgAccomp);
 
+router.post("/postFileTest", m4Cont.postFileTest);
+router.get("/getFileTest", m4Cont.getFileTest);
 
 // CRON Routes
 cron.schedule("00 14 * * 3", m1Cont.cronCRFDeadlineNotif);

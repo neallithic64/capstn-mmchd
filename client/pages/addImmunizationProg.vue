@@ -1,26 +1,26 @@
 <template>
-  <div id="viewCRF">
+  <div id="viewCRF" class="addIPbody">
     <!--Top Bar of the screen-->
     <TopNav />
-    <div ref="content" class="viewcases-container">
-      <div class="viewCRF-details" style="align-text: left">
-        <div class="CRFnumbers">
-          <h1 style="margin: -10px 0">Program Immunization Report No. {{immunProgNo}}</h1>
-          <h2 style="margin-top: -1px">{{ city }}, {{ barangay }}</h2>
-          <p>Last updated: <b> {{ updatedDate }} </b> </p>
+    <div ref="content" class="addIPcontainer">
+      <div class="addIP-viewDetails" style="align-text: left">
+        <div class="addIP-info">
+          <addIPh1 style="margin: -10px 0" class="addIPh1">Program Immunization Report No. {{immunProgNo}}</addIPh1>
+          <h2 style="margin-top: -1px" class="addIPh2">{{ city }}, {{ barangay }}</h2>
+          <p>Last updated: <b class="addIPhBold"> {{ updatedDate }} </b> </p>
         </div>
-        <div class="CRFstatus" style="align-text: right; place-content: end;">
-          <div v-show="!isPrint" class="CRFActionButtons">
+        <div class="addIP-status" style="align-text: right; place-content: end;">
+          <div v-show="!isPrint" class="addIP-actionButts">
             <ul class="CRFActionButton">
               <img
                 src="~/assets/img/pdf.png"
-                class="printButton"
+                class="addIP-printButt"
                 @click="downloadPDF"
               />
             </ul>
             <ul class="CRFActionButton">
               <img src="~/assets/img/csv.png" 
-              class="printButton"
+              class="addIP-printButt"
               @click="csvExport()"
             />
             </ul>
@@ -42,16 +42,16 @@
         </div>
       </div>
 
-      <div class="viewcases-component">
+      <div class="addIPcomponent" style="margin-top: 20px;">
         <dataTable
           :options="tableOptions"
           :datavalues="dataSets"
           :casetype="'immunProg'"
         />
-        <div v-if="year+'' === new Date().getFullYear()+'' && month+'' === new Date().getMonth()+''" class="additionalButtons">
-          <button class="addText"><a href="/addImmunizationProgEntry">+ add an entry</a></button></div>
+        <div v-if="year+'' === new Date().getFullYear()+'' && month+'' === new Date().getMonth()+''" class="addIPaddButton">
+          <button class="addIPaddText"><a href="/addImmunizationProgEntry">+ add an entry</a></button></div>
       </div>
-        <div v-if="year+'' === new Date().getFullYear()+'' && month+'' === new Date().getMonth()+''" class="CRFendButton">
+        <div v-if="year+'' === new Date().getFullYear()+'' && month+'' === new Date().getMonth()+''" class="addIPendButt">
           <button class="back-button" type="button" @click="save()">
             Save
           </button>
@@ -63,7 +63,7 @@
     <div v-show="popupOpen" class="overlay">
       <div class="overlay-form">
         <button class="close" @click="popupOpen=false">x</button>
-        <h2 style="color:red; text-align:center"> PUSH DATA APPROACH CONSENT </h2>
+        <h2 style="color:red; text-align:center" class="addIPh2"> PUSH DATA APPROACH CONSENT </h2>
         <hr style="border-color: inherit;"/>
         <div style="padding:10px; text-align:justify;">
           <p style="margin:10px 5px; font-size:16px"> If you agree, all details will be pushed to MMCHD-RESU.
@@ -71,7 +71,7 @@
              (e.g. patient name, complete address) will not be pushed.</p>
           <p style="margin:10px 5px; font-size:16px"> Only data that is necessary for 
             time, place, and person analysis will be pushed.</p>
-          <p style="margin:10px 5px; font-size:12px"> You can update this in your settings anytime.</p>
+          <!--p style="margin:10px 5px; font-size:12px"> You can update this in your settings anytime.</p-->
           <div class="popupButtons" style="text-align: center;">
             <button class="back-button" type="button" @click="popup(false)">
               Disagree
@@ -296,7 +296,7 @@ export default {
 </script>
 
 <style>
-body {
+.addIPbody {
   font-family: 'Work Sans', sans-serif;
   font-weight: 300;
   padding: 0px;
@@ -304,25 +304,19 @@ body {
   background-image: none;
 }
 
-.pageHeader {
-  font-weight: 800;
-  font-size: 32px;
-  color: #346083;
-}
-
-.viewCRF-details {
+.addIP-viewDetails {
   display: flex;
   flex-direction: row;
   margin-bottom: 10px;
   justify-content: space-between;
 }
-.CRFnumbers,
-.CRFstatus {
+.addIP-info,
+.addIP-status {
   display: inline-flex;
   flex-direction: column;
 }
 
-.CRFActionButtons {
+.addIP-actionButts {
   display: inline-flex;
   flex-direction: row;
   justify-content: flex-end;
@@ -330,73 +324,45 @@ body {
   cursor: pointer;
 }
 
-.printButton {
+.addIP-printButt {
   width: 30px;
   height: 30px;
   /* margin: 0 5px; */
   margin: 5px;
 }
 
-h1 {
+.addIPh1 {
   color: #008d41;
   font-size: 40px;
   font-weight: 800;
 }
 
-h2 {
+.addIPh2 {
   color: #346083;
   font-size: 25px;
   font-weight: 600;
 }
 
-h3 {
-  font-size: 24px;
-  font-weight: 600;
-}
-
-b {
+.addIPhBold {
   /* color: #346083; */
   font-size: 18px;
   font-weight: 600;
 }
 
-.printCRFButton {
-  width: 30px;
-  height: 30px;
-  margin-top: 10px;
-  margin-bottom: -15px;
-}
-
-.viewcases-container {
+.addIPcontainer {
   padding: 80px 20px 5px 20px;
   width: 100%;
 }
 
 @media only screen and (max-width: 800px) {
-  .viewcases-container {
+  .addIPcontainer {
     width: 100%;
     align-items: center;
     margin: 0px;
   }
 }
 
-.viewcases-section-container {
-  /* left: 275px; */
-  /* position: relative; */
-  /* width: calc(100vw - 320px); */
-  /* margin: 5px; */
-  width: 100%;
-  padding: 5px;
-  margin: 10px;
-}
-
-@media only screen and (max-width: 800px) {
-  .viewcases-section-container {
-    width: 95%;
-  }
-}
-
-.viewcases-component {
+.addIPcomponent {
   /* position: relative;
   display: inline-flex;
   flex-direction: row; */
@@ -411,7 +377,7 @@ b {
   margin-bottom: 40px;
 }
 @media only screen and (max-width: 800px) {
-  .viewcases-component {
+  .addIPcomponent {
     position: relative;
     top: 0px;
     min-height: fit-content;
@@ -432,33 +398,23 @@ select {
   border-radius: 9px;
 }
 
-.CRF-SummaryContainer {
-  display: flex;
-  flex-direction: row;
-  overflow-x: auto;
-  overflow-y: hidden;
-  z-index: 1;
-  margin-left: 5px;
-}
-
 #datatabale {
   width: -webkit-fill-available;
 }
 
-
-.additionalButtons {
+.addIPaddButton {
   /* position: relative; */
   position: absolute;
   margin-top: 0px;
   margin-left: 5px;
 }
 
-.addText {
+.addIPaddText {
   color: #346083;
   font-size: 12px;
 }
 
-.CRFendButton {
+.addIPendButt {
   /* margin: -10px 0 5px; */
   float: right;
   margin-top: -40px;
@@ -530,63 +486,6 @@ select {
   overflow-y: auto;
   box-shadow: 1px 4px 8px rgb(0 0 0 / 40%);
 }
-
-
-.searchPatientValues {
-  background: white;
-  height: fit-content;
-  /* border-radius: 0 0 25px 25px; */
-  margin-top: -1px;
-  display: grid;
-  /* width: 100%; */
-  position: absolute;
-  border: lightgray solid 1px;
-  padding: 0;
-  /* right: 0;
-  left: 0; */
-}
-
-.searchResult {
-  padding: 5px 10px;
-  border-top: 1px solid lightgray;
-  display: inline-flex;
-  flex-direction: row;
-  cursor: pointer;
-}
-
-.searchResult:hover {
-  background: #eeeeee;
-}
-
-.searchResultInfo {
-  display: inline-flex;
-  flex-direction: column;
-}
-
-.searchPerson {
-  font-size: 16px;
-  margin-bottom: -5px;
-  font-weight: 400;
-}
-
-.searchAddress {
-  font-size: 12px;
-  font-weight: 200;
-}
-
-.searchPersonIcon {
-  content: url('~/assets/img/personIcon.png');
-  height: 25px;
-  width: 25px;
-  margin: auto 5px auto 0;
-}
-
-/* :disabled {
-  background: #ffffff;
-  border: 1px solid #c4c4c4;
-  color:#c4c4c4;
-} */
-
 
 </style>
 

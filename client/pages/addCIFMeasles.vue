@@ -1,13 +1,13 @@
 <template>
-  <div id="cif">
+  <div id="cif" class="addCIFBody">
     <!--Top Bar of the screen-->
     <TopNav />
 
     <!--Everything below = main screen-->
-    <div class="case-container">
+    <div class="addCIF-caseContainer">
       <!--SUMMARY: left side-->
-      <div class="form-summary-container">
-        <div class="form-summary">
+      <div class="addCIF-formSummaryContainer">
+        <div class="addCIF-formSummary">
           <button id="login-submit" type="submit" style="width: 210px; text-align: left" @click="isOpen = !isOpen">
             <h2 style="font-weight: 600">Case Investigation Form</h2>
           </button>
@@ -25,9 +25,9 @@
       </div>
 
       <!--Everything in the right-->
-      <div class="form-section-container">
+      <div class="addCIF-formSectionContainer">
         <!--Name of form-->
-        <div class="disease-name">
+        <div class="addCIF-diseaseName">
           <h1 style="margin: 0; font-weight: 600; font-size: 24px">
             {{ disease.name }}
           </h1>
@@ -37,10 +37,10 @@
         </div>
 
         <!--Form itself-->
-        <div class="form-component">
+        <div class="addCIF-formComponent">
           <form v-if="pageNum == 0" id="measles0" type="submit">
             <div id="case-investigation-form" class="center">
-              <h2 id="form-header">
+              <h2 id="addCIF-formHeader">
                 {{ Object.values(disease.formNames)[0] }}
               </h2>
 
@@ -80,7 +80,7 @@
           <form v-if="pageNum == 1 || pageNum == Object.keys(disease.formNames).length" id="measles1" type="submit">
             <div id="case-investigation-form" class="center">
               <div style="display:flex; flex-direction:row; justify-content: space-between;">
-                <h2 id="form-header">
+                <h2 id="addCIF-formHeader">
                   {{ Object.values(disease.formNames)[1] }}
                 </h2>
                 <div v-if="patientExist" style="display:inline-flex; flex-direction:row;">
@@ -296,7 +296,7 @@
                 </div>
               </div>
 
-              <hr/>
+              <hr class="addCIFhr"/>
 
               <div class="field-row">
                 <div class="field">
@@ -442,7 +442,7 @@
                 </div>
               </div>
 
-              <hr/>
+              <hr class="addCIFhr"/>
 
               <div class="field-row-straight">
                 <div class="field">
@@ -497,11 +497,11 @@
               </div>
             </div>
           </form>
-          <hr v-if="pageNum == Object.keys(disease.formNames).length" />
+          <hr v-if="pageNum == Object.keys(disease.formNames).length" class="addCIFhr"/>
 
           <form v-if="pageNum == 2 || pageNum == Object.keys(disease.formNames).length" id="measles1" type="submit">
             <div id="case-investigation-form" class="center">
-              <h2 id="form-header"> {{ Object.values(disease.formNames)[2] }} </h2>
+              <h2 id="addCIF-formHeader"> {{ Object.values(disease.formNames)[2] }} </h2>
 
               <div class="field-row">
                 <div class="sixtyDesk" style="display: inline-flex; flex-direction: row">
@@ -599,11 +599,11 @@
               </div>
             </div>
 
-            <hr />
+            <hr class="addCIFhr"/>
 
             <div id="case-investigation-form" class="center">
               <div style="display: flex; flex-direction: row;">
-                <h2 id="form-header">Risk Factors</h2>
+                <h2 id="addCIF-formHeader">Risk Factors</h2>
                 <button
                   class="tooltip"
                   data-tooltip="Identify all possible risk factors that may contribute to the analysis of disease spread"
@@ -618,7 +618,7 @@
                   <div style="display: block">
                     <div class="risk-factors" style="display: inline-flex; margin-bottom: -1 px; flex-direction: column;">
                       <div class="field">
-                        <h3 class="required">Lifestyle:</h3>
+                        <h3 class="required addCIFh3">Lifestyle:</h3>
                         <div style="flex-direction: column; align-items: center">
 
                           <div style="display: flex; align-items: center;">
@@ -720,7 +720,7 @@
                   <div style="display: block">
                     <div class="risk-factors" style="display: inline-flex; margin-bottom: -1 px; flex-direction: column;">
                       <div class="field">
-                        <h3 class="required">Current Health Conditions:</h3>
+                        <h3 class="required addCIFh3">Current Health Conditions:</h3>
                         <div style="flex-direction: column; align-items: center">
 
                           <div style="display: flex; align-items: center;">
@@ -794,7 +794,7 @@
                   <div style="display: block">
                     <div class="risk-factors" style="display: inline-flex; margin-bottom: -1 px; flex-direction: column;">
                       <div class="field">
-                        <h3 class="required">Historical Health Data:</h3>
+                        <h3 class="required addCIFh3">Historical Health Data:</h3>
                         <div style="flex-direction: column; align-items: center">
 
                           <div style="display: flex; align-items: center;">
@@ -893,7 +893,7 @@
 
                   <div class="risk-factors" style="display: block; margin-bottom: -1 px">
                     <div class="field" style="display: block">
-                      <h3 class="required">Other Risks:</h3>
+                      <h3 class="required addCIFh3">Other Risks:</h3>
                       <div style="display:inline-flex; flex-direction:row">
                         <div class="otherRisk" style="margin-right: 10px;">
 
@@ -1067,11 +1067,11 @@
               </div>
             </div>
           </form>
-          <hr v-if="pageNum == Object.keys(disease.formNames).length" />
+          <hr v-if="pageNum == Object.keys(disease.formNames).length" class="addCIFhr"/>
 
           <form v-if="pageNum == 3 || pageNum == Object.keys(disease.formNames).length" id="measles3" type="submit">
             <div id="case-investigation-form" class="center">
-              <h2 id="form-header">
+              <h2 id="addCIF-formHeader">
                 {{ Object.values(disease.formNames)[3] }}
               </h2>
 
@@ -1291,11 +1291,11 @@
               </div>
             </div>
           </form>
-          <hr v-if="pageNum == Object.keys(disease.formNames).length" />
+          <hr v-if="pageNum == Object.keys(disease.formNames).length" class="addCIFhr"/>
 
           <form v-if="pageNum == 4 || pageNum == Object.keys(disease.formNames).length" id="measles4" type="submit">
             <div id="case-investigation-form" class="center">
-              <h2 id="form-header">
+              <h2 id="addCIF-formHeader">
                 {{ Object.values(disease.formNames)[4] }}
               </h2>
             </div>
@@ -1593,11 +1593,11 @@
               </div>
             </div>
           </form>
-          <hr v-if="pageNum == Object.keys(disease.formNames).length" />
+          <hr v-if="pageNum == Object.keys(disease.formNames).length" class="addCIFhr"/>
 
           <form v-if="pageNum == 5 || pageNum == Object.keys(disease.formNames).length " id="measles5" type="submit">
             <div id="case-investigation-form" class="center">
-              <h2 id="form-header">
+              <h2 id="addCIF-formHeader">
                 {{ Object.values(disease.formNames)[5] }}
               </h2>
 
@@ -2030,11 +2030,11 @@
               </div>
             </div>
           </form>
-          <hr v-if="pageNum == Object.keys(disease.formNames).length" />
+          <hr v-if="pageNum == Object.keys(disease.formNames).length" class="addCIFhr"/>
 
           <form v-if="pageNum == 6 || pageNum == Object.keys(disease.formNames).length" id="measles6" type="submit">
             <div id="case-investigation-form" class="center">
-              <h2 id="form-header">
+              <h2 id="addCIF-formHeader">
                 {{ Object.values(disease.formNames)[6] }}
               </h2>
 
@@ -2077,11 +2077,11 @@
               </div>
             </div>
           </form>
-          <hr v-if="pageNum == Object.keys(disease.formNames).length" />
+          <hr v-if="pageNum == Object.keys(disease.formNames).length" class="addCIFhr"/>
 
           <form v-if="pageNum == 7 || pageNum == Object.keys(disease.formNames).length" id="measles7" type="submit">
             <div id="case-investigation-form" class="center">
-              <h2 id="form-header">
+              <h2 id="addCIF-formHeader">
                 {{ Object.values(disease.formNames)[7] }}
               </h2>
 
@@ -2109,11 +2109,11 @@
               </div>
             </div>
           </form>
-          <hr v-if="pageNum == Object.keys(disease.formNames).length" />
+          <hr v-if="pageNum == Object.keys(disease.formNames).length" class="addCIFhr"/>
 
           <form v-if="pageNum == 8 || pageNum == Object.keys(disease.formNames).length" id="measles8" type="submit">
             <div id="case-investigation-form" class="center">
-              <h2 id="form-header">
+              <h2 id="addCIF-formHeader">
                 {{ Object.values(disease.formNames)[8] }}
               </h2>
 
@@ -2193,7 +2193,7 @@
 
           <form v-if="pageNum == 9 || pageNum == Object.keys(disease.formNames).length" id="measles9" type="submit">
             <div id="case-investigation-form" class="center">
-              <h2 id="form-header">
+              <h2 id="addCIF-formHeader">
                 {{ Object.values(disease.formNames)[9] }}
               </h2>
               <div class="vaccine-field field">
@@ -2462,8 +2462,6 @@
 </template>
 
 <script>
-// import infoicon from '../static/infoicon.png'
-// const axios = require('axios');
 import axios from 'axios';
 
 export default {
@@ -2659,22 +2657,22 @@ export default {
       classification: {},
       labList: [],
       cityList: [
-        'Caloocan',
-        'Las Piñas',
-        'Makati',
-        'Malabon',
-        'Mandaluyong',
-        'Manila',
-        'Marikina',
-        'Muntinlupa',
-        'Navotas',
-        'Parañaque',
-        'Pasay',
-        'Pasig',
+        'Caloocan City',
+        'Las Piñas City',
+        'Makati City',
+        'Malabon City',
+        'Mandaluyong City',
+        'Manila City',
+        'Marikina City',
+        'Muntinlupa City',
+        'Navotas City',
+        'Parañaque City',
+        'Pasay City',
+        'Pasig City',
         'Quezon City',
-        'San Juan',
-        'Taguig',
-        'Valenzuela',
+        'San Juan City',
+        'Taguig City',
+        'Valenzuela City',
       ],
     }
   },
@@ -2791,16 +2789,8 @@ export default {
           this.pageDone[page] = true;
           this.pageNum = page;
         }
-      }
-      else {
-        // alert('Please fill up the required fields');
-        this.$toast.error('Please fill up the required fields.', {position: 'top-right', duration: 4000, icon: 'error'});
-        // document.getElementsByClassName('input-form-field').className = 'input-form-field input-required';
-        this.$forceUpdate();
-      }
-      // console.log(this.pageDone)
 
-      this.$nextTick(() => {
+        this.$nextTick(() => {
         if ((page === 1 || page === 10) && this.formData.patient.occuBrgy != null) {
           const dropdown = document.getElementById('occuBarangay');
           const defaultOption = document.createElement('option');
@@ -2825,6 +2815,15 @@ export default {
           dropdown.selectedIndex = 0;
         }
       })
+      }
+      else {
+        // alert('Please fill up the required fields');
+        this.$toast.error('Please fill up the required fields.', {position: 'top-right', duration: 4000, icon: 'error'});
+        // document.getElementsByClassName('input-form-field').className = 'input-form-field input-required';
+        this.$forceUpdate();
+      }
+      // console.log(this.pageDone)
+
     },
     validateForm(page) {
       switch (page) {
@@ -3142,12 +3141,6 @@ export default {
 </script>
 
 <style>
-/* .form-summary:active {
-  height: 64px;
-  transition: transform 1000ms;
-  transition-delay: 5000ms;
-  transition-timing-function: linear;
-} */
 
 .input-required:invalid { 
     box-shadow: 0 0 5px #d45252;
@@ -3159,7 +3152,7 @@ export default {
   border-color: hsl(0, 76%, 50%);
 }
 
-body {
+.addCIFBody {
   font-family: 'Work Sans', sans-serif;
   font-weight: 300;
   padding: 0px;
@@ -3167,7 +3160,7 @@ body {
   background-image: none;
 }
 
-.case-container {
+.addCIF-caseContainer {
   margin: 70px 20px 5px 20px;
   display: flex;
   flex-direction: row;
@@ -3176,7 +3169,7 @@ body {
 }
 
 @media only screen and (max-width: 800px) {
-  .case-container {
+  .addCIF-caseContainer {
     width: 100%;
     flex-direction: column;
     align-items: center;
@@ -3185,7 +3178,8 @@ body {
   }
 }
 
-.form-summary {
+
+.addCIF-formSummary {
   width: fit-content;
   height: fit-content;
   left: 23px;
@@ -3198,7 +3192,7 @@ body {
   border-radius: 10px;
 }
 @media only screen and (max-width: 800px) {
-  .form-summary {
+  .addCIF-formSummary {
     width: 100%;
     position: unset;
     height: fit-content;
@@ -3206,7 +3200,7 @@ body {
   }
 }
 
-.form-summary-container {
+.addCIF-formSummaryContainer {
   position: fixed;
   width: fit-content;
   margin: 5px;
@@ -3214,22 +3208,11 @@ body {
 }
 
 @media only screen and (max-width: 800px) {
-  .form-summary-container {
+  .addCIF-formSummaryContainer {
     width: 95%;
     position: sticky;
     margin: 0px;
   }
-}
-
-.disease {
-  font-family: Work Sans;
-  font-style: normal;
-  font-weight: 500;
-  font-size: 20px;
-  line-height: 33px;
-  margin: 0;
-  color: #000000;
-  text-align: center;
 }
 
 .formnum {
@@ -3251,11 +3234,6 @@ body {
   display: flex;
 }
 
-/* .formnum:hover {
-  color: #000000;
-  font-weight: 800;
-} */
-
 @media only screen and (max-width: 800px) {
   .formnum {
     width: 98%;
@@ -3273,7 +3251,7 @@ body {
   color: white;
 }
 
-.form-section-container {
+.addCIF-formSectionContainer {
   left: 275px;
   position: relative;
   width: calc(100vw - 320px);
@@ -3282,25 +3260,13 @@ body {
 }
 
 @media only screen and (max-width: 800px) {
-  .form-section-container {
+  .addCIF-formSectionContainer {
     left: 0px;
     width: 95%;
   }
 }
 
-.disease-name {
-  position: relative;
-  top: -3px;
-  z-index: 2;
-}
-@media only screen and (max-width: 800px) {
-  .disease-name {
-    position: relative;
-    top: 0px;
-  }
-}
-
-.form-component {
+.addCIF-formComponent {
   position: relative;
   height: fit-content;
   width: 100%;
@@ -3314,10 +3280,22 @@ body {
   min-height: calc(100vh - 220px);
 }
 @media only screen and (max-width: 800px) {
-  .form-component {
+  .addCIF-formComponent {
     position: relative;
     top: 0px;
     min-height: fit-content;
+  }
+}
+
+.addCIF-diseaseName {
+  position: relative;
+  top: -3px;
+  z-index: 2;
+}
+@media only screen and (max-width: 800px) {
+  .addCIF-diseaseName {
+    position: relative;
+    top: 0px;
   }
 }
 
@@ -3326,7 +3304,7 @@ body {
   width: 100%;
 }
 
-#form-header {
+#addCIF-formHeader {
   text-align: left;
   padding-left: 5px;
   margin-bottom: 5px;
@@ -3341,7 +3319,7 @@ body {
 }
 
 @media only screen and (max-width: 950px) {
-  #form-header {
+  #addCIF-formHeader {
     text-align: center;
   }
 }
@@ -3602,6 +3580,141 @@ select {
   border-radius: 9px;
 }
 
+label {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  z-index: 1;
+}
+
+.required:after {
+  content: '*';
+  color: red;
+}
+
+.addCIFh3 {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.next-button {
+  width: 150px;
+  height: 38px;
+  max-width: 100%;
+  font-size: 16px;
+  margin-top: 30px;
+  font-family: 'Work Sans', sans-serif;
+  font-weight: 600;
+  background-color: #346083;
+  color: white;
+  border: #346083 solid 0.75px;
+}
+
+.back-button {
+  width: 150px;
+  height: 38px;
+  max-width: 100%;
+  font-size: 16px;
+  margin-top: 30px;
+  font-family: 'Work Sans', sans-serif;
+  font-weight: 600;
+  background-color: white;
+  color: #346083;
+}
+
+.back-button:hover {
+  border: #346083 solid 1px;
+}
+
+input:disabled,
+select:disabled {
+  background: #dddddd;
+}
+
+.addCIFhr {
+  margin: 20px 0;
+}
+
+.center-center {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.show {
+  display: unset;
+}
+
+.hide {
+  display: none;
+}
+
+
+/* COLLAPSE EME BELOW */
+
+.collpaseWrapper {
+  margin: 15px 0;
+  padding: 15px auto;
+  width: 100%;
+}
+
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.collapseLabel {
+  display: block;
+  cursor: pointer;
+  padding: 10px;
+  /* border: 1px solid #fff; */
+  border-bottom: none;
+  font-weight: 400;
+}
+
+.collapseLabel:hover {
+  background: #346083;
+  opacity: 0.85;
+  color: white;
+  font-weight: 600;
+}
+
+.collapseLabel.last {
+  border-bottom: 1px solid #fff;
+}
+
+ul ul li {
+  padding: 10px;
+  background: white;
+}
+
+.collapseInput[type='checkbox'] {
+  position: absolute;
+  left: -9999px;
+}
+
+.collapseInput[type='checkbox'] ~ ul {
+  height: 0;
+  transform: scaleY(0);
+}
+
+.collapseInput[type='checkbox']:checked ~ ul {
+  height: 100%;
+  transform-origin: top;
+  transition: transform 0.2s ease-out;
+  transform: scaleY(1);
+}
+
+.collapseInput[type='checkbox']:checked + label {
+  background: #346083;
+  opacity: 0.85;
+  color: white;
+  font-weight: 500;
+  border-bottom: 1px solid #fff;
+}
+
+
 /* TOOLTIP */
 
 .tooltip-icon-img {
@@ -3798,142 +3911,6 @@ select {
     border: 0;
   }
 
-label {
-  display: inline-flex;
-  flex-direction: row;
-  align-items: center;
-  z-index: 1;
-}
-
-.required:after {
-  content: '*';
-  color: red;
-}
-
-h3 {
-  font-size: 15px;
-  font-weight: 600;
-}
-
-.next-button {
-  width: 150px;
-  height: 38px;
-  max-width: 100%;
-  font-size: 16px;
-  margin-top: 30px;
-  font-family: 'Work Sans', sans-serif;
-  font-weight: 600;
-  background-color: #346083;
-  color: white;
-  border: #346083 solid 0.75px;
-}
-
-/* .next-button:hover {
-  background-color: #346083;
-} */
-
-.back-button {
-  width: 150px;
-  height: 38px;
-  max-width: 100%;
-  font-size: 16px;
-  margin-top: 30px;
-  font-family: 'Work Sans', sans-serif;
-  font-weight: 600;
-  background-color: white;
-  color: #346083;
-}
-
-.back-button:hover {
-  border: #346083 solid 1px;
-}
-
-input:disabled,
-select:disabled {
-  background: #dddddd;
-}
-
-hr {
-  margin: 20px 0;
-}
-
-.center-center {
-  display: inline-flex;
-  flex-direction: row;
-  align-items: center;
-}
-
-.show {
-  display: unset;
-}
-
-.hide {
-  display: none;
-}
-
-/* COLLAPSE EME BELOW */
-
-.collpaseWrapper {
-  margin: 15px 0;
-  padding: 15px auto;
-  width: 100%;
-}
-
-ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.collapseLabel {
-  display: block;
-  cursor: pointer;
-  padding: 10px;
-  /* border: 1px solid #fff; */
-  border-bottom: none;
-  font-weight: 400;
-}
-
-.collapseLabel:hover {
-  background: #346083;
-  opacity: 0.85;
-  color: white;
-  font-weight: 600;
-}
-
-.collapseLabel.last {
-  border-bottom: 1px solid #fff;
-}
-
-ul ul li {
-  padding: 10px;
-  background: white;
-}
-
-.collapseInput[type='checkbox'] {
-  position: absolute;
-  left: -9999px;
-}
-
-.collapseInput[type='checkbox'] ~ ul {
-  height: 0;
-  transform: scaleY(0);
-}
-
-.collapseInput[type='checkbox']:checked ~ ul {
-  height: 100%;
-  transform-origin: top;
-  transition: transform 0.2s ease-out;
-  transform: scaleY(1);
-}
-
-.collapseInput[type='checkbox']:checked + label {
-  background: #346083;
-  opacity: 0.85;
-  color: white;
-  font-weight: 500;
-  border-bottom: 1px solid #fff;
-}
 
 /* SEARCH BAR ALL BELOW */
 

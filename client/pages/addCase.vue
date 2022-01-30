@@ -1,14 +1,14 @@
 <template>
-  <div id="addCase">
+  <div id="addCase" class="addCaseBody">
     <!--Top Bar of the screen-->
     <TopNav />
 
     <!--Everything below = main screen-->
-    <div class="cases-container">
-      <div class="cases-section-container">
+    <div class="addCase-casesContainer">
+      <div class="addCase-caseSectionContainer">
         <!--Name of form-->
         <div class="page-name">
-          <h1 class="formHeader">Add a Case</h1>
+          <h1 class="addCaseFormHeader">Add a Case</h1>
           <p style="margin: -5px 5px 10px; font-size: 16px">
             Select the disease of the reported case:
           </p>
@@ -16,9 +16,9 @@
 
         <!--Form itself-->
         <div class="addcases-component">
-          <div id="CIF" class="center formTypeDiv">
+          <div id="addCaseCIF" class="center addCaseFormDiv">
             <!-- CASE DEFINITION -->
-            <h2 id="formTypeH">Case Investigation Form</h2>
+            <h2 class="addCase-formTypeH">Case Investigation Form</h2>
 
             <div
               v-for="(value, name, i) in diseases.cif"
@@ -26,9 +26,9 @@
               style="width: 100%; align-content: center"
             >
               <!-- <div v-if="i > 1" :id="name" :class="formColor(i - 1)"> -->
-              <!-- <a :href="value" style="margin: auto"> -->
-              <a :href="'/addCIF'+value" style="margin: auto">
-                <div class="cases-disease-name">{{ name }}</div>
+              <!-- <a :href="'/addCIF'+value" style="margin: auto"> -->
+              <a :href="'/addCIFMeasles'" style="margin: auto">
+                <div class="addCases-disease-name">{{ name }}</div>
               </a>
             </div>
 
@@ -42,9 +42,9 @@
             </a> -->
           </div>
 
-          <div id="CRF" class="center formTypeDiv">
+          <div id="addCaseCRF" class="center addCaseFormDiv">
             <!-- CASE DEFINITION -->
-            <h2 id="formTypeH">Case Report Form</h2>
+            <h2 class="addCase-formTypeH">Case Report Form</h2>
 
             <div
               v-for="(value, name, i) in diseases.crf"
@@ -52,8 +52,9 @@
               style="width: 100%; align-content: center"
             >
               <!-- <div v-if="i > 1" :id="name" :class="formColor(i - 1)"> -->
-              <a :href="'/addCRF'+value" style="margin: auto">
-                <div class="cases-disease-name">{{ name }}</div>
+              <!-- <a :href="'/addCRF'+value" style="margin: auto"> -->
+              <a :href="'/addCRFDengue'" style="margin: auto">
+                <div class="addCases-disease-name">{{ name }}</div>
               </a>
             </div>
           </div>
@@ -96,7 +97,7 @@ export default {
 </script>
 
 <style>
-body {
+.addCaseBody {
   font-family: 'Work Sans', sans-serif;
   font-weight: 300;
   padding: 0px;
@@ -104,19 +105,14 @@ body {
   background-image: none;
 }
 
-h3 {
-  font-size: 15px;
-  font-weight: 600;
-}
-
-.formHeader {
+.addCaseFormHeader {
   margin: -5px 0;
   font-weight: 800;
   font-size: 32px;
   color: #346083;
 }
 
-.cases-container {
+.addCase-casesContainer {
   padding: 70px 20px 5px 20px;
   display: flex;
   flex-direction: row;
@@ -125,7 +121,7 @@ h3 {
 }
 
 @media only screen and (max-width: 800px) {
-  .cases-ontainer {
+  .addCase-casesContainer {
     width: 100%;
     flex-direction: column;
     align-items: center;
@@ -133,7 +129,7 @@ h3 {
   }
 }
 
-.cases-section-container {
+.addCase-caseSectionContainer {
   /* left: 275px; */
   position: relative;
   /* width: calc(100vw - 320px); */
@@ -144,7 +140,7 @@ h3 {
 }
 
 @media only screen and (max-width: 800px) {
-  .cases-section-container {
+  .addCase-caseSectionContainer {
     left: 0px;
     width: 95%;
   }
@@ -174,13 +170,13 @@ h3 {
   }
 }
 
-.formTypeDiv {
+.addCaseFormDiv {
   flex-direction: column;
   width: 50%;
   padding: 10px;
 }
 
-#formTypeH {
+.addCase-formTypeH {
   text-align: center;
   font-weight: 600;
   font-size: 28px;
@@ -192,39 +188,34 @@ h3 {
   background-clip: text;
 }
 
-#CIF {
+#addCaseCIF {
   border: none;
   border-right: #b8b7b7 0.5px solid;
 }
 
-#CRF {
+#addCaseCRF {
   border: none;
   border-left: #b8b7b7 0.5px solid;
 }
 
 @media only screen and (max-width: 800px) {
-  .formTypeDiv {
+  .addCaseFormDiv {
     width: 100%;
     padding: 30px;
   }
 
-  #CIF {
+  #addCaseCIF {
     border: none;
     border-bottom: black 0.5px solid;
   }
 
-  #CRF {
+  #addCaseCRF {
     border: none;
     border-top: black 0.5px solid;
   }
 }
 
-h3 {
-  font-size: 15px;
-  font-weight: 600;
-}
-
-.cases-disease-name {
+.addCases-disease-name {
   text-align: center;
   width: fit-content;
   max-width: 100%;
@@ -237,14 +228,14 @@ h3 {
   cursor: pointer;
 }
 
-.cases-disease-name:hover {
+.addCases-disease-name:hover {
   border: #346083 solid 1px;
   transform: translateY(-5px);
   transition: 0.3s;
   font-weight: 800;
 }
 
-.cases-disease-name:active {
+.addCases-disease-name:active {
   border: #346083 solid 1px;
   background: #346083;
   color: #f2f2f2;
@@ -252,74 +243,5 @@ h3 {
   font-weight: 800;
 }
 
-hr {
-  margin: 20px 0;
-}
-
-/* 
-a {
-  background: rgba(255, 255, 255, 0);
-  border-bottom: 1px solid;
-  color: pink;
-  line-height: 1.4;
-  padding: 0.25em;
-  text-decoration: none;
-}
-a:hover {
-  background: rgba(255, 255, 255, 1);
-  color: #346083;
-}
-
-.btn {
-  color: #346083;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: 400;
-  line-height: 45px;
-  margin: 0 0 2em;
-  max-width: 160px;
-  position: relative;
-  text-decoration: none;
-  width: 100%;
-}
-@media (min-width: 600px) {
-  .btn {
-    margin: 0 1em 2em;
-  }
-}
-.btn:hover {
-  text-decoration: none;
-  text-transform: uppercase;
-}
-
-.btn-1 {
-  background: transparent;
-  font-weight: 100;
-}
-.btn-1 svg {
-  height: 100%;
-  left: 0;
-  position: absolute;
-  top: 0;
-  width: 100%;
-}
-.btn-1 rect {
-  fill: none;
-  stroke: none;
-  stroke-width: 2;
-  stroke-dasharray: 422, 0;
-  transition: all 0.35s linear;
-}
-.btn-1:hover {
-  background: white;
-  font-weight: 900;
-  letter-spacing: 1px;
-}
-.btn-1:hover rect {
-  stroke-width: 5;
-  stroke-dasharray: 15, 310;
-  stroke-dashoffset: 48;
-  transition: all 1.35s cubic-bezier(0.19, 1, 0.22, 1);
-} */
 </style>
 

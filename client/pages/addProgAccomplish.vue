@@ -1,43 +1,43 @@
 <template>
-  <div id="addCase">
+  <div id="addCase" class="APAbody">
     <!--Top Bar of the screen-->
     <TopNav />
 
     <!--Everything below = main screen-->
-    <div class="cases-container">
-      <div class="cases-section-container">
+    <div class="APAcasesContainer">
+      <div class="APA-casesSectionContainer">
         <!--Name of form-->
         <div class="page-name">
-          <h1 class="formHeader">Program Accomplishment</h1>
+          <h1 class="APAformHeader">Program Accomplishment</h1>
           <p style="margin: -5px 5px 10px; font-size: 16px">
             Select the disease of the program:
           </p>
         </div>
 
         <!--Form itself-->
-        <div class="addcases-component">
-          <div id="CIF" class="center formTypeDiv">
+        <div class="APAdiseases">
+          <div id="CIF" class="center APAformTypeDiv">
             <div
               v-for="(value, name, i) in diseases.cif"
               :key="i"
               style="width: 100%; align-content: center"
             >
               <!-- <a :href="'/progAccomplishDisease'+value" style="margin: auto"> -->
-              <a :href="'/viewProgAccomplish' + value" style="margin: auto">
-                <div class="cases-disease-name">{{ name }}</div>
+              <a :href="'/viewProgAccomplishMalaria' + value" style="margin: auto">
+                <div class="APAdiseaseName">{{ name }}</div>
               </a>
             </div>
           </div>
 
-          <div id="CRF" class="center formTypeDiv">
+          <div id="CRF" class="center APAformTypeDiv">
             <div
               v-for="(value, name, i) in diseases.crf"
               :key="i"
               style="width: 100%; align-content: center"
             >
               <!-- <a :href="'/progAccomplishDisease' + value" style="margin: auto"> -->
-              <a :href="'/viewProgAccomplish' + value" style="margin: auto">
-                <div class="cases-disease-name">{{ name }}</div>
+              <a :href="'/viewProgAccomplishMalaria'" style="margin: auto">
+                <div class="APAdiseaseName">{{ name }}</div>
               </a>
             </div>
           </div>
@@ -80,7 +80,7 @@ export default {
 </script>
 
 <style>
-body {
+.APAbody {
   font-family: 'Work Sans', sans-serif;
   font-weight: 300;
   padding: 0px;
@@ -88,19 +88,14 @@ body {
   background-image: none;
 }
 
-h3 {
-  font-size: 15px;
-  font-weight: 600;
-}
-
-.formHeader {
+.APAformHeader {
   margin: -5px 0;
   font-weight: 800;
   font-size: 32px;
   color: #346083;
 }
 
-.cases-container {
+.APAcasesContainer {
   padding: 70px 20px 5px 20px;
   display: flex;
   flex-direction: row;
@@ -109,7 +104,7 @@ h3 {
 }
 
 @media only screen and (max-width: 800px) {
-  .cases-ontainer {
+  .APAcasesContainer {
     width: 100%;
     flex-direction: column;
     align-items: center;
@@ -117,7 +112,7 @@ h3 {
   }
 }
 
-.cases-section-container {
+.APA-casesSectionContainer {
   /* left: 275px; */
   position: relative;
   /* width: calc(100vw - 320px); */
@@ -128,13 +123,13 @@ h3 {
 }
 
 @media only screen and (max-width: 800px) {
-  .cases-section-container {
+  .APA-casesSectionContainer {
     left: 0px;
     width: 95%;
   }
 }
 
-.addcases-component {
+.APAdiseases {
   position: relative;
   display: inline-flex;
   flex-direction: row;
@@ -150,7 +145,7 @@ h3 {
   min-height: calc(100vh - 220px);
 }
 @media only screen and (max-width: 800px) {
-  .addcases-component {
+  .APAdiseases {
     flex-direction: column;
     position: relative;
     top: 0px;
@@ -158,45 +153,40 @@ h3 {
   }
 }
 
-.formTypeDiv {
+.APAformTypeDiv {
   flex-direction: column;
   width: 50%;
   padding: 10px;
 }
 
-#CIF {
+#APACIF {
   border: none;
   border-right: #b8b7b7 0.5px solid;
 }
 
-#CRF {
+#APACRF {
   border: none;
   border-left: #b8b7b7 0.5px solid;
 }
 
 @media only screen and (max-width: 800px) {
-  .formTypeDiv {
+  .APAformTypeDiv {
     width: 100%;
     padding: 30px;
   }
 
-  #CIF {
+  #APACIF {
     border: none;
     border-bottom: black 0.5px solid;
   }
 
-  #CRF {
+  #APACRF {
     border: none;
     border-top: black 0.5px solid;
   }
 }
 
-h3 {
-  font-size: 15px;
-  font-weight: 600;
-}
-
-.cases-disease-name {
+.APAdiseaseName {
   text-align: center;
   width: fit-content;
   max-width: 100%;
@@ -209,14 +199,14 @@ h3 {
   cursor: pointer;
 }
 
-.cases-disease-name:hover {
+.APAdiseaseName:hover {
   border: #346083 solid 1px;
   transform: translateY(-5px);
   transition: 0.3s;
   font-weight: 800;
 }
 
-.cases-disease-name:active {
+.APAdiseaseName:active {
   border: #346083 solid 1px;
   background: #346083;
   color: #f2f2f2;
@@ -224,8 +214,5 @@ h3 {
   font-weight: 800;
 }
 
-hr {
-  margin: 20px 0;
-}
 </style>
 

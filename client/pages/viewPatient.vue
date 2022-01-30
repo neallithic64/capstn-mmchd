@@ -947,11 +947,10 @@
               Cases
             </h2>
             <dataTable
-            :options="tableOptions"
-            :datavalues="allData"
-            :casetype="'patient'"
+              :options="tableOptions"
+              :datavalues="allData"
+              :casetype="'patient'"
             />
-          
           </div>
         </form>
 
@@ -1104,28 +1103,7 @@ export default {
         // source: 'http://demo.datatable/api/users',
         search: true,
       },
-      allData: [
-        {
-          type:'CIF',
-          caseID:'123',
-          disease:'Measles',
-          reportedBy:'aa',
-          city:'Manila City',
-          reportDate:'today',
-          updatedDate:'today',
-          caseLevel:'Suspected',
-        },
-        {
-          type:'CRF',
-          caseID:'321',
-          disease:'Dengue',
-          reportedBy:'bb',
-          city:'Makati City',
-          reportDate:'today',
-          updatedDate:'today',
-          caseLevel:'Probable',
-        },
-      ],
+      allData: [],
       isDisabled: false,
       editCase: false,
       isPrint: false,
@@ -1133,24 +1111,11 @@ export default {
         druName:'',
         druType:'',
         druCity:'',
-        druAddress:''
+        druBrgy:'',
+        druHouseStreet:''
       }, 
       formData: {
-        cases: {
-          caseID: 123,
-          diseaseID: '',
-          reportedBy: '',
-          caseLevel: 'Suspected Case',
-          reportDate: '11/30/2021',
-          investigationDate: '',
-          dateAdmitted: '',
-          dateOnset: '',
-          reporterName: 'me',
-          reporterContact: '',
-          investigatorLab: '',
-          investigatorName: '',
-          investigatorContact: '',
-        },
+        cases: {},
         patient: {
           patientID: 123,
           epiID: '',
@@ -1226,17 +1191,16 @@ export default {
         'Taguig City',
         'Valenzuela City',
       ],
-      immunization: 
-        {
-          status: 'Complete', // n/a ongoing complete
-          bcg: true,
-          hepa2: false,
-          opv3: true,
-          penta3: true,
-          pcv3: false,
-          mcv2: false,
-          dengue3: true,
-        },
+      immunization: {
+        status: 'Complete', // n/a ongoing complete
+        bcg: true,
+        hepa2: false,
+        opv3: true,
+        penta3: true,
+        pcv3: false,
+        mcv2: false,
+        dengue3: true,
+      },
     }
   },
   mounted() {
@@ -1255,15 +1219,25 @@ export default {
     console.log(today);
   },
   async fetch() {
-    const data = (await axios.get('http://localhost:8080/api/getPatientData?patientID=' + this.$route.query.patientID)).data;
-    // this.formData.cases = data.cases;
-    // this.formData.caseData = data.caseData;
+    const data = (await axios.get('http://localhost:8080/api/getPatientData', {
+      params: {
+        patientID: this.$route.query.patientID,
+        userID: this.$auth.user.userID
+      }
+    })).data;
     this.formData.patient = data.patient;
     this.formData.riskFactors = data.riskFactors; // working already
     this.DRUData = data.DRUData;
     this.allData = data.rowData;
-    // console.log(data);
-    this.update('cancel')
+	if ((!['Chief', 'Staff', 'resuHead', 'chdDirector'].some(e => this.$auth.user.userType.includes(e)) && !this.DRUData.pushDataAccept) ||
+	    (this.$auth.user.druName !== this.DRUData.druName)) {
+	  this.formData.patient.firstName = "";
+	  this.formData.patient.midName = "";
+	  this.formData.patient.lastName = "";
+	  this.formData.patient.currHouseStreet = "";
+	  this.formData.patient.permHouseStreet = "";
+	}
+    this.update('cancel');
   }, 
   head() {
     return {
@@ -1291,7 +1265,6 @@ export default {
         this.getBrgy();
         // this.getLocBrgyList(this.newPatientInfo.permCity,'permBarangay');
         // this.newPatientInfo.permBrgy = this.newPatientInfo.currBrgy;
-        // console.log(this.newPatientInfo.permBrgy,this.newPatientInfo.currBrgy)
       }
       else {
         this.newPatientInfo.permHouseStreet = '';

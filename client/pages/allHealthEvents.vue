@@ -1,21 +1,21 @@
 <template>
-  <div id="viewevents">
+  <div id="viewevents" class="AHEbody">
     <!--Top Bar of the screen-->
     <TopNav/>
     <div ref="content" class="allevents-container">
-      <div class="exportButtons">
-        <h1 class="pageHeader">All Health Events</h1>
-        <div v-show="!isPrint" class="actionButtons">
+      <div class="AHEexport">
+        <h1 class="AHEpageHeader">All Health Events</h1>
+        <div v-show="!isPrint" class="AHEaction">
           <ul class="HEActionButton" @click="downloadPDF">
           <img
             src="~/assets/img/pdf.png"
-            class="printButton"
+            class="AHEprint"
             @click="downloadPDF()"
           />
           </ul>
           <ul class="HEActionButton">
             <img src="~/assets/img/csv.png" 
-            class="printButton"
+            class="AHEprint"
             @click="csvExport(getTable())"
           />
           </ul>
@@ -100,13 +100,13 @@ export default {
             filter: true,
           },
           {
-            title: 'No. of Cases',
+            title: 'Cases',
             key: 'numCases',
             type: 'text',
             source: 'events'
           },
           {
-            title: 'No. of Deaths',
+            title: 'Deaths',
             key: 'numDeaths',
             type: 'text',
             source: 'events'
@@ -114,6 +114,14 @@ export default {
           {
             title: 'Status',
             key: 'eventStatus',
+            type: 'text',
+            source: 'events',
+            sortable: true,
+          },
+          {
+            // PHELC, PHERC, PHENC, PHEIC
+            title: 'Assessment',
+            key: 'eventAssess',
             type: 'text',
             source: 'events',
             sortable: true,
@@ -131,12 +139,19 @@ export default {
     }
   },
   async mounted() {
+    if (this.allEvents.length === 0) {
+      this.$toast.show('Loading...', {className: 'blink', icon: 'hourglass_top'});
+    }
     const DRUUserTypes = ['BHS', 'RHU', 'CHO', 'govtHosp', 'privHosp', 'clinic', 'govtLab', 'privLab', 'airseaPort', 'fhsisStaff'];
     const rows = (await axios.get('http://localhost:8080/api/getAllEvents')).data;
     
     if (DRUUserTypes.includes(this.$auth.user.userType)) {
       this.allEvents = rows.filter(e => e.userID === this.$auth.user.userID);
     } else this.allEvents = rows;
+    if (this.allEvents.length > 0) {
+      this.$toast.clear();
+      this.$toast.success('All health events loaded!', {duration: 4000, icon: 'check_circle'});
+    }
   },
   methods: {
     downloadPDF() {
@@ -187,7 +202,7 @@ export default {
 </script>
 
 <style>
-body {
+.AHEbody {
   font-family: 'Work Sans', sans-serif;
   font-weight: 300;
   padding: 0px;
@@ -195,7 +210,7 @@ body {
   background-image: none;
 }
 
-.pageHeader {
+.AHEAHEpageHeader {
   font-weight: 800;
   font-size: 32px;
   color: #346083;
@@ -211,6 +226,22 @@ body {
     width: 100%;
     align-items: center;
     margin: 0px;
+  }
+}
+
+.blink {
+  animation: blink 2s steps(3, end) infinite;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
   }
 }
 
@@ -252,33 +283,24 @@ body {
   }
 }
 
-.events-SummaryContainer {
-  display: flex;
-  flex-direction: row;
-  overflow-x: auto;
-  overflow-y: hidden;
-  z-index: 1;
-  margin-left: 5px;
-}
-
 #datatabale {
   width: -webkit-fill-available;
 }
 
-.actionButtons {
+.AHEaction {
   display: inline-flex;
   flex-direction: row;
   cursor: pointer;
 }
 
-.printButton {
+.AHEprint {
   width: 30px;
   height: 30px;
   /* margin: 0 5px; */
   margin: 5px;
 }
 
-.exportButtons {
+.AHEexport {
   display: flex;
   flex-direction: row;
   justify-content: space-between;

@@ -72,7 +72,7 @@ export default {
         columns: [
           {
             title: 'Immunization Program ID',
-            key: 'immunizationProgNo',
+            key: 'TCLID',
             sortable: true,
             type: 'clickable',
           },
@@ -84,7 +84,7 @@ export default {
           },
           {
             title: 'Barangay',
-            key: 'barangay',
+            key: 'brgy',
             sortable: true,
           },
           {
@@ -151,12 +151,19 @@ export default {
     }
   },
   mounted() {
+    // if (this.dataSets.length === 0) {
+    //   this.$toast.show('Loading...', {className: 'blink', icon: 'hourglass_top'});
+    // }
     const today = new Date();
     const monthsList = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Aug', 'Oct', 'Nov', 'Dec'];
     const hour = today.getHours()>9 ? today.getHours() : '0'+today.getHours()
     const mins = today.getMinutes()>9 ? today.getMinutes() : '0'+today.getMinutes()
     this.dayTime = monthsList[today.getMonth()] + ' ' + today.getDate() + ', ' + today.getFullYear()
                      + ' ' + hour + ':' + mins;
+    // if (this.dataSets.length > 0) {
+    //   this.$toast.clear();
+    //   this.$toast.success('All TCLs loaded!', {duration: 4000, icon: 'check_circle'});
+    // }
   },
   methods: {
     editInput() {
@@ -227,6 +234,22 @@ body {
 .viewcases-container {
   padding: 80px 20px 5px 20px;
   width: 100%;
+}
+
+.blink {
+  animation: blink 2s steps(3, end) infinite;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 @media only screen and (max-width: 800px) {

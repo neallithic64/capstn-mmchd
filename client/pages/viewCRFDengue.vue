@@ -31,10 +31,10 @@
 
       <div class="viewCRF-details" style="align-text: left">
         <div class="CIFnumbers">
-          <p>DRU City: <b></b></p>
-          <p>DRU Name: <b></b></p>
-          <p>DRU Type: <b></b></p>
-          <p>DRU Address: <b></b></p>
+          <p>DRU City: <b>{{ druCity }}</b></p>
+          <p>DRU Name: <b>{{ druName }}</b></p>
+          <p>DRU Type: <b>{{ druType }}</b></p>
+          <p>DRU Address: <b>{{ druAddr }}</b></p>
         </div>
         <div class="CRFstatus" style="align-text: right">
           <p>Submitted on: <b> {{ submittedDate }} </b> </p>
@@ -50,6 +50,9 @@
             :casetype="'crfCase'"
           />
         </div>
+      </div>
+      <div class="additionalButtons">
+          <button class="addText" type="button" @click="lateCases()"><a :href="'/addCRFDengueCase?CRFID=' + CRFID">+ Add a Late Case</a></button>
       </div>
     </div>
   </div>
@@ -78,11 +81,14 @@ export default {
       isPrint: false,
       disease: 'Dengue',
       CRFID: '',
-      druID: '',
-      submittedDate: 'Nov 11,2021',
-      updatedDate: 'Nov 10, 2020',
+      submittedDate: '',
+      updatedDate: '',
+      druCity: '',
+      druName: '',
+      druType: '',
+      druAddr: '',
+	  pushDataAccept: 0,
       weekNo: '',
-
       tableOptions: {
         tableName: 'crf',
         columns: [
@@ -164,18 +170,40 @@ export default {
     const rows = (await axios.get('http://localhost:8080/api/getCRFPage', {
       params: {
         CRFID: this.$route.query.CRFID,
-		diseaseID: "DI-0000000000003",
-		userID: this.$auth.user.userID
+        diseaseID: "DI-0000000000003",
+        userID: this.$auth.user.userID
       }
     })).data;
-    console.log(rows);
+    this.pushDataAccept = rows.pushDataAccept;
     for (let i = 0; i < rows.crfData.length; i++) {
-      rows.crfData[i].updatedDate = rows.crfData[i].updatedDate ? rows.crfData[i].updatedDate.substr(0, 10) : "N/A";
-      rows.crfData[i].reportDate = rows.crfData[i].reportDate.substr(0, 10);
+      rows.crfData[i].updatedDate = rows.crfData[i].updatedDate ? this.convDatePHT(new Date(rows.crfData[i].updatedDate)) : "N/A";
+      rows.crfData[i].reportDate = this.convDatePHT(new Date(rows.crfData[i].reportDate));
+	  if ((!['Chief', 'Staff', 'resuHead', 'chdDirector'].some(e => this.$auth.user.userType.includes(e)) && !this.pushDataAccept) ||
+	      (this.$auth.user.druName !== this.druName)) {
+	    rows.crfData[i].patientName = "";
+	  }
     }
+    this.submittedDate = rows.CRF.isPushed
+        ? this.convDatePHT(new Date(rows.CRF.year, 0, (1 + rows.CRF.week * 7)))
+        : "N/A";
+    this.updatedDate = rows.crfData.reduce((acc, val) => {
+      let accD = new Date(acc.updatedDate), valD = new Date(val.updatedDate);
+      return accD > valD ? accD : valD;
+    }).updatedDate;
+    if (this.updatedDate === "N/A") {
+      this.updatedDate = rows.crfData.reduce((acc, val) => {
+        let accD = new Date(acc.reportDate), valD = new Date(val.reportDate);
+        return accD > valD ? accD : valD;
+      }).reportDate;
+    }
+    console.log(rows);
     this.crfData = rows.crfData;
     this.weekNo = rows.CRF.year + "-" + rows.CRF.week;
     this.CRFID = this.$route.query.CRFID;
+    this.druCity = rows.userData.druCity;
+    this.druName = rows.userData.druName;
+    this.druType = rows.userData.druType;
+    this.druAddr = rows.userData.druAddr;
   },
   head() {
     return {
@@ -251,6 +279,9 @@ export default {
         }
       }
       return data;
+    },
+    convDatePHT(d) { // only accepts Date object; includes checking
+      return !isNaN(Date.parse(d)) ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10) : "N/A";
     },
   },
 }
@@ -331,6 +362,44 @@ b {
 .viewcases-container {
   padding: 80px 20px 5px 20px;
   width: 100%;
+}
+
+.additionalButtons {
+  /* position: relative; */
+  position: absolute;
+  margin-top: -110px;
+  margin-left: 20px;
+}
+
+.addText {
+  color: #346083;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.CRFendButton {
+  /* margin: -10px 0 5px; */
+  float: right;
+  margin-top: -40px;
+  margin-right: 16px;
+  margin-bottom: 50px;
+}
+
+.submit-button, .next-button {
+  width: 150px;
+  height: 38px;
+  max-width: 100%;
+  font-size: 16px;
+  margin-top: 30px;
+  font-family: 'Work Sans', sans-serif;
+  font-weight: 600;
+  background-color: #346083;
+  color: white;
+  border: #346083 solid 0.75px;
+}
+
+.submit-button:hover, .next-button:hover {
+  background-color: #346083;
 }
 
 @media only screen and (max-width: 800px) {

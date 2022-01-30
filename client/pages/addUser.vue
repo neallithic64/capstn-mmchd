@@ -327,22 +327,22 @@
                   <div class="name-field">
                     <label for="userCity" class="required"> City </label>
                     <select id="userCity" v-model="user.userCity" name="userCity" :disabled="inputEdit()" @change="getBrgyList()">
-                      <option value="Caloocan">Caloocan</option>
-                      <option value="Las Piñas">Las Piñas</option>
-                      <option value="Makati">Makati</option>
-                      <option value="Malabon">Malabon</option>
-                      <option value="Mandaluyong">Mandaluyong</option>
-                      <option value="Manila">Manila</option>
-                      <option value="Marikina">Marikina</option>
-                      <option value="Muntinlupa">Muntinlupa</option>
-                      <option value="Navotas">Navotas</option>
-                      <option value="Parañaque">Parañaque</option>
-                      <option value="Pasay">Pasay</option>
-                      <option value="Pasig">Pasig</option>
+                      <option value="Caloocan City">Caloocan</option>
+                      <option value="Las Piñas City">Las Piñas</option>
+                      <option value="Makati City">Makati</option>
+                      <option value="Malabon City">Malabon</option>
+                      <option value="Mandaluyong City">Mandaluyong</option>
+                      <option value="Manila City">Manila</option>
+                      <option value="Marikina City">Marikina</option>
+                      <option value="Muntinlupa City">Muntinlupa</option>
+                      <option value="Navotas City">Navotas</option>
+                      <option value="Parañaque City">Parañaque</option>
+                      <option value="Pasay City">Pasay</option>
+                      <option value="Pasig City">Pasig</option>
                       <option value="Quezon City">Quezon City</option>
-                      <option value="San Juan">San Juan</option>
-                      <option value="Taguig">Taguig</option>
-                      <option value="Valenzuela">Valenzuela</option>
+                      <option value="San Juan City">San Juan</option>
+                      <option value="Taguig City">Taguig</option>
+                      <option value="Valenzuela City">Valenzuela</option>
                     </select>
                   </div>
 

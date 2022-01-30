@@ -113,7 +113,7 @@
             <!-- v-if w/ latest health event show this -->
             <a :href="'/allHealthEvents'">
               <div class="dboard-right-content" style="border-left-color: #e09922;">
-                <span style="padding-top: 5px; font-weight: 900"> {{ latestEvent.leCity }}, {{ latestEvent.leSource }} Source, <span :class="caseStatusClass(latestEvent.leStatus)"> {{ latestEvent.leStatus }} </span> </span>
+                <span style="padding-top: 5px; font-weight: 900"> {{ latestEvent.leCity }}, <span :class="caseStatusClass(latestEvent.leStatus)">{{ latestEvent.leStatus }}</span>, <span :class="caseStatusClass(latestEvent.leAssess)"> {{ latestEvent.leAssess }} </span> </span>
                 <span style="color: red; font-size: 16px; font-weight: 600"> {{ latestEvent.leNoCases }} cases, {{ latestEvent.leNoDeaths }} deaths </span>
               </div>
             </a>
@@ -268,8 +268,8 @@ export default {
       },
       latestEvent: {
         leCity: 'Malabon',
-        leSource: 'Internet',
-        leStatus: 'For Verification',
+        leStatus: 'Ongoing',
+        leAssess: 'PHELC',
         leNoCases: '5',
         leNoDeaths: '2'
       },
@@ -288,24 +288,24 @@ export default {
       reportStatus: {
         // CIF only 1 or 0 (1 if submitted at least 1 CIF, 0 if no CIF at all)
         // CRF count should be count of all CRFs in the city (total = 5 per DRU * number of DRUs in the city)
-        'Caloocan': [1, 4],
-        'Las Piñas': [0, 2],
-        'Makati': [1, 5],
-        'Malabon': [1, 2],
-        'Mandaluyong': [0, 3],
-        'Manila': [0, 1],
-        'Marikina': [0, 3],
-        'Muntinlupa': [0, 5],
-        'Navotas': [1, 0],
-        'Parañaque': [0, 2],
-        'Pasay': [1, 3],
-        'Pasig': [1, 2],
+        'Caloocan City': [1, 4],
+        'Las Piñas City': [0, 2],
+        'Makati City': [1, 5],
+        'Malabon City': [1, 2],
+        'Mandaluyong City': [0, 3],
+        'Manila City': [0, 1],
+        'Marikina City': [0, 3],
+        'Muntinlupa City': [0, 5],
+        'Navotas City': [1, 0],
+        'Parañaque City': [0, 2],
+        'Pasay City': [1, 3],
+        'Pasig City': [1, 2],
         'Quezon City': [0, 1],
-        'San Juan': [0, 5],
-        'Taguig': [0, 0],
-        'Valenzuela': [1, 2],
+        'San Juan City': [0, 5],
+        'Taguig City': [0, 0],
+        'Valenzuela City': [1, 2],
       },
-      cities: ['Caloocan', 'Las Piñas', 'Makati', 'Malabon', 'Mandaluyong', 'Manila', 'Marikina', 'Muntinlupa', 'Navotas', 'Parañaque', 'Pasay', 'Pasig', 'Quezon City', 'San Juan', 'Taguig', 'Valenzuela'],
+      cities: ['Caloocan City', 'Las Piñas City', 'Makati City', 'Malabon City', 'Mandaluyong City', 'Manila City', 'Marikina City', 'Muntinlupa City', 'Navotas City', 'Parañaque City', 'Pasay City', 'Pasig City', 'Quezon City', 'San Juan City', 'Taguig City', 'Valenzuela City'],
       crfDiseases: ['Dengue', 'Cholera', 'Leptospirosis', 'Chikungunya', 'Typhoid'],
       crfStatus: {
         // Submit Status: Ongoing = 0, Submitted = 1, Pushed = 2; Report Status: Ongoing = 0, Zero Report = 1, Cases Submitted = 2
@@ -366,6 +366,10 @@ export default {
       else if (c.toString().includes('Ongoing')) return 'caseStatus confirmedCase';
       else if (c.toString().includes('Controlled')) return 'caseStatus suspectedCase';
       else if (c.toString().includes('Closed')) return 'caseStatus closedCase';
+      else if (c.toString().includes('PHELC')) return 'caseStatus confirmedCase';
+      else if (c.toString().includes('PHERC')) return 'caseStatus confirmedCase';
+      else if (c.toString().includes('PHENC')) return 'caseStatus confirmedCase';
+      else if (c.toString().includes('PHEIC')) return 'caseStatus confirmedCase';
     },
     moveProgress() {
       for (let i = 0; i < this.cities.length; i++) {

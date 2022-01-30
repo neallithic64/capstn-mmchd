@@ -1,127 +1,109 @@
 <template>
   <div>
-    <TopNav/>
+    <TopNav v-show="!isPrint"/>
     <!-- Rest of the screen -->
-    <div class="addReportOuterContainer">
+    <div ref="content" :class="[{ addReportOuterContainer: !isPrint }, { padding20 : isPrint, }, { paddingTop75 : isPrint, },]">
+      <!-- HEADER -->
+      <div class="centerSide paddingSide25">
+        <div class="space-inline">
+          <h1 class="textAlighRight greenC weight800 size32 marginTop2 marginBottom-3"> Feedback Report # 123 </h1>
+          <div class="viewRep-mainStatus marginLeft10 marginTop10" :class="getColor(report.status)"> {{report.status}} </div>
+        </div>
+        <div class="space-inline marginTop5">
+          <h3 class="weight500 size18"> {{report.title}} </h3>
+          <h3 class="weight500 size18">
+              {{report.type}} Report - {{report.year}}
+              <span v-if="report.duration!==''">, {{report.duration}} </span> 
+          </h3>
+          <h3 class="weight500 size18"> {{report.disease}} </h3>
+        </div>
+        <hr class="marginTopBot10" id="2"/>
+      </div>
+
+      <!-- PDF -->
+      <div class="addReportInnerContainter width100" style="text-align: -webkit-center;">
+        <iframe></iframe>
+      </div>
+
       <div class="addReportInnerContainter">
-        <!-- TOP : report details -->
-        <div class="padding5 marginBottom15">
-          <!-- title + status -->
-          <div class="space-inline">
-            <h1 class="formHeader marginTopBot5">Add Feedback Report</h1>
-            <div class="main-status" :class="getColor(report.status)"> {{report.status}} </div>
-          </div>
-
-          <!-- details -->
-          <div class="space-inline marginTopBot5 alignTop">
-            <!-- input -->
-            <div class="half alignStart paddingSide10 block">
-              <div class="inline alignCenter marginTopBot2">
-                <legend for="reportTitle" class="inputLegend required"> Report Title: </legend>
-                <input id="reportTitle" v-model="report.title" type="text" class="input-form-field"
-                  :class="isRequired()" :disabled="!inputEdit()" required />
-              </div>
-
-              <div class="inline alignCenter marginTopBot2">
-                <legend for="reportType" class="inputLegend required"> Report Type: </legend>
-                <select id="reportType" v-model="report.type" type="text" class="input-form-field"
-                  :class="isRequired()" :disabled="!inputEdit()" required @change="changeTime(report.type)">
-                  <option v-for="(reportType, index) in reportTypeOption" :key="index">
-                    {{reportType}}
-                  </option>
-                </select>
-              </div>
-
-              <div class="inline alignCenter marginTopBot2">
-                <legend for="reportTime" class="inputLegend required"> Year: </legend>
-                <select id="reportTime" v-model="report.year" type="text" class="input-form-field"
-                  :class="isRequired()" :disabled="!inputEdit()" required>
-                  <option v-for="(year, index) in yearOption" :key="index">
-                    {{year}}
-                  </option>
-                </select>
-              </div>
-
-              <div v-if="timeUnit==='Week' || timeUnit==='Month'" class="inline alignCenter marginTopBot2">
-                <legend for="reportTime" class="inputLegend required"> {{timeUnit}}: </legend>
-                <select id="reportTime" v-model="report.time" type="text" class="input-form-field"
-                  :class="isRequired()" :disabled="!inputEdit()" required>
-                  <option v-for="(time, index) in timeOption" :key="index">
-                    {{time}}
-                  </option>
-                </select>
-              </div>
-
-              <div class="inline alignCenter marginTopBot2">
-                <legend for="reportDisease" class="inputLegend required"> Disease: </legend>
-                <select id="reportDisease" v-model="report.disease" type="text" class="input-form-field"
-                  :class="isRequired()" :disabled="!inputEdit()" required>
-                  <option v-for="(disease, index) in diseaseOption" :key="index">
-                    {{disease}}
-                  </option>
-                </select>
-              </div>
-
-            </div>
-
-            <!-- checkbox -->
-            <div class="alignLeft alignStart marginTop-1" style="width:36%">
-              <div class="reportsOptionsBox">
-                <div class="analysisReportOption marginTopBot2" style="width: 210px;font-weight: 600;">
-                  Reports Included:
-                </div>
-                <div v-for="(analysis, index) in reportsOption" :key="index" :class="analysisStyle(index)"
-                  class="analysisReportOption marginTopBot2">
-                  <input v-model="report.reportsIncluded" class="input-radio" type="checkbox"
-                    :value="analysis" :id="analysis" :disabled="!inputEdit()" :class="isOptionRequired()" required/>
-                  <label :for="analysis"> {{analysis}} </label>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      <hr class="marginTopBot5"/>
-
-        <!-- CHARTS -->
-        <div class="padding15 alignTop block">
-          <div v-for="(chart, chartIndex) in report.reportsIncluded" :key="chartIndex" class="fullwidth padding10">
-            <h3 class="caps chartTitle marginBottom5"> {{chart}} </h3>
-            <div class="marginTopBottom5 lightgray padding30 borderRadius30 boxShadow">
-              <div class="chartContainer marginBottom5"></div>
-              <p> <b> Interpretation / Remarks </b> </p>
-              <textarea v-model="report.chartRemarks[chartIndex]" class="input-form-field" :class="isRequired()" 
-                  style="resize: vertical;width:100%; height: 100px; padding: 5px; 10px;" required/>
-            </div>
-            <hr class="marginTop30"/>
-          </div>
-        </div>
-
-      <!-- <hr class="marginTopBot5"/> -->
-
+        <hr class="marginTopBot10" id="3"/>
         <!-- BOTTOM : prepare + submit buttons -->
-        <div class="space-inline marginTopBot5 padding5 alignTop">
+        <div class="marginTopBot5 padding5 alignTop">
           <!-- name -->
-          <div class="half alignStart paddingSide10 block">
-              <div class="inline alignCenter marginTopBot2">
-                <legend for="preparedBy" class="inputLegend required"> Prepared By: </legend>
-                <input id="preparedBy" v-model="report.preparedBy" type="text" class="input-form-field"
-                  :class="isRequired()" :disabled="!inputEdit()" required />
+          <div class="space-inline alignStart block marginBottom30">
+            <div class="grid">
+              <div class="inlineFlex alignCenter marginTopBot2">  <span class="width105"> Prepared By: </span>
+                <span class="approval-people"> <b> &nbsp;{{report.preparedBy}} </b> </span>
               </div>
-              <div class="inline alignCenter marginTopBot2">
-                <legend for="reportType" class="inputLegend required"> Date and Time: </legend>
-                <input id="reportType" v-model="report.dateTime" type="text" class="input-form-field" disabled/>
+              <div class="inlineFlex alignCenter marginTopBot2">  <span class="width105"> Prepared On: </span>
+                <span class="approval-people"> <b> &nbsp;{{report.dateTime}} </b> </span>
               </div>
+              <div class="inlineFlex alignCenter marginTopBot2"></div>
+            </div>
+            <div class="grid">
+              <div class="inlineFlex alignCenter marginTopBot2">  <span class="width155"> Noted By: </span>
+                <img v-if="report.notedByDate" class="width20" src="~/assets/img/check.png">
+                <img v-else class="width20" src="~/assets/img/arrow.png" style="opacity: 0.75;">
+                  <span class="approval-people"> <b> &nbsp;{{report.notedBy}} </b> </span> <span v-if="report.notedByDate"> &nbsp;({{report.notedByDate}}) </span>
+              </div>
+              <div class="inlineFlex alignCenter marginTopBot2">  <span class="width155"> Recommended By: </span>
+                <img v-if="report.recommendedByDate" class="width20" src="~/assets/img/check.png">
+                <img v-else-if="report.notedByDate" class="width20" src="~/assets/img/arrow.png" style="opacity: 0.75;">
+                <img v-else class="width20" src="~/assets/img/circle.png" style="opacity: 0.3;">
+                  <span class="approval-people"> <b> &nbsp;{{report.recommendedBy}} </b> </span> <span v-if="report.recommendedByDate"> &nbsp;({{report.recommendedByDate}}) </span>
+              </div>
+              <div class="inlineFlex alignCenter marginTopBot2">  <span class="width155"> Approved By: </span>
+                <img v-if="report.approvedByDate" class="width20" src="~/assets/img/check.png" >
+                <img v-else-if="report.recommendedByDate" class="width20" src="~/assets/img/arrow.png" style="opacity: 0.75;">
+                <img v-else class="width20" src="~/assets/img/circle.png" style="opacity: 0.3;">
+                  <span class="approval-people"> <b> &nbsp;{{report.approvedBy}} </b></span> <span v-if="report.approvedByDate"> &nbsp;({{report.approvedByDate}}) </span>
+              </div>
+            </div>
           </div>
-          <!-- buttons -->
-          <div style="margin: -10px 0 5px; float: right">
-            <!-- <button v-if="pageNum == 0" class="back-button" type="button">
-              <nuxt-link to="/addCase"> Cancel </nuxt-link>
-            </button> -->
-            <button class="next-button" type="button" @click="submit()">
+
+        <hr class="marginTopBot5" id="5"/>
+        </div>
+
+        <!-- APPROVAL / REMARKS -->
+
+        <div v-show="(!isPrint && isAssess) && 
+            ($auth.user.userType === 'lhsdChief' || $auth.user.userType === 'resuHead' ||
+             $auth.user.userType === 'chdDirector' || $auth.user.userType === 'techStaff')"
+         class="marginTopBot20 padding5">
+          <div>
+            <div class="inlineFlex marginTopBot2">
+              <legend for="inputStatus" class="inputLegend required"> Status (from person name): </legend>
+              <select id="inputStatus" v-model="inputStatus" type="text" class="input-form-field marginLeft5"
+                :class="isRequired()" required>
+                <option value="Approve"> Approve </option>
+                <option value="Reject"> Reject </option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <legend for="inputRemarks" class="inputLegend"> Remarks / Comments: </legend>
+            <textarea id="inputRemarks" v-model="inputRemarks" class="input-form-field width100" :class="isRequired()" 
+                style="resize: vertical; height: 100px; padding: 5px; 10px;"/>
+          </div>
+          <div class="marginTop5" style="display: flex; justify-content: right;">
+            <button class="viewRep-backButton" type="button" @click="submit('assessment','cancel')">
+              Cancel
+            </button>
+            <button class="viewRep-nextButton" type="button" @click="submit('assessment','submit')">
               Submit
             </button>
           </div>
+        <hr class="marginTop30" />
+        </div>
+
+        <!-- Historry -->
+        <div v-show="!isPrint" id="case-investigation-form" class="center">
+          <h3 class="caps viewRep-chartTitle marginBottom5 viewRep-formHeader"> Report History </h3>
+          <dataTable
+          :options="tableOptions"
+          :datavalues="dataSet"
+          :casetype="'feedbackReport'"
+          />
         </div>
 
       </div>
@@ -130,219 +112,418 @@
 </template>
 
 <script>
+import dataTable from './dataTable.vue'
+const axios = require("axios");
+// import jsPDF from 'jspdf'
+// import html2canvas from 'html2canvas'
+
 export default {
+  components: { dataTable, },
   middleware: 'is-auth',
   data() {
     return {
-      isValidated:true,
+      isPrint: false,
+      isAssess: false,
+      isRevise: false,
+      isValidated: true,
+      inputStatus:'',
+      inputRemarks: '',
+      inputChartRemarks: [],
+      today:'',
       timeUnit:'',
       report: {
-        status: 'Approved',
-        title: '',
-        type: '',
-        year: '',
-        time: '',
-        disease: '',
-        reportsIncluded: [],
-        chartRemarks: [],
+        status: 'Pending',
+        title: 'THe Best Report',
+        type: 'Weekly',
+        year: '2020',
+        duration: 'Week 54',
+        disease: 'Dengue',
+        reportsIncluded: ['Person Analysis', 'Time Analysis'],
+        chartRemarks: ['AB', 'ABCD',],
 
-        preparedBy: '',
-        dateTime: '',
+        // reportsIncluded: ['Person Analysis', 'Summary1', 'Summary2', 'Time Analysis'],
+        // chartRemarks: ['AB', 'ABC1', 'ABC2', 'ABCD',],
+
+        preparedBy: 'Secret',
+        dateTime: 'Feb 29 2022',
+
+        notedBy: 'me',
+        notedByDate: 'Jan 28, 2013',
+        recommendedBy: 'mysef',
+        recommendedByDate: 'Feb 02, 2013',
+        approvedBy: 'I',
+        approvedByDate: '',
       },
-      reportTypeOption: ['Weekly','Monthly','Annual','Adhoc','Outbreak'],
-      reportTimeOption: ['Week','Month'],
-      timeOption: [], weekOption:[], monthOption: [], yearOption:[],
-      diseaseOption: [
-        'Malaria',
-        'Measles',
-        'Tetanus',
-        'Pertussis',
-        'Meningococcal',
-        'Dengue',
-        'Cholera',
-        'Leptospirosis',
-        'Chikungunya',
-        'Typhoid',
-      ],
-      reportsOption: [
-        'Summary',
-        'Prevalence Analysis',
-        'Fatality Analysis',
-        'Person Analysis',
-        'Time Analysis',
-        'Place Analysis',
-        'Risk Analysis',
-      ],
+
+      tableOptions: {
+        tableName: 'cases',
+        sortKey: '',
+        columns: [
+          {
+            title: 'Date',
+            key: 'date',
+            type: 'text',
+            dateFormat: true,
+            currentFormat: 'YYYY-MM-DD',
+            expectFormat: 'DD MMM YYYY',
+            // sortable: true,
+          },
+          {
+            title: 'Action', // approve, Reject, edit, comment, etc.
+            key: 'action',
+          },
+          {
+            title: 'By',
+            key: 'actor',
+          },
+          {
+            title: 'Remarks',
+            key: 'remarks',
+          },
+        ],
+        // source: 'http://demo.datatable/api/users',
+        search: false,
+      },
+      dataSet: [
+        {
+          date:'today',
+          action: 'approve',
+          actor: 'me',
+          remarks: 'nice report ...',
+        },
+      ]
     }
   },
   head() {
     return {
-      title: 'New Report'
+      title: 'View Feedback Report'
     }
   },
-  mounted() {
+  async mounted() {
     const today = new Date();
-    const hour = today.getHours()>9 ? today.getHours() : '0'+today.getHours()
-    const mins = today.getMinutes()>9 ? today.getMinutes() : '0'+today.getMinutes()
-    const monthsList = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Aug', 'Oct', 'Nov', 'Dec'];
-    this.report.dateTime = monthsList[today.getMonth()] + ' ' + today.getDate() + ', ' + today.getFullYear()
-                     + ' ' + hour + ':' + mins;
+      const hour = today.getHours()>9 ? today.getHours() : '0'+today.getHours()
+      const mins = today.getMinutes()>9 ? today.getMinutes() : '0'+today.getMinutes()
+      const monthsList = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Aug', 'Oct', 'Nov', 'Dec'];
+      this.today = monthsList[today.getMonth()] + ' ' + today.getDate() + ', ' + today.getFullYear()
+                      + ' ' + hour + ':' + mins;
 
-    this.yearOption= [2022, 2021, 2020, 2019, 2018];
-    this.monthOption= ['January', 'February', 'March', 'April', 'May',
-      'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-    for (let i=0; i<52; i++)
-      this.weekOption[i] = 'Week ' + (i+1);
+      for (let i=0; i<this.report.chartRemarks.length; i++) this.inputChartRemarks[i] = this.report.chartRemarks[i];
+      if (this.report.status === 'Pending') this.isAssess = true;
+
+    const pdfFile = await axios.get("http://localhost:8080/api/getFileTest", {responseType: 'blob'});
+    // const url = window.URL.createObjectURL(pdfFile.data);
+    const iFrameElement = document.querySelector('iframe');
+    iFrameElement.src = pdfFile.data;
   },
   methods: {
     getColor(status) {
       switch (status) {
-        case 'Approved': return 'green';
-        case 'Pending': return 'blue';
-        case 'For Revision': return 'orange';
-        case 'Declined': return 'red';
+        case 'Approved': return 'greenB';
+        case 'Pending': return 'darkGrayB';
+        case 'Rejected': return 'redB';
       }
     },
     isRequired() {  if (!this.isValidated) return 'input-required'; },
-    isOptionRequired() { if (!this.isValidated && this.report.reportsIncluded.length < 1) return 'input-required'; },
-    inputEdit() { return true; },
-    analysisStyle(i) {return ''},
-    changeTime(reportType) {
-      this.timeUnit = '';
-      this.report.time = '';
-      switch(reportType) {
-        case 'Weekly': this.timeUnit = 'Week'; this.timeOption = this.weekOption; break;
-        case 'Monthly': this.timeUnit = 'Month'; this.timeOption = this.monthOption; break;
-      }
+    inputEdit() { return false; },
+    chartRemarkClass() { 
+      if (this.isRevise && !this.isValidated) return 'whiteB input-required';
+      else if (this.isRevise) return 'whiteB';
     },
-    validate() {
-      if (this.report.title!=='' && this.report.type!== '' && this.report.year!== '' &&
-          this.report.disease!== '' && this.report.preparedBy!== '' &&
-          this.report.reportsIncluded.length > 0 && this.report.chartRemarks.length > 0 &&
-          this.report.reportsIncluded.length === this.report.chartRemarks.length) {
+    getMinClass(index, reportCount) {
+      if (!this.isPrint) return 'viewRep-chartContainerView';
+      else if (index === 0) return 'fullHeightFirst';
+      else if (index === reportCount-1) return '';
+      else return 'fullHeightNotFirst';
+    },
+    validate(part) {
+      if (part==='assessment') {
+        if (this.inputStatus === '' || this.inputStatus === null) this.isValidated = false;
+        else this.isValidated = true;
+        }
+      else if (part==='revision') {
         this.isValidated = true;
-        console.log(this.isValidated)
-        if (this.report.type === 'Monthly' || this.report.type === 'Weekly') 
-        { if (this.report.time === '') this.isValidated = false; }
-        else {
-          this.isValidated = true;
-          for (let i=0; i<this.report.reportsIncluded.length; i++)
-            if (this.reports.chartRemarks[i] === '' || this.reports.chartRemarks[i] === null)
-              this.isValidated = this.isValidated & false;
-        }
-        }
-      else this.isValidated = false;
+        console.log(this.inputChartRemarks);
+        for (let i=0; i<this.inputChartRemarks.length; i++)
+          if (this.inputChartRemarks[i] === '') this.isValidated = false;
+      }
     },
-    submit() {
-      this.validate();
-      if (this.isValidated) {
-        this.$toast.success('Feedback Report Submitted!', {duration: 4000, icon: 'check_circle'});
-        // TO DO
+    submit(part, action) {
+      if (part==='assessment') {
+        if (action === 'cancel') {
+          // CANCEL ASSESSMENT / one with drop down
+          this.isAssess = false;
+          this.inputStatus = '';
+          this.inputRemarks = '';
+        }
+        else {
+          // SUBMIT ASSESSMENT (drop down)
+          this.validate(part);
+          if (!this.isValidated) this.$toast.error('Please select a status!', {duration: 4000, icon: 'error'});
+          else { // eslint-disable-next-line no-lonely-if
+            if (this.inputStatus === 'Approve') {
+              this.report.status = 'Approved';
+              this.report.approvedByDate = this.today;
+            }
+            else if (this.inputStatus === 'Rejected') this.report.status = 'Rejected';
+            for (let i=0; i<this.inputChartRemarks.length; i++) this.report.chartRemarks[i] = this.inputChartRemarks[i];
+
+          // TO DO: SAVE SAVE in db
+            this.isAssess = false;
+            this.$toast.success('Status saved!', {duration: 4000, icon: 'check_circle'});
+          }
+        }
       }
-      else { // eslint-disable-next-line no-lonely-if
-        if (this.report.reportsIncluded.length < 1) this.$toast.error('Select atleast 1 report!', {duration: 4000, icon: 'error'});
-        else this.$toast.error('Please fill up the required fields!', {duration: 4000, icon: 'error'});
+
+      else if (part=== 'revision') {
+        if (action === 'cancel') {
+          // CANCEL CHART COMMENT REVISIONS
+          this.isRevise = false;
+          for (let i=0; i<this.report.chartRemarks.length; i++) this.inputChartRemarks[i] = this.report.chartRemarks[i];
+        }
+        else {
+          // SUBMIT REVISION (for each chart)
+          this.validate(part);
+          if (!this.isValidated) this.$toast.error('Please fill up the required fields!', {duration: 4000, icon: 'error'});
+          else {
+            for (let i=0; i<this.report.chartRemarks.length; i++) this.report.chartRemarks[i] = this.inputChartRemarks[i];
+            this.isRevise = false;
+            this.report.notedByDate = '';
+            this.report.recommendedByDate = '';
+            this.report.status = 'Pending';
+            this.isAssess = true;
+
+            // TO DO: SAVE SAVE in db
+            this.$toast.success('Changes saved!', {duration: 4000, icon: 'check_circle'});
+          }
+        }
       }
-    }
+    },
+    print() {window.print();},
+    downloadPDF() {
+      this.isPrint = true;
+      // window.addEventListener('load', function () {
+      if (this.isPrint) {
+        setTimeout(() => (this.print()), 10);
+        setTimeout(() => (this.isPrint=false), 1000);
+        // window.onafterprint = function(){
+        //   this.isPrint = false;
+        // }
+          // setTimeout(() => (this.isPrint = false), 10000);
+        }
+      // })
+    },
   }
 }
 </script>
 
 <style>
-.addReportOuterContainer { padding: 70px 20px 50px 20px;}
+body {font-family:Arial, Helvetica, sans-serif}
+.addReportOuterContainer { padding: 80px 20px 50px 20px;}
 .addReportInnerContainter { /* width: 100%; */ padding: 5px; margin: 10px; }
 
 .fullwidth { width: 100%; }
 .half { width: 50%; }
+.width20 {width: 20px;}
+.width25 {width: 25px;}
+.width30 {width: 30px;}
 .padding5 { padding: 5px;}
 .padding10 { padding: 10px;}
 .padding15 { padding: 15px;}
+.padding20 { padding: 20px;}
 .padding30 { padding: 30px;}
+.paddingTop-10 { padding-top: -10px;}
+.paddingTop60 { padding-top: 60px;}
+.paddingTop75 { padding-top: 75px;}
+.paddingTopBot15 { padding: 15px 0; }
+.paddingTopBot25 { padding: 25px 0; }
+.paddingLeft5 { padding-left: 5px; }
+.paddingLeft10 { padding-left: 10px; }
+.paddingSide5 { padding: 0 5px; }
 .paddingSide10 { padding: 0 10px; }
+.paddingSide20 { padding: 0 20px; }
+.paddingSide25 { padding: 0 25px; }
+.paddingSide30 { padding: 0 30px; }
 .margin5 { margin: 5px;}
+.margin10 { margin: 10px;}
+.margin20 { margin: 20px;}
+.margin30 { margin: 30px;}
+.marginRight10 { margin-right: 10px;}
+.marginLeft10 { margin-left: 10px;}
 .marginTop-1 { margin-top: -1px;}
+.marginTop-5 { margin-top: -5px;}
+.marginTop-6 { margin-top: -6px;}
+.marginTop-10 { margin-top: -10px;}
+.marginTop2 { margin-top: 2px;}
 .marginTop5 { margin-top: 5px;}
+.marginTop10 { margin-top: 10px;}
 .marginTop15 { margin-top: 15px;}
+.marginTop20 { margin-top: 20px;}
 .marginTop30 { margin: 30px 0 0 0;}
+.marginBottom-3 { margin-bottom: -3px;}
+.marginBottom-5 { margin-bottom: -5px;}
+.marginBottom-15 { margin-bottom: -15px;}
+.marginBottom-25 { margin-bottom: -25px;}
+.marginBottom-40 { margin-bottom: -40px;}
+.marginBottom-50 { margin-bottom: -50px;}
 .marginBottom5 { margin-bottom: 5px;}
 .marginBottom15 { margin-bottom: 15px;}
+.marginBottom25 { margin-bottom: 25px;}
+.marginBottom30 { margin-bottom: 30px;}
+.marginBottom50 { margin-bottom: 50px;}
+.marginBottom60 { margin-bottom: 60px;}
+.marginBottom80 { margin-bottom: 80px;}
+.marginBottom85 { margin-bottom: 85px;}
+.marginBottom90 { margin-bottom: 90px;}
+.marginBottom100 { margin-bottom: 100px;}
+.marginBottom115 { margin-bottom: 115px;}
+.marginBottom120 { margin-bottom: 120px;}
+.marginTopBot2 { margin: 2px 0;}
 .marginTopBot5 { margin: 5px 0;}
 .marginTopBot10 { margin: 10px 0;}
-.marginTopBot2 { margin: 2px 0;}
+.marginTopBot20 { margin: 20px 0;}
 .marginTopBot-5 { margin: -5px 0; }
+.marginLeft5 { margin-left: 5px; }
+.marginLeft10 { margin-left: 10px; }
+.marginSide25 { margin: 0 25px; }
 .borderRadius10 { border-radius: 10px; }
 .borderRadius30 { border-radius: 30px; }
+.centerUp { align-self: center; }
+.centerSide { text-align: -webkit-center; }
 
+.border {border: 1px solid black;}
 .boxShadow { box-shadow: 0px 2px 4px rgb(0 0 0 / 25%); }
+.italics { font-style: italic; }
+.weight800 { font-weight: 800; }
+.weight700 { font-weight: 700; }
+.weight600 { font-weight: 600; }
+.weight500 { font-weight: 500; }
+.weight400 { font-weight: 400; }
+.weight200 { font-weight: 200; }
+.size32 { font-size: 32px; }
+.size24 { font-size: 24px; }
+.size22 { font-size: 22px; }
+.size20 { font-size: 20px; }
+.size18 { font-size: 18px; }
+.size16 { font-size: 16px; }
+.size12 { font-size: 12px; }
+.size10 { font-size: 10px; }
+.size8 { font-size: 8px; }
 
-.inline { display: inline-flex; }
+.inline { display: inline; }
+.inlineFlex { display: inline-flex; }
 .block { display: block; }
+.grid { display: grid; }
+.centerText { text-align: end; }
 .alignCenter { align-items: center; }
 .alightRight { align-items: right; }
 .alignLeft { align-items: left; }
 .alignTop { align-items: start; }
 .alignStart { align-self: start; }
 .alignEnd { align-self: end; }
+.textAlighRight { text-align-last: left; }
 .caps {text-transform: uppercase;}
 
-.formHeader {
-    margin: -5px 0;
-    font-weight: 800;
-    font-size: 32px;
-    color: #346083;
+.peopleLeft { width: 60% }
+.peopleRight { width: 40% }
+@media screen and (max-width: 1111px) {
+  .peopleLeft { width: 40% }
+  .peopleRight { width: 60% }
+}
+
+.viewRep-formHeader {
+  text-align: left;
+  padding-left: 5px;
+  margin-bottom: 5px;
+  font-weight: 600;
+  font-size: 20px;
+  background-color: #346083;
+  color: transparent;
+  text-shadow: 1px 1px, -1px -1px rgba(0, 0, 0, 0.25);
+  -webkit-background-clip: text;
+  -moz-background-clip: text;
+  background-clip: text;
 }
 
 .space-inline {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  align-items: center;
+  /* align-items: center; */
 }
 
-.main-status {
+.viewRep-actionStatusButton {
+    display: -webkit-inline-box;
+    margin-top: -10px;
+    padding-top: 5px;
+}
+
+.viewRep-mainStatus {
   padding: 3px 15px 4px;
   border-radius: 22px;
   color: white;
   font-weight: 900;
   font-size: 20px;
+  width: fit-content;
+  float: right;
 }
 
-.reportsOptionsBox {
-    width: fit-content;
-    border: 1px solid black;
-    padding: 2px 16px;
-    border-radius: 8px;
+.viewRep-chartContainerView {
+    margin: 15px 10px 10px;
+    filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.25));
+    background-color: #f2f2f2;
 }
 
-.analysisReportOption {
-    align-items: center;
-    width: 215px;
-    display: inline-block;
-}
-
-.chartContainer {
+.viewRep-chartContainer {
   border: lightgray solid 1px;
-  width: 100%;
-  height: 500px;
+  /* width: 100%; */
+  height: 415px;
   background: lightgray;
 }
 
-.chartTitle {
+.viewRep-chartTitle {
     font-weight: 600;
     font-size: 20px;
-    background-color: #008d41;
+    /* background-color: #008d41;
     color: transparent;
     text-shadow: 1px 1px, -1px -1px rgb(0 0 0 / 25%);
-    -webkit-background-clip: text;
+    -webkit-background-clip: text; */
 }
 
-.next-button {
+.viewRep-report-powerbi-iframe {
+  height: 100%;
+  background-color: gray;
+  width: 100%;
+  /* border-radius: 10px; */
+  /* margin-left: 5px;
+  margin-top: 5px; */
+}
+
+.viewRep-approvalPeople {
+    font-size: 16px;
+    padding-right: 5px;
+    padding-left: 5px;
+}
+
+.viewRep-backButton {
+    width: 150px;
+    height: 38px;
+    max-width: 100%;
+    font-size: 16px;
+    font-weight: 600;
+    background-color: white;
+    color: #346083;
+    margin-right: 10px;
+  }
+
+.viewRep-backButton:hover {
+  border: #346083 solid 1px;
+}
+
+.viewRep-nextButton {
   width: 150px;
   height: 38px;
   max-width: 100%;
   font-size: 16px;
-  margin-top: 30px;
-  font-family: 'Work Sans', sans-serif;
   font-weight: 600;
   background-color: #346083;
   color: white;
@@ -354,7 +535,6 @@ select {
   width: 350px;
   height: 25px;
   font-size: 16px;
-  font-family: 'Work Sans', sans-serif;
   padding-right: 5px;
   padding-left: 5px;
   /* border: 1p x solid rgba(0, 0, 0, 0.25); */
@@ -367,7 +547,6 @@ select {
   /* width: 10%; */
   height: 15px;
   font-size: 16px;
-  font-family: 'Work Sans', sans-serif;
   padding-right: 5px;
   padding-left: 5px;
   /* border: 1p x solid rgba(0, 0, 0, 0.25); */
@@ -382,7 +561,6 @@ select {
   /* width: 10%; */
   height: 15px;
   font-size: 16px;
-  font-family: 'Work Sans', sans-serif;
   padding-right: 5px;
   padding-left: 5px;
   /* border: 1p x solid rgba(0, 0, 0, 0.25); */
@@ -392,16 +570,30 @@ select {
   margin: 0 5px;
 }
 
-.inputLegend { width: 140px; }
+.width100 { width: 100%; }
+.width155 { width: 155px; }
+.width105 { width: 105px; }
+.fullHeightFirst { min-height: 740px;} /* 1000-265 - 10 + 15 (removed from margin bottom) */
+.fullHeightNotFirst { min-height: 915px; }
 .input-required:invalid {  box-shadow: 0 0 5px #d45252; border-color: hsl(0, 76%, 50%); /* background-color: #ff6961; */ }
 /* .input-required{ border-color: hsl(0, 76%, 50%); } */
 .required:after { content: '*'; color: red; }
 
-.green { background: #53a262; }
-.blue { background: #346083; }
-.orange { background: orange; }
-.red { background: red; }
-.lightgray {background: #f2f2f2;}
-.darkerlightgray {background: lightgray;}
+.greenB { background: #008d41; }
+.blueB { background: #346083; }
+.orangeB { background: orange; }
+.redB { background: red; }
+.lightgrayB {background: #f2f2f2;}
+.darkerlightgrayB {background: lightgray;}
+.darkGrayB {background: gray;}
+.whiteB {background: white;}
+.greenC { color: #008d41; }
+.blueC { color: #346083; }
+.orangeC { color: orange; }
+.redC { color: red; }
+.lightgrayC {color: #f2f2f2;}
+.darkerlightgrayC {color: lightgray;}
+.darkGrayC {color:gray}
+.whiteC {color: white;}
 
 </style>
