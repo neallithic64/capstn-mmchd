@@ -1,11 +1,11 @@
 <template>
-  <div id="viewCases">
+  <div id="viewCases" class="allCaseBody">
     <!--Top Bar of the screen-->
     <TopNav />
-    <div ref="content" class="viewcases-container">
-      <h1 class="pageHeader">All Case Reports</h1>
-      <div class="exportButtons">
-        <div class="CIF-SummaryContainer">
+    <div ref="content" class="allCases-viewcasesContainer">
+      <h1 class="allCasesHeader">All Case Reports</h1>
+      <div class="allCasesExport">
+        <div class="allCases-summaryContainer">
           <ul :class="formListClass('all')" @click="clickTab('all')">
             ALL
           </ul>
@@ -18,26 +18,26 @@
           </ul>
           <ul v-if="['Chief', 'Staff', 'resuHead', 'chdDirector'].some(e => $auth.user.userType.includes(e))"
             :class="formListClass('crfCHD')" @click="clickTab('crfCHD')">
-           CRF
+            CRF
           </ul>
         </div>
-        <div v-show="!isPrint" class="CRFActionButtons">
+        <div v-show="!isPrint" class="allCasesActionButtons">
           <ul class="CRFActionButton">
           <img
             src="~/assets/img/pdf.png"
-            class="printButton"
+            class="allCasesPrint"
             @click="downloadPDF"
           />
           </ul>
           <ul class="CRFActionButton">
             <img src="~/assets/img/csv.png" 
-            class="printButton"
+            class="allCasesPrint"
             @click="csvExport(getTable())"
           />
           </ul>
         </div>
       </div>
-      <div class="viewcases-component">
+      <div class="allCases-viewcasesComponent">
         <div v-if="allData.length > 0" id="vue-root">
           <dataTable
             v-show="caseTab === 'all'"
@@ -567,7 +567,7 @@ export default {
 </script>
 
 <style>
-body {
+.allCaseBody {
   font-family: 'Work Sans', sans-serif;
   font-weight: 300;
   padding: 0px;
@@ -575,42 +575,26 @@ body {
   background-image: none;
 }
 
-.pageHeader {
+.allCasesHeader {
   font-weight: 800;
   font-size: 32px;
   color: #346083;
 }
 
-.viewcases-container {
+.allCases-viewcasesContainer {
   padding: 80px 20px 5px 20px;
   width: 100%;
 }
 
 @media only screen and (max-width: 800px) {
-  .viewcases-ontainer {
+  .allCases-viewcasesContainer {
     width: 100%;
     align-items: center;
     margin: 0px;
   }
 }
 
-.viewcases-section-container {
-  /* left: 275px; */
-  /* position: relative; */
-  /* width: calc(100vw - 320px); */
-  /* margin: 5px; */
-  width: 100%;
-  padding: 5px;
-  margin: 10px;
-}
-
-@media only screen and (max-width: 800px) {
-  .viewcases-section-container {
-    width: 95%;
-  }
-}
-
-.viewcases-component {
+.allCases-viewcasesComponent {
   /* position: relative;
   display: inline-flex;
   flex-direction: row; */
@@ -625,14 +609,14 @@ body {
   margin-bottom: 40px;
 }
 @media only screen and (max-width: 800px) {
-  .viewcases-component {
+  .allCases-viewcasesComponent {
     position: relative;
     top: 0px;
     min-height: fit-content;
   }
 }
 
-.CIF-SummaryContainer {
+.allCases-summaryContainer {
   display: flex;
   flex-direction: row;
   overflow-x: auto;
@@ -664,35 +648,24 @@ body {
   width: -webkit-fill-available;
 }
 
-.CRFActionButtons {
+.allCasesActionButtons {
   display: inline-flex;
   flex-direction: row;
   cursor: pointer;
 }
 
-.printButton {
+.allCasesPrint {
   width: 30px;
   height: 30px;
   /* margin: 0 5px; */
   margin: -5px 5px 5px;
 }
 
-.exportButtons {
+.allCasesExport {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
 }
 
-/* h2 {
-  text-align: center;
-  font-weight: 600;
-  font-size: 20px;
-  background-color: #008d41;
-  color: transparent;
-  text-shadow: 1px 1px, -1px -1px rgba(0, 0, 0, 0.25);
-  -webkit-background-clip: text;
-  -moz-background-clip: text;
-  background-clip: text;
-} */
 </style>
 

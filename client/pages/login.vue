@@ -1,5 +1,5 @@
 <template>
-  <div id="login">
+  <div id="login" class="loginBody">
     <img id="login-logo" class="center" src="~/assets/img/logo.png" />
     <form id="user-login" type="submit" novalidate="true" method="post" @submit.stop.prevent="submitForm">
       <div id="login-form" class="center">
@@ -125,7 +125,7 @@ export default {
 </script>
 
 <style>
-    body {
+    .loginBody {
         background-image: url('~/assets/img/login-vector.png');
         background-repeat: no-repeat;
         background-attachment: fixed;
