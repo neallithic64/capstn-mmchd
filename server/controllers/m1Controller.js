@@ -290,7 +290,7 @@ async function createOutbreak(diseaseID, outbreakStatus) {
 		let match = await db.exec("SELECT * FROM mmchddb.OUTBREAKS WHERE diseaseID='" + diseaseID +
 								"' AND NOT outbreakStatus='Closed';");
 		if(match.length > 0) {
-			if(match[0] == outbreakStatus)
+			if(match[0].outbreakStatus == outbreakStatus)
 				return match[0];
 			else if(outbreakStatus == 'Epidemic') {
 				let result = await db.updateRows("mmchddb.OUTBREAKS", {outbreakID:match[0].outbreakID}, {outbreakStatus:outbreakStatus});
@@ -300,7 +300,7 @@ async function createOutbreak(diseaseID, outbreakStatus) {
 					return false;
 			}	
 		} else {
-			let newOutbreak = new Outbreak(await generateID("mmchddb.OUTBREAKS").id, diseaseID, 'Ongoing', new Date(), null,outbreakStatus, null);
+			let newOutbreak = new Outbreak((await generateID("mmchddb.OUTBREAKS")).id, diseaseID, 'Ongoing', new Date(), null,outbreakStatus, null);
 			let result = await db.insertOne("mmchddb.OUTBREAKS", newOutbreak);
 			return result;
 		}
@@ -314,10 +314,10 @@ async function checkIfOutbreak(diseaseID, caseObj) {
 	try {
 		// check if disease case is measles (suspected case for alert, confirmed case for epidemic)
 		if(diseaseID == "DI-0000000000000") {
-			if(caseObj.caseStatus == "Suspected Case") {
+			if(caseObj.caseLevel == "Suspected Case") {
 				return await createOutbreak("DI-0000000000000", "Alert");
 			}
-			else if (caseObj.caseStatus == "Discarded Case")
+			else if (caseObj.caseLevel == "Non-Measles/Rubella Discarded Case")
 				return false;
 			else
 				return await createOutbreak("DI-0000000000000", "Epidemic");
@@ -1189,6 +1189,20 @@ const indexFunctions = {
 					HAVING c.diseaseID = '${outbreak.outbreak.diseaseID}' AND
 					c.reportDate > '${convDatePHT(new Date(outbreak.outbreak.startDate))}';`);
 			res.status(200).send(outbreak);
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
+
+	getOutbreakAlertDetails: async function(req, res){
+		try {
+			let outbreaks = await db.findRows("mmchddb.OUTBREAKS", {outbreakID:req.query.outbreakID});
+			if(outbreaks.length > 0){
+				let disease = await db.findRows("mmchddb.DISEASES", {diseaseID:outbreaks[0].diseaseID});
+				res.status(200).send({outbreak: outbreaks[0], disease:disease[0]});
+			}
+			else res.status(400).send("No outbreaks");
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");

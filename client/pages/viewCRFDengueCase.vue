@@ -1942,6 +1942,12 @@ export default {
 
         if (updateCase.status === 200) {
           // alert('CRF case status updated!');
+          if(result.data.outbreakID){
+            if(result.data.type === 'Alert'){
+              window.open('http://localhost:3000/alertOutbreak?outbreakID='+ result.data.outbreakID)
+            } else
+              window.open('http://localhost:3000/epiOutbreak?outbreakID='+ result.data.outbreakID);
+          }
           location.reload();
           this.$toast.success('Case Status updated!', {duration: 4000, icon: 'check_circle'});
         } else {

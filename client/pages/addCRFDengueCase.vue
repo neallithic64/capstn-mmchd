@@ -1880,6 +1880,12 @@ export default {
       if (result.status === 200) {
         // alert('CRF case submitted!');
         this.$toast.success('Case saved!', {duration: 4000, icon: 'check_circle'});
+        if(result.data.outbreakID){
+          if(result.data.type === 'Alert'){
+            window.open('http://localhost:3000/alertOutbreak?outbreakID='+ result.data.outbreakID)
+          } else
+            window.open('http://localhost:3000/epiOutbreak?outbreakID='+ result.data.outbreakID);
+        }
         window.location.href = '/allCases';
       } else {
         // eslint-disable-next-line no-console
