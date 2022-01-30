@@ -1,10 +1,10 @@
 <template>
-  <div>
+  <div class="addHEbody">
     <TopNav/>
-    <div class="case-container">
+    <div class="addHE-caseContainer">
       <!--SUMMARY: left side-->
-      <div class="form-summary-container">
-        <div class="form-summary">
+      <div class="addHE-formSummary-container">
+        <div class="addHE-formSummary">
           <button id="login-submit" type="submit" style="width: 210px; text-align: left" @click="isOpen = !isOpen">
             <h2 style="font-weight: 600">Event-based Surveillance</h2>
           </button>
@@ -21,9 +21,9 @@
       </div>
 
       <!--Everything in the right-->
-      <div class="form-section-container">
+      <div class="addHE-formSectionContainer">
         <!--Name of form-->
-        <div class="disease-name">
+        <div class="addHE-diseaseName">
           <h1 style="margin: 0; font-weight: 600; font-size: 24px">
             Add Health Event
           </h1>
@@ -33,15 +33,15 @@
         </div>
 
         <!--Form itself-->
-        <div class="form-component">
+        <div class="addHE-formComponent">
           <!-- Source Details (Form 1) -->
           <form v-if="pageNum == 0 || pageNum == Object.keys(formSection.formNames).length" id="newUserType" type="submit">
-            <div id="new-user-form" class="center">
-              <h2 id="form-header"> {{ Object.values(formSection.formNames)[0] }} </h2>
+            <div id="addHE-newUserForm" class="center">
+              <h2 id="addHE-formHeader"> {{ Object.values(formSection.formNames)[0] }} </h2>
               <div class="field-row-straight">
                 <div class="name-field">
                   <div style="display: flex; flex-direction: row;">
-                    <label for="dateCaptured" class="required"> Date Captured </label>
+                    <label for="dateCaptured" class="required addHElabel"> Date Captured </label>
                     <button
                         class="tooltip"
                         data-tooltip="The date the health event was captured"
@@ -61,7 +61,7 @@
 
                 <div class="field">
                   <div style="display: flex; flex-direction: row;">
-                    <label for="timeCaptured" class="required"> Time Captured</label>
+                    <label for="timeCaptured" class="required addHElabel"> Time Captured</label>
                     <button
                         class="tooltip"
                         data-tooltip="The time the health event was captured"
@@ -83,7 +83,7 @@
 
               <div class="field">
                 <div style="display: flex; flex-direction: row;">
-                  <label for="source" class="required"> Source </label>
+                  <label for="source" class="required addHElabel"> Source </label>
                   <button
                       class="tooltip"
                       data-tooltip="The primary source of information"
@@ -103,7 +103,7 @@
                     :disabled="inputEdit()"
                     required
                   />
-                  <label for="print"> Print </label>
+                  <label for="print addHElabel"> Print </label>
                 </div>
                 <div style="display: inline-flex; align-items: center">
                   <input
@@ -117,7 +117,7 @@
                     :disabled="inputEdit()"
                     required
                   />
-                  <label for="internet"> Internet </label>
+                  <label for="internet addHElabel"> Internet </label>
                 </div>
                 <div style="display: inline-flex; align-items: center">
                   <input
@@ -131,7 +131,7 @@
                     :disabled="inputEdit()"
                     required
                   />
-                  <label for="television"> Television </label>
+                  <label for="television addHElabel"> Television </label>
                 </div>
                 <div style="display: inline-flex; align-items: center">
                   <input
@@ -145,7 +145,7 @@
                     :disabled="inputEdit()"
                     required
                   />
-                  <label for="radioSource"> Radio </label>
+                  <label for="radioSource addHElabel"> Radio </label>
                 </div>
                 <div style="display: inline-flex; align-items: center">
                   <input
@@ -159,7 +159,7 @@
                     :disabled="inputEdit()"
                     required
                   />
-                  <label for="doh"> DOH </label>
+                  <label for="doh addHElabel"> DOH </label>
                 </div>
                 <div>
                   <input
@@ -173,13 +173,13 @@
                     :disabled="inputEdit()"
                     required
                   />
-                  <label for="public">Public </label>
+                  <label for="public addHElabel">Public </label>
                 </div>
               </div>
 
               <div class="name-field">
                 <div style="display: flex; flex-direction: row;">
-                  <label for="reportSource" class="required"> Reporting Source </label>
+                  <label for="reportSource" class="required addHElabel"> Reporting Source </label>
                   <button
                       class="tooltip"
                       data-tooltip="The name of agency or facility reporting the event"
@@ -201,12 +201,12 @@
 
           <!-- Source Details (Form 1) -->
           <form v-if="pageNum == 1 || pageNum == Object.keys(formSection.formNames).length" id="newUserType" type="submit">
-            <div id="new-user-form" class="center">
-              <h2 id="form-header"> {{ Object.values(formSection.formNames)[1] }} </h2>
+            <div id="addHE-newUserForm" class="center">
+              <h2 id="addHE-formHeader"> {{ Object.values(formSection.formNames)[1] }} </h2>
 
               <div class="name-field">
                 <div style="display: flex; flex-direction: row;">
-                  <label for="eventDetails" class="required"> Health Event </label>
+                  <label for="eventDetails" class="required addHElabel"> Health Event </label>
                   <button
                       class="tooltip"
                       data-tooltip="Describe the health event captured (e.g. chemical spillage, cases of fever, etc.)"
@@ -230,7 +230,7 @@
               <div class="field-row" style="margin-left: 0px">
                 <div class="field">
                   <div style="display: flex; flex-direction: row;">
-                    <label for="locHouseStreet" class="required"> Street / House No. </label>
+                    <label for="locHouseStreet" class="required addHElabel"> Street / House No. </label>
                     <button
                       class="tooltip"
                       data-tooltip="The place of the event"
@@ -251,7 +251,7 @@
 
               <div class="field-row-straight">
                 <div class="name-field">
-                  <label for="locCity" class="required"> City </label>
+                  <label for="locCity" class="required addHElabel"> City </label>
                   <select id="locCity" v-model="healthEvent.locCity"
                     :class="isRequired()"
                     name="locCity"
@@ -278,7 +278,7 @@
                 </div>
 
                 <div class="field">
-                  <label for="locBrgy" class="required"> Barangay </label>
+                  <label for="locBrgy" class="required addHElabel"> Barangay </label>
                   <select
                     id="locBrgy"
                     v-model="healthEvent.locBrgy"
@@ -298,7 +298,7 @@
               <div class="field-row-straight">
                 <div class="field">
                   <div style="display: flex; flex-direction: row;">
-                    <label for="numCases" class="required"> Number of Cases </label>
+                    <label for="numCases" class="required addHElabel"> Number of Cases </label>
                     <button
                       class="tooltip"
                       data-tooltip="The number of people affected (this can be an estimate)"
@@ -318,7 +318,7 @@
                 </div>
                 <div class="field">
                   <div style="display: flex; flex-direction: row;">
-                    <label for="numDeaths" class="required"> Number of Deaths </label>
+                    <label for="numDeaths" class="required addHElabel"> Number of Deaths </label>
                     <button
                       class="tooltip"
                       data-tooltip="The number of reported deaths"
@@ -342,7 +342,7 @@
               <!-- Remarks -->
               <div class="field-row" style="margin-left: 0px">
                 <div class="field">
-                  <label for="remarks">
+                  <label for="remarks" class="addHElabel">
                     Remarks
                   </label>
                   <textarea 
@@ -607,7 +607,7 @@ export default {
 </script>
 
 <style>
-  body {
+  .addHEbody {
     font-family: 'Work Sans', sans-serif;
     font-weight: 300;
     padding: 0px;
@@ -625,7 +625,7 @@ export default {
     border-color: hsl(0, 76%, 50%);
   }
 
-  .case-container {
+  .addHE-caseContainer {
     margin: 70px 20px 5px 20px;
     display: flex;
     flex-direction: row;
@@ -634,7 +634,7 @@ export default {
   }
 
   @media only screen and (max-width: 800px) {
-    .case-container {
+    .addHE-caseContainer {
       width: 100%;
       flex-direction: column;
       align-items: center;
@@ -643,7 +643,7 @@ export default {
     }
   }
 
-  .form-summary {
+  .addHE-formSummary {
     width: fit-content;
     height: fit-content;
     left: 23px;
@@ -656,7 +656,7 @@ export default {
     border-radius: 10px;
   }
   @media only screen and (max-width: 800px) {
-    .form-summary {
+    .addHE-formSummary {
       width: 100%;
       position: unset;
       height: fit-content;
@@ -664,7 +664,7 @@ export default {
     }
   }
 
-  .form-summary-container {
+  .addHE-formSummary-container {
     position: fixed;
     width: fit-content;
     margin: 5px;
@@ -672,28 +672,11 @@ export default {
   }
 
   @media only screen and (max-width: 800px) {
-    .form-summary-container {
+    .addHE-formSummary-container {
       width: 95%;
       position: sticky;
       margin: 0px;
     }
-  }
-
-  .disease {
-    font-family: Work Sans;
-    font-style: normal;
-    font-weight: 500;
-    font-size: 20px;
-    line-height: 33px;
-    margin: 0;
-    color: #000000;
-    text-align: center;
-  }
-
-  .error-message {
-        color: #da4944;
-        font-weight: 500;
-        font-size: 12px;
   }
 
   .formnum {
@@ -737,7 +720,7 @@ export default {
     color: white;
   }
 
-  .form-section-container {
+  .addHE-formSectionContainer {
     left: 275px;
     position: relative;
     width: calc(100vw - 320px);
@@ -746,25 +729,25 @@ export default {
   }
 
   @media only screen and (max-width: 800px) {
-    .form-section-container {
+    .addHE-formSectionContainer {
       left: 0px;
       width: 95%;
     }
   }
 
-  .disease-name {
+  .addHE-diseaseName {
     position: relative;
     top: -3px;
     z-index: 3;
   }
   @media only screen and (max-width: 800px) {
-    .disease-name {
+    .addHE-diseaseName {
       position: relative;
       top: 0px;
     }
   }
 
-  .form-component {
+  .addHE-formComponent {
     position: relative;
     height: fit-content;
     width: 100%;
@@ -778,19 +761,19 @@ export default {
     min-height: calc(100vh - 220px);
   }
   @media only screen and (max-width: 800px) {
-    .form-component {
+    .addHE-formComponent {
       position: relative;
       top: 0px;
       min-height: fit-content;
     }
   }
 
-  .new-user-form {
+  .addHE-newUserForm {
     margin-top: 5px;
     width: 100%;
   }
 
-  #form-header {
+  #addHE-formHeader {
     text-align: left;
     padding-left: 5px;
     font-weight: 600;
@@ -804,7 +787,7 @@ export default {
   }
 
   @media only screen and (max-width: 950px) {
-    #form-header {
+    #addHE-formHeader {
       text-align: center;
     }
   }
@@ -979,7 +962,7 @@ export default {
   margin-right: 5px;
 }
 
-  label {
+  .addHElabel {
     display: inline-flex;
     flex-direction: row;
     align-items: center;
@@ -988,11 +971,6 @@ export default {
   .required:after {
     content: '*';
     color: red;
-  }
-
-  h3 {
-    font-size: 15px;
-    font-weight: 600;
   }
 
   .next-button {
@@ -1033,10 +1011,6 @@ export default {
     background: #dddddd;
   }
 
-  hr {
-    margin: 20px 0;
-  }
-
   .center-center {
     display: inline-flex;
     flex-direction: row;
@@ -1051,159 +1025,6 @@ export default {
     display: none;
   }
 
-  /* COLLAPSE EME BELOW */
-
-  .collpaseWrapper {
-    margin: 15px 0;
-    padding: 15px auto;
-    width: 100%;
-  }
-
-  ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-
-  .collapseLabel {
-    display: block;
-    cursor: pointer;
-    padding: 10px;
-    /* border: 1px solid #fff; */
-    border-bottom: none;
-    font-weight: 400;
-  }
-
-  .collapseLabel:hover {
-    background: #346083;
-    opacity: 0.85;
-    color: white;
-    font-weight: 600;
-  }
-
-  .collapseLabel.last {
-    border-bottom: 1px solid #fff;
-  }
-
-  ul ul li {
-    padding: 10px;
-    background: white;
-  }
-
-  .collapseInput[type='checkbox'] {
-    position: absolute;
-    left: -9999px;
-  }
-
-  .collapseInput[type='checkbox'] ~ ul {
-    height: 0;
-    transform: scaleY(0);
-  }
-
-  .collapseInput[type='checkbox']:checked ~ ul {
-    height: 100%;
-    transform-origin: top;
-    transition: transform 0.2s ease-out;
-    transform: scaleY(1);
-  }
-
-  .collapseInput[type='checkbox']:checked + label {
-    background: #346083;
-    opacity: 0.85;
-    color: white;
-    font-weight: 500;
-    border-bottom: 1px solid #fff;
-  }
-
-  /* SEARCH BAR ALL BELOW */
-
-  .searchbar {
-    background: #ffffff;
-    border: 1px solid #a3a3a3;
-    box-sizing: border-box;
-    border-radius: 40px;
-    width: 100%;
-    height: 40px;
-    padding: 10px 20px 10px 40px;
-
-    height: 45px;
-    border: none;
-    font-size: 16px;
-    outline: none;
-    margin-top: -1px;
-
-    /* background-image: url(../assets/img/search.svg); */
-    background-image: url(https://cdn1.iconfinder.com/data/icons/hawcons/32/698956-icon-111-search-512.png);
-    background-size: 20px;
-    background-repeat: no-repeat;
-    background-position: 15px 12.5px;
-  }
-
-  .bar {
-    margin: 0 auto;
-    width: 100%;
-    height: 45px;
-    border-radius: 40px;
-    /* border: 1px solid #dcdcdc; */
-
-    position: relative;
-  }
-  .bar:hover {
-    box-shadow: 1px 1px 8px 1px #dcdcdc;
-  }
-  .bar:focus-within {
-    box-shadow: 1px 1px 8px 1px #dcdcdc;
-    outline: none;
-  }
-
-  .container {
-    background: white;
-    border-radius: 40px;
-    width: 60%;
-    margin: 0 auto;
-  }
-
-  #input_img {
-    position: absolute;
-    bottom: 8px;
-    left: 10px;
-    width: 30px;
-    height: 30px;
-  }
-
-  .searchResult {
-    padding: 5px 10px;
-    border-bottom: 1px solid lightgray;
-    display: inline-flex;
-    flex-direction: row;
-  }
-
-  .searchResult:hover {
-    background: #eeeeee;
-  }
-
-  .searchResultInfo {
-    display: inline-flex;
-    flex-direction: column;
-  }
-
-  .searchPerson {
-    font-size: 16px;
-    margin-bottom: -5px;
-    font-weight: 400;
-  }
-
-  .searchAddress {
-    font-size: 12px;
-    font-weight: 200;
-  }
-
-  .searchPersonIcon {
-    content: url('~/assets/img/personIcon.png');
-    height: 25px;
-    width: 25px;
-    margin: auto 5px auto 0;
-  }
 
   [data-tooltip] {
     position: relative;

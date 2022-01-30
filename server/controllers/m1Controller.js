@@ -547,16 +547,28 @@ const indexFunctions = {
 	},
 	
 	getPatients: async function(req, res) {
+		let match = [];
 		try {
-			let match = await db.exec(`SELECT p.*, a1.houseStreet AS currHouseStreet,
-					a1.brgy AS currBrgy, a1.city AS currCity, a2.houseStreet AS permHouseStreet,
-					a2.brgy AS permBrgy, a2.city AS permCity, MAX(c.reportDate) AS updatedDate
-					FROM mmchddb.PATIENTS p
-					INNER JOIN mmchddb.ADDRESSES a1 ON p.caddressID = a1.addressID
-					INNER JOIN mmchddb.ADDRESSES a2 ON p.paddressID = a2.addressID
-					LEFT JOIN mmchddb.CASES c ON p.patientID = c.patientID
-					WHERE c.reportedBy = '${req.query.userID}'
-					GROUP BY p.patientID;`);
+			if (req.query.userID) {
+				match = await db.exec(`SELECT p.*, a1.houseStreet AS currHouseStreet,
+						a1.brgy AS currBrgy, a1.city AS currCity, a2.houseStreet AS permHouseStreet,
+						a2.brgy AS permBrgy, a2.city AS permCity, MAX(c.reportDate) AS updatedDate
+						FROM mmchddb.PATIENTS p
+						INNER JOIN mmchddb.ADDRESSES a1 ON p.caddressID = a1.addressID
+						INNER JOIN mmchddb.ADDRESSES a2 ON p.paddressID = a2.addressID
+						LEFT JOIN mmchddb.CASES c ON p.patientID = c.patientID
+						WHERE c.reportedBy = '${req.query.userID}'
+						GROUP BY p.patientID;`);
+			} else {
+				match = await db.exec(`SELECT p.*, a1.houseStreet AS currHouseStreet,
+						a1.brgy AS currBrgy, a1.city AS currCity, a2.houseStreet AS permHouseStreet,
+						a2.brgy AS permBrgy, a2.city AS permCity, MAX(c.reportDate) AS updatedDate
+						FROM mmchddb.PATIENTS p
+						INNER JOIN mmchddb.ADDRESSES a1 ON p.caddressID = a1.addressID
+						INNER JOIN mmchddb.ADDRESSES a2 ON p.paddressID = a2.addressID
+						LEFT JOIN mmchddb.CASES c ON p.patientID = c.patientID
+						GROUP BY p.patientID;`);
+			}
 			res.status(200).send(match);
 		} catch (e) {
 			console.log(e);

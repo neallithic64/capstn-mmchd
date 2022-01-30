@@ -42,7 +42,7 @@
         </div>
       </div>
 
-      <div class="viewcases-component">
+      <div class="viewcases-component" style="margin-top: 20px;">
         <dataTable
           :options="tableOptions"
           :datavalues="dataSets"
