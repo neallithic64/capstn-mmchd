@@ -5,7 +5,7 @@
     <div ref="content" class="viewOB-container">
       <div v-if="outbreak.responseTime === 'N/A'" id="countdown-container">
         <client-only>
-          <Countdown deadline="January 22, 2022 23:39:00"></Countdown>
+          <Countdown :deadline="resDeadline"></Countdown>
         </client-only>
         <span style="font-weight: 600;"> TIME LEFT FOR INITIAL RESPONSE </span>
       </div>
@@ -230,6 +230,7 @@ export default {
       arMod2Risk: 7,
       arHighRisk: 7,
       editStatus: false,
+	  resDeadline: '',
       auditLog: {
         newStatus: '',
         remarks: '',
@@ -443,6 +444,8 @@ export default {
         this.obSummary[i].risk = "Moderate";
       else this.obSummary[i].risk = "Low";
     }
+	
+	this.resDeadline = (new Date((new Date(this.outbreak.startDate)).getTime() + 115200000)).toString();
   }, 
   head() {
     return {
