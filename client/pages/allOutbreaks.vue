@@ -158,8 +158,8 @@ export default {
       rows[i].dateStarted = this.convDatePHT(new Date(rows[i].startDate));
       rows[i].dateClosed = rows[i].endDate ? this.convDatePHT(new Date(rows[i].endDate)) : "N/A";
       rows[i].responseTime = rows[i].responseTime ? rows[i].responseTime : "N/A";
-      rows[i].attackRate = rows[i].attackRate ? rows[i].attackRate : "0.0";
-      rows[i].growthRate = rows[i].growthRate ? (parseFloat(rows[i].growthRate) * 100).toFixed(2) + "%" : "0.00%";
+      rows[i].attackRate = !isNaN(rows[i].attackRate) ? rows[i].attackRate : "0.0";
+      rows[i].growthRate = !isNaN(rows[i].growthRate) ? (parseFloat(rows[i].growthRate) * 100).toFixed(2) + "%" : "0.00%";
     }
     this.allOutbreaks = rows;
     if (this.allOutbreaks.length > 0) {

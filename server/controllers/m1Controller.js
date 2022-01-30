@@ -375,8 +375,9 @@ async function getOutbreakData(outbreakID) {
 			caseCount, deathCount, growth, attack;
 	try {
 		if (!!outbreakID) {
-			caseCount = await db.exec(`SELECT o.*, d.diseaseName, IFNULL(a.city, 'NCR') AS city,
-					COUNT(c.caseID) + IFNULL(d.epiThreshold, 0) AS numCases
+			caseCount = await db.exec(`SELECT o.*, o.startDate, o.diseaseID,
+					d.epiThreshold, d.diseaseName, a.city AS city,
+					COUNT(c.caseID) AS numCases
 					FROM mmchddb.OUTBREAKS o
 					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = o.diseaseID
 					LEFT JOIN mmchddb.CASES c ON c.diseaseID = o.diseaseID AND c.reportDate > o.startDate
@@ -386,22 +387,49 @@ async function getOutbreakData(outbreakID) {
 					GROUP BY a.city
 					ORDER BY (CASE WHEN o.type = 'Ongoing' THEN '1' ELSE '2' END) ASC, o.startDate DESC;`);
 			
-			deathCount = await db.exec(`SELECT o.outbreakID, IFNULL(a.city, 'NCR') AS city,
-					COUNT(c.caseID) AS numDeaths
+			let casePast = await db.exec(`SELECT cp.city AS city, COUNT(cp.caseID) AS casePast
+					FROM (SELECT pasta.city AS city, pastc.caseID
+						FROM mmchddb.CASES pastc
+						LEFT JOIN mmchddb.PATIENTS pastp ON pastp.patientID = pastc.patientID
+						LEFT JOIN mmchddb.ADDRESSES pasta ON pasta.addressID = pastp.caddressID
+						WHERE pastc.diseaseID = '${ caseCount[0].diseaseID }' AND
+						pastc.reportDate < ${convDatePHT(caseCount[0].startDate)}
+						ORDER BY pastc.reportDate DESC
+						LIMIT 0, ${ caseCount[0].epiThreshold }
+					) cp
+					GROUP BY cp.city;`);
+			
+			deathCount = await db.exec(`SELECT o.outbreakID, a.city AS city, COUNT(c.caseID) AS numDeaths
 					FROM mmchddb.OUTBREAKS o
 					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = o.diseaseID
 					LEFT JOIN mmchddb.CASES c ON o.diseaseID = c.diseaseID AND c.reportDate > o.startDate
-					LEFT JOIN mmchddb.CASE_DATA cd ON c.caseID = cd.caseID AND cd.fieldName = "outcome" AND cd.value = "Dead"
+					LEFT JOIN mmchddb.CASE_DATA cd ON c.caseID = cd.caseID
+					AND cd.fieldName = "outcome" AND cd.value = "Dead"
 					LEFT JOIN mmchddb.PATIENTS p ON p.patientID = c.patientID
 					LEFT JOIN mmchddb.ADDRESSES a ON a.addressID = p.caddressID
 					WHERE o.outbreakID = '${outbreakID}'
 					GROUP BY a.city
 					ORDER BY (CASE WHEN o.type = 'Ongoing' THEN '1' ELSE '2' END) ASC, o.startDate DESC;`);
 			
-			/* growth rate: rate of the difference of outbreak and non-outbreak cases and non-outbreak cases
+			let deathPast = await db.exec(`SELECT dp.city AS city, COUNT(dp.caseID) AS deathPast
+					FROM (SELECT pasta.city AS city, pastc.caseID
+						FROM mmchddb.CASES pastc
+						LEFT JOIN mmchddb.CASE_DATA pastcd ON pastcd.caseID = pastc.caseID
+						AND pastcd.fieldName = "outcome" AND pastcd.value = "Dead"
+						LEFT JOIN mmchddb.PATIENTS pastp ON pastp.patientID = pastc.patientID
+						LEFT JOIN mmchddb.ADDRESSES pasta ON pasta.addressID = pastp.caddressID
+						WHERE pastc.diseaseID = '${ caseCount[0].diseaseID }' AND
+						pastc.reportDate < ${convDatePHT(caseCount[0].startDate)}
+						ORDER BY pastc.reportDate DESC
+						LIMIT 0, ${ caseCount[0].epiThreshold }
+					) dp
+					GROUP BY dp.city;`);
+			
+			/* growth rate: rate of outbreak cases to non-outbreak cases
 			 */
-			growth = await db.exec(`SELECT o.outbreakID, IFNULL(a.city, 'NCR') AS city,
-					SUM(CASE WHEN c.reportDate > o.startDate THEN 1 ELSE 0 END) AS growthRate
+			growth = await db.exec(`SELECT o.outbreakID, a.city AS city,
+					SUM(CASE WHEN c.reportDate > o.startDate THEN 1 ELSE 0 END) AS growthNum,
+					SUM(CASE WHEN c.reportDate < o.startDate THEN 1 ELSE 0 END) AS growthDen
 					FROM mmchddb.OUTBREAKS o
 					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = o.diseaseID
 					LEFT JOIN mmchddb.CASES c ON o.diseaseID = c.diseaseID
@@ -411,27 +439,58 @@ async function getOutbreakData(outbreakID) {
 					GROUP BY a.city
 					ORDER BY (CASE WHEN o.type = 'Ongoing' THEN '1' ELSE '2' END) ASC, o.startDate DESC;`);
 			
+			let growthPast = await db.exec(`SELECT gp.city AS city,
+					SUM(CASE WHEN gp.reportDate < ${convDatePHT(caseCount[0].startDate)} THEN 1 ELSE 0 END) AS growthPast
+					FROM (SELECT pasta.city AS city, pastc.reportDate
+						FROM mmchddb.CASES pastc
+						LEFT JOIN mmchddb.PATIENTS pastp ON pastp.patientID = pastc.patientID
+						LEFT JOIN mmchddb.ADDRESSES pasta ON pasta.addressID = pastp.caddressID
+						WHERE pastc.diseaseID = '${ caseCount[0].diseaseID }'
+						ORDER BY pastc.reportDate DESC
+						LIMIT 0, ${ caseCount[0].epiThreshold }
+					) gp
+					GROUP BY gp.city;`);
+			
 			/* attack rate: percentage of an at-risk population that contracts a disease
 			 */
-			attack = await db.exec(`SELECT o.outbreakID, IFNULL(a.city, 'NCR') AS city,
-					CONCAT(FORMAT(SUM(CASE WHEN c.caseLevel LIKE '%Confirm%' THEN 1 ELSE 0 END) /
-					SUM(CASE WHEN c.caseLevel LIKE '%Suspect%' THEN 1 ELSE 0 END) * 100, 2), '%') AS attackRate
+			attack = await db.exec(`SELECT o.outbreakID, a.city AS city,
+					SUM(CASE WHEN c.caseLevel LIKE '%Confirm%' THEN 1 ELSE 0 END) AS attackNum,
+					IF(IFNULL(MAX(pad.populationTotal), 0) > 0, MAX(pad.populationTotal), 1) * 100000 AS attackDen
 					FROM mmchddb.OUTBREAKS o
 					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = o.diseaseID
 					LEFT JOIN mmchddb.CASES c ON o.diseaseID = c.diseaseID AND c.reportDate > o.startDate
 					LEFT JOIN mmchddb.PATIENTS p ON p.patientID = c.patientID
 					LEFT JOIN mmchddb.ADDRESSES a ON a.addressID = p.caddressID
+					LEFT JOIN mmchddb.PROGRAM_ACCOMPS pa ON pa.year = YEAR(o.startDate)
+					LEFT JOIN mmchddb.PROGRAM_ACCOMP_DATA pad ON pad.progAccompID = pa.progAccompID AND pad.month = MONTH(o.startDate) - 1
 					WHERE o.outbreakID = '${outbreakID}'
 					GROUP BY a.city
 					ORDER BY (CASE WHEN o.type = 'Ongoing' THEN '1' ELSE '2' END) ASC, o.startDate DESC;`);
 			
+			let attackPast = await db.exec(`SELECT ap.city,
+					SUM(CASE WHEN ap.caseLevel LIKE '%Confirm%' THEN 1 ELSE 0 END) AS attackPast
+					FROM (SELECT pasta.city AS city, pastc.caseLevel
+						FROM mmchddb.CASES pastc
+						LEFT JOIN mmchddb.PATIENTS pastp ON pastp.patientID = pastc.patientID
+						LEFT JOIN mmchddb.ADDRESSES pasta ON pasta.addressID = pastp.caddressID
+						WHERE pastc.diseaseID = '${ caseCount[0].diseaseID }'
+						ORDER BY pastc.reportDate DESC
+						LIMIT 0, ${ caseCount[0].epiThreshold }
+					) ap
+					GROUP BY ap.city;`);
+			
 			outbreaks = {
 				outbreak: caseCount[0],
 				caseCount: caseCount,
+				casePast: casePast,
 				deathCount: deathCount,
+				deathPast: deathPast,
 				growth: growth,
-				attack: attack
+				growthPast: growthPast,
+				attack: attack,
+				attackPast: attackPast
 			};
+			// console.log(outbreaks);
 			outbreaks.outbreak.endDate = outbreaks.outbreak.endDate ? outbreaks.outbreak.endDate : "N/A";
 			if (!!outbreaks.outbreak.responseTime) {
 				let seconds = Math.floor(outbreaks.outbreak.responseTime / 1000);
@@ -458,10 +517,10 @@ async function getOutbreakData(outbreakID) {
 					GROUP BY o.outbreakID
 					ORDER BY (CASE WHEN o.type = 'Ongoing' THEN '1' ELSE '2' END) ASC, o.startDate DESC;`);
 			
-			/* growth rate: rate of the difference of outbreak and non-outbreak cases and non-outbreak cases
+			/* growth rate: rate of outbreak cases to non-outbreak cases
 			 */
 			growth = await db.exec(`SELECT o.outbreakID,
-					SUM(CASE WHEN c.reportDate > o.startDate THEN 1 ELSE -1 END) /
+					(SUM(CASE WHEN c.reportDate > o.startDate THEN 1 ELSE 0 END) + IFNULL(d.epiThreshold, 0)) /
 					SUM(CASE WHEN c.reportDate < o.startDate THEN 1 ELSE 0 END) AS growthRate
 					FROM mmchddb.OUTBREAKS o
 					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = o.diseaseID
@@ -469,14 +528,17 @@ async function getOutbreakData(outbreakID) {
 					GROUP BY o.outbreakID
 					ORDER BY (CASE WHEN o.type = 'Ongoing' THEN '1' ELSE '2' END) ASC, o.startDate DESC;`);
 			
-			/* attack rate: percentage of an at-risk population that contracts a disease
+			/* attack rate: new cases of disease over population
 			 */
 			attack = await db.exec(`SELECT o.outbreakID,
-					CONCAT(FORMAT(SUM(CASE WHEN c.caseLevel LIKE '%Confirm%' THEN 1 ELSE 0 END) /
-					SUM(CASE WHEN c.caseLevel LIKE '%Suspect%' THEN 1 ELSE 0 END) * 100, 2), '%') AS attackRate
+					(SUM(CASE WHEN c.caseLevel LIKE '%Confirm%' THEN 1 ELSE 0 END) + IFNULL(d.epiThreshold, 0)) /
+					IF(IFNULL(MAX(pad.populationTotal), 0) > 0, MAX(pad.populationTotal), 1) * 100000 AS attackRate
 					FROM mmchddb.OUTBREAKS o
 					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = o.diseaseID
 					LEFT JOIN mmchddb.CASES c ON o.diseaseID = c.diseaseID AND c.reportDate > o.startDate
+					LEFT JOIN mmchddb.PROGRAM_ACCOMPS pa ON pa.year = YEAR(o.startDate)
+					LEFT JOIN mmchddb.PROGRAM_ACCOMP_DATA pad ON pad.progAccompID = pa.progAccompID
+					AND pad.month = MONTH(o.startDate) - 1
 					GROUP BY o.outbreakID
 					ORDER BY (CASE WHEN o.type = 'Ongoing' THEN '1' ELSE '2' END) ASC, o.startDate DESC;`);
 			
@@ -489,6 +551,7 @@ async function getOutbreakData(outbreakID) {
 				tempOutbreak.numDeaths = deathCount[i].numDeaths;
 				tempOutbreak.growthRate = growth[i].growthRate;
 				tempOutbreak.attackRate = attack[i].attackRate;
+				console.log(attack[i]);
 				if (!!caseCount[i].responseTime) {
 					let seconds = caseCount[i].responseTime;
 					caseCount[i].responseTime = Math.floor(seconds / 3600) + "h ";
@@ -1048,24 +1111,36 @@ const indexFunctions = {
 			// get all cities across all arrays
 			let lookup = [...new Set([
 					...outbreak.caseCount.map(e => e.city),
+					...outbreak.casePast.map(e => e.city),
 					...outbreak.deathCount.map(e => e.city),
+					...outbreak.deathPast.map(e => e.city),
 					...outbreak.growth.map(e => e.city),
-					...outbreak.attack.map(e => e.city)
+					...outbreak.growthPast.map(e => e.city),
+					...outbreak.attack.map(e => e.city),
+					...outbreak.attackPast.map(e => e.city)
 			])];
 			outbreak.outbreakSumm = [];
 			lookup.forEach(e1 => {
 				outbreak.outbreakSumm.push({
 					city: e1,
 					...outbreak.caseCount.find(e2 => e2.city === e1),
+					...outbreak.casePast.find(e2 => e2.city === e1),
 					...outbreak.deathCount.find(e2 => e2.city === e1),
+					...outbreak.deathPast.find(e2 => e2.city === e1),
 					...outbreak.growth.find(e2 => e2.city === e1),
-					...outbreak.attack.find(e2 => e2.city === e1)
+					...outbreak.growthPast.find(e2 => e2.city === e1),
+					...outbreak.attack.find(e2 => e2.city === e1),
+					...outbreak.attackPast.find(e2 => e2.city === e1)
 				});
 			});
 			delete outbreak.caseCount;
+			delete outbreak.casePast;
 			delete outbreak.deathCount;
+			delete outbreak.deathPast;
 			delete outbreak.growth;
+			delete outbreak.growthPast;
 			delete outbreak.attack;
+			delete outbreak.attackPast;
 			
 			outbreak.outbreakAudit = await db.exec(`SELECT oa.*, u.druName
 					FROM mmchddb.OUTBREAK_AUDIT oa
