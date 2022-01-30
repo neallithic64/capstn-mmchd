@@ -349,9 +349,9 @@
                   :href="'/viewHealthEvent' + '?eventID=' + data[column.key]">
                   {{ data[column.key] }}
                 </a>
-                <a v-else-if="column.key === 'immunizationProgNo'"
+                <a v-else-if="column.key === 'TCLID'"
                   style="color: #346083; text-decoration-line: underline"
-                  :href="'/viewImmunizationProg'">
+                  :href="'/viewImmunizationProg?TCLID=' + data[column.key]">
                   {{ data[column.key] }}
                 </a>
                 <a v-else-if="(column.key === 'progAccompID')"
