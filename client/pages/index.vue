@@ -155,7 +155,7 @@
             <a :href="'/allCases'">
               <div class="dboard-right-content" style="border-left-color: #008d41; padding-left: 0px;">
                 <div id="tracker-headers">
-                  <span style="width: 33.33%;"> City </span>
+                  <span style="width: 40%;"> City </span>
                   <span style="width: 20%;"> CIF </span>
                   <span style="width: 40%;"> CRF </span>
                 </div>
@@ -164,13 +164,13 @@
                   <ul v-for="(value, name, i) in reportStatus" :key="i">
                     <li>
                       <div id="tracker-content-row">
-                      <div style="width: 33.33%;">
+                      <div style="width: 40%;">
                         {{ name }}
                       </div>
-                      <div v-if="reportStatus[name][0] == 1" style="width: 20%;">
+                      <div v-if="reportStatus[name][0] == 1" style="width: 20%; padding-left: 10px;">
                         <div class="cifYES"> </div>
                       </div>
-                      <div v-if="reportStatus[name][0] == 0" style="width: 20%;">
+                      <div v-if="reportStatus[name][0] == 0" style="width: 20%; padding-left: 10px;">
                         <div class="cifNO"> </div>
                       </div>
                       <div class="crfBar" style="width: 40%;">
