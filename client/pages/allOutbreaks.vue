@@ -148,7 +148,7 @@ export default {
   },
   async mounted() {
     if (this.allOutbreaks.length === 0) {
-      this.$toast.show('Loading...', {icon: 'hourglass_top'});
+      this.$toast.show('Loading...', {className: 'blink', icon: 'hourglass_top'});
     }
     const rows = (await axios.get('http://localhost:8080/api/getAllOutbreaks')).data;
     console.log(rows[0]);
@@ -247,6 +247,22 @@ body {
   font-weight: 800;
   font-size: 32px;
   color: #346083;
+}
+
+.blink {
+  animation: blink 2s steps(3, end) infinite;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 .alloutbreaks-container {

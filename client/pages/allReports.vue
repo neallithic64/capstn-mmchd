@@ -152,7 +152,7 @@ export default {
   },
   async mounted() {
     // if (this.dataSets.length === 0) {
-    //   this.$toast.show('Loading...', {icon: 'hourglass_top'});
+    //   this.$toast.show('Loading...', {className: 'blink', icon: 'hourglass_top'});
     // }
     
     // const DRUUserTypes = ['BHS', 'RHU', 'CHO', 'govtHosp', 'privHosp', 'clinic', 'govtLab', 'privLab', 'airseaPort', 'fhsis'];
@@ -233,6 +233,22 @@ body {
 .all-reports-container {
   padding: 80px 20px 5px 20px;
   width: 100%;
+}
+
+.blink {
+  animation: blink 2s steps(3, end) infinite;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 @media only screen and (max-width: 800px) {

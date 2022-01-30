@@ -380,7 +380,7 @@ export default {
   async mounted() {
 
     if (this.allData.length === 0) {
-      this.$toast.show('Loading...', {icon: 'hourglass_top'});
+      this.$toast.show('Loading...', {className: 'blink', icon: 'hourglass_top'});
     }
     const CHDtypes = ['Chief', 'Staff', 'resuHead', 'chdDirector'];
     const cifRows = (await axios.get('http://localhost:8080/api/getCases')).data;
@@ -674,6 +674,22 @@ body {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+}
+
+.blink {
+  animation: blink 2s steps(3, end) infinite;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 /* h2 {

@@ -140,7 +140,7 @@ export default {
   },
   async mounted() {
     if (this.allEvents.length === 0) {
-      this.$toast.show('Loading...', {icon: 'hourglass_top'});
+      this.$toast.show('Loading...', {className: 'blink', icon: 'hourglass_top'});
     }
     const DRUUserTypes = ['BHS', 'RHU', 'CHO', 'govtHosp', 'privHosp', 'clinic', 'govtLab', 'privLab', 'airseaPort', 'fhsisStaff'];
     const rows = (await axios.get('http://localhost:8080/api/getAllEvents')).data;
@@ -226,6 +226,22 @@ body {
     width: 100%;
     align-items: center;
     margin: 0px;
+  }
+}
+
+.blink {
+  animation: blink 2s steps(3, end) infinite;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
   }
 }
 
