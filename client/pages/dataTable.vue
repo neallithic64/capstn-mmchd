@@ -781,6 +781,7 @@ export default {
       this.getPages();
     },
     selectedDataAmount() {
+      this.showDataAmount = parseInt(this.showDataAmount);
       this.currentPage = 1;
       this.getPages();
       this.getStartEnd();

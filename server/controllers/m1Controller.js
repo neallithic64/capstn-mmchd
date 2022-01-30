@@ -136,13 +136,14 @@ function Notification(notificationID, receiverID, type, message, caseID, dateCre
 	this.viewed = viewed;
 }
 
-function Outbreak(outbreakID, diseaseID, outbreakStatus, startDate, endDate, responseTime) {
+function Outbreak(outbreakID, diseaseID, outbreakStatus, startDate, endDate, type ,responseTime) {
 	this.outbreakID = outbreakID;
 	this.diseaseID = diseaseID;
 	this.outbreakStatus = outbreakStatus;
 	this.startDate = startDate;
 	this.endDate = endDate;
 	this.responseTime = responseTime;
+	this.type = type;
 }
 /** ON ID CREATION
 */
@@ -289,7 +290,7 @@ async function createOutbreak(diseaseID, outbreakStatus) {
 		let match = await db.exec("SELECT * FROM mmchddb.OUTBREAKS WHERE diseaseID='" + diseaseID +
 								"' AND NOT outbreakStatus='Closed';");
 		if(match.length > 0) {
-			if(match[0] == outbreakStatus)
+			if(match[0].outbreakStatus == outbreakStatus)
 				return match[0];
 			else if(outbreakStatus == 'Epidemic') {
 				let result = await db.updateRows("mmchddb.OUTBREAKS", {outbreakID:match[0].outbreakID}, {outbreakStatus:outbreakStatus});
@@ -299,7 +300,7 @@ async function createOutbreak(diseaseID, outbreakStatus) {
 					return false;
 			}	
 		} else {
-			let newOutbreak = new Outbreak(await generateID("mmchddb.OUTBREAKS"), diseaseID, 'Ongoing', new Date(), null, null);
+			let newOutbreak = new Outbreak((await generateID("mmchddb.OUTBREAKS")).id, diseaseID, 'Ongoing', new Date(), null,outbreakStatus, null);
 			let result = await db.insertOne("mmchddb.OUTBREAKS", newOutbreak);
 			return result;
 		}
@@ -313,10 +314,10 @@ async function checkIfOutbreak(diseaseID, caseObj) {
 	try {
 		// check if disease case is measles (suspected case for alert, confirmed case for epidemic)
 		if(diseaseID == "DI-0000000000000") {
-			if(caseObj.caseStatus == "Suspected Case") {
+			if(caseObj.caseLevel == "Suspected Case") {
 				return await createOutbreak("DI-0000000000000", "Alert");
 			}
-			else if (caseObj.caseStatus == "Discarded Case")
+			else if (caseObj.caseLevel == "Non-Measles/Rubella Discarded Case")
 				return false;
 			else
 				return await createOutbreak("DI-0000000000000", "Epidemic");
@@ -1199,6 +1200,20 @@ const indexFunctions = {
 		}
 	},
 
+	getOutbreakAlertDetails: async function(req, res){
+		try {
+			let outbreaks = await db.findRows("mmchddb.OUTBREAKS", {outbreakID:req.query.outbreakID});
+			if(outbreaks.length > 0){
+				let disease = await db.findRows("mmchddb.DISEASES", {diseaseID:outbreaks[0].diseaseID});
+				res.status(200).send({outbreak: outbreaks[0], disease:disease[0]});
+			}
+			else res.status(400).send("No outbreaks");
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
+
 	getOngoingOutbreaks: async function(req, res){
 		try {
 			let outbreaks = await db.exec("SELECT * FROM mmchddb.OUTBREAKS WHERE NOT outbreakStatus='Closed'");
@@ -1528,8 +1543,10 @@ const indexFunctions = {
 									result = await sendBulkNotifs(['pidsrStaff', 'fhsisStaff'],'caseNotif',
 										'NEW CASE: '+ user[0].druName + ' submitted a ' + disease[0].diseaseName + ' case', formData.cases.caseID);
 									
-									if (result)
-										res.status(200).send("Add case success");
+									if (result){
+										let ifOutbreak = await checkIfOutbreak(formData.cases.diseaseID, formData.cases);
+										res.status(200).send(ifOutbreak);
+									}
 									else res.status(500).send("Send Notifs Failed");
 
 								} else {
@@ -1626,7 +1643,8 @@ const indexFunctions = {
 					let newNotif = await db.insertOne("mmchddb.NOTIFICATIONS", notification);
 					
 					if (newNotif) {
-						res.status(200).send("Case has been updated!");
+						let ifOutbreak = await checkIfOutbreak(caseData[0].diseaseID, caseData[0]);
+						res.status(200).send(ifOutbreak);
 					} else {
 						console.log("Add Notification failed");
 						res.status(500).send("Add Notification failed");
@@ -1640,7 +1658,7 @@ const indexFunctions = {
 	},
 	
 	postUpdateEventStatus: async function(req, res) {
-		let { eventID, newStatus, modifiedBy } = req.body;
+		let { eventID, newStatus, modifiedBy, assessment} = req.body;
 		try {
 			// retrieve the case (that hopefully exists)
 			let eventData = await db.findRows("mmchddb.EVENTS", {eventID: eventID});
@@ -1658,7 +1676,7 @@ const indexFunctions = {
 				// then updating the case object itself
 				let updateEvent = await db.updateRows("mmchddb.EVENTS",
 						{eventID: eventID},
-						{eventStatus: newStatus});
+						{eventStatus: newStatus, assessment:assessment});
 				if (newEventAudit && updateEvent) {
 					// actual notification object insertion
 					let notification = new Notification(null, eventData[0].userID, 'updateNotif',

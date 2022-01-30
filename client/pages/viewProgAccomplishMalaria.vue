@@ -34,7 +34,7 @@
             Save </button>
         </div>
       </div>
-      <div class="viewcases-component">
+      <div class="VPAMviewComponent">
       <div class="datatable">
         <div style="display: flex; justify-content: space-between; margin-top:-5px;">
           <h3 id="form-header" style="padding: 10px 0;">DRU: {{ druName }}</h3>
@@ -98,7 +98,7 @@
       </div>
       </div>
       <div>
-        <div v-show="!isEdit" style="margin: -15px 10px 50px; text-align: -webkit-right;">
+        <div v-show="!isEdit" style="margin: 20px 10px 40px; text-align: -webkit-right;">
           <button class="cancel-button" type="button" @click="save('Save')">
             Save </button>
           <button class="save-button" type="button" @click="save('Submit')">
@@ -385,7 +385,7 @@ body {
   }
 }
 
-.viewcases-component {
+.VPAMviewComponent {
   /* position: relative;
   display: inline-flex;
   flex-direction: row; */
@@ -397,10 +397,9 @@ body {
   border-radius: 10px;
   padding: 15px;
   padding-bottom: 20px;
-  margin-bottom: 40px;
 }
 @media only screen and (max-width: 800px) {
-  .viewcases-component {
+  .VPAMviewComponent {
     position: relative;
     top: 0px;
     min-height: fit-content;

@@ -16,15 +16,20 @@
 </template>
 
 <script>
+const axios = require('axios');
 export default {
   middleware: 'is-auth',
   data() {
     return {
       outbreak: {
-        outbreakType: 'epidemic',
+        outbreakType: 'Epidemic',
         diseaseName: 'Acute Viral Hepatitis'
       }
     }
+  },
+  async fetch(){
+    const alertDetails = (await axios.get('http://localhost:8080/api/getOutbreakAlertDetails?outbreakID=' + this.$route.query.outbreakID)).data;
+    this.outbreak.diseaseName = alertDetails.disease.diseaseName;
   },
   head() {
     return {

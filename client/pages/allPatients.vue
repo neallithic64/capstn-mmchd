@@ -105,7 +105,7 @@ export default {
     }
   },
   async mounted() {
-    if (this.allOutbreaks.length === 0) {
+    if (this.allPatients.length === 0) {
       this.$toast.show('Loading...', {className: 'blink', icon: 'hourglass_top'});
     }
     const rows = (await axios.get('http://localhost:8080/api/getPatients', {
@@ -116,7 +116,7 @@ export default {
       rows[i].updatedDate = rows[i].updatedDate ? this.convDatePHT(new Date(rows[i].updatedDate)) : "N/A";
     }
     this.allPatients = rows;
-    if (this.allOutbreaks.length > 0) {
+    if (this.allPatients.length > 0) {
       this.$toast.clear();
       this.$toast.success('All outbreaks loaded!', {duration: 4000, icon: 'check_circle'});
     }

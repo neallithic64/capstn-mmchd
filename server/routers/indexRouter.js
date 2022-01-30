@@ -3,6 +3,7 @@ const router = express();
 const cron = require('node-cron');
 const m1Cont = require("../controllers/m1Controller");
 const m4Cont = require("../controllers/m4Controller");
+const m2Cont = require("../controllers/m2Controller");
 // const middleware = require("../middlewares/indexMiddleware");
 
 
@@ -32,6 +33,7 @@ router.get("/getPatientData", m1Cont.getPatientData);
 
 router.get("/getAllOutbreaks", m1Cont.getAllOutbreaks);
 router.get("/getOutbreak", m1Cont.getOutbreak);
+router.get("/getOutbreakAlertDetails",m1Cont.getOutbreakAlertDetails);
 router.get("/getOngoingOutbreaks", m1Cont.getOngoingOutbreaks);
 router.get("/getAllEvents", m1Cont.getAllEvents);
 router.get("/getEvent", m1Cont.getEvent);
@@ -75,8 +77,8 @@ router.get("/getFileTest", m4Cont.getFileTest);
 // CRON Routes
 cron.schedule("00 14 * * 3", m1Cont.cronCRFDeadlineNotif);
 cron.schedule("00 17 * * 5", m1Cont.cronCRFPushData);
-// cron.schedule("00 17 * * 6", m1Cont.cronUpdateThresholds);
-
+cron.schedule("00 17 * * 6", m1Cont.cronUpdateThresholds);
+// router.get("/updateThresholds", m1Cont.cronUpdateThresholds);
 
 // 404 PAGE
 router.get("*", function(req, res) {
