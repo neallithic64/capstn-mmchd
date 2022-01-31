@@ -587,7 +587,6 @@ const indexFunctions = {
 			/*
 			let rows = await db.exec(`SELECT userID FROM mmchddb.USERS ORDER BY userID;`);
 			if (rows) rows = rows.map(e => e.userID);
-			*/
 			let arr = [];
 			let rows = await db.exec(`SELECT SUM(rf.LSmoking), SUM(rf.LAlcoholism), SUM(rf.LDrugUse),
 					SUM(rf.LPhysicalInactivity), SUM(rf.CHereditary), SUM(rf.CAsthma), SUM(rf.HHeartDisease),
@@ -601,7 +600,26 @@ const indexFunctions = {
 				arr.push({key: /SUM\(rf\.(\w+)\)/.exec(key)[1], value: val});
 			}
 			arr.forEach(async (e) => await db.insertOne("mmchddb.RISK_FACTORS_C", e));
-			res.status(200).send(arr);
+			let risks = ["rf.LSmoking", "rf.LAlcoholism", "rf.LDrugUse", "rf.LPhysicalInactivity",
+					"rf.CHereditary", "rf.CAsthma", "rf.HHeartDisease", "rf.HHypertension", "rf.HObesity",
+					"rf.HDiabetes", "rf.OCleanWater", "rf.OAirPollution", "rf.OHealthFacility",
+					"rf.OWasteMgmt", "rf.OVacCoverage", "rf.OHealthEdu", "rf.OShelter", "rf.OFlooding",
+					"rf.OPoverty"], risk, rows;
+			for (let i = 0; i < risks.length; i++) {
+				risk = risks[i];
+				rows = await db.exec(`SELECT SUM(CASE WHEN ${risk} = 1 AND c.caseLevel LIKE '%Confirm%' THEN 1 ELSE 0 END) AS exposedDisease,
+						SUM(${risk}) AS totalExposed,
+						SUM(CASE WHEN ${risk} = 0 AND c.caseLevel LIKE '%Confirm%' THEN 1 ELSE 0 END) AS unexposedDisease,
+						SUM(CASE WHEN ${risk} = 0 THEN 1 ELSE 0 END) totalUnexposed, d.diseaseName, '${risk.substr(3)}' AS riskName
+						FROM mmchddb.RISK_FACTORS rf
+						LEFT JOIN mmchddb.CASES c ON c.caseID = rf.caseID
+						LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = c.diseaseID
+						GROUP BY d.diseaseName`);
+				console.log(rows);
+				await db.insertRows("mmchddb.RISK_FACTORS_D", Object.keys(rows[0]), rows.map(Object.values));
+			}
+			*/
+			res.status(200).send([]);
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
