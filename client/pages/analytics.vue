@@ -20,7 +20,9 @@
 
       <!-- Reports -->
       <div class="analytics-report-container">
-        
+        <div v-if="pageNum == 0">
+          
+        </div>
       </div>
     </div>
   </div>
@@ -34,15 +36,14 @@ export default {
       isPrint: false, 
       pageNum: 0,
       analyticsList: {
-        'A1': 'Summary',
-        'A2': 'Prevalence',
-        'A3': 'Fatality',
-        'A4': 'Person',
-        'A5': 'Time',
-        'A6': 'Place',
-        'A7': 'Risks',
-        'A8': 'Accomplishments',
-        'A9': 'Health Events'
+        'A1': 'Prevalence',
+        'A2': 'Fatality',
+        'A3': 'Person',
+        'A4': 'Time',
+        'A5': 'Place',
+        'A6': 'Risks',
+        'A7': 'Accomplishments',
+        'A8': 'Health Events'
       } 
     }
   },
