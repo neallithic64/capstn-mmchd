@@ -80,7 +80,7 @@
             <!-- checkbox -->
             <div class="alignLeft alignStart marginTop-25" style="width:45%">
               <div class="reportsOptionsBox">
-                <div class="analysisReportOption marginTopBot2" style="width: 235px;font-weight: 600;">
+                <div class="analysisReportOption marginTopBot2" style="width: 100%;font-weight: 600;">
                   Reports Included:
                 </div>
                 <div v-for="(analysis, index) in reportsOption" :key="index"
@@ -262,7 +262,6 @@ export default {
         'Typhoid',
       ],
       reportsOption: [
-        'Summary',
         'Prevalence Analysis',
         'Fatality Analysis',
         'Person Analysis',
@@ -313,8 +312,8 @@ export default {
     },
     getMinClass(index, reportCount) {
       if (!this.isPrint) return 'addRep-chartContainerView';
-      else if (index === 0) return 'fullHeightFirst';
       else if (index === reportCount-1) return 'fullHeightLast';
+      else if (index === 0) return 'fullHeightFirst';
       else return 'fullHeightNotFirst';
     },
     validate() {
@@ -343,12 +342,10 @@ export default {
         else this.$toast.error('Please fill up the required fields!', {duration: 4000, icon: 'error'});
       }
       else {
-        let done = false;
         this.isPrint = true;
         // window.addEventListener('load', function () {
         if (this.isPrint) {
-          if (!done) this.$toast.show('Printing...', {className: 'blink', icon: 'hourglass_top'}); 
-          setTimeout(() => (done = true), 8000);
+          this.$toast.success('Printing...', {duration: 8500, icon: 'check_circle'});
           setTimeout(() => (this.print()), 10000);
           setTimeout(() => (this.isPrint=false), 15000);
           setTimeout(() => (this.readyPrint=true), 15000);
@@ -665,9 +662,9 @@ select {
 .width100 { width: 100%; }
 .width155 { width: 155px; }
 .width105 { width: 105px; }
-.fullHeightLast { min-height: 720px;}
-.fullHeightFirst { min-height: 740px;} /* 1000-265 - 10 + 15 (removed from margin bottom) */
-.fullHeightNotFirst { min-height: 915px; }
+.fullHeightLast { min-height: 710px;}
+.fullHeightFirst { min-height: 730px;} /* 1000-265 - 10 + 5 (removed from margin bottom) */
+.fullHeightNotFirst { min-height: 905px; }
 .inputLegend { width: 140px; }
 .input-required:invalid {  box-shadow: 0 0 5px #d45252; border-color: hsl(0, 76%, 50%); /* background-color: #ff6961; */ }
 /* .input-required{ border-color: hsl(0, 76%, 50%); } */
