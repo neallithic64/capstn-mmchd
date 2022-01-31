@@ -709,8 +709,11 @@ const indexFunctions = {
 		try {
 			let havingClause,
 					userTypeCheck = await db.findRows("mmchddb.USERS", {userID: req.query.userID});
-			if (userTypeCheck.length > 0 && userTypeCheck[0].userType.includes("Staff")) havingClause = ``;
-			else havingClause = `HAVING cr.userID = '${req.query.userID}'`;
+			if (userTypeCheck.length > 0 && userTypeCheck[0].userType.includes("Staff")) {
+				havingClause = ``;
+			} else if (userTypeCheck.length > 0 && userTypeCheck[0].userType.includes("Lab")) {
+				havingClause = `HAVING c.reportedBy = '${req.query.userID}' OR c.investigatorLab = '${req.query.userID}'`;
+			} else havingClause = `HAVING c.reportedBy = '${req.query.userID}'`;
 			
 			let match = await db.exec(`SELECT c.*, d.diseaseName,
 					CONCAT(p.lastName, ", ", p.firstName, " ", p.midName) AS patientName,
