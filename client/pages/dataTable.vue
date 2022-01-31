@@ -268,13 +268,11 @@
               <span v-else-if="column.key === 'action'">
                 <div v-if="pageType==='immunProg'" class="actionButtons">
                   <ul>
-                    <a :href="'/viewImmunizationProgEntry'" class="CRFActionButton" style="color: #346083; text-decoration-line: underline">
-                      <span v-if="data[column.key]==='update'"> Update </span>
-                      <span v-if="data[column.key]==='view'"> View </span>
-                    
-                      <!-- <img v-if="data[column.key]==='add'" src="~/assets/img/add.png" class="button" />
-                      <img v-if="data[column.key]==='edit'" src="~/assets/img/pen.png" class="button"/>
-                      <img v-if="data[column.key]==='view'" src="~/assets/img/eye.png" class="button"/> -->
+                    <a v-if="data[column.key]==='update'" :href="'/viewImmunizationProgEntry?action=update&patientID=' + data['patientID']" class="CRFActionButton" style="color: #346083; text-decoration-line: underline">
+                      <span> Update </span>
+                    </a>
+                    <a v-if="data[column.key]==='view'" :href="'/viewImmunizationProgEntry?action=view&patientID=' + data['patientID']" class="CRFActionButton" style="color: #346083; text-decoration-line: underline">
+                      <span> View </span>
                     </a>
                   </ul>
                 </div>

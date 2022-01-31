@@ -282,7 +282,7 @@ const indexFunctions = {
 					WHERE u.userID = '${ req.query.userID }';`);
 			if (!!req.query.TCLID) { // getting for view page
 				let match = await db.exec(`SELECT t.*, td.*, p.*, a1.city AS patientCity,
-						a1.brgy AS patientCity
+						u.druName, a2.city AS druCity, a2.brgy AS druBrgy
 						FROM mmchddb.TCLS t
 						LEFT JOIN mmchddb.TCL_DATA td ON td.TCLID = t.TCLID
 						LEFT JOIN mmchddb.PATIENTS p ON p.patientID = td.patientID
@@ -291,6 +291,7 @@ const indexFunctions = {
 						LEFT JOIN mmchddb.ADDRESSES a2 ON a2.addressID = u.addressID
 						WHERE t.TCLID = '${ req.query.TCLID }';`);
 				res.status(200).send({
+					TCL: match.length ? match[match.length - 1] : [],
 					tclData: match,
 					pushDataAccept: userSettings[0].pushDataAccept,
 					userData: userData[0]

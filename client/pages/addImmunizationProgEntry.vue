@@ -1091,7 +1091,7 @@ const axios = require('axios');
 export default {
   middleware: 'is-auth',
   header: {
-    title: 'Case Report Form - Dengue',
+    title: 'Immunization Program Report Entry',
   },
   data() {
     return {

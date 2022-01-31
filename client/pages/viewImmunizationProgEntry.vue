@@ -1069,7 +1069,7 @@ const axios = require('axios');
 export default {
   middleware: 'is-auth',
   header: {
-    title: 'Case Report Form - Dengue',
+    title: 'Immunization Program Report Entry',
   },
   data() {
     return {
@@ -1229,12 +1229,13 @@ export default {
   },
   async fetch() {
 	this.formData = (await axios.get('http://localhost:8080/api/getPatientData', {
-      patientID: this.$route.query.patientID
+      params: { patientID: this.$route.query.patientID }
     })).data;
+	if (this.formData.tcl)
   },
   head() {
     return {
-      title: 'Immunization Form '
+      title: 'Immunization Form'
     }
   },
   computed: {},

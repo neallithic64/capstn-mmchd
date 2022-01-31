@@ -17,7 +17,7 @@ Date.prototype.getWeek = function() {
  * This will return a String representation of the corrected date in Philippine Standard
  * Time. This is done by offsetting the date by a constant of 8 hours in miliseconds.
  */
-function convDatePHT (d) {
+function convDatePHT(d) {
 	return !isNaN(Date.parse(d)) ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10) : "N/A";
 }
 
@@ -780,7 +780,7 @@ const indexFunctions = {
 			let riskFactorsData = await db.findRows("mmchddb.RISK_FACTORS", {caseID: req.query.caseID});
 			let caseData = await db.findRows("mmchddb.CASE_DATA", {caseID: req.query.caseID});
 			let caseAudit = await db.exec("SELECT a.dateModified AS 'reportDate', a.prevValue AS 'from', "+
-			 		"CONCAT(u.firstName,' ', u.midName, ' ', u.lastName, ', ' , u.druName) AS 'reportedBy' " +
+					"CONCAT(u.firstName,' ', u.midName, ' ', u.lastName, ', ' , u.druName) AS 'reportedBy' " +
 					"FROM mmchddb.AUDIT_LOG a JOIN mmchddb.USERS u ON a.modifiedBy = u.userID " +
 					"WHERE a.editedID = '" + req.query.caseID + "' AND a.fieldName = 'caseLevel'" +
 					"ORDER BY a.dateModified;");
@@ -863,6 +863,8 @@ const indexFunctions = {
 	},
 
 	getPatientData: async function(req, res) {
+		let riskFactorsData = [], DRUData = [];
+		console.log(req.query);
 		try {
 			// collect relevant data
 			let rows = await db.exec(`SELECT c.caseID, c.reportDate, c.caseLevel,
@@ -884,20 +886,28 @@ const indexFunctions = {
 					INNER JOIN mmchddb.ADDRESSES a1 ON p.caddressID = a1.addressID
 					INNER JOIN mmchddb.ADDRESSES a2 ON p.paddressID = a2.addressID
 					WHERE p.patientID = '${req.query.patientID}';`);
-			let riskFactorsData = await db.findRows("mmchddb.RISK_FACTORS", {caseID: rows[rows.length - 1].caseID});
-			let DRUData = await db.exec(`SELECT u.druName, userType AS 'druType', a.city AS 'druCity',
-					a.houseStreet AS 'druHouseStreet', a.brgy AS 'druBrgy', us.pushDataAccept
-					FROM mmchddb.USERS u
-					INNER JOIN mmchddb.ADDRESSES a ON u.addressID = a.addressID
-					INNER JOIN mmchddb.USER_SETTINGS us ON us.userID = u.userID
-					WHERE u.userID = '${rows[0].reportedBy}';`);
-			let cases;
+			let tclData = await db.exec(`SELECT * FROM mmchddb.TCL_DATA WHERE patientID = '${req.query.patientID}';`);
+			if (rows.length > 0) {
+				riskFactorsData = await db.findRows("mmchddb.RISK_FACTORS", {caseID: rows[rows.length - 1].caseID});
+				DRUData = await db.exec(`SELECT u.druName, userType AS 'druType', a.city AS 'druCity',
+						a.houseStreet AS 'druHouseStreet', a.brgy AS 'druBrgy', us.pushDataAccept
+						FROM mmchddb.USERS u
+						INNER JOIN mmchddb.ADDRESSES a ON u.addressID = a.addressID
+						INNER JOIN mmchddb.USER_SETTINGS us ON us.userID = u.userID
+						WHERE u.userID = '${rows[0].reportedBy}';`);
+			} else {
+				riskFactorsData = [{
+					LSmoking: 0,					LAlcoholism: 0,					LDrugUse: 0,					LPhysicalInactivity: 0,					LOthers: 0,					CHereditary: 0,					CAsthma: 0,					COthers: 0,					HHeartDisease: 0,					HHypertension: 0,					HObesity: 0,					HDiabetes: 0,					HOthers: 0,					OCleanWater: 0,					OAirPollution: 0,					OHealthFacility: 0,					OWasteMgmt: 0,					OVacCoverage: 0,					OHealthEdu: 0,					OShelter: 0,					OFlooding: 0,					OPoverty: 0,					OOthers: 0
+				}];
+			}
+			
 			let data = {
 				rowData: rows,
 				patient: patientData[0],
 				riskFactors: riskFactorsData[0],
-				DRUData: DRUData[0]
-			}
+				DRUData: DRUData.length ? DRUData[0] : [],
+				tclData: tclData.length ? tclData[0] : []
+			};
 			
 			// fixing dates
 			data.rowData.forEach(function(element) {
@@ -928,7 +938,7 @@ const indexFunctions = {
 			let caseData = await db.findRows("mmchddb.CASE_DATA", {caseID: req.query.caseID});
 			let crfData = await db.findRows("mmchddb.CRFS", {CRFID: rows[0].CRFID});
 			let caseAudit = await db.exec("SELECT a.dateModified AS 'reportDate', a.prevValue AS 'from', " +
-			 		"CONCAT(u.firstName,' ', u.midName, ' ', u.lastName, ', ' , u.druName) AS 'reportedBy' " +
+					"CONCAT(u.firstName,' ', u.midName, ' ', u.lastName, ', ' , u.druName) AS 'reportedBy' " +
 					"FROM mmchddb.AUDIT_LOG a JOIN mmchddb.USERS u ON a.modifiedBy = u.userID " +
 					"WHERE a.editedID = '" + req.query.caseID + "' AND a.fieldName = 'caseLevel'" +
 					"ORDER BY a.dateModified;");
