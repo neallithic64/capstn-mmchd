@@ -478,6 +478,31 @@ const indexFunctions = {
 		}
 	},
 	
+	cronTCLPushData: async function() {
+		try {
+			let tcls = await db.exec(`SELECT * FROM mmchddb.TCLS WHERE isPushed = 0 AND status = 'Ongoing';`);
+			
+			// generate new CRFs
+			for (let i = 0; i < tcls.length; i++) {
+				let newTCL = (await generateID("mmchddb.TCLS")).id;
+				currWeek = new Date(tcls[i].year, tcls[i].month, 0);
+				nextWeek = new Date(currWeek.getFullYear(), currWeek.getMonth() + 1, currWeek.getDate());
+				await db.insertOne("mmchddb.TCLS", {
+					TCLID: newTCL,
+					diseaseID: tcls[i].diseaseID,
+					userID: tcls[i].userID,
+					week: nextWeek.getWeek(),
+					year: nextWeek.getFullYear(),
+					isPushed: false
+				});
+			}
+			console.log("TCLs have been pushed successfully!");
+		} catch (e) {
+			console.log(e);
+			console.log("Server Error");
+		}
+	},
+	
 	/** ignore below
 	 */
 
