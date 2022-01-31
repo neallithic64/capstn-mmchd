@@ -243,16 +243,15 @@ export default {
 
         preparedBy: '',
         dateTime: '',
-
-        notedBy: 'me',
+        notedBy: '',
         notedByDate: 'Jan 28, 2013',
-        recommendedBy: 'mysef',
+        recommendedBy: '',
         recommendedByDate: 'Feb 02, 2013',
         approvedBy: 'I',
         approvedByDate: '',
       },
-      reportTypeOption: ['Weekly','Monthly','Annual','Adhoc','Outbreak'],
-      timeOption: [], weekOption:[], monthOption: [], yearOption:[],
+      reportTypeOption: ['Weekly', 'Monthly', 'Annual', 'Adhoc', 'Outbreak'],
+      timeOption: [], weekOption: [], monthOption: [], yearOption: [],
       diseaseOption: [
         'Malaria',
         'Measles',

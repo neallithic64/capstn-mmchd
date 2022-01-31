@@ -131,6 +131,19 @@ const indexFunctions = {
 		}
 	},
 	
+	getAllReports: async function(req, res) {
+		try {
+			let reports = await db.exec(`SELECT r.*, d.diseaseName
+					FROM mmchddb.REPORTS r
+					LEFT JOIN mmchddb.USERS u ON u.userID = r.preparedBy
+					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = r.diseaseID;`);
+			res.status(200).send(reports);
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
+	
 	/*
 	 * POST METHODS
 	 */
