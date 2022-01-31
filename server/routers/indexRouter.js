@@ -74,6 +74,7 @@ router.post("/updatePushData", m1Cont.postUpdatePushData);
 router.post("/updateOutbreakStatus", m1Cont.postUpdateOutbreakStatus);
 
 router.post("/postFileBlob", m3Cont.postFileBlob);
+router.post("/postAddReport", m3Cont.postAddReport);
 
 router.post("/editProgTargets", m4Cont.postEditProgTargets);
 router.post("/editProgAccomp", m4Cont.postEditProgAccomp);
