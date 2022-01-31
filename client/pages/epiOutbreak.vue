@@ -10,7 +10,7 @@
         <span style="font-weight: 900; font-size: 40px; margin-top: 5px"> EPIDEMIC OUTBREAK ALERT </span>
         <span style="font-weight: 200; font-size: 18px; max-width: 300;"> The <b style="font-weight: 900;"> {{ outbreak.outbreakType }} threshold </b> for <b style="font-weight: 900;"> {{ outbreak.diseaseName }} </b> has been reached. Response required! </span>
       </div>
-      <button class="view-button"> View Outbreak </button>
+      <a href="/allOutbreaks"> <button class="view-button"> View Outbreak </button> </a>
     </div>
   </div>
 </template>

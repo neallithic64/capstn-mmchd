@@ -3,7 +3,17 @@
     <TopNav/>
     <div id="dashboard-container">
       <div id="dashboard-bottom">
-          <iframe id="dashboard-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiODdiNTM2N2YtMTA3YS00NzA2LTg5YjItMDBlZDllMTQ2ZDY0IiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D&pageName=ReportSection">
+          <iframe v-if="$auth.user.userType === 'pidsrStaff' || $auth.user.userType === 'techStaff' || $auth.user.userType === 'lhsdChief' 
+                  || $auth.user.userType === 'resuHead' || $auth.user.userType === 'chdDirector' || $auth.user.userType === 'idpcStaff'" 
+            id="dashboard-powerbi-iframe"
+            src="https://app.powerbi.com/view?r=eyJrIjoiYTQ0YjRkY2YtMTk2MS00NTljLWFhOTUtYWI0ODUzZDlmNDEyIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D">
+          </iframe>
+          <iframe v-if="$auth.user.userType === 'fhsisStaff'" id="dashboard-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiYTdlYWJmYzEtMDliOC00NzBiLTlkYjEtNjViN2E1MjkxMjFlIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D">
+          </iframe>
+          <iframe v-if="$auth.user.userType === 'BHS' || $auth.user.userType === 'privHosp' || $auth.user.userType === 'privLab' 
+                  || $auth.user.userType === 'govtLab' || $auth.user.userType === 'govtHosp'" 
+            id="dashboard-powerbi-iframe" 
+            src="https://app.powerbi.com/view?r=eyJrIjoiNWFhOWE0NTAtYWIwMy00MjRmLTk2YmYtNGY2OTFmNGQzYTliIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D&pageName=ReportSectionaeb3cc4ecb8e7e8b1d66">
           </iframe>
         <div id="dashboard-right">
 
@@ -81,18 +91,18 @@
             <a :href="'/allProgAccomplish'">
               <div class="dboard-right-content" style="border-left-color: #008d41; padding-left: 0px;">
                 <div id="tracker-headers">
-                  <span style="width: 30%;"> City </span>
-                  <span style="width: 70%;"> Accomplishment Forms </span>
+                  <span style="width: 40%;"> City </span>
+                  <span style="width: 60%;"> Accomplishment Forms </span>
                 </div>
 
                 <div id="tracker-content">
                   <ul v-for="(value, name, i) in progStatus" :key="i">
                     <li>
                       <div id="tracker-content-row">
-                        <div style="width: 30%;">
+                        <div style="width: 40%;">
                           {{ name }}
                         </div>
-                        <div class="crfBar" style="width: 70%">
+                        <div class="crfBar" style="width: 60%">
                           <div :id="name" class="crfProgress">
                           </div>
                         </div>
@@ -317,22 +327,22 @@ export default {
       },
       progStatus: {
         // out of 12 TCLs, and 12 PAFs so total 24 per BHS
-        'Caloocan': 6,
-        'Las Piñas': 8,
-        'Makati': 7,
-        'Malabon': 2,
-        'Mandaluyong': 8,
-        'Manila': 4,
-        'Marikina': 7,
-        'Muntinlupa': 2,
-        'Navotas': 24,
-        'Parañaque': 8,
-        'Pasay': 9,
-        'Pasig': 4,
+        'Caloocan City': 6,
+        'Las Piñas City': 8,
+        'Makati City': 7,
+        'Malabon City': 2,
+        'Mandaluyong City': 8,
+        'Manila City': 4,
+        'Marikina City': 7,
+        'Muntinlupa City': 2,
+        'Navotas City': 24,
+        'Parañaque City': 8,
+        'Pasay City': 9,
+        'Pasig City': 4,
         'Quezon City': 2,
-        'San Juan': 5,
-        'Taguig': 7,
-        'Valenzuela': 5
+        'San Juan City': 5,
+        'Taguig City': 7,
+        'Valenzuela City': 5
       }
     }
   },
@@ -351,7 +361,7 @@ export default {
         this.$auth.user.userType === 'aehmdChief' || this.$auth.user.userType === 'resuHead' || this.$auth.user.userType === 'chdDirector' || 
         this.$auth.user.userType === 'idpcStaff' || this.$auth.user.userType === 'eohStaff' || this.$auth.user.userType === 'hemStaff')
       this.moveProgress();
-    if (this.$auth.user.userType === 'fhsisStaff' || this.$auth.user.userType === 'techStaff')
+    else if (this.$auth.user.userType === 'fhsisStaff')
       this.moveTCLProgress();
   },
   methods: {
@@ -380,9 +390,9 @@ export default {
     },
     moveTCLProgress() {
       for (let i = 0; i < this.cities.length; i++) {
-        const bar = document.getElementById(this.cities[i]);
+        const bars = document.getElementById(this.cities[i]);
         // computation for % = total no of CRFs submitted in the city / (24 per BHS * number of BHSs in the city) * 100)
-        bar.style.width = ((this.progStatus[this.cities[i]]/24)*100) + "%";
+        bars.style.width = ((this.progStatus[this.cities[i]]/24)*100) + "%";
       }
     }
   }
