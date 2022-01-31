@@ -402,11 +402,15 @@ export default {
           console.log(result);
         };
     },
-    submit() {
+    async submit() {
       if (!this.readySubmit) this.$toast.error('Please upload the file.', {duration: 4000, icon: 'error'});
       else {
-        // TO DO
-        this.$toast.success('Feedback Report Submitted!', {duration: 4000, icon: 'check_circle'});
+        const response = (await axios.post('http://localhost:8080/api/postAddReport', {
+		  report: this.report
+		}));
+		if (response.status === 200) {
+          this.$toast.success('Feedback Report Submitted!', {duration: 4000, icon: 'check_circle'});
+		}
       }
     },
   }
