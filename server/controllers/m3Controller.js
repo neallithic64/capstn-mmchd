@@ -121,10 +121,37 @@ const indexFunctions = {
 		else res.status(500).send("problems");
 	},
 	
-	getFileTest: async function(req, res) {
+	getFileBlob: async function(req, res) {
+		let match = "";
 		try {
-			let match = await db.exec(`SELECT * FROM mmchddb.zzzREPORT_COMMENTS;`);
+			if (req.query.reportID) {
+				match = await db.exec(`SELECT file FROM mmchddb.REPORTS WHERE reportID = '${req.query.reportID}';`);
+			} else {
+				match = await db.exec(`SELECT file FROM mmchddb.zzzREPORT_COMMENTS;`);
+			}
 			res.status(200).send(match[0].file);
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
+	
+	getReport: async function(req, res) {
+		try {
+			let report = await db.exec(`SELECT r.*, d.diseaseName, u1.*, u2.*
+					FROM mmchddb.REPORTS r
+					LEFT JOIN mmchddb.USERS u1 ON u1.userID = r.preparedBy
+					LEFT JOIN mmchddb.USERS u2 ON u2.userID = r.approvedBy
+					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = r.diseaseID
+					WHERE r.reportID = '${req.query.reportID}';`);
+			let auditLog = await db.exec(`SELECT r.*, ra.*
+					FROM mmchddb.REPORTS r
+					LEFT JOIN mmchddb.REPORT_AUDIT ra ON ra.reportID = r.reportID
+					WHERE r.reportID = '${req.query.reportID}';`);
+			res.status(200).send({
+				report: report,
+				dataSet: auditLog
+			});
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
@@ -147,6 +174,56 @@ const indexFunctions = {
 	/*
 	 * POST METHODS
 	 */
+	
+	postAddReport: async function(req, res) {
+		let { report } = req.body;
+		try {
+			let reportID = (await generateID("mmchddb.REPORTS")).id;
+			/*let rows = await db.findRows("mmchddb.REPORTS", {
+				reportID: reportID
+				diseaseID: report.
+				preparedBy: 
+				reportType: 
+				status: 
+				dateCreated: 
+				title: 
+				year: 
+				duration: 
+				file: 
+				reportsIncluded: 
+				chartRemarks: 
+			});*/
+			res.status(200).send(rows);
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
+	
+	postEditApproveReport: async function(req, res) {
+		let { reportID, userID, remarks } = req.body;
+		let newDate = new Date();
+		try {
+			// let rows = await db.findRows("mmchddb.REPORTS", {});
+			let updateObj = {
+				status: "Approved",
+				approvedBy: userID,
+				approvedByDate: newDate
+			}, audit = {
+				reportID: reportID,
+				dateModified: newDate,
+				modifiedBy: userID,
+				action: "Approved",
+				remarks: remarks
+			};
+			await db.updateRows("mmchddb.REPORTS", { reportID: reportID }, updateObj);
+			await db.insertOne("mmchddb.REPORT_AUDIT", audit);
+			res.status(200).send(rows);
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
 	
 	postFileTest: async function(req, res) {
 		let { file } = req.body;

@@ -39,6 +39,8 @@ router.get("/getOngoingOutbreaks", m1Cont.getOngoingOutbreaks);
 router.get("/getAllEvents", m1Cont.getAllEvents);
 router.get("/getEvent", m1Cont.getEvent);
 
+router.get("/getFileBlob", m3Cont.getFileBlob);
+router.get("/getReport", m3Cont.getReport);
 router.get("/getReports", m3Cont.getAllReports);
 
 router.get("/getProgTargets", m4Cont.getAllProgTargets);
