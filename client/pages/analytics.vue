@@ -20,8 +20,52 @@
 
       <!-- Reports -->
       <div class="analytics-report-container">
+        <!-- Prevalence -->
         <div v-if="pageNum == 0">
-          
+          <iframe id="analytics-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiNTAwZDAxNDktM2E2Zi00ZWQxLWEyYzQtYzkwNDY1OTljZDg1IiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D">
+          </iframe>
+        </div>
+
+        <!-- Fatality -->
+        <div v-if="pageNum == 1">
+          <iframe id="analytics-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiNTRhNTRmN2MtMjU2NC00YmRhLWE0ZmYtYjFhZGU0MmYwOTlkIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D">
+          </iframe>
+        </div>
+
+        <!-- Person -->
+        <div v-if="pageNum == 2">
+          <iframe id="analytics-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiNWI4OTdkOGUtYzNiZS00ZjQwLWJkNzItZWY3Yjk1YjU1MTVjIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D">
+          </iframe>
+        </div>
+
+        <!-- Time -->
+        <div v-if="pageNum == 3">
+          <iframe id="analytics-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiNjMyNzJjYjUtNDMyOS00YmE4LTk2MDQtMzM1OGNlYzc5ZmI1IiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D">
+          </iframe>
+        </div>
+
+        <!-- Place -->
+        <div v-if="pageNum == 4">
+          <iframe id="analytics-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiMDJkYjk3OGYtMTFlOC00YWFiLWJlMWMtYWM1NmM4NGRlZDZjIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D">
+          </iframe>
+        </div>
+
+        <!-- Risks -->
+        <div v-if="pageNum == 5">
+          <iframe id="analytics-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiZTE5NTAxMjEtYjRjMC00ZDY1LWJmYTMtMDhkN2I2MGExODBjIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D">
+          </iframe>
+        </div>
+
+        <!-- Accomplishments -->
+        <div v-if="pageNum == 6">
+          <iframe id="analytics-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiYTdlYWJmYzEtMDliOC00NzBiLTlkYjEtNjViN2E1MjkxMjFlIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D">
+          </iframe>
+        </div>
+
+        <!-- Health Events -->
+        <div v-if="pageNum == 7">
+          <iframe id="analytics-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiZjJjZDVhZDAtYjljZi00NzQzLWI4ZGMtN2Q0OTRhYWUxMGU3IiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D">
+          </iframe>
         </div>
       </div>
     </div>
@@ -84,12 +128,21 @@ body {
   height: 100vh;
 }
 
+#analytics-powerbi-iframe {
+  height: 87vh;
+  background-color: gray;
+  width: 70%;
+  border-radius: 10px;
+  margin: auto;
+}
+
 .analytics-tabs-container {
   display: flex;
   flex-direction: row;
   overflow-x: auto;
   overflow-y: hidden;
   z-index: 1;
+  font-family: 'Work Sans', sans-serif;
 }
 
 .tabs-items {
