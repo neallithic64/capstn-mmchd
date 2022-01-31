@@ -26,7 +26,7 @@
           <!-- details -->
           <div class="space-inline alignCenter marginTopBot10 alignTop">
             <!-- input -->
-            <div class="half alignStart paddingSide10 block">
+            <div class="half alignStart paddingSide10 block" style="width: 45%">
               <div class="inlineFlex alignCenter marginTopBot2">
                 <legend for="reportTitle" class="inputLegend required"> Report Title: </legend>
                 <input id="reportTitle" v-model="report.title" type="text" class="input-form-field"
@@ -80,7 +80,7 @@
             <!-- checkbox -->
             <div class="alignLeft alignStart marginTop-25" style="width:45%">
               <div class="reportsOptionsBox">
-                <div class="analysisReportOption marginTopBot2" style="width: 245px;font-weight: 600;">
+                <div class="analysisReportOption marginTopBot2" style="width: 235px;font-weight: 600;">
                   Reports Included:
                 </div>
                 <div v-for="(analysis, index) in reportsOption" :key="index"
@@ -438,6 +438,7 @@ body {font-family:Arial, Helvetica, sans-serif}
 .marginTop-6 { margin-top: -6px;}
 .marginTop-10 { margin-top: -10px;}
 .marginTop-25 { margin-top: -25px;}
+.marginTop-35 { margin-top: -35px;}
 .marginTop2 { margin-top: 2px;}
 .marginTop5 { margin-top: 5px;}
 .marginTop10 { margin-top: 10px;}
@@ -544,7 +545,7 @@ body {font-family:Arial, Helvetica, sans-serif}
 
 .analysisReportOption {
     align-items: center;
-    width: 250px;
+    width: 240px;
     display: inline-block;
 }
 
