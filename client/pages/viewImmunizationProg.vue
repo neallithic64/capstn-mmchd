@@ -169,7 +169,7 @@ export default {
     console.log(rows);
 	for (let i = 0; i < rows.tclData.length; i++) {
       rows.tclData[i].dateAdded = this.convDatePHT(new Date(rows.tclData[i].dateAdded));
-	  rows.tclData[i].action = rows.tclData[i].action === "Complete" ? "view" : "update";
+	  rows.tclData[i].action = rows.tclData[i].immunizationStatus === "Complete" ? "view" : "update";
       // rows.tclData[i].updatedDate = rows.tclData[i].updatedDate ? this.convDatePHT(new Date(rows.tclData[i].updatedDate)) : "N/A";
       // rows.tclData[i].reportDate = this.convDatePHT(new Date(rows.tclData[i].reportDate));
     }

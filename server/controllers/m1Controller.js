@@ -584,9 +584,24 @@ const indexFunctions = {
 	
 	mkData: async function(req, res) {
 		try {
+			/*
 			let rows = await db.exec(`SELECT userID FROM mmchddb.USERS ORDER BY userID;`);
 			if (rows) rows = rows.map(e => e.userID);
-			res.status(200).send(rows);
+			*/
+			let arr = [];
+			let rows = await db.exec(`SELECT SUM(rf.LSmoking), SUM(rf.LAlcoholism), SUM(rf.LDrugUse),
+					SUM(rf.LPhysicalInactivity), SUM(rf.CHereditary), SUM(rf.CAsthma), SUM(rf.HHeartDisease),
+					SUM(rf.HHypertension), SUM(rf.HObesity), SUM(rf.HDiabetes), SUM(rf.OCleanWater),
+					SUM(rf.OAirPollution), SUM(rf.OHealthFacility), SUM(rf.OWasteMgmt), SUM(rf.OVacCoverage),
+					SUM(rf.OHealthEdu), SUM(rf.OShelter), SUM(rf.OFlooding), SUM(rf.OPoverty)
+					FROM mmchddb.RISK_FACTORS rf
+					LEFT JOIN mmchddb.CASES c ON c.caseID = rf.caseID
+					WHERE c.diseaseID = 'DI-0000000000003';`);
+			for (let [key, val] of Object.entries(rows[0])) {
+				arr.push({key: /SUM\(rf\.(\w+)\)/.exec(key)[1], value: val});
+			}
+			arr.forEach(async (e) => await db.insertOne("mmchddb.RISK_FACTORS_C", e));
+			res.status(200).send(arr);
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
