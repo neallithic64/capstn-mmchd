@@ -2,8 +2,9 @@ const express = require("express");
 const router = express();
 const cron = require('node-cron');
 const m1Cont = require("../controllers/m1Controller");
-const m4Cont = require("../controllers/m4Controller");
 const m2Cont = require("../controllers/m2Controller");
+const m3Cont = require("../controllers/m3Controller");
+const m4Cont = require("../controllers/m4Controller");
 // const middleware = require("../middlewares/indexMiddleware");
 
 
@@ -38,13 +39,18 @@ router.get("/getOngoingOutbreaks", m1Cont.getOngoingOutbreaks);
 router.get("/getAllEvents", m1Cont.getAllEvents);
 router.get("/getEvent", m1Cont.getEvent);
 
+router.get("/dashboardData", m2Cont.getIndexData);
+
+router.get("/getFileBlob", m3Cont.getFileBlob);
+router.get("/getReport", m3Cont.getReport);
+router.get("/getReports", m3Cont.getAllReports);
+
 router.get("/getProgTargets", m4Cont.getAllProgTargets);
 router.get("/getProgAccomps", m4Cont.getAllProgAccomps);
 router.get("/getViewProgAccomp", m4Cont.getProgAccomps);
 router.get("/getTCLEntry", m4Cont.getTCLEntry);
 router.get("/getTCL", m4Cont.getTCL);
 router.get("/getAllTCLs", m4Cont.getAllTCLs);
-
 
 // POST Routes
 router.post("/login", m1Cont.postLogin);
@@ -66,14 +72,15 @@ router.post("/updateEventStatus", m1Cont.postUpdateEventStatus);
 router.post("/updatePushData", m1Cont.postUpdatePushData);
 router.post("/updateOutbreakStatus", m1Cont.postUpdateOutbreakStatus);
 
+router.post("/postFileBlob", m3Cont.postFileBlob);
+
 router.post("/editProgTargets", m4Cont.postEditProgTargets);
 router.post("/editProgAccomp", m4Cont.postEditProgAccomp);
 router.post("/newImmuProgEntry", m4Cont.postNewImmuProgEntry);
 router.post("/editPatientTCL", m4Cont.postEditPatientTCL);
+router.post("/submitTCL", m4Cont.postSubmitTCL);
 
 
-router.post("/postFileTest", m4Cont.postFileTest);
-router.get("/getFileTest", m4Cont.getFileTest);
 
 // CRON Routes
 cron.schedule("00 14 * * 3", m1Cont.cronCRFDeadlineNotif);

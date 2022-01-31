@@ -303,13 +303,12 @@ const indexFunctions = {
 				});
 				if (r.length > 0) {
 					// collect the patients and TCL data with that TCLID
-					let data = await db.exec(`SELECT CONCAT(p.lastName, ", ", p.firstName, " ", p.midName)
-							AS patientName, p.ageNo, p.sex, a.city, td.dateAdded
+					let data = await db.exec(`SELECT t.*, p.*, a.city, td.dateAdded
 							FROM mmchddb.TCL_DATA td
+							LEFT JOIN mmchddb.TCLS t ON t.TCLID = td.TCLID
 							LEFT JOIN mmchddb.PATIENTS p ON p.patientID = td.patientID
 							LEFT JOIN mmchddb.ADDRESSES a ON a.addressID = p.caddressID
-							WHERE td.TCLID = '${r[r.length - 1].TCLID}'
-							GROUP BY td.TCLID;`);
+							WHERE td.TCLID = '${r[r.length - 1].TCLID}';`);
 					res.status(200).send({
 						TCL: r[r.length - 1],
 						tclData: data,
@@ -453,7 +452,7 @@ const indexFunctions = {
 				...immunisationData
 			};
 			await db.insertOne("mmchddb.TCL_DATA", insertObj);
-			res.status(200).send("Update targets successful!");
+			res.status(200).send(insertObj);
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
@@ -469,8 +468,7 @@ const indexFunctions = {
 			
 			// getting patient's TCL data
 			let tclData = await db.findRows("mmchddb.TCL_DATA", {patientID: patientID});
-			
-			await db.updateRows("mmchddb.TCL_DATA", {patientID: patientID}, loadedData); // ???
+			await db.updateRows("mmchddb.TCL_DATA", {patientID: patientID}, {...loadedData, status: "Complete"});
 			res.status(200).send("Update targets successful!");
 		} catch (e) {
 			console.log(e);
@@ -478,22 +476,72 @@ const indexFunctions = {
 		}
 	},
 	
+	postSubmitTCL: async function(req, res) {
+		let {TCLID} = req.body;
+		try {
+			let tclRow = await db.exec(`SELECT * FROM mmchddb.TCLS WHERE TCLID = '${TCLID}' AND isPushed = 0;`);
+			
+			// generate new CRFs and update past ones
+			for (let i = 0; i < tclRow.length; i++) {
+				// updating TCL
+				await db.updateRows("mmchddb.TCLS", {TCLID: tclRow[i].TCLID}, {
+					isPushed: true,
+					status: "Submitted",
+					dateSubmitted: new Date()
+				});
+				
+				// generating new TCL
+				let newTCL = (await generateID("mmchddb.TCLS")).id;
+				currMonth = new Date(tclRow[i].year, tclRow[i].month, 0);
+				nextMonth = new Date(currMonth.getFullYear(), currMonth.getMonth() + 1, currMonth.getDate());
+				await db.insertOne("mmchddb.TCLS", {
+					TCLID: newTCL,
+					diseaseID: tclRow[i].diseaseID,
+					userID: tclRow[i].userID,
+					dateSubmitted: null,
+					month: nextMonth.getMonth(),
+					year: nextMonth.getFullYear(),
+					isPushed: false,
+					status: "Ongoing"
+				});
+			}
+			res.status(200).send("TCL has been submitted successfully!");
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
+	
+	/*
+	 * CRON METHODS
+	 */
+	
 	cronTCLPushData: async function() {
 		try {
 			let tcls = await db.exec(`SELECT * FROM mmchddb.TCLS WHERE isPushed = 0 AND status = 'Ongoing';`);
 			
-			// generate new CRFs
+			// generate new CRFs and update past ones
 			for (let i = 0; i < tcls.length; i++) {
+				// updating TCL
+				await db.updateRows("mmchddb.TCLS", {TCLID: tcls[i].TCLID}, {
+					isPushed: true,
+					status: "Submitted",
+					dateSubmitted: new Date()
+				});
+				
+				// generating new TCL
 				let newTCL = (await generateID("mmchddb.TCLS")).id;
-				currWeek = new Date(tcls[i].year, tcls[i].month, 0);
-				nextWeek = new Date(currWeek.getFullYear(), currWeek.getMonth() + 1, currWeek.getDate());
+				currMonth = new Date(tcls[i].year, tcls[i].month, 0);
+				nextMonth = new Date(currMonth.getFullYear(), currMonth.getMonth() + 1, currMonth.getDate());
 				await db.insertOne("mmchddb.TCLS", {
 					TCLID: newTCL,
 					diseaseID: tcls[i].diseaseID,
 					userID: tcls[i].userID,
-					week: nextWeek.getWeek(),
-					year: nextWeek.getFullYear(),
-					isPushed: false
+					dateSubmitted: null,
+					month: nextMonth.getMonth(),
+					year: nextMonth.getFullYear(),
+					isPushed: false,
+					status: "Ongoing"
 				});
 			}
 			console.log("TCLs have been pushed successfully!");
@@ -502,35 +550,6 @@ const indexFunctions = {
 			console.log("Server Error");
 		}
 	},
-	
-	/** ignore below
-	 */
-
-	postFileTest: async function(req, res) {
-		let { file } = req.body;
-		try {
-			console.log(file);
-			let insert = await db.insertOne("mmchddb.zzzREPORT_COMMENTS", {
-				reportID: "001",
-				file: file
-			});
-			if (insert) res.status(200).send("success!");
-			else res.status(500).send("error!");
-		} catch(e) {
-			res.status(500).send("Server error");
-		}
-	},
-	
-	getFileTest: async function(req, res) {
-		try {
-			let match = await db.exec(`SELECT * FROM mmchddb.zzzREPORT_COMMENTS;`);
-			res.status(200).send(match[0].file);
-		} catch (e) {
-			console.log(e);
-			res.status(500).send("Server error");
-		}
-	},
-
 };
 
 module.exports = indexFunctions;

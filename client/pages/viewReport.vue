@@ -161,7 +161,7 @@ export default {
         columns: [
           {
             title: 'Date',
-            key: 'date',
+            key: 'dateModified',
             type: 'text',
             dateFormat: true,
             currentFormat: 'YYYY-MM-DD',
@@ -174,7 +174,7 @@ export default {
           },
           {
             title: 'By',
-            key: 'actor',
+            key: 'modifiedBy',
           },
           {
             title: 'Remarks',
@@ -186,9 +186,9 @@ export default {
       },
       dataSet: [
         {
-          date:'today',
+          dateModified: 'today',
           action: 'approve',
-          actor: 'me',
+          modifiedBy: 'me',
           remarks: 'nice report ...',
         },
       ]
@@ -201,19 +201,42 @@ export default {
   },
   async mounted() {
     const today = new Date();
-      const hour = today.getHours()>9 ? today.getHours() : '0'+today.getHours()
-      const mins = today.getMinutes()>9 ? today.getMinutes() : '0'+today.getMinutes()
-      const monthsList = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Aug', 'Oct', 'Nov', 'Dec'];
-      this.today = monthsList[today.getMonth()] + ' ' + today.getDate() + ', ' + today.getFullYear()
+    const hour = today.getHours()>9 ? today.getHours() : '0'+today.getHours()
+    const mins = today.getMinutes()>9 ? today.getMinutes() : '0'+today.getMinutes()
+    const monthsList = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Aug', 'Oct', 'Nov', 'Dec'];
+    this.today = monthsList[today.getMonth()] + ' ' + today.getDate() + ', ' + today.getFullYear()
                       + ' ' + hour + ':' + mins;
 
-      for (let i=0; i<this.report.chartRemarks.length; i++) this.inputChartRemarks[i] = this.report.chartRemarks[i];
-      if (this.report.status === 'Pending') this.isAssess = true;
+    for (let i=0; i<this.report.chartRemarks.length; i++) this.inputChartRemarks[i] = this.report.chartRemarks[i];
+    if (this.report.status === 'Pending') this.isAssess = true;
 
-    const pdfFile = await axios.get("http://localhost:8080/api/getFileTest", {responseType: 'blob'});
+    const pdfFile = await axios.get("http://localhost:8080/api/getFileBlob", {
+	  responseType: 'blob'
+	}, {
+	  params: {reportID: this.$route.query.reportID}
+	});
     // const url = window.URL.createObjectURL(pdfFile.data);
     const iFrameElement = document.querySelector('iframe');
     iFrameElement.src = pdfFile.data;
+	
+	// report data
+    const reportData = await axios.get("http://localhost:8080/api/getReport", {
+	  params: { reportID: this.$route.query.reportID }
+	});
+	for (let i = 0; i < reportData.dataSet.length; i++) {
+	  reportData.dataSet[i].dateModified = reportData.dataSet[i].dateModified
+	    ? this.convDatePHT(new Date(reportData.dataSet[i].dateModified))
+		: "N/A";
+	}
+	this.dataSet = reportData.dataSet;
+	
+	reportData.report.dateCreated = reportData.report.dateCreated
+	  ? this.convDatePHT(new Date(reportData.report.dateCreated))
+	  : "N/A";
+	reportData.report.approvedByDate = reportData.report.approvedByDate
+	  ? this.convDatePHT(new Date(reportData.report.approvedByDate))
+	  : "N/A";
+	this.report = reportData.report;
   },
   methods: {
     getColor(status) {
@@ -277,6 +300,11 @@ export default {
           // setTimeout(() => (this.isPrint = false), 10000);
         }
       // })
+    },
+	convDatePHT(d) { // only accepts Date object; includes checking
+      return !isNaN(Date.parse(d))
+	      ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10).split("-").join("/")
+		  : "N/A";
     },
   }
 }
