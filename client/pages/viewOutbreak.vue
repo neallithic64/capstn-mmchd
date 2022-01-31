@@ -305,7 +305,7 @@ export default {
             filter: true,
           },
           {
-            title: 'Submitted on',
+            title: 'Reported on',
             key: 'reportDate',
             type: 'text',
             dateFormat: true,

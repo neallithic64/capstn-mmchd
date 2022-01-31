@@ -37,7 +37,7 @@
           <p>DRU Address: <b class="viewCRFDb">{{ druAddr }}</b></p>
         </div>
         <div class="CRFstatus" style="align-text: right">
-          <p>Submitted on: <b class="viewCRFDb"> {{ submittedDate }} </b> </p>
+          <p>Reported on: <b class="viewCRFDb"> {{ submittedDate }} </b> </p>
           <p>Last updated: <b class="viewCRFDb"> {{ updatedDate }} </b> </p>
         </div>
       </div>
@@ -52,7 +52,7 @@
         </div>
       </div>
       <div class="additionalButtons">
-          <button class="addText" type="button" @click="lateCases()"><a :href="'/addCRFDengueCase?CRFID=' + CRFID">+ Add a Late Case</a></button>
+          <button class="addText" type="button"><a :href="'/addCRFDengueCase?CRFID=' + CRFID">+ Add a Late Case</a></button>
       </div>
     </div>
   </div>
@@ -132,7 +132,7 @@ export default {
             filter: true,
           },
           {
-            title: 'Date added',
+            title: 'Reported on',
             key: 'reportDate',
             type: 'text',
             dateFormat: true,
