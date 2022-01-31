@@ -1069,7 +1069,7 @@ const axios = require('axios');
 export default {
   middleware: 'is-auth',
   header: {
-    title: 'Case Report Form - Dengue',
+    title: 'Immunization Program Report Entry',
   },
   data() {
     return {
@@ -1182,20 +1182,20 @@ export default {
       ],
       loadedData: [
         {
-          BCGdate: '2020-02-03',
-          HEPAwithdate: '2020-02-03',
+          BCGdate: '',
+          HEPAwithdate: '',
           HEPAmoredate: '',
-          OPV1date: '2020-02-03',
-          OPV2date: '2020-02-03',
-          OPV3date: '2020-02-03',
-          PENTA1date: '2020-02-03',
-          PENTA2date: '2020-02-03',
-          PENTA3date: '2020-02-03',
-          PCV1date: '2020-02-03',
-          PCV2date: '2020-02-03',
+          OPV1date: '',
+          OPV2date: '',
+          OPV3date: '',
+          PENTA1date: '',
+          PENTA2date: '',
+          PENTA3date: '',
+          PCV1date: '',
+          PCV2date: '',
           PCV3date: '',
-          MCV1date: '2020-02-03',
-          MCV2date: '2020-02-03',
+          MCV1date: '',
+          MCV2date: '',
           Dengue1date: '',
           Dengue2date: '',
           Dengue3date: '',
@@ -1228,13 +1228,30 @@ export default {
     }
   },
   async fetch() {
-	this.formData = (await axios.get('http://localhost:8080/api/getPatientData', {
-      patientID: this.$route.query.patientID
+    /*
+	formData: {
+	  patient: {},
+	  riskFactors: {},
+	  immunization: {}
+	},
+	riskFactors: { },
+	loadedData: [ {} ],
+	dataSets: [ {} ]
+	*/
+	const patientData = (await axios.get('http://localhost:8080/api/getPatientData', {
+      params: { patientID: this.$route.query.patientID }
     })).data;
+	console.log(patientData);
+	Object.keys(patientData.tclData).forEach((e, i) => {
+	  patientData.tclData[e] = this.convDatePHT(new Date(patientData.tclData[e]));
+	});
+	if (patientData.tclData) {
+	  this.formData.immunization = patientData.tclData;
+	}
   },
   head() {
     return {
-      title: 'Immunization Form '
+      title: 'Immunization Form'
     }
   },
   computed: {},

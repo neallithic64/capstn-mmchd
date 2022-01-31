@@ -282,7 +282,7 @@ const indexFunctions = {
 					WHERE u.userID = '${ req.query.userID }';`);
 			if (!!req.query.TCLID) { // getting for view page
 				let match = await db.exec(`SELECT t.*, td.*, p.*, a1.city AS patientCity,
-						a1.brgy AS patientCity
+						u.druName, a2.city AS druCity, a2.brgy AS druBrgy
 						FROM mmchddb.TCLS t
 						LEFT JOIN mmchddb.TCL_DATA td ON td.TCLID = t.TCLID
 						LEFT JOIN mmchddb.PATIENTS p ON p.patientID = td.patientID
@@ -291,7 +291,8 @@ const indexFunctions = {
 						LEFT JOIN mmchddb.ADDRESSES a2 ON a2.addressID = u.addressID
 						WHERE t.TCLID = '${ req.query.TCLID }';`);
 				res.status(200).send({
-					TCLentries: match,
+					TCL: match.length ? match[match.length - 1] : [],
+					tclData: match,
 					pushDataAccept: userSettings[0].pushDataAccept,
 					userData: userData[0]
 				});
@@ -340,9 +341,10 @@ const indexFunctions = {
 	
 	getAllTCLs: async function(req, res) {
 		try {
-			let match = await db.exec(`SELECT d.diseaseName, u.druName, a.*, td.*,
+			let match = await db.exec(`SELECT d.diseaseName, u.druName, a.*, t.*,
 					SUM(CASE WHEN td.immunizationStatus = "Complete" THEN 1 ELSE 0 END) AS immuniPati,
-					COUNT(td.TCLID) AS totalPatients FROM mmchddb.TCLS t
+					COUNT(td.TCLID) AS totalPatients
+					FROM mmchddb.TCLS t
 					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = t.diseaseID
 					LEFT JOIN mmchddb.USERS u ON u.userID = t.userID
 					LEFT JOIN mmchddb.ADDRESSES a ON a.addressID = u.addressID

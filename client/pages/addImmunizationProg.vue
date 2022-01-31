@@ -130,7 +130,7 @@ export default {
           },
           {
             title: 'City',
-            key: 'city',
+            key: 'patientCity',
             type: 'text',
             source: 'crf',
             uniqueField: 'id',
@@ -162,6 +162,7 @@ export default {
             expectFormat: 'DD MMM YYYY',
             sortable: true,
           },
+		  /*
           {
             title: 'Last updated',
             key: 'updatedDate',
@@ -171,6 +172,7 @@ export default {
             expectFormat: 'DD MMM YYYY',
             sortable: true,
           },
+		  */
           {
             title: 'Immunization Status',
             key: 'immunStatus',
