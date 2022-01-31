@@ -306,6 +306,7 @@ const indexFunctions = {
 					let data = await db.exec(`SELECT CONCAT(p.lastName, ", ", p.firstName, " ", p.midName)
 							AS patientName, p.ageNo, p.sex, a.city, td.dateAdded
 							FROM mmchddb.TCL_DATA td
+							LEFT JOIN mmchddb.TCLS t ON t.TCLID = td.TCLID
 							LEFT JOIN mmchddb.PATIENTS p ON p.patientID = td.patientID
 							LEFT JOIN mmchddb.ADDRESSES a ON a.addressID = p.caddressID
 							WHERE td.TCLID = '${r[r.length - 1].TCLID}'
@@ -477,6 +478,10 @@ const indexFunctions = {
 		}
 	},
 	
+	/*
+	 * CRON METHODS
+	 */
+	
 	cronTCLPushData: async function() {
 		try {
 			let tcls = await db.exec(`SELECT * FROM mmchddb.TCLS WHERE isPushed = 0 AND status = 'Ongoing';`);
@@ -510,35 +515,6 @@ const indexFunctions = {
 			console.log("Server Error");
 		}
 	},
-	
-	/** ignore below
-	 */
-
-	postFileTest: async function(req, res) {
-		let { file } = req.body;
-		try {
-			console.log(file);
-			let insert = await db.insertOne("mmchddb.zzzREPORT_COMMENTS", {
-				reportID: "001",
-				file: file
-			});
-			if (insert) res.status(200).send("success!");
-			else res.status(500).send("error!");
-		} catch(e) {
-			res.status(500).send("Server error");
-		}
-	},
-	
-	getFileTest: async function(req, res) {
-		try {
-			let match = await db.exec(`SELECT * FROM mmchddb.zzzREPORT_COMMENTS;`);
-			res.status(200).send(match[0].file);
-		} catch (e) {
-			console.log(e);
-			res.status(500).send("Server error");
-		}
-	},
-
 };
 
 module.exports = indexFunctions;

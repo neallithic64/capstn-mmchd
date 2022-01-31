@@ -124,13 +124,13 @@ export default {
         columns: [
           {
             title: 'Patient',
-            key: 'patientID',
+            key: 'patientName',
             type: 'clickable',
             sortable: true,
           },
           {
             title: 'City',
-            key: 'patientCity',
+            key: 'city',
             type: 'text',
             source: 'crf',
             uniqueField: 'id',
@@ -155,7 +155,7 @@ export default {
           },
           {
             title: 'Date added',
-            key: 'addDate',
+            key: 'dateAdded',
             type: 'text',
             dateFormat: true,
             currentFormat: 'YYYY-MM-DD',
