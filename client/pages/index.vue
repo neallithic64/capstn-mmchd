@@ -457,7 +457,7 @@ body {
 #dashboard-right {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: start;
   margin-right: 5px;
   margin-left: 5px;
   /* margin-top: 5px; */
