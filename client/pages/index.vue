@@ -22,9 +22,9 @@
             <span class="dboard-right-titles" style="padding: 3px 3px 3px 5px; background-image: linear-gradient(to bottom right, #b02e0c, #eb4511);"> Ongoing Outbreak </span>
             <!-- v-if w/ ongoing outbreak show this -->
             <!-- if from CHD, view the outbreak page when clicked -->
-            <a v-if="$auth.user.userType === 'pidsrStaff' || $auth.user.userType === 'lhsdChief' || $auth.user.userType === 'aehmdChief' || $auth.user.userType === 'resuHead' || 
-                $auth.user.userType === 'chdDirector' || $auth.user.userType === 'idpcStaff' || $auth.user.userType === 'eohStaff' || $auth.user.userType === 'hemStaff'" 
-                :href="'/viewOutbreak?outbreakID='"> 
+            <a v-if="isOutbreak && ($auth.user.userType === 'pidsrStaff' || $auth.user.userType === 'lhsdChief' || $auth.user.userType === 'aehmdChief' || $auth.user.userType === 'resuHead' || 
+                $auth.user.userType === 'chdDirector' || $auth.user.userType === 'idpcStaff' || $auth.user.userType === 'eohStaff' || $auth.user.userType === 'hemStaff')" 
+                :href="'/viewOutbreak?outbreakID=' +  ongoingOutbreak.obID " > 
               <div id="outbreak-content" class="dboard-right-content" style="border-left-color: #c70000;">
                 <div id="outbreak-text">
                   <span style="padding-top: 5px; font-weight: 900"> {{ ongoingOutbreak.obDisease }} </span>
@@ -40,7 +40,7 @@
 
             <!-- if not from CHD, view the all outbreaks page when clicked -->
             <a v-if="!($auth.user.userType === 'pidsrStaff' || $auth.user.userType === 'lhsdChief' || $auth.user.userType === 'aehmdChief' || $auth.user.userType === 'resuHead' || 
-                $auth.user.userType === 'chdDirector' || $auth.user.userType === 'idpcStaff' || $auth.user.userType === 'eohStaff' || $auth.user.userType === 'hemStaff')"
+                $auth.user.userType === 'chdDirector' || $auth.user.userType === 'idpcStaff' || $auth.user.userType === 'eohStaff' || $auth.user.userType === 'hemStaff') && isOutbreak"
                 :href="'/allOutbreaks'">
               <div id="outbreak-content" class="dboard-right-content" style="border-left-color: #c70000;">
                 <div id="outbreak-text">
@@ -56,11 +56,11 @@
             </a>
 
             <!-- v-if no ongoing outbreak show this -->
-            <!-- <div id="outbreak-content" class="dboard-right-content" style="border-left-color: #c70000;">
+            <div v-if="!isOutbreak" id="outbreak-content" class="dboard-right-content" style="border-left-color: #c70000;">
               <div id="outbreak-text">
                 <span style="padding-top: 5px; font-weight: 900"> No ongoing outbreak. </span>
               </div>
-            </div> -->
+            </div>
           </div>
 
           <!-- Latest Accomplishment Report -->
@@ -86,7 +86,7 @@
 
           <!-- Report Status for FHSIS -->
           <!-- for FHSIS -->
-          <div v-if="$auth.user.userType === 'fhsisStaff'" id="tracker-container">
+          <!-- <div v-if="$auth.user.userType === 'fhsisStaff'" id="tracker-container">
             <span class="dboard-right-titles" style="padding: 3px 3px 3px 5px; background-image: linear-gradient(to bottom right, #008d41, #74d680);"> Accomplishment Reporting Status </span>
             <a :href="'/allProgAccomplish'">
               <div class="dboard-right-content" style="border-left-color: #008d41; padding-left: 0px;">
@@ -112,7 +112,7 @@
                 </div>
               </div>
             </a>
-          </div>
+          </div> -->
 
           <!-- Latest Health Event -->
           <div id="latest-event-container">
@@ -157,7 +157,7 @@
 
           <!-- Report Status for CHD and DRU -->
           <!-- for CHD -->
-          <div v-if="$auth.user.userType === 'pidsrStaff' || $auth.user.userType === 'techStaff' || $auth.user.userType === 'lhsdChief' || 
+          <!-- <div v-if="$auth.user.userType === 'pidsrStaff' || $auth.user.userType === 'techStaff' || $auth.user.userType === 'lhsdChief' || 
               $auth.user.userType === 'aehmdChief' || $auth.user.userType === 'resuHead' || $auth.user.userType === 'chdDirector' || 
               $auth.user.userType === 'idpcStaff' || $auth.user.userType === 'eohStaff' || $auth.user.userType === 'hemStaff'" 
               id="tracker-container">
@@ -193,7 +193,7 @@
                 </div>
               </div>
             </a>
-          </div>
+          </div> -->
 
           <!-- for DRU -->
           <div v-if="$auth.user.userType === 'BHS' || $auth.user.userType === 'RHU' || $auth.user.userType === 'CHO' ||
@@ -265,6 +265,7 @@
 <script>
 import Countdown from 'vuejs-countdown'
 // import * as pbi from "powerbi-client";
+const axios = require('axios');
 export default {
   components: { 
     Countdown
@@ -272,9 +273,11 @@ export default {
   middleware: 'is-auth',
   data() {
     return {
+      isOutbreak: true,
       ongoingOutbreak: {
         obDisease: 'Measles',
-        obActive: '1826'
+        obActive: '1826',
+        obID:'OU-0000000000000'
       },
       latestEvent: {
         leCity: 'Malabon',
@@ -346,6 +349,32 @@ export default {
       }
     }
   },
+  async fetch(){
+    const data = (await axios.get('http://localhost:8080/api/dashboarddata')).data;
+
+    this.latestEvent.leCity = data.latestEvent.city;
+    this.latestEvent.leStatus = data.latestEvent.eventStatus;
+    this.latestEvent.leAssess = data.latestEvent.assessment;
+    this.latestEvent.leNoCases = data.latestEvent.numCases;
+    this.latestEvent.leNoDeaths = data.latestEvent.numDeaths;
+
+    this.latestCase.lcDisease = data.latestCase.diseaseName;
+    this.latestCase.lcCity = data.latestCase.city;
+    this.latestCase.lcStatus = data.latestCase.caseLevel;
+    this.latestCase.lcBrgy = data.latestCase.brgy;
+
+    this.latestAccomplish.laDisease = data.latestAccomp.diseaseName;
+    this.latestAccomplish.laCity = data.latestAccomp.city;
+    this.latestAccomplish.laBrgy = data.latestAccomp.brgy;
+
+    if(data.ongoingOutbreak.length < 0)
+      this.isOutbreak = false;
+    else {
+      this.ongoingOutbreak.obDisease = data.ongoingOutbreak[0].diseaseName;
+      this.ongoingOutbreak.obActive = data.activeCases;
+    }
+
+  },
   head() {
     return {
       title: 'Dashboard'
@@ -357,12 +386,12 @@ export default {
             "resuHead", "chdDirector", "idpcStaff", "eohStaff", "hemStaff"];
     setInterval(this.getToday, 1000);
     
-    if (this.$auth.user.userType === 'pidsrStaff' || this.$auth.user.userType === 'techStaff' || this.$auth.user.userType === 'lhsdChief' || 
-        this.$auth.user.userType === 'aehmdChief' || this.$auth.user.userType === 'resuHead' || this.$auth.user.userType === 'chdDirector' || 
-        this.$auth.user.userType === 'idpcStaff' || this.$auth.user.userType === 'eohStaff' || this.$auth.user.userType === 'hemStaff')
-      this.moveProgress();
-    else if (this.$auth.user.userType === 'fhsisStaff')
-      this.moveTCLProgress();
+    // if (this.$auth.user.userType === 'pidsrStaff' || this.$auth.user.userType === 'techStaff' || this.$auth.user.userType === 'lhsdChief' || 
+    //     this.$auth.user.userType === 'aehmdChief' || this.$auth.user.userType === 'resuHead' || this.$auth.user.userType === 'chdDirector' || 
+    //     this.$auth.user.userType === 'idpcStaff' || this.$auth.user.userType === 'eohStaff' || this.$auth.user.userType === 'hemStaff')
+    //   this.moveProgress();
+    // if (this.$auth.user.userType === 'fhsisStaff' || this.$auth.user.userType === 'techStaff')
+    //   this.moveTCLProgress();
   },
   methods: {
     caseStatusClass(c) {
@@ -381,20 +410,20 @@ export default {
       else if (c.toString().includes('PHENC')) return 'caseStatus confirmedCase';
       else if (c.toString().includes('PHEIC')) return 'caseStatus confirmedCase';
     },
-    moveProgress() {
-      for (let i = 0; i < this.cities.length; i++) {
-        const bar = document.getElementById(this.cities[i]);
-        // computation for % = total no of CRFs submitted in the city / (5 per DRU * number of DRUs in the city) * 100)
-        bar.style.width = ((this.reportStatus[this.cities[i]][1]/5)*100) + "%";
-      }
-    },
-    moveTCLProgress() {
-      for (let i = 0; i < this.cities.length; i++) {
-        const bars = document.getElementById(this.cities[i]);
-        // computation for % = total no of CRFs submitted in the city / (24 per BHS * number of BHSs in the city) * 100)
-        bars.style.width = ((this.progStatus[this.cities[i]]/24)*100) + "%";
-      }
-    }
+    // moveProgress() {
+    //   for (let i = 0; i < this.cities.length; i++) {
+    //     const bar = document.getElementById(this.cities[i]);
+    //     // computation for % = total no of CRFs submitted in the city / (5 per DRU * number of DRUs in the city) * 100)
+    //     bar.style.width = ((this.reportStatus[this.cities[i]][1]/5)*100) + "%";
+    //   }
+    // },
+    // moveTCLProgress() {
+    //   for (let i = 0; i < this.cities.length; i++) {
+    //     const bar = document.getElementById(this.cities[i]);
+    //     // computation for % = total no of CRFs submitted in the city / (24 per BHS * number of BHSs in the city) * 100)
+    //     bar.style.width = ((this.progStatus[this.cities[i]]/24)*100) + "%";
+    //   }
+    // }
   }
 }
 </script>
@@ -457,7 +486,7 @@ body {
 #dashboard-right {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: start;
   margin-right: 5px;
   margin-left: 5px;
   /* margin-top: 5px; */

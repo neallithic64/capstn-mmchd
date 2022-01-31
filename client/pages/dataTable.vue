@@ -364,7 +364,7 @@
                 </a> -->
                 <a v-else-if="column.key === 'reportID'"
                   style="color: #346083; text-decoration-line: underline"
-                  :href="'/viewReport'">
+                  :href="'/viewReport?reportID=' + data[column.key]">
                   {{ data[column.key] }}
                 </a>
               </span>

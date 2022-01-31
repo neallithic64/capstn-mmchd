@@ -70,7 +70,7 @@ export default {
           },
           {
             title: 'Disease',
-            key: 'reportDisease',
+            key: 'diseaseName',
             type: 'text',
             source: 'reports',
           },
@@ -83,7 +83,7 @@ export default {
           },
           {
             title: 'Date Submitted',
-            key: 'reportDateSub',
+            key: 'dateCreated',
             type: 'text',
             dateFormat: true,
             currentFormat: 'YYYY-MM-DD',
@@ -92,14 +92,14 @@ export default {
           },
           {
             title: 'Status',
-            key: 'reportStatus',
+            key: 'status',
             type: 'text',
             source: 'reports',
             sortable: true,
           },
           {
             title: 'Date Approved',
-            key: 'reportDateApp',
+            key: 'approvedByDate',
             type: 'text',
             dateFormat: true,
             currentFormat: 'YYYY-MM-DD',
@@ -151,21 +151,27 @@ export default {
     }
   },
   async mounted() {
-    // if (this.dataSets.length === 0) {
-    //   this.$toast.show('Loading...', {className: 'blink', icon: 'hourglass_top'});
-    // }
+    if (this.dataSets.length === 0) {
+      this.$toast.show('Loading...', {className: 'blink', icon: 'hourglass_top'});
+    }
     
     // const DRUUserTypes = ['BHS', 'RHU', 'CHO', 'govtHosp', 'privHosp', 'clinic', 'govtLab', 'privLab', 'airseaPort', 'fhsis'];
-    // const rows = (await axios.get('http://localhost:8080/api/getAllEvents')).data;
+    const rows = (await axios.get('http://localhost:8080/api/getAllReports')).data;
     
     // if (DRUUserTypes.includes(this.$auth.user.userType)) {
     //   this.allEvents = rows.filter(e => e.userID === this.$auth.user.userID);
     // } else this.allEvents = rows;
+	
+	for (let i = 0; i < rows.length; i++) {
+      rows[i].dateCreated = this.convDatePHT(new Date(rows[i].dateCreated));
+      rows[i].approvedByDate = this.convDatePHT(new Date(rows[i].approvedByDate));
+	}
+	this.allReports = rows;
     
-    // if (this.dataSets.length > 0) {
-    //   this.$toast.clear();
-    //   this.$toast.success('All TCLs loaded!', {duration: 4000, icon: 'check_circle'});
-    // }
+    if (this.dataSets.length > 0) {
+      this.$toast.clear();
+      this.$toast.success('All Reports loaded!', {duration: 4000, icon: 'check_circle'});
+    }
   },
   methods: {
     downloadPDF() {
@@ -210,6 +216,9 @@ export default {
       link.setAttribute("href", data);
       link.setAttribute("download", "AllReports.csv");
       link.click();
+    },
+    convDatePHT(d) { // only accepts Date object; includes checking
+      return !isNaN(Date.parse(d)) ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10) : "N/A";
     },
   },
 }
