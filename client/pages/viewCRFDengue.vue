@@ -37,7 +37,7 @@
           <p>DRU Address: <b class="viewCRFDb">{{ druAddr }}</b></p>
         </div>
         <div class="CRFstatus" style="align-text: right">
-          <p>Submitted on: <b class="viewCRFDb"> {{ submittedDate }} </b> </p>
+          <p>Reported on: <b class="viewCRFDb"> {{ submittedDate }} </b> </p>
           <p>Last updated: <b class="viewCRFDb"> {{ updatedDate }} </b> </p>
         </div>
       </div>
@@ -132,7 +132,7 @@ export default {
             filter: true,
           },
           {
-            title: 'Date added',
+            title: 'Reported on',
             key: 'reportDate',
             type: 'text',
             dateFormat: true,
