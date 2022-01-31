@@ -52,7 +52,7 @@
         </div>
       </div>
       <div class="additionalButtons">
-          <button class="addText" type="button" @click="lateCases()"><a :href="'/addCRFDengueCase?CRFID=' + CRFID">+ Add a Late Case</a></button>
+          <button class="addText" type="button"><a :href="'/addCRFDengueCase?CRFID=' + CRFID">+ Add a Late Case</a></button>
       </div>
     </div>
   </div>
