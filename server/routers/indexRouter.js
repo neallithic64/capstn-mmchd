@@ -73,8 +73,8 @@ router.post("/newImmuProgEntry", m4Cont.postNewImmuProgEntry);
 router.post("/editPatientTCL", m4Cont.postEditPatientTCL);
 
 
-router.post("/postFileTest", m4Cont.postFileTest);
-router.get("/getFileTest", m4Cont.getFileTest);
+router.get("/getFileTest", m3Cont.getFileTest);
+router.post("/postFileTest", m3Cont.postFileTest);
 
 // CRON Routes
 cron.schedule("00 14 * * 3", m1Cont.cronCRFDeadlineNotif);
