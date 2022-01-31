@@ -80,7 +80,7 @@
             <!-- checkbox -->
             <div class="alignLeft alignStart marginTop-25" style="width:45%">
               <div class="reportsOptionsBox">
-                <div class="analysisReportOption marginTopBot2" style="width: 235px;font-weight: 600;">
+                <div class="analysisReportOption marginTopBot2" style="width: 100%;font-weight: 600;">
                   Reports Included:
                 </div>
                 <div v-for="(analysis, index) in reportsOption" :key="index"
@@ -101,7 +101,21 @@
           <div v-else class="caps addRep-chartTitle marginBottom-15 blueB whiteC paddingLeft10 marginRight10 marginLeft10"> {{chart}} </div>
           <div class="padding30" :class="getMinClass(chartIndex, report.reportsIncluded.length)">
             <div class="addRep-chartContainer marginBottom5">
-              <iframe class="addRep-report-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiODdiNTM2N2YtMTA3YS00NzA2LTg5YjItMDBlZDllMTQ2ZDY0IiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D&pageName=ReportSection">
+              <iframe v-if="report.reportsIncluded.includes(reportsOption[0])" class="addRep-report-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiYTQ0YjRkY2YtMTk2MS00NTljLWFhOTUtYWI0ODUzZDlmNDEyIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D">
+              </iframe>
+              <iframe v-else-if="report.reportsIncluded.includes(reportsOption[1])" class="addRep-report-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiYTQ0YjRkY2YtMTk2MS00NTljLWFhOTUtYWI0ODUzZDlmNDEyIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D">
+              </iframe>
+              <iframe v-else-if="report.reportsIncluded.includes(reportsOption[2])" class="addRep-report-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiYTQ0YjRkY2YtMTk2MS00NTljLWFhOTUtYWI0ODUzZDlmNDEyIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D">
+              </iframe>
+              <iframe v-else-if="report.reportsIncluded.includes(reportsOption[3])" class="addRep-report-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiYTQ0YjRkY2YtMTk2MS00NTljLWFhOTUtYWI0ODUzZDlmNDEyIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D">
+              </iframe>
+              <iframe v-else-if="report.reportsIncluded.includes(reportsOption[4])" class="addRep-report-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiYTQ0YjRkY2YtMTk2MS00NTljLWFhOTUtYWI0ODUzZDlmNDEyIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D">
+              </iframe>
+              <iframe v-else-if="report.reportsIncluded.includes(reportsOption[5])" class="addRep-report-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiYTQ0YjRkY2YtMTk2MS00NTljLWFhOTUtYWI0ODUzZDlmNDEyIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D">
+              </iframe>
+              <iframe v-else-if="report.reportsIncluded.includes(reportsOption[6])" class="addRep-report-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiYTQ0YjRkY2YtMTk2MS00NTljLWFhOTUtYWI0ODUzZDlmNDEyIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D">
+              </iframe>
+              <iframe v-else-if="report.reportsIncluded.includes(reportsOption[7])" class="addRep-report-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiYTQ0YjRkY2YtMTk2MS00NTljLWFhOTUtYWI0ODUzZDlmNDEyIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D">
               </iframe>
             </div>
             <!-- <div v-if="!isRevise" style="padding: 5px 10px;" :class="chartRemarkClass()" :contentEditable="isRevise" class="width100" required> {{inputChartRemarks[chartIndex]}} </div> -->
@@ -203,10 +217,6 @@
           <p> {{report.title}} | Page {{report.reportsIncluded.length}}</p>
         </div>
 
-        <button v-if="isPrint" class="addRep-backButton" type="button" @click="isPrint = false">
-            Unprint
-          </button>
-
       </div>
     </div>
   </div>
@@ -265,7 +275,6 @@ export default {
         'Typhoid',
       ],
       reportsOption: [
-        'Summary',
         'Prevalence Analysis',
         'Fatality Analysis',
         'Person Analysis',
@@ -316,8 +325,8 @@ export default {
     },
     getMinClass(index, reportCount) {
       if (!this.isPrint) return 'addRep-chartContainerView';
-      else if (index === 0) return 'fullHeightFirst';
       else if (index === reportCount-1) return 'fullHeightLast';
+      else if (index === 0) return 'fullHeightFirst';
       else return 'fullHeightNotFirst';
     },
     validate() {
@@ -349,10 +358,10 @@ export default {
         this.isPrint = true;
         // window.addEventListener('load', function () {
         if (this.isPrint) {
-          this.$toast.success('Printing!', {duration: 4000, icon: 'check_circle'});
-          setTimeout(() => (this.print()), 5000);
-          setTimeout(() => (this.isPrint=false), 100);
-          setTimeout(() => (this.readyPrint=true), 1000);
+          this.$toast.success('Printing...', {duration: 8500, icon: 'check_circle'});
+          setTimeout(() => (this.print()), 10000);
+          setTimeout(() => (this.isPrint=false), 15000);
+          setTimeout(() => (this.readyPrint=true), 15000);
           // window.onafterprint = function(){
           //   this.isPrint = false;
           // }
@@ -666,9 +675,9 @@ select {
 .width100 { width: 100%; }
 .width155 { width: 155px; }
 .width105 { width: 105px; }
-.fullHeightLast { min-height: 720px;}
-.fullHeightFirst { min-height: 740px;} /* 1000-265 - 10 + 15 (removed from margin bottom) */
-.fullHeightNotFirst { min-height: 915px; }
+.fullHeightLast { min-height: 710px;}
+.fullHeightFirst { min-height: 730px;} /* 1000-265 - 10 + 5 (removed from margin bottom) */
+.fullHeightNotFirst { min-height: 905px; }
 .inputLegend { width: 140px; }
 .input-required:invalid {  box-shadow: 0 0 5px #d45252; border-color: hsl(0, 76%, 50%); /* background-color: #ff6961; */ }
 /* .input-required{ border-color: hsl(0, 76%, 50%); } */
