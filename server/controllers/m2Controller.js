@@ -101,7 +101,35 @@ const indexFunctions = {
 	},
 	
 	getIndexData: async function(req, res){
-		
+		try{
+			let latestCase = await db.exec("SELECT * FROM mmchddb.CASES c JOIN mmchddb.DISEASES d ON d.diseaseID = c.diseaseID "+
+											"JOIN mmchddb.PATIENTS p ON c.patientID = p.patientID " +
+											"JOIN mmchddb.ADDRESSES a ON a.addressID = p.paddressID "+"ORDER BY c.reportDate desc LIMIT 1;");
+			let latestEvent = await db.exec("SELECT * FROM mmchddb.EVENTS e JOIN mmchddb.ADDRESSES a ON a.addressID = e.addressID ORDER BY e.dateReported desc LIMIT 1;");
+			let latestAccomp = await db.exec("SELECT * FROM mmchddb.PROGRAM_ACCOMPS p JOIN mmchddb.DISEASES d ON d.diseaseID = p.diseaseID JOIN mmchddb.USERS u ON u.userID = p.userID JOIN mmchddb.ADDRESSES a ON a.addressID = u.addressID ORDER BY dateUpdated desc LIMIT 1;");
+			let ongoingOutbreak = await db.exec("SELECT * FROM mmchddb.OUTBREAKS o JOIN mmchddb.DISEASES d ON d.diseaseID = o.diseaseID WHERE NOT outbreakStatus='Closed' ORDER BY startDate desc LIMIT 1;");
+			if(ongoingOutbreak.length > 0){	
+				let activeCases = await db.exec("SELECT * FROM mmchddb.CASES WHERE diseaseID='"+ ongoingOutbreak[0].diseaseID + "' AND reportDate >= '" +
+									dateToString(ongoingOutbreak[0].startDate) +"';");
+				res.status(200).send({
+					latestAccomp : latestAccomp[0],
+					latestCase : latestCase[0],
+					latestEvent : latestEvent[0],
+					ongoingOutbreak : ongoingOutbreak,
+					activeCases : activeCases.length
+					});
+			} else 
+				res.status(200).send({
+					latestAccomp: latestAccomp[0],
+					latestCase : latestCase[0],
+					latestEvent : latestEvent[0],
+					ongoingOutbreak : ongoingOutbreak
+				});
+			
+		}catch(e){
+			console.log(e);
+			res.status(500).send("Server error");
+		}
 	},
 	
 	/*

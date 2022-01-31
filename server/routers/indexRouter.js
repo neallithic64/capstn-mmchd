@@ -39,6 +39,8 @@ router.get("/getOngoingOutbreaks", m1Cont.getOngoingOutbreaks);
 router.get("/getAllEvents", m1Cont.getAllEvents);
 router.get("/getEvent", m1Cont.getEvent);
 
+router.get("/dashboardData", m2Cont.getIndexData);
+
 router.get("/getFileBlob", m3Cont.getFileBlob);
 router.get("/getReport", m3Cont.getReport);
 router.get("/getReports", m3Cont.getAllReports);
@@ -49,7 +51,6 @@ router.get("/getViewProgAccomp", m4Cont.getProgAccomps);
 router.get("/getTCLEntry", m4Cont.getTCLEntry);
 router.get("/getTCL", m4Cont.getTCL);
 router.get("/getAllTCLs", m4Cont.getAllTCLs);
-
 
 // POST Routes
 router.post("/login", m1Cont.postLogin);
@@ -71,13 +72,14 @@ router.post("/updateEventStatus", m1Cont.postUpdateEventStatus);
 router.post("/updatePushData", m1Cont.postUpdatePushData);
 router.post("/updateOutbreakStatus", m1Cont.postUpdateOutbreakStatus);
 
+router.post("/postFileBlob", m3Cont.postFileBlob);
+
 router.post("/editProgTargets", m4Cont.postEditProgTargets);
 router.post("/editProgAccomp", m4Cont.postEditProgAccomp);
 router.post("/newImmuProgEntry", m4Cont.postNewImmuProgEntry);
 router.post("/editPatientTCL", m4Cont.postEditPatientTCL);
 router.post("/submitTCL", m4Cont.postSubmitTCL);
 
-router.post("/postFileBlob", m3Cont.postFileBlob);
 
 
 // CRON Routes
