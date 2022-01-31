@@ -203,10 +203,6 @@
           <p> {{report.title}} | Page {{report.reportsIncluded.length}}</p>
         </div>
 
-        <button v-if="isPrint" class="addRep-backButton" type="button" @click="isPrint = false">
-            Unprint
-          </button>
-
       </div>
     </div>
   </div>
@@ -347,13 +343,15 @@ export default {
         else this.$toast.error('Please fill up the required fields!', {duration: 4000, icon: 'error'});
       }
       else {
+        let done = false;
         this.isPrint = true;
         // window.addEventListener('load', function () {
         if (this.isPrint) {
-          this.$toast.success('Printing!', {duration: 4000, icon: 'check_circle'});
-          setTimeout(() => (this.print()), 5000);
-          setTimeout(() => (this.isPrint=false), 100);
-          setTimeout(() => (this.readyPrint=true), 1000);
+          if (!done) this.$toast.show('Printing...', {className: 'blink', icon: 'hourglass_top'}); 
+          setTimeout(() => (done = true), 8000);
+          setTimeout(() => (this.print()), 10000);
+          setTimeout(() => (this.isPrint=false), 15000);
+          setTimeout(() => (this.readyPrint=true), 15000);
           // window.onafterprint = function(){
           //   this.isPrint = false;
           // }
