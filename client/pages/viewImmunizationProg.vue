@@ -73,14 +73,14 @@ export default {
     return {
       isPrint: false,
       monthsList: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-      TCLID: '123',
-      city: 'Manila City',
-      brgy: 'Barangay 123',
-      submittedBy: 'me',
+      TCLID: '',
+      city: '',
+      brgy: '',
+      submittedBy: '',
       dateSubmitted: 'Nov 11, 2021',
       // updatedDate: 'Nov 10, 2020',
-      month: 'January',
-      year: '2021',
+      month: '',
+      year: '',
 
       tableOptions: {
         sortKey: 'updatedDate',
@@ -177,6 +177,9 @@ export default {
     this.month = this.monthsList[rows.TCL.month];
 	this.year = rows.TCL.year;
     this.TCLID = this.$route.query.TCLID;
+	this.city = rows.userData.city;
+    this.brgy = rows.userData.brgy;
+    this.submittedBy = rows.userData.druName;
   },
   methods: {
     downloadPDF() {

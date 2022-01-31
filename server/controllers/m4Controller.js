@@ -469,10 +469,7 @@ const indexFunctions = {
 			
 			// getting patient's TCL data
 			let tclData = await db.findRows("mmchddb.TCL_DATA", {patientID: patientID});
-			Object.keys(loadedData).forEach(e => {
-				if (!!loadedData[e]) delete loadedData[e];
-			});
-			await db.updateRows("mmchddb.TCL_DATA", {patientID: patientID}, loadedData); // ???
+			await db.updateRows("mmchddb.TCL_DATA", {patientID: patientID}, {...loadedData, status: "Complete"});
 			res.status(200).send("Update targets successful!");
 		} catch (e) {
 			console.log(e);
