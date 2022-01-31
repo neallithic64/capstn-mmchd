@@ -303,8 +303,7 @@ const indexFunctions = {
 				});
 				if (r.length > 0) {
 					// collect the patients and TCL data with that TCLID
-					let data = await db.exec(`SELECT CONCAT(p.lastName, ", ", p.firstName, " ", p.midName)
-							AS patientName, p.ageNo, p.sex, a.city, td.dateAdded
+					let data = await db.exec(`SELECT t.*, p.*, a.city, td.dateAdded
 							FROM mmchddb.TCL_DATA td
 							LEFT JOIN mmchddb.TCLS t ON t.TCLID = td.TCLID
 							LEFT JOIN mmchddb.PATIENTS p ON p.patientID = td.patientID
@@ -478,6 +477,42 @@ const indexFunctions = {
 		}
 	},
 	
+	postSubmitTCL: async function(req, res) {
+		let {TCLID} = req.body;
+		try {
+			let tclRow = await db.exec(`SELECT * FROM mmchddb.TCLS WHERE TCLID = '${TCLID}' AND isPushed = 0;`);
+			
+			// generate new CRFs and update past ones
+			for (let i = 0; i < tclRow.length; i++) {
+				// updating TCL
+				await db.updateRows("mmchddb.TCLS", {TCLID: tclRow[i].TCLID}, {
+					isPushed: true,
+					status: "Submitted",
+					dateSubmitted: new Date()
+				});
+				
+				// generating new TCL
+				let newTCL = (await generateID("mmchddb.TCLS")).id;
+				currMonth = new Date(tclRow[i].year, tclRow[i].month, 0);
+				nextMonth = new Date(currMonth.getFullYear(), currMonth.getMonth() + 1, currMonth.getDate());
+				await db.insertOne("mmchddb.TCLS", {
+					TCLID: newTCL,
+					diseaseID: tclRow[i].diseaseID,
+					userID: tclRow[i].userID,
+					dateSubmitted: null,
+					month: nextMonth.getMonth(),
+					year: nextMonth.getFullYear(),
+					isPushed: false,
+					status: "Ongoing"
+				});
+			}
+			res.status(200).send("TCL has been submitted successfully!");
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
+	
 	/*
 	 * CRON METHODS
 	 */
@@ -491,7 +526,8 @@ const indexFunctions = {
 				// updating TCL
 				await db.updateRows("mmchddb.TCLS", {TCLID: tcls[i].TCLID}, {
 					isPushed: true,
-					status: "Submitted"
+					status: "Submitted",
+					dateSubmitted: new Date()
 				});
 				
 				// generating new TCL

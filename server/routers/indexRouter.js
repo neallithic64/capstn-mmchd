@@ -71,6 +71,7 @@ router.post("/editProgTargets", m4Cont.postEditProgTargets);
 router.post("/editProgAccomp", m4Cont.postEditProgAccomp);
 router.post("/newImmuProgEntry", m4Cont.postNewImmuProgEntry);
 router.post("/editPatientTCL", m4Cont.postEditPatientTCL);
+router.post("/submitTCL", m4Cont.postSubmitTCL);
 
 
 router.get("/getFileTest", m3Cont.getFileTest);

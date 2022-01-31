@@ -83,7 +83,7 @@ export default {
       year: '',
 
       tableOptions: {
-        sortKey: 'updatedDate',
+        sortKey: 'dateAdded',
         columns: [
           {
             title: 'Patient',

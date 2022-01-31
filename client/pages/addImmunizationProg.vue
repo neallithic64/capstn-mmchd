@@ -43,7 +43,7 @@
         </div>
       </div>
 
-      <div class="addIPcomponent" style="margin-top: 20px;">
+      <div v-if="dataSets.length > 0" class="addIPcomponent" style="margin-top: 20px;">
         <dataTable
           :options="tableOptions"
           :datavalues="dataSets"
@@ -53,9 +53,9 @@
           <button class="addIPaddText"><a :href="'/addImmunizationProgEntry?TCLID=' + TCLID">+ add an entry</a></button></div>
       </div>
         <div v-if="year+'' === new Date().getFullYear()+'' && month+'' === new Date().getMonth()+''" class="addIPendButt">
-          <button class="back-button" type="button" @click="save()">
+          <!--button class="back-button" type="button" @click="save()">
             Save
-          </button>
+          </button-->
           <button class="submit-button" type="button" @click="submit()">
             Submit
           </button>
@@ -120,11 +120,11 @@ export default {
       month: '0',
       year: '2022',
       tableOptions: {
-        sortKey: 'updatedDate',
+        sortKey: 'dateAdded',
         columns: [
           {
             title: 'Patient',
-            key: 'patientName',
+            key: 'patientID',
             type: 'clickable',
             sortable: true,
           },
@@ -175,7 +175,7 @@ export default {
 		  */
           {
             title: 'Immunization Status',
-            key: 'immunStatus',
+            key: 'status',
             type: 'text',
             source: 'cases',
             uniqueField: 'id',
@@ -203,9 +203,13 @@ export default {
 	  }
 	})).data;
 	console.log(rows);
+	for (let i = 0; i < rows.tclData.length; i++) {
+	  rows.tclData[i].dateAdded = this.convDatePHT(new Date(rows.tclData[i].dateAdded));
+	  rows.tclData[i].action = rows.tclData[i].immunizationStatus === "Complete" ? "view" : "update";
+	}
+	this.dataSets = rows.tclData;
 	this.city = rows.userData.city;
 	this.barangay = rows.userData.brgy;
-	this.dataSets = rows.tclData;
     this.year = rows.TCL.year;
     this.month = rows.TCL.month;
     this.countMonth();
@@ -235,6 +239,26 @@ export default {
         this.$toast.error('Something went wrong!', {duration: 4000, icon: 'error'});
       }
     },
+	async submit() {
+	  try {
+        const result = await axios.post('http://localhost:8080/api/submitTCL', {
+		  TCLID: this.TCLID
+		});
+        if (result.status === 200) {
+          this.$toast.success('TCL submitted!', {duration: 4000, icon: 'check_circle'});
+		  window.location = '/allImmunizationProg';
+        } else {
+          // eslint-disable-next-line no-console
+          console.log(result);
+          this.$toast.error('Something went wrong!', {duration: 4000, icon: 'error'});
+        }
+        this.popupOpen = false;
+      } catch(e) {
+        // eslint-disable-next-line no-console
+        console.log(e);
+        this.$toast.error('Something went wrong!', {duration: 4000, icon: 'error'});
+      }
+	},
     countMonth() {
       this.maxMonth = this.year == 2022 ? (new Date()).getMonth() : 11;
     },
@@ -281,6 +305,9 @@ export default {
       link.setAttribute("href", data);
       link.setAttribute("download", "ImmunizationProgram.csv");
       link.click();
+    },
+	convDatePHT(d) { // only accepts Date object; includes checking
+      return !isNaN(Date.parse(d)) ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10) : "N/A";
     },
   },
 }
