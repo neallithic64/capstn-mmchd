@@ -1069,7 +1069,7 @@ const axios = require('axios');
 export default {
   middleware: 'is-auth',
   header: {
-    title: 'Case Report Form - Dengue',
+    title: 'Immunization Program Report Entry',
   },
   data() {
     return {
@@ -1182,20 +1182,20 @@ export default {
       ],
       loadedData: [
         {
-          BCGdate: '2020-02-03',
-          HEPAwithdate: '2020-02-03',
+          BCGdate: '',
+          HEPAwithdate: '',
           HEPAmoredate: '',
-          OPV1date: '2020-02-03',
-          OPV2date: '2020-02-03',
-          OPV3date: '2020-02-03',
-          PENTA1date: '2020-02-03',
-          PENTA2date: '2020-02-03',
-          PENTA3date: '2020-02-03',
-          PCV1date: '2020-02-03',
-          PCV2date: '2020-02-03',
+          OPV1date: '',
+          OPV2date: '',
+          OPV3date: '',
+          PENTA1date: '',
+          PENTA2date: '',
+          PENTA3date: '',
+          PCV1date: '',
+          PCV2date: '',
           PCV3date: '',
-          MCV1date: '2020-02-03',
-          MCV2date: '2020-02-03',
+          MCV1date: '',
+          MCV2date: '',
           Dengue1date: '',
           Dengue2date: '',
           Dengue3date: '',
@@ -1228,38 +1228,28 @@ export default {
     }
   },
   async fetch() {
-    let rows = (await axios.get('http://localhost:8080/api/getCaseDefs?diseaseID=' + this.diseaseID)).data;
-    for (let i = 0; i < rows.length; i++) {
-      this.classification[rows[i].class] = rows[i].definition;
-    }
-    rows = (await axios.get('http://localhost:8080/api/getPatients')).data;
-    this.patients = rows;
-    rows = (await axios.get('http://localhost:8080/api/getLabUsers')).data;
-    this.labList = rows;
+	const patientData = (await axios.get('http://localhost:8080/api/getPatientData', {
+      params: { patientID: this.$route.query.patientID }
+    })).data;
+	console.log(patientData);
+	Object.keys(patientData.tclData).forEach((e, i) => {
+	  patientData.tclData[e] = this.convDatePHT(new Date(patientData.tclData[e]));
+	  if ((new Date(patientData.tclData[e])).getTime() < 0) patientData.tclData[e] = "";
+	});
+	if (patientData.tclData) {
+	  this.formData.immunization = patientData.tclData;
+	  this.loadedData = [this.formData.immunization];
+	}
   },
   head() {
     return {
-      title: 'Immunization Form '
+      title: 'Immunization Form'
     }
   },
   computed: {},
   mounted() {
-    const today = new Date();
-    let dd = today.getDate();
-    let mm = today.getMonth()+1;
-    const yyyy = today.getFullYear();
-    if(dd<10){
-      dd='0'+dd
-    } 
-    if(mm<10){
-      mm='0'+mm
-    } 
-    this.today = yyyy+'-'+mm+'-'+dd;
-    // document.getElementById('birthdate').setAttribute('max', today);
-    // console.log(today);
-
-    console.log(this.loadedData[0])
-
+    this.today = this.convDatePHT(new Date());
+	
     this.dataSets[0].BCGdate = this.loadedData[0].BCGdate;
     this.dataSets[0].HEPAwithdate = this.loadedData[0].HEPAwithdate;
     this.dataSets[0].HEPAmoredate = this.loadedData[0].HEPAmoredate;
@@ -1308,27 +1298,26 @@ export default {
       else this.formData.patient.ageNo = age-1;
       if (this.formData.patient.ageNo<0) this.formData.patient.ageNo = 0;
     },
-    save() {
+    async save() {
       this.saveData();
-      if (this.validate()) {
-        // submit();
+      // if (this.validate()) {
+        await this.submit();
         // IF SUBMIT SUCCESSFUL
         console.log('VALIDATED dates');
         this.status = 'Complete';
         this.action = 'view';
-      }
+      // }
     },
     async submit() {
       // TODO: this submit is the "save" type, the cases should only be visible to the DRU, not yet submitted to MMCHD
-      const now = new Date();
-      this.formData.cases.diseaseID = this.diseaseID;
-      this.formData.cases.reportedBy = this.$auth.user.userID;
-      this.formData.cases.reportDate = now.getFullYear() + '-' + (now.getMonth()+1) + '-' + now.getDate();
-      const result = await axios.post('http://localhost:8080/api/newCase', {formData: this.formData, CRFID: this.$route.query.CRFID});
+      const result = await axios.post('http://localhost:8080/api/editPatientTCL', {
+	    loadedData: this.loadedData,
+		patientID: this.$route.query.patientID
+      });
       if (result.status === 200) {
         // alert('CRF case submitted!');
-        this.$toast.success('Case saved!', {duration: 4000, icon: 'check_circle'});
-        window.location.href = '/allCases';
+        this.$toast.success('Immunizations saved!', {duration: 4000, icon: 'check_circle'});
+        window.location.href = '/allImmunizationProg';
       } else {
         // eslint-disable-next-line no-console
         console.log(result);
@@ -1443,21 +1432,7 @@ export default {
 
       this.patientExist = false;
     },
-    searchPatient(event) {
-      this.patientResult = [];
-      if (event.target.value !== '') {
-        let ctr = 0;
-        for (let i = 0; i < this.patients.length && ctr < 5; i++) {
-          // eslint-disable-next-line no-useless-escape
-          const reg = new RegExp('^' + event.target.value + 'w*', 'i');
-          if ((this.patients[i].firstName + ' ' + this.patients[i].midName + ' ' + this.patients[i].lastName).match(reg)) {
-            this.patientResult.push(this.patients[i]);
-            ctr++;
-          }
-        }
-      }
-    },
-    getAddress() {
+	getAddress() {
       if (this.sameAddress) {
         this.formData.patient.permHouseStreet = this.formData.patient.currHouseStreet;
         this.formData.patient.permCity = this.formData.patient.currCity;
@@ -1514,6 +1489,11 @@ export default {
       console.log(this.formData.patient.permBrgy)
       // eslint-disable-next-line no-console
       console.log(this.formData.patient.currBrgy)
+    },
+	convDatePHT(d) { // only accepts Date object; includes checking
+      return !isNaN(Date.parse(d))
+	      ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10).split("-").join("/")
+		  : "N/A";
     },
   },
 }

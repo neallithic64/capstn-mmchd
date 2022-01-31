@@ -17,7 +17,7 @@ Date.prototype.getWeek = function() {
  * This will return a String representation of the corrected date in Philippine Standard
  * Time. This is done by offsetting the date by a constant of 8 hours in miliseconds.
  */
-function convDatePHT (d) {
+function convDatePHT(d) {
 	return !isNaN(Date.parse(d)) ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10) : "N/A";
 }
 
@@ -300,7 +300,7 @@ async function createOutbreak(diseaseID, outbreakStatus) {
 					return false;
 			}	
 		} else {
-			let newOutbreak = new Outbreak((await generateID("mmchddb.OUTBREAKS")).id, diseaseID, "Ongoing", new Date(), null, outbreakStatus, null);
+			let newOutbreak = new Outbreak((await generateID("mmchddb.OUTBREAKS")).id, diseaseID, 'Ongoing', new Date(), null,outbreakStatus, null);
 			let result = await db.insertOne("mmchddb.OUTBREAKS", newOutbreak);
 			return result;
 		}
@@ -584,9 +584,42 @@ const indexFunctions = {
 	
 	mkData: async function(req, res) {
 		try {
+			/*
 			let rows = await db.exec(`SELECT userID FROM mmchddb.USERS ORDER BY userID;`);
 			if (rows) rows = rows.map(e => e.userID);
-			res.status(200).send(rows);
+			let arr = [];
+			let rows = await db.exec(`SELECT SUM(rf.LSmoking), SUM(rf.LAlcoholism), SUM(rf.LDrugUse),
+					SUM(rf.LPhysicalInactivity), SUM(rf.CHereditary), SUM(rf.CAsthma), SUM(rf.HHeartDisease),
+					SUM(rf.HHypertension), SUM(rf.HObesity), SUM(rf.HDiabetes), SUM(rf.OCleanWater),
+					SUM(rf.OAirPollution), SUM(rf.OHealthFacility), SUM(rf.OWasteMgmt), SUM(rf.OVacCoverage),
+					SUM(rf.OHealthEdu), SUM(rf.OShelter), SUM(rf.OFlooding), SUM(rf.OPoverty)
+					FROM mmchddb.RISK_FACTORS rf
+					LEFT JOIN mmchddb.CASES c ON c.caseID = rf.caseID
+					WHERE c.diseaseID = 'DI-0000000000003';`);
+			for (let [key, val] of Object.entries(rows[0])) {
+				arr.push({key: /SUM\(rf\.(\w+)\)/.exec(key)[1], value: val});
+			}
+			arr.forEach(async (e) => await db.insertOne("mmchddb.RISK_FACTORS_C", e));
+			let risks = ["rf.LSmoking", "rf.LAlcoholism", "rf.LDrugUse", "rf.LPhysicalInactivity",
+					"rf.CHereditary", "rf.CAsthma", "rf.HHeartDisease", "rf.HHypertension", "rf.HObesity",
+					"rf.HDiabetes", "rf.OCleanWater", "rf.OAirPollution", "rf.OHealthFacility",
+					"rf.OWasteMgmt", "rf.OVacCoverage", "rf.OHealthEdu", "rf.OShelter", "rf.OFlooding",
+					"rf.OPoverty"], risk, rows;
+			for (let i = 0; i < risks.length; i++) {
+				risk = risks[i];
+				rows = await db.exec(`SELECT SUM(CASE WHEN ${risk} = 1 AND c.caseLevel LIKE '%Confirm%' THEN 1 ELSE 0 END) AS exposedDisease,
+						SUM(${risk}) AS totalExposed,
+						SUM(CASE WHEN ${risk} = 0 AND c.caseLevel LIKE '%Confirm%' THEN 1 ELSE 0 END) AS unexposedDisease,
+						SUM(CASE WHEN ${risk} = 0 THEN 1 ELSE 0 END) totalUnexposed, d.diseaseName, '${risk.substr(3)}' AS riskName
+						FROM mmchddb.RISK_FACTORS rf
+						LEFT JOIN mmchddb.CASES c ON c.caseID = rf.caseID
+						LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = c.diseaseID
+						GROUP BY d.diseaseName`);
+				console.log(rows);
+				await db.insertRows("mmchddb.RISK_FACTORS_D", Object.keys(rows[0]), rows.map(Object.values));
+			}
+			*/
+			res.status(200).send([]);
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
@@ -694,8 +727,11 @@ const indexFunctions = {
 		try {
 			let havingClause,
 					userTypeCheck = await db.findRows("mmchddb.USERS", {userID: req.query.userID});
-			if (userTypeCheck.length > 0 && userTypeCheck[0].userType.includes("Staff")) havingClause = ``;
-			else havingClause = `HAVING cr.userID = '${req.query.userID}'`;
+			if (userTypeCheck.length > 0 && userTypeCheck[0].userType.includes("Staff")) {
+				havingClause = ``;
+			} else if (userTypeCheck.length > 0 && userTypeCheck[0].userType.includes("Lab")) {
+				havingClause = `HAVING c.reportedBy = '${req.query.userID}' OR c.investigatorLab = '${req.query.userID}'`;
+			} else havingClause = `HAVING c.reportedBy = '${req.query.userID}'`;
 			
 			let match = await db.exec(`SELECT c.*, d.diseaseName,
 					CONCAT(p.lastName, ", ", p.firstName, " ", p.midName) AS patientName,
@@ -780,7 +816,7 @@ const indexFunctions = {
 			let riskFactorsData = await db.findRows("mmchddb.RISK_FACTORS", {caseID: req.query.caseID});
 			let caseData = await db.findRows("mmchddb.CASE_DATA", {caseID: req.query.caseID});
 			let caseAudit = await db.exec("SELECT a.dateModified AS 'reportDate', a.prevValue AS 'from', "+
-			 		"CONCAT(u.firstName,' ', u.midName, ' ', u.lastName, ', ' , u.druName) AS 'reportedBy' " +
+					"CONCAT(u.firstName,' ', u.midName, ' ', u.lastName, ', ' , u.druName) AS 'reportedBy' " +
 					"FROM mmchddb.AUDIT_LOG a JOIN mmchddb.USERS u ON a.modifiedBy = u.userID " +
 					"WHERE a.editedID = '" + req.query.caseID + "' AND a.fieldName = 'caseLevel'" +
 					"ORDER BY a.dateModified;");
@@ -863,6 +899,8 @@ const indexFunctions = {
 	},
 
 	getPatientData: async function(req, res) {
+		let riskFactorsData = [], DRUData = [];
+		console.log(req.query);
 		try {
 			// collect relevant data
 			let rows = await db.exec(`SELECT c.caseID, c.reportDate, c.caseLevel,
@@ -884,20 +922,50 @@ const indexFunctions = {
 					INNER JOIN mmchddb.ADDRESSES a1 ON p.caddressID = a1.addressID
 					INNER JOIN mmchddb.ADDRESSES a2 ON p.paddressID = a2.addressID
 					WHERE p.patientID = '${req.query.patientID}';`);
-			let riskFactorsData = await db.findRows("mmchddb.RISK_FACTORS", {caseID: rows[rows.length - 1].caseID});
-			let DRUData = await db.exec(`SELECT u.druName, userType AS 'druType', a.city AS 'druCity',
-					a.houseStreet AS 'druHouseStreet', a.brgy AS 'druBrgy', us.pushDataAccept
-					FROM mmchddb.USERS u
-					INNER JOIN mmchddb.ADDRESSES a ON u.addressID = a.addressID
-					INNER JOIN mmchddb.USER_SETTINGS us ON us.userID = u.userID
-					WHERE u.userID = '${rows[0].reportedBy}';`);
-			let cases;
+			let tclData = await db.exec(`SELECT * FROM mmchddb.TCL_DATA WHERE patientID = '${req.query.patientID}';`);
+			if (rows.length > 0) {
+				riskFactorsData = await db.findRows("mmchddb.RISK_FACTORS", {caseID: rows[rows.length - 1].caseID});
+				DRUData = await db.exec(`SELECT u.druName, userType AS 'druType', a.city AS 'druCity',
+						a.houseStreet AS 'druHouseStreet', a.brgy AS 'druBrgy', us.pushDataAccept
+						FROM mmchddb.USERS u
+						INNER JOIN mmchddb.ADDRESSES a ON u.addressID = a.addressID
+						INNER JOIN mmchddb.USER_SETTINGS us ON us.userID = u.userID
+						WHERE u.userID = '${rows[0].reportedBy}';`);
+			} else {
+				riskFactorsData = [{
+					LSmoking: 0,
+					LAlcoholism: 0,
+					LDrugUse: 0,
+					LPhysicalInactivity: 0,
+					LOthers: 0,
+					CHereditary: 0,
+					CAsthma: 0,
+					COthers: 0,
+					HHeartDisease: 0,
+					HHypertension: 0,
+					HObesity: 0,
+					HDiabetes: 0,
+					HOthers: 0,
+					OCleanWater: 0,
+					OAirPollution: 0,
+					OHealthFacility: 0,
+					OWasteMgmt: 0,
+					OVacCoverage: 0,
+					OHealthEdu: 0,
+					OShelter: 0,
+					OFlooding: 0,
+					OPoverty: 0,
+					OOthers: 0
+				}];
+			}
+			
 			let data = {
 				rowData: rows,
 				patient: patientData[0],
 				riskFactors: riskFactorsData[0],
-				DRUData: DRUData[0]
-			}
+				DRUData: DRUData.length ? DRUData[0] : [],
+				tclData: tclData.length ? tclData[0] : []
+			};
 			
 			// fixing dates
 			data.rowData.forEach(function(element) {
@@ -928,7 +996,7 @@ const indexFunctions = {
 			let caseData = await db.findRows("mmchddb.CASE_DATA", {caseID: req.query.caseID});
 			let crfData = await db.findRows("mmchddb.CRFS", {CRFID: rows[0].CRFID});
 			let caseAudit = await db.exec("SELECT a.dateModified AS 'reportDate', a.prevValue AS 'from', " +
-			 		"CONCAT(u.firstName,' ', u.midName, ' ', u.lastName, ', ' , u.druName) AS 'reportedBy' " +
+					"CONCAT(u.firstName,' ', u.midName, ' ', u.lastName, ', ' , u.druName) AS 'reportedBy' " +
 					"FROM mmchddb.AUDIT_LOG a JOIN mmchddb.USERS u ON a.modifiedBy = u.userID " +
 					"WHERE a.editedID = '" + req.query.caseID + "' AND a.fieldName = 'caseLevel'" +
 					"ORDER BY a.dateModified;");
@@ -1820,11 +1888,18 @@ const indexFunctions = {
 			}, { isPushed: true });
 			
 			let oldCRF = (await db.findRows("mmchddb.CRFS", { CRFID: CRFID }))[0];
-			let nextWeek = new Date(oldCRF.getFullYear(), oldCRF.getMonth(), oldCRF.getDate() + 7);
+			let nextWeek;
+			
+			// if cases were submitted ahead of time, generate the next week
+			if (oldCRF.year == (new Date()).getFullYear() && oldCRF.week == (new Date()).getWeek()) {
+				nextWeek = new Date(oldCRF.year, 0, 1 + oldCRF.week * 7);
+			} else { // if not, just get the currect date
+				nextWeek = new Date();
+			}
 			
 			// generate new CRF
 			await db.insertOne("mmchddb.CRFS", {
-				CRFID: CRFID,
+				CRFID: (await generateID("mmchddb.CRFS")).id,
 				diseaseID: diseaseID,
 				userID: userID,
 				week: nextWeek.getWeek(),

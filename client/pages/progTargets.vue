@@ -124,8 +124,8 @@ export default {
       newIndicators:[],
       formSection: [],
       instructions: {
-        'Step 1': 'Click on a disease in the list on the left side to see its case definitions.',
-        'Step 2': 'Click on the "Edit" button if you wish to edit the case definitions of the disease.',
+        'Step 1': 'Click on a disease in the list on the left side to see its program targets.',
+        'Step 2': 'Click on the "Edit" button if you wish to edit the program targets of the disease.',
         'Step 3': 'Select and edit the target values.',
         'Step 4': 'Lastly, click "Save" to save your changes.',
         'Step 5': 'In case there are issues, please contact the IT Staff.'

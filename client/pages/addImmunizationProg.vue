@@ -5,9 +5,9 @@
     <div ref="content" class="addIPcontainer">
       <div class="addIP-viewDetails" style="align-text: left">
         <div class="addIP-info">
-          <h1 style="margin: -10px 0" class="addIPh1">Program Immunization Report No. {{immunProgNo}}</h1>
+          <h1 style="margin: -10px 0" class="addIPh1">Program Immunization Report No. {{TCLID}}</h1>
           <h2 style="margin-top: -1px" class="addIPh2">{{ city }}, {{ barangay }}</h2>
-          <p>Last updated: <b class="addIPhBold"> {{ updatedDate }} </b> </p>
+          <!--p>Last updated: <b class="addIPhBold"> {{ updatedDate }} </b> </p-->
         </div>
         <div class="addIP-status" style="align-text: right; place-content: end;">
           <div v-show="!isPrint" class="addIP-actionButts">
@@ -26,7 +26,8 @@
             </ul>
           </div>
           <div style="display:inline-flex">
-            <select v-model="month" class="input-year" style="float: right;margin-right: 10px;">
+		    {{ monthsList[month] + " " + year }}
+            <!--select v-model="month" class="input-year" style="float: right;margin-right: 10px;">
               <option v-for="index in (0,maxMonth)" :key="index" :value="index-1">
                 {{monthsList[index-1]}}
               </option>
@@ -37,7 +38,7 @@
               <option value='2020'>2020</option>
               <option value='2019'>2019</option>
               <option value='2018'>2018</option>
-            </select>
+            </select-->
           </div>
         </div>
       </div>
@@ -49,7 +50,7 @@
           :casetype="'immunProg'"
         />
         <div v-if="year+'' === new Date().getFullYear()+'' && month+'' === new Date().getMonth()+''" class="addIPaddButton">
-          <button class="addIPaddText"><a href="/addImmunizationProgEntry">+ add an entry</a></button></div>
+          <button class="addIPaddText"><a :href="'/addImmunizationProgEntry?TCLID=' + TCLID">+ add an entry</a></button></div>
       </div>
         <div v-if="year+'' === new Date().getFullYear()+'' && month+'' === new Date().getMonth()+''" class="addIPendButt">
           <button class="back-button" type="button" @click="save()">
@@ -108,18 +109,16 @@ export default {
   compute: {},
   data() {
     return {
-      popupOpen:true,
-      monthsList : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+      popupOpen: true,
+      monthsList: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
       maxMonth:'',
-      today:'',
       isPrint: false,
-      immunProgNo: '123',
+      TCLID: '123',
       city: 'Manila City',
       barangay: 'Barangay 123',
       updatedDate: 'Nov 10, 2020',
       month: '0',
       year: '2022',
-
       tableOptions: {
         sortKey: 'updatedDate',
         columns: [
@@ -131,7 +130,7 @@ export default {
           },
           {
             title: 'City',
-            key: 'city',
+            key: 'patientCity',
             type: 'text',
             source: 'crf',
             uniqueField: 'id',
@@ -163,6 +162,7 @@ export default {
             expectFormat: 'DD MMM YYYY',
             sortable: true,
           },
+		  /*
           {
             title: 'Last updated',
             key: 'updatedDate',
@@ -172,6 +172,7 @@ export default {
             expectFormat: 'DD MMM YYYY',
             sortable: true,
           },
+		  */
           {
             title: 'Immunization Status',
             key: 'immunStatus',
@@ -190,62 +191,52 @@ export default {
         // source: 'http://demo.datatable/api/users',
         search: true,
       },
-      dataSets: [
-        {
-          patientID: 'me',
-          city: 'Manila',
-          ageNo: '9',
-          sex: 'F',
-          addDate: '',
-          updatedDate: '',
-          immunStatus: 'Complete',
-          action: 'view',
-        },
-        {
-          patientID: 'me',
-          city: 'Manila',
-          ageNo: '9',
-          sex: 'F',
-          addDate: '',
-          updatedDate: '',
-          immunStatus: 'Ongoing',
-          action: 'update',
-        },
-      ],
+      dataSets: [],
     }
   },
-  mounted() {
-    const day = new Date();
-    this.today = this.monthsList[day.getMonth()] + ' ' + day.getDate() + ', ' + day.getFullYear();
-    this.year = day.getFullYear()+'';
-    this.month = '0';
+  async mounted() {
+	const rows = (await axios.get('http://localhost:8080/api/getTCL', {
+	  params: {
+	    TCLID: this.$route.query.TCLID,
+		diseaseID: "DI-0000000000003",
+		userID: this.$auth.user.userID
+	  }
+	})).data;
+	console.log(rows);
+	this.city = rows.userData.city;
+	this.barangay = rows.userData.brgy;
+	this.dataSets = rows.tclData;
+    this.year = rows.TCL.year;
+    this.month = rows.TCL.month;
     this.countMonth();
+	this.TCLID = this.$route.query.TCLID ? this.$route.query.TCLID : rows.TCL.TCLID;
+	if (!rows.pushDataAccept) this.popupOpen = true;
+    else this.popupOpen = false;
   },
   methods: {
-    popup(change) {this.popupOpen = !this.popupOpen},
-    /* async popup(change) {
+    async popup(change) {
       try {
-        this.popupOpen = !this.popupOpen
-        const result = await axios.post('http://localhost:8080/api/updatePushData', {userID: this.$auth.user.userID, pushDataAccept: change});
+        this.popupOpen = !this.popupOpen;
+        const result = await axios.post('http://localhost:8080/api/updatePushData', {
+		  userID: this.$auth.user.userID,
+		  pushDataAccept: change
+		});
         if (result.status === 200) {
-          // alert('Health event submitted!');
           this.$toast.success('User Settings Updated!', {duration: 4000, icon: 'check_circle'});
-          window.location.href = '/allHealthEvents';
         } else {
           // eslint-disable-next-line no-console
           console.log(result);
           this.$toast.error('Something went wrong!', {duration: 4000, icon: 'error'});
         }
-        location.reload()
+        this.popupOpen = false;
       } catch(e) {
         // eslint-disable-next-line no-console
         console.log(e);
         this.$toast.error('Something went wrong!', {duration: 4000, icon: 'error'});
       }
-    }, */
+    },
     countMonth() {
-      if (this.year=== 2022 || this.year=== '2022') this.maxMonth = new Date().getMonth()+1;
-      else this.maxMonth = 12;
+      this.maxMonth = this.year == 2022 ? (new Date()).getMonth() : 11;
     },
     downloadPDF() {
       this.isPrint = !this.isPrint

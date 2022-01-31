@@ -131,6 +131,8 @@ export default {
         background-attachment: fixed;
         background-size: cover;
         font-family: 'Work Sans', sans-serif;
+        height: 100vh;
+        overflow-y: hidden;
     }
 
     #login-logo {

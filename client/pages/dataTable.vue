@@ -268,13 +268,11 @@
               <span v-else-if="column.key === 'action'">
                 <div v-if="pageType==='immunProg'" class="actionButtons">
                   <ul>
-                    <a :href="'/viewImmunizationProgEntry'" class="CRFActionButton" style="color: #346083; text-decoration-line: underline">
-                      <span v-if="data[column.key]==='update'"> Update </span>
-                      <span v-if="data[column.key]==='view'"> View </span>
-                    
-                      <!-- <img v-if="data[column.key]==='add'" src="~/assets/img/add.png" class="button" />
-                      <img v-if="data[column.key]==='edit'" src="~/assets/img/pen.png" class="button"/>
-                      <img v-if="data[column.key]==='view'" src="~/assets/img/eye.png" class="button"/> -->
+                    <a v-if="data[column.key]==='update'" :href="'/viewImmunizationProgEntry?action=update&patientID=' + data['patientID']" class="CRFActionButton" style="color: #346083; text-decoration-line: underline">
+                      <span> Update </span>
+                    </a>
+                    <a v-if="data[column.key]==='view'" :href="'/viewImmunizationProgEntry?action=view&patientID=' + data['patientID']" class="CRFActionButton" style="color: #346083; text-decoration-line: underline">
+                      <span> View </span>
                     </a>
                   </ul>
                 </div>
@@ -349,9 +347,9 @@
                   :href="'/viewHealthEvent' + '?eventID=' + data[column.key]">
                   {{ data[column.key] }}
                 </a>
-                <a v-else-if="column.key === 'immunizationProgNo'"
+                <a v-else-if="column.key === 'TCLID'"
                   style="color: #346083; text-decoration-line: underline"
-                  :href="'/viewImmunizationProg'">
+                  :href="'/viewImmunizationProg?TCLID=' + data[column.key]">
                   {{ data[column.key] }}
                 </a>
                 <a v-else-if="(column.key === 'progAccompID')"
@@ -370,7 +368,7 @@
                   {{ data[column.key] }}
                 </a>
               </span>
-              <span v-else-if="column.title==='Case Status' || column.title==='Status' || column.title==='Risk Classification' || column.title==='Submit Status' || column.title==='Report Status' || column.title==='Immunization Status'" :class="caseStatusClass(data[column.key])">
+              <span v-else-if="column.title==='Case Status' || column.title==='Status' || column.title==='Risk Classification' || column.title==='Submit Status' || column.title==='Report Status' || column.title==='Immunization Status' || column.title==='Assessment'" :class="caseStatusClass(data[column.key])">
                 {{ data[column.key] }}
               </span>
               <span v-else>
@@ -568,6 +566,7 @@ export default {
         else if (c.toString().includes('Ongoing')) return 'caseStatus red';
         else if (c.toString().includes('Controlled')) return 'caseStatus orange';
         else if (c.toString().includes('Closed')) return 'caseStatus green';
+        else if (c.toString().includes('Discarded')) return 'caseStatus gray';
         
         else if (c.toString().includes('High')) return 'caseStatus red';
         else if (c.toString().includes('Moderate')) return 'caseStatus orange';
@@ -581,6 +580,8 @@ export default {
         else if (c.toString().includes('For Approval')) return 'caseStatus orange';
         else if (c.toString().includes('For Revision')) return 'caseStatus red';
         else if (c.toString().includes('Approved')) return 'caseStatus green';
+
+        else if (c.toString().includes('PHELC') || c.toString().includes('PHERC') || c.toString().includes('PHENC') || c.toString().includes('PHEIC')) return 'caseStatus red';
         
         return 'none';
       }

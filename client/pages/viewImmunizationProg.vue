@@ -5,8 +5,8 @@
     <div ref="content" class="VIPcontainer">
       <div class="VIPdetails" style="align-text: left">
         <div class="VIPnumbers">
-          <h1 class="VIPh1" style="margin: -10px 0">Program Immunization Report No. {{immunProgNo}}</h1>
-          <h2 class="VIPh2" style="margin-top: -1px">{{ city }}, {{ barangay }}</h2>
+          <h1 class="VIPh1" style="margin: -10px 0">Program Immunization Report No. {{ TCLID }}</h1>
+          <h2 class="VIPh2" style="margin-top: -1px">{{ city }}, {{ brgy }}</h2>
           <h3 class="VIPh3">{{ month }} {{ year }} </h3>
           <p>Submitted by: <b class="VIPb"> {{ submittedBy }} </b> </p>
         </div>
@@ -28,13 +28,13 @@
             />
             </ul>
           </div>
-          <p>Submitted on: <b class="VIPb"> {{ submittedDate }} </b> </p>
-          <p>Last updated: <b class="VIPb"> {{ updatedDate }} </b> </p>
+          <!--p>Submitted on: <b class="VIPb"> {{ submittedDate }} </b> </p>
+          <p>Last updated: <b class="VIPb"> {{ updatedDate }} </b> </p-->
         </div>
       </div>
 
       <div class="VIPcomponent">
-        <div id="vue-root">
+        <div v-if="dataSets.length > 0" id="vue-root">
           <dataTable
             :options="tableOptions"
             :datavalues="dataSets"
@@ -66,18 +66,19 @@ export default {
   compute: {},
   head() {
     return {
-      title: 'Immunization Report ' + this.immunProgNo
+      title: 'Immunization Program'
     }
   },
   data() {
     return {
       isPrint: false,
-      immunProgNo: '123',
+      monthsList: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+      TCLID: '123',
       city: 'Manila City',
-      barangay: 'Barangay 123',
+      brgy: 'Barangay 123',
       submittedBy: 'me',
-      submittedDate: 'Nov 11,2021',
-      updatedDate: 'Nov 10, 2020',
+      dateSubmitted: 'Nov 11, 2021',
+      // updatedDate: 'Nov 10, 2020',
       month: 'January',
       year: '2021',
 
@@ -92,7 +93,7 @@ export default {
           },
           {
             title: 'City',
-            key: 'city',
+            key: 'patientCity',
             type: 'text',
             source: 'crf',
             uniqueField: 'id',
@@ -117,14 +118,15 @@ export default {
           },
           {
             title: 'Date added',
-            key: 'addDate',
+            key: 'dateAdded',
             type: 'text',
             dateFormat: true,
             currentFormat: 'YYYY-MM-DD',
             expectFormat: 'DD MMM YYYY',
             sortable: true,
           },
-          {
+          /*
+		  {
             title: 'Last updated',
             key: 'updatedDate',
             type: 'text',
@@ -133,9 +135,10 @@ export default {
             expectFormat: 'DD MMM YYYY',
             sortable: true,
           },
-          {
+          */
+		  {
             title: 'Immunization Status',
-            key: 'immunStatus',
+            key: 'immunizationStatus',
             type: 'text',
             source: 'cases',
             uniqueField: 'id',
@@ -151,50 +154,30 @@ export default {
         // source: 'http://demo.datatable/api/users',
         search: true,
       },
-      dataSets: [
-        {
-          patientID: 'me',
-          city: 'Manila',
-          ageNo: '9',
-          sex: 'F',
-          addDate: '',
-          updatedDate: '',
-          immunStatus: 'Complete',
-          action: 'view',
-        },
-        {
-          patientID: 'me',
-          city: 'Manila',
-          ageNo: '9',
-          sex: 'F',
-          addDate: '',
-          updatedDate: '',
-          immunStatus: 'Ongoing',
-          action: 'update',
-        },
-      ],
+      dataSets: [],
     }
   },
   mounted() {},
-  /*
   async fetch() {
-    const rows = (await axios.get('http://localhost:8080/api/getCRFPage', {
+    const rows = (await axios.get('http://localhost:8080/api/getTCL', {
       params: {
-        CRFID: this.$route.query.CRFID,
+        TCLID: this.$route.query.TCLID,
         diseaseID: "DI-0000000000003",
         userID: this.$auth.user.userID
       }
     })).data;
     console.log(rows);
-    for (let i = 0; i < rows.dataSets.length; i++) {
-      rows.dataSets[i].updatedDate = rows.dataSets[i].updatedDate ? this.convDatePHT(new Date(rows.dataSets[i].updatedDate)) : "N/A";
-      rows.dataSets[i].reportDate = this.convDatePHT(new Date(rows.dataSets[i].reportDate));
+	for (let i = 0; i < rows.tclData.length; i++) {
+      rows.tclData[i].dateAdded = this.convDatePHT(new Date(rows.tclData[i].dateAdded));
+	  rows.tclData[i].action = rows.tclData[i].immunizationStatus === "Complete" ? "view" : "update";
+      // rows.tclData[i].updatedDate = rows.tclData[i].updatedDate ? this.convDatePHT(new Date(rows.tclData[i].updatedDate)) : "N/A";
+      // rows.tclData[i].reportDate = this.convDatePHT(new Date(rows.tclData[i].reportDate));
     }
-    this.dataSets = rows.dataSets;
-    this.weekNo = rows.CRF.year + "-" + rows.CRF.week;
-    this.CRFID = this.$route.query.CRFID;
+	this.dataSets = rows.tclData;
+    this.month = this.monthsList[rows.TCL.month];
+	this.year = rows.TCL.year;
+    this.TCLID = this.$route.query.TCLID;
   },
-  */
   methods: {
     downloadPDF() {
       this.isPrint = !this.isPrint

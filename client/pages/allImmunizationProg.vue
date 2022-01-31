@@ -28,7 +28,7 @@
           </ul>
         </div>
       </div>
-      <div class="AIP-viewComponent">
+      <div v-if="dataSets.length > 0" class="AIP-viewComponent">
         <dataTable
           :options="tableOptions"
           :datavalues="dataSets"
@@ -66,6 +66,7 @@ export default {
     return {
       isPrint: false,
       dayTime: '',
+      monthsList: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
       tableOptions: {
         tableName: 'cases',
         sortKey: 'updateDate',
@@ -99,7 +100,7 @@ export default {
           },
           {
             title: 'Immunized Patients',
-            key: 'immunizedPatients',
+            key: 'immuniPati',
             sortable: true,
           },
           {
@@ -107,11 +108,11 @@ export default {
             key: 'totalPatients',
             sortable: true,
           },
-          {
+          /*{
             title: 'Last Updated',
             key: 'updateDate',
             sortable: true,
-          },
+          },*/
           {
             title: 'Submit Status',
             key: 'submitStatus',
@@ -120,54 +121,24 @@ export default {
         // source: 'http://demo.datatable/api/users',
         search: true,
       },
-      dataSets: [
-        {
-          immunizationProgNo: '124',
-          city: 'ad',
-          barangay: '',
-          year: '2020',
-          month: 'Feb',
-          immunizedPatients: '10',
-          totalPatients: '30',
-          updateDate: '',
-        },
-        {
-          immunizationProgNo: '124',
-          city: 'ad',
-          barangay: '',
-          year: '2020',
-          month: 'Feb',
-          immunizedPatients: '10',
-          totalPatients: '30',
-          updateDate: '',
-        },
-        {
-          immunizationProgNo: '124',
-          city: 'ad',
-          barangay: '',
-          year: '2020',
-          month: 'Feb',
-          immunizedPatients: '10',
-          totalPatients: '30',
-          updateDate: '',
-        },
-      ],
+      dataSets: [],
     }
   },
-  mounted() {
-    // if (this.dataSets.length === 0) {
-    //   this.$toast.show('Loading...', {className: 'blink', icon: 'hourglass_top'});
-    // }
-    const today = new Date();
-    const monthsList = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Aug', 'Oct', 'Nov', 'Dec'];
-    const hour = today.getHours()>9 ? today.getHours() : '0'+today.getHours()
-    const mins = today.getMinutes()>9 ? today.getMinutes() : '0'+today.getMinutes()
-    this.dayTime = monthsList[today.getMonth()] + ' ' + today.getDate() + ', ' + today.getFullYear()
-                     + ' ' + hour + ':' + mins;
-    // if (this.dataSets.length > 0) {
-    //   this.$toast.clear();
-    //   this.$toast.success('All TCLs loaded!', {duration: 4000, icon: 'check_circle'});
-    // }
+  async mounted() {
+    if (this.dataSets.length === 0) {
+      this.$toast.show('Loading...', {className: 'blink', icon: 'hourglass_top'});
+    }
+    this.dayTime = (new Date()).toString().split(":").slice(0, 2).join(":");
+	const data = (await axios.get('http://localhost:8080/api/getAllTCLs')).data;
+	for (let i = 0; i < data.length; i++) {
+	  data[i].month = this.monthsList[data[i].month];
+	  data[i].submitStatus = data[i].isPushed ? "Submitted" : "Ongoing";
+	}
+	this.dataSets = data;
+    if (this.dataSets.length > 0) {
+      this.$toast.clear();
+      this.$toast.success('All TCLs loaded!', {duration: 4000, icon: 'check_circle'});
+    }
   },
   methods: {
     editInput() {
