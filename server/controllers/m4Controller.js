@@ -469,7 +469,9 @@ const indexFunctions = {
 			
 			// getting patient's TCL data
 			let tclData = await db.findRows("mmchddb.TCL_DATA", {patientID: patientID});
-			
+			Object.keys(loadedData).forEach(e => {
+				if (!!loadedData[e]) delete loadedData[e];
+			});
 			await db.updateRows("mmchddb.TCL_DATA", {patientID: patientID}, loadedData); // ???
 			res.status(200).send("Update targets successful!");
 		} catch (e) {
@@ -482,18 +484,27 @@ const indexFunctions = {
 		try {
 			let tcls = await db.exec(`SELECT * FROM mmchddb.TCLS WHERE isPushed = 0 AND status = 'Ongoing';`);
 			
-			// generate new CRFs
+			// generate new CRFs and update past ones
 			for (let i = 0; i < tcls.length; i++) {
+				// updating TCL
+				await db.updateRows("mmchddb.TCLS", {TCLID: tcls[i].TCLID}, {
+					isPushed: true,
+					status: "Submitted"
+				});
+				
+				// generating new TCL
 				let newTCL = (await generateID("mmchddb.TCLS")).id;
-				currWeek = new Date(tcls[i].year, tcls[i].month, 0);
-				nextWeek = new Date(currWeek.getFullYear(), currWeek.getMonth() + 1, currWeek.getDate());
+				currMonth = new Date(tcls[i].year, tcls[i].month, 0);
+				nextMonth = new Date(currMonth.getFullYear(), currMonth.getMonth() + 1, currMonth.getDate());
 				await db.insertOne("mmchddb.TCLS", {
 					TCLID: newTCL,
 					diseaseID: tcls[i].diseaseID,
 					userID: tcls[i].userID,
-					week: nextWeek.getWeek(),
-					year: nextWeek.getFullYear(),
-					isPushed: false
+					dateSubmitted: null,
+					month: nextMonth.getMonth(),
+					year: nextMonth.getFullYear(),
+					isPushed: false,
+					status: "Ongoing"
 				});
 			}
 			console.log("TCLs have been pushed successfully!");
