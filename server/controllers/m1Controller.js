@@ -300,7 +300,7 @@ async function createOutbreak(diseaseID, outbreakStatus) {
 					return false;
 			}	
 		} else {
-			let newOutbreak = new Outbreak((await generateID("mmchddb.OUTBREAKS")).id, diseaseID, 'Ongoing', new Date(), null,outbreakStatus, null);
+			let newOutbreak = new Outbreak((await generateID("mmchddb.OUTBREAKS")).id, diseaseID, "Ongoing", new Date(), null, outbreakStatus, null);
 			let result = await db.insertOne("mmchddb.OUTBREAKS", newOutbreak);
 			return result;
 		}
