@@ -3,7 +3,7 @@
     <TopNav/>
     <div id="dashboard-container">
       <div id="dashboard-bottom">
-          <iframe id="dashboard-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiODdiNTM2N2YtMTA3YS00NzA2LTg5YjItMDBlZDllMTQ2ZDY0IiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D&pageName=ReportSection">
+          <iframe id="dashboard-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiYTQ0YjRkY2YtMTk2MS00NTljLWFhOTUtYWI0ODUzZDlmNDEyIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D">
           </iframe>
         <div id="dashboard-right">
 
