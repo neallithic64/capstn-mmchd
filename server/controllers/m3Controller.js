@@ -175,24 +175,39 @@ const indexFunctions = {
 	 * POST METHODS
 	 */
 	
+	postFileBlob: async function(req, res) {
+		let { file, reportID } = req.body;
+		try {
+			console.log(file);
+			/* let insert = await db.insertOne("mmchddb.zzzREPORT_COMMENTS", {
+				reportID: "001",
+				file: file
+			}); */
+			await db.updateRows("mmchddb.REPORTS", { reportID: reportID }, { file: file });
+			res.status(200).send(rows);
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
+	
 	postAddReport: async function(req, res) {
 		let { report } = req.body;
 		try {
 			let reportID = (await generateID("mmchddb.REPORTS")).id;
-			/*let rows = await db.findRows("mmchddb.REPORTS", {
-				reportID: reportID
-				diseaseID: report.
-				preparedBy: 
-				reportType: 
-				status: 
-				dateCreated: 
-				title: 
-				year: 
-				duration: 
-				file: 
-				reportsIncluded: 
-				chartRemarks: 
-			});*/
+			let rows = await db.findRows("mmchddb.REPORTS", {
+				reportID: reportID,
+				diseaseID: report.disease,
+				preparedBy: report.preparedBy,
+				reportType: report.type,
+				status: "Pending",
+				dateCreated: new Date(), // dateTime
+				title: report.title,
+				year: report.year,
+				duration: report.duration,
+				reportsIncluded: JSON.stringify(report.reportsIncluded),
+				chartRemarks: JSON.stringify(report.chartRemarks)
+			});
 			res.status(200).send(rows);
 		} catch (e) {
 			console.log(e);
@@ -221,21 +236,6 @@ const indexFunctions = {
 			res.status(200).send(rows);
 		} catch (e) {
 			console.log(e);
-			res.status(500).send("Server error");
-		}
-	},
-	
-	postFileTest: async function(req, res) {
-		let { file } = req.body;
-		try {
-			console.log(file);
-			let insert = await db.insertOne("mmchddb.zzzREPORT_COMMENTS", {
-				reportID: "001",
-				file: file
-			});
-			if (insert) res.status(200).send("success!");
-			else res.status(500).send("error!");
-		} catch(e) {
 			res.status(500).send("Server error");
 		}
 	},

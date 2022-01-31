@@ -393,15 +393,13 @@ export default {
         let base64;
         // Onload of file read the file content
         fileReader.onload = async function(fileLoadedEvent) {
-            base64 = fileLoadedEvent.target.result;
-            // Print data in console
-            console.log(base64);
-            const result = (
-              await axios.post ('http://localhost:8080/api/postFileTest', {
-                file: base64
-              })
-            );
-            console.log(result);
+          base64 = fileLoadedEvent.target.result;
+          const result = (
+            await axios.post ('http://localhost:8080/api/postFileBlob', {
+              file: base64
+            })
+          );
+          console.log(result);
         };
     },
     submit() {

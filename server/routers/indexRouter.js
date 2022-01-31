@@ -77,7 +77,7 @@ router.post("/newImmuProgEntry", m4Cont.postNewImmuProgEntry);
 router.post("/editPatientTCL", m4Cont.postEditPatientTCL);
 router.post("/submitTCL", m4Cont.postSubmitTCL);
 
-router.post("/postFileTest", m3Cont.postFileTest);
+router.post("/postFileBlob", m3Cont.postFileBlob);
 
 
 // CRON Routes
