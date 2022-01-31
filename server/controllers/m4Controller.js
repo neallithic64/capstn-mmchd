@@ -460,6 +460,24 @@ const indexFunctions = {
 		}
 	},
 	
+	postEditPatientTCL: async function(req, res) {
+		let { loadedData, patientID } = req.body;
+		try {
+			delete loadedData.dateAdded;
+			delete loadedData.immunizationStatus;
+			delete loadedData.TCLID;
+			
+			// getting patient's TCL data
+			let tclData = await db.findRows("mmchddb.TCL_DATA", {patientID: patientID});
+			
+			await db.updateRows("mmchddb.TCL_DATA", {patientID: patientID}, loadedData); // ???
+			res.status(200).send("Update targets successful!");
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
+	
 	/** ignore below
 	 */
 

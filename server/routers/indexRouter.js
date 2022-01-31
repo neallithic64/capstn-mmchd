@@ -69,6 +69,7 @@ router.post("/updateOutbreakStatus", m1Cont.postUpdateOutbreakStatus);
 router.post("/editProgTargets", m4Cont.postEditProgTargets);
 router.post("/editProgAccomp", m4Cont.postEditProgAccomp);
 router.post("/newImmuProgEntry", m4Cont.postNewImmuProgEntry);
+router.post("/editPatientTCL", m4Cont.postEditPatientTCL);
 
 
 router.post("/postFileTest", m4Cont.postFileTest);
