@@ -552,15 +552,15 @@ async function getOutbreakData(outbreakID) {
 				tempOutbreak.growthRate = growth[i].growthRate;
 				tempOutbreak.attackRate = attack[i].attackRate;
 				console.log(attack[i]);
-				if (!!caseCount[i].responseTime) {
-					let seconds = caseCount[i].responseTime;
-					caseCount[i].responseTime = Math.floor(seconds / 3600) + "h ";
+				if (!!tempOutbreak.responseTime) {
+					let seconds = tempOutbreak.responseTime;
+					tempOutbreak.responseTime = Math.floor(seconds / 3600) + "h ";
 					seconds %= 3600;
-					caseCount[i].responseTime += Math.floor(seconds / 60) + "min ";
+					tempOutbreak.responseTime += Math.floor(seconds / 60) + "min ";
 					seconds %= 60;
-					caseCount[i].responseTime += seconds + "s";
-					console.log("response time: " + caseCount[i].responseTime);
-				} else outbreaks.outbreak.responseTime = "N/A";
+					tempOutbreak.responseTime += seconds + "s";
+					console.log("response time: " + tempOutbreak.responseTime);
+				} else tempOutbreak.responseTime = "N/A";
 				outbreaks.push(tempOutbreak);
 			}
 		}

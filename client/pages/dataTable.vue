@@ -370,7 +370,7 @@
                   {{ data[column.key] }}
                 </a>
               </span>
-              <span v-else-if="column.title==='Case Status' || column.title==='Status' || column.title==='Risk Classification' || column.title==='Submit Status' || column.title==='Report Status' || column.title==='Immunization Status'" :class="caseStatusClass(data[column.key])">
+              <span v-else-if="column.title==='Case Status' || column.title==='Status' || column.title==='Risk Classification' || column.title==='Submit Status' || column.title==='Report Status' || column.title==='Immunization Status' || column.title==='Assessment'" :class="caseStatusClass(data[column.key])">
                 {{ data[column.key] }}
               </span>
               <span v-else>
@@ -568,6 +568,7 @@ export default {
         else if (c.toString().includes('Ongoing')) return 'caseStatus red';
         else if (c.toString().includes('Controlled')) return 'caseStatus orange';
         else if (c.toString().includes('Closed')) return 'caseStatus green';
+        else if (c.toString().includes('Discarded')) return 'caseStatus gray';
         
         else if (c.toString().includes('High')) return 'caseStatus red';
         else if (c.toString().includes('Moderate')) return 'caseStatus orange';
@@ -581,6 +582,8 @@ export default {
         else if (c.toString().includes('For Approval')) return 'caseStatus orange';
         else if (c.toString().includes('For Revision')) return 'caseStatus red';
         else if (c.toString().includes('Approved')) return 'caseStatus green';
+
+        else if (c.toString().includes('PHELC') || c.toString().includes('PHERC') || c.toString().includes('PHENC') || c.toString().includes('PHEIC')) return 'caseStatus red';
         
         return 'none';
       }

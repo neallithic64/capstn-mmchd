@@ -118,7 +118,7 @@ export default {
     this.allPatients = rows;
     if (this.allPatients.length > 0) {
       this.$toast.clear();
-      this.$toast.success('All outbreaks loaded!', {duration: 4000, icon: 'check_circle'});
+      this.$toast.success('All patients loaded!', {duration: 4000, icon: 'check_circle'});
     }
   },
   methods: {
