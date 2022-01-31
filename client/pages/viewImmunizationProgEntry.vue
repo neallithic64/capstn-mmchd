@@ -1300,13 +1300,14 @@ export default {
     },
     async save() {
       this.saveData();
-      // if (this.validate()) {
+	  // required to finish all immunisations by then
+      if (this.validate()) {
         await this.submit();
         // IF SUBMIT SUCCESSFUL
         console.log('VALIDATED dates');
         this.status = 'Complete';
         this.action = 'view';
-      // }
+      }
     },
     async submit() {
       // TODO: this submit is the "save" type, the cases should only be visible to the DRU, not yet submitted to MMCHD

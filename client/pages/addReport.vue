@@ -245,16 +245,15 @@ export default {
 
         preparedBy: '',
         dateTime: '',
-
-        notedBy: 'me',
+        notedBy: '',
         notedByDate: 'Jan 28, 2013',
-        recommendedBy: 'mysef',
+        recommendedBy: '',
         recommendedByDate: 'Feb 02, 2013',
         approvedBy: 'I',
         approvedByDate: '',
       },
-      reportTypeOption: ['Weekly','Monthly','Annual','Adhoc','Outbreak'],
-      timeOption: [], weekOption:[], monthOption: [], yearOption:[],
+      reportTypeOption: ['Weekly', 'Monthly', 'Annual', 'Adhoc', 'Outbreak'],
+      timeOption: [], weekOption: [], monthOption: [], yearOption: [],
       diseaseOption: [
         'Malaria',
         'Measles',
@@ -394,15 +393,13 @@ export default {
         let base64;
         // Onload of file read the file content
         fileReader.onload = async function(fileLoadedEvent) {
-            base64 = fileLoadedEvent.target.result;
-            // Print data in console
-            console.log(base64);
-            const result = (
-              await axios.post ('http://localhost:8080/api/postFileTest', {
-                file: base64
-              })
-            );
-            console.log(result);
+          base64 = fileLoadedEvent.target.result;
+          const result = (
+            await axios.post ('http://localhost:8080/api/postFileBlob', {
+              file: base64
+            })
+          );
+          console.log(result);
         };
     },
     submit() {
