@@ -154,7 +154,7 @@ export default {
             filter: true,
           },
           {
-            title: 'Date added',
+            title: 'Reported on',
             key: 'addDate',
             type: 'text',
             dateFormat: true,

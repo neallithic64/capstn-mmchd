@@ -122,7 +122,7 @@ export default {
             filter: true,
           },
           {
-            title: 'Date added',
+            title: 'Reported on',
             key: 'reportDate',
             type: 'text',
             dateFormat: true,
@@ -130,15 +130,15 @@ export default {
             expectFormat: 'DD MMM YYYY',
             sortable: true,
           },
-          {
-            title: 'Last updated',
-            key: 'updatedDate',
-            type: 'text',
-            dateFormat: true,
-            currentFormat: 'YYYY-MM-DD',
-            expectFormat: 'DD MMM YYYY',
-            sortable: true,
-          },
+          // {
+          //   title: 'Last updated',
+          //   key: 'updatedDate',
+          //   type: 'text',
+          //   dateFormat: true,
+          //   currentFormat: 'YYYY-MM-DD',
+          //   expectFormat: 'DD MMM YYYY',
+          //   sortable: true,
+          // },
           {
             title: 'Case Status',
             key: 'caseLevel',
