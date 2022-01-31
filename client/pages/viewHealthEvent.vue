@@ -344,10 +344,10 @@
               </div>
             </div>
 
-            <h2 v-if="newStatus != 'Discarded' && healthEvent.assessment === ''" id="form-header" class="required">
+            <h2 v-if="newStatus != 'Discarded' || healthEvent.assessment === ''" id="form-header" class="required">
               Please select the health event assessment.
             </h2>
-            <div v-if="newStatus != 'Discarded' && healthEvent.assessment === ''">
+            <div v-if="newStatus != 'Discarded' || healthEvent.assessment === ''">
               <!-- ASSESSMENT -->
               <div>
                 <div class="collpaseWrapper">
@@ -557,7 +557,7 @@ export default {
           eventID: this.healthEvent.eventID,
           newStatus: this.newStatus,
           modifiedBy: this.$auth.user.userID,
-          eventAssess: this.healthEvent.assessment
+          assessment: this.healthEvent.assessment
         });
         if (updateCase.status === 200) {
           // alert('Event status updated!');
@@ -601,10 +601,12 @@ export default {
       setTimeout(() => (this.isPrint = !this.isPrint), 5000)
     },
     caseStatusClass(c) {
-      if (c.toString().includes('PHELC')) return 'healthAssess assessRed';
-      else if (c.toString().includes('PHERC')) return 'healthAssess assessRed';
-      else if (c.toString().includes('PHENC')) return 'healthAssesss assessRed';
-      else if (c.toString().includes('PHEIC')) return 'healthAssess assessRed';
+      if (c) {
+        if (c.toString().includes('PHELC')) return 'healthAssess assessRed';
+        else if (c.toString().includes('PHERC')) return 'healthAssess assessRed';
+        else if (c.toString().includes('PHENC')) return 'healthAssesss assessRed';
+        else if (c.toString().includes('PHEIC')) return 'healthAssess assessRed';
+      }
     },
   },
 }
