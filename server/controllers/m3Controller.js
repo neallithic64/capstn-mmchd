@@ -217,7 +217,7 @@ const indexFunctions = {
 				preparedBy: report.preparedBy,
 				reportType: report.type,
 				status: "Pending",
-				dateCreated: new Date(), // dateTime
+				dateCreated: (new Date()).toISOString(), // dateTime
 				title: report.title,
 				year: report.year,
 				duration: report.duration,
@@ -239,10 +239,10 @@ const indexFunctions = {
 			let updateObj = {
 				status: "Approved",
 				approvedBy: userID,
-				approvedByDate: newDate
+				approvedByDate: newDate.toISOString()
 			}, audit = {
 				reportID: reportID,
-				dateModified: newDate,
+				dateModified: newDate.toISOString(),
 				modifiedBy: userID,
 				action: "Approved",
 				remarks: remarks

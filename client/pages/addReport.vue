@@ -301,6 +301,7 @@ export default {
       'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     for (let i=0; i<53; i++) this.weekOption[i] = 'Week ' + (i+1);
     setInterval(() => { this.getDate() }, 10000)
+	this.report.preparedBy = this.$auth.user.userID;
   },
   methods: {
     call() {console.log(this.report.reportsIncluded); console.log(this.chartRemarks);},

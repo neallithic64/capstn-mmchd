@@ -1668,8 +1668,7 @@ const indexFunctions = {
 				if(result)
 					res.status(200).send("Update disease Successful");
 				else res.status(500).send("Add Notifications Failed");
-			}
-			else res.status(500).send("Update Case Definition error!");
+			} else res.status(500).send("Update Case Definition error!");
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
