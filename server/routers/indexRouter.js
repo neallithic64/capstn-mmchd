@@ -69,6 +69,7 @@ router.post("/updateOutbreakStatus", m1Cont.postUpdateOutbreakStatus);
 router.post("/editProgTargets", m4Cont.postEditProgTargets);
 router.post("/editProgAccomp", m4Cont.postEditProgAccomp);
 router.post("/newImmuProgEntry", m4Cont.postNewImmuProgEntry);
+router.post("/editPatientTCL", m4Cont.postEditPatientTCL);
 
 
 router.post("/postFileTest", m4Cont.postFileTest);
@@ -78,7 +79,7 @@ router.get("/getFileTest", m4Cont.getFileTest);
 cron.schedule("00 14 * * 3", m1Cont.cronCRFDeadlineNotif);
 cron.schedule("00 17 * * 5", m1Cont.cronCRFPushData);
 cron.schedule("00 17 * * 6", m1Cont.cronUpdateThresholds);
-// router.get("/updateThresholds", m1Cont.cronUpdateThresholds);
+cron.schedule("0 0 17 * * 5#2", m4Cont.cronTCLPushData);
 
 // 404 PAGE
 router.get("*", function(req, res) {

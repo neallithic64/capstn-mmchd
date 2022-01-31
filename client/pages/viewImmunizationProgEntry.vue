@@ -1228,25 +1228,17 @@ export default {
     }
   },
   async fetch() {
-    /*
-	formData: {
-	  patient: {},
-	  riskFactors: {},
-	  immunization: {}
-	},
-	riskFactors: { },
-	loadedData: [ {} ],
-	dataSets: [ {} ]
-	*/
 	const patientData = (await axios.get('http://localhost:8080/api/getPatientData', {
       params: { patientID: this.$route.query.patientID }
     })).data;
 	console.log(patientData);
 	Object.keys(patientData.tclData).forEach((e, i) => {
 	  patientData.tclData[e] = this.convDatePHT(new Date(patientData.tclData[e]));
+	  if ((new Date(patientData.tclData[e])).getTime() < 0) patientData.tclData[e] = "";
 	});
 	if (patientData.tclData) {
 	  this.formData.immunization = patientData.tclData;
+	  this.loadedData = [this.formData.immunization];
 	}
   },
   head() {
@@ -1306,27 +1298,26 @@ export default {
       else this.formData.patient.ageNo = age-1;
       if (this.formData.patient.ageNo<0) this.formData.patient.ageNo = 0;
     },
-    save() {
+    async save() {
       this.saveData();
-      if (this.validate()) {
-        // submit();
+      // if (this.validate()) {
+        await this.submit();
         // IF SUBMIT SUCCESSFUL
         console.log('VALIDATED dates');
         this.status = 'Complete';
         this.action = 'view';
-      }
+      // }
     },
     async submit() {
       // TODO: this submit is the "save" type, the cases should only be visible to the DRU, not yet submitted to MMCHD
-      const now = new Date();
-      this.formData.cases.diseaseID = this.diseaseID;
-      this.formData.cases.reportedBy = this.$auth.user.userID;
-      this.formData.cases.reportDate = now.getFullYear() + '-' + (now.getMonth()+1) + '-' + now.getDate();
-      const result = await axios.post('http://localhost:8080/api/newCase', {formData: this.formData, CRFID: this.$route.query.CRFID});
+      const result = await axios.post('http://localhost:8080/api/editPatientTCL', {
+	    loadedData: this.loadedData,
+		patientID: this.$route.query.patientID
+      });
       if (result.status === 200) {
         // alert('CRF case submitted!');
-        this.$toast.success('Case saved!', {duration: 4000, icon: 'check_circle'});
-        window.location.href = '/allCases';
+        this.$toast.success('Immunizations saved!', {duration: 4000, icon: 'check_circle'});
+        window.location.href = '/allImmunizationProg';
       } else {
         // eslint-disable-next-line no-console
         console.log(result);
@@ -1500,7 +1491,9 @@ export default {
       console.log(this.formData.patient.currBrgy)
     },
 	convDatePHT(d) { // only accepts Date object; includes checking
-      return !isNaN(Date.parse(d)) ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10) : "N/A";
+      return !isNaN(Date.parse(d))
+	      ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10).split("-").join("/")
+		  : "N/A";
     },
   },
 }
