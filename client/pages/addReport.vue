@@ -86,7 +86,7 @@
                 <div v-for="(analysis, index) in reportsOption" :key="index"
                   class="analysisReportOption marginTopBot2">
                   <input v-model="report.reportsIncluded" class="input-radio" type="checkbox"
-                    :value="analysis" :id="analysis" :disabled="!inputEdit()" :class="isOptionRequired()" required/>
+                    :value="analysis" :id="analysis" :disabled="!inputEdit()" :class="isOptionRequired()" @change="call" required/>
                   <label :for="analysis"> {{analysis}} </label>
             </div> </div> </div>
           </div>
@@ -100,23 +100,15 @@
           <h3 v-if="isPrint" class="caps addRep-chartTitle marginBottom-15 blueC"> {{chart}} </h3>
           <div v-else class="caps addRep-chartTitle marginBottom-15 blueB whiteC paddingLeft10 marginRight10 marginLeft10"> {{chart}} </div>
           <div class="padding30" :class="getMinClass(chartIndex, report.reportsIncluded.length)">
-            <div class="addRep-chartContainer marginBottom5">
-              <iframe v-if="report.reportsIncluded.includes(reportsOption[0])" class="addRep-report-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiYTQ0YjRkY2YtMTk2MS00NTljLWFhOTUtYWI0ODUzZDlmNDEyIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D">
-              </iframe>
-              <iframe v-else-if="report.reportsIncluded.includes(reportsOption[1])" class="addRep-report-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiYTQ0YjRkY2YtMTk2MS00NTljLWFhOTUtYWI0ODUzZDlmNDEyIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D">
-              </iframe>
-              <iframe v-else-if="report.reportsIncluded.includes(reportsOption[2])" class="addRep-report-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiYTQ0YjRkY2YtMTk2MS00NTljLWFhOTUtYWI0ODUzZDlmNDEyIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D">
-              </iframe>
-              <iframe v-else-if="report.reportsIncluded.includes(reportsOption[3])" class="addRep-report-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiYTQ0YjRkY2YtMTk2MS00NTljLWFhOTUtYWI0ODUzZDlmNDEyIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D">
-              </iframe>
-              <iframe v-else-if="report.reportsIncluded.includes(reportsOption[4])" class="addRep-report-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiYTQ0YjRkY2YtMTk2MS00NTljLWFhOTUtYWI0ODUzZDlmNDEyIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D">
-              </iframe>
-              <iframe v-else-if="report.reportsIncluded.includes(reportsOption[5])" class="addRep-report-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiYTQ0YjRkY2YtMTk2MS00NTljLWFhOTUtYWI0ODUzZDlmNDEyIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D">
-              </iframe>
-              <iframe v-else-if="report.reportsIncluded.includes(reportsOption[6])" class="addRep-report-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiYTQ0YjRkY2YtMTk2MS00NTljLWFhOTUtYWI0ODUzZDlmNDEyIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D">
-              </iframe>
-              <iframe v-else-if="report.reportsIncluded.includes(reportsOption[7])" class="addRep-report-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiYTQ0YjRkY2YtMTk2MS00NTljLWFhOTUtYWI0ODUzZDlmNDEyIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D">
-              </iframe>
+            <div class="addRep-chartContainer marginBottom5" :style="biSize()">
+              <iframe v-if="chart === reportsOption[0]" class="addRep-report-powerbi-iframe" :src="getLink(0)"></iframe>
+              <iframe v-else-if="chart === reportsOption[1]" class="addRep-report-powerbi-iframe" :src="getLink(1)"></iframe>
+              <iframe v-else-if="chart === reportsOption[2]" class="addRep-report-powerbi-iframe" :src="getLink(2)"></iframe>
+              <iframe v-else-if="chart === reportsOption[3]" class="addRep-report-powerbi-iframe" :src="getLink(3)"></iframe>
+              <iframe v-else-if="chart === reportsOption[4]" class="addRep-report-powerbi-iframe" :src="getLink(4)"></iframe>
+              <iframe v-else-if="chart === reportsOption[5]" class="addRep-report-powerbi-iframe" :src="getLink(5)"></iframe>
+              <iframe v-else-if="chart === reportsOption[6]" class="addRep-report-powerbi-iframe" :src="getLink(6)"></iframe>
+              <iframe v-else-if="chart === reportsOption[7]" class="addRep-report-powerbi-iframe" :src="getLink(7)"></iframe>
             </div>
             <!-- <div v-if="!isRevise" style="padding: 5px 10px;" :class="chartRemarkClass()" :contentEditable="isRevise" class="width100" required> {{inputChartRemarks[chartIndex]}} </div> -->
             <div v-if="isPrint" style="padding: 5px 10px;" class="width100"> {{report.chartRemarks[chartIndex]}} </div>
@@ -132,8 +124,8 @@
             <p> {{report.title}} | Page {{chartIndex+1}}</p>
           </div>
         </div>
+
         <hr v-if="!isPrint" class="marginBottom5 marginTop20" id="4"/>
-        
       </div>
 
       <div class="addReportInnerContainter">
@@ -285,6 +277,16 @@ export default {
         'Accomplishment Analysis',
         'Health Events',
       ],
+      biLinks: [
+        "https://app.powerbi.com/view?r=eyJrIjoiNTAwZDAxNDktM2E2Zi00ZWQxLWEyYzQtYzkwNDY1OTljZDg1IiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D",
+        "https://app.powerbi.com/view?r=eyJrIjoiNTRhNTRmN2MtMjU2NC00YmRhLWE0ZmYtYjFhZGU0MmYwOTlkIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D",
+        "https://app.powerbi.com/view?r=eyJrIjoiNWI4OTdkOGUtYzNiZS00ZjQwLWJkNzItZWY3Yjk1YjU1MTVjIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D",
+        "https://app.powerbi.com/view?r=eyJrIjoiNjMyNzJjYjUtNDMyOS00YmE4LTk2MDQtMzM1OGNlYzc5ZmI1IiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D",
+        "https://app.powerbi.com/view?r=eyJrIjoiMDJkYjk3OGYtMTFlOC00YWFiLWJlMWMtYWM1NmM4NGRlZDZjIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D",
+        "https://app.powerbi.com/view?r=eyJrIjoiZTE5NTAxMjEtYjRjMC00ZDY1LWJmYTMtMDhkN2I2MGExODBjIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D",
+        "https://app.powerbi.com/view?r=eyJrIjoiYTdlYWJmYzEtMDliOC00NzBiLTlkYjEtNjViN2E1MjkxMjFlIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D",
+        "https://app.powerbi.com/view?r=eyJrIjoiZjJjZDVhZDAtYjljZi00NzQzLWI4ZGMtN2Q0OTRhYWUxMGU3IiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D",
+      ]
 
     }
   },
@@ -302,9 +304,12 @@ export default {
     setInterval(() => { this.getDate() }, 10000)
   },
   methods: {
+    call() {console.log(this.report.reportsIncluded); console.log(this.chartRemarks);},
+    getLink(i) { return this.biLinks[i]; },
     isRequired() {  if (!this.isValidated) return 'input-required'; },
     isOptionRequired() { if (!this.isValidated && this.report.reportsIncluded.length < 1) return 'input-required'; },
     inputEdit() { if (this.isPrint) return false; else return true; },
+    biSize() { if (!this.isPrint) return 'min-height: 70vh;    min-width: 70vh;'},
     getDate() {
       const today = new Date();
       const hour = today.getHours()>9 ? today.getHours() : '0'+today.getHours()
@@ -341,9 +346,11 @@ export default {
           this.isValidated = false;
         else {
           this.isValidated = true;
-          for (let i=0; i<this.report.reportsIncluded.length; i++)
-            if (this.report.chartRemarks[i] === '' || this.report.chartRemarks[i] === null)
-              this.isValidated = this.isValidated & false;
+          for (let i=0; i<this.reportsOption.length; i++)
+            for (let j=0; j<=this.report.reportsIncluded.length; j++)
+              if (this.report.reportsIncluded[j] === this.reportsOption[i])
+                if (this.report.chartRemarks[i] === '' || this.report.chartRemarks[i] === null)
+                  this.isValidated = this.isValidated & false;
         }
       }
       else this.isValidated = false;
@@ -413,6 +420,7 @@ export default {
 body {font-family:Arial, Helvetica, sans-serif}
 .addReportOuterContainer { padding: 80px 20px 50px 20px;}
 .addReportInnerContainter { /* width: 100%; */ padding: 5px; margin: 10px; }
+.fullSize {min-height: 80vh;    min-width: 80vh;}
 
 .fullwidth { width: 100%; }
 .half { width: 50%; }
