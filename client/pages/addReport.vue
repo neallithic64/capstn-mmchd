@@ -101,7 +101,21 @@
           <div v-else class="caps addRep-chartTitle marginBottom-15 blueB whiteC paddingLeft10 marginRight10 marginLeft10"> {{chart}} </div>
           <div class="padding30" :class="getMinClass(chartIndex, report.reportsIncluded.length)">
             <div class="addRep-chartContainer marginBottom5">
-              <iframe class="addRep-report-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiODdiNTM2N2YtMTA3YS00NzA2LTg5YjItMDBlZDllMTQ2ZDY0IiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D&pageName=ReportSection">
+              <iframe v-if="report.reportsIncluded.includes(reportsOption[0])" class="addRep-report-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiYTQ0YjRkY2YtMTk2MS00NTljLWFhOTUtYWI0ODUzZDlmNDEyIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D">
+              </iframe>
+              <iframe v-else-if="report.reportsIncluded.includes(reportsOption[1])" class="addRep-report-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiYTQ0YjRkY2YtMTk2MS00NTljLWFhOTUtYWI0ODUzZDlmNDEyIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D">
+              </iframe>
+              <iframe v-else-if="report.reportsIncluded.includes(reportsOption[2])" class="addRep-report-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiYTQ0YjRkY2YtMTk2MS00NTljLWFhOTUtYWI0ODUzZDlmNDEyIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D">
+              </iframe>
+              <iframe v-else-if="report.reportsIncluded.includes(reportsOption[3])" class="addRep-report-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiYTQ0YjRkY2YtMTk2MS00NTljLWFhOTUtYWI0ODUzZDlmNDEyIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D">
+              </iframe>
+              <iframe v-else-if="report.reportsIncluded.includes(reportsOption[4])" class="addRep-report-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiYTQ0YjRkY2YtMTk2MS00NTljLWFhOTUtYWI0ODUzZDlmNDEyIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D">
+              </iframe>
+              <iframe v-else-if="report.reportsIncluded.includes(reportsOption[5])" class="addRep-report-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiYTQ0YjRkY2YtMTk2MS00NTljLWFhOTUtYWI0ODUzZDlmNDEyIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D">
+              </iframe>
+              <iframe v-else-if="report.reportsIncluded.includes(reportsOption[6])" class="addRep-report-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiYTQ0YjRkY2YtMTk2MS00NTljLWFhOTUtYWI0ODUzZDlmNDEyIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D">
+              </iframe>
+              <iframe v-else-if="report.reportsIncluded.includes(reportsOption[7])" class="addRep-report-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiYTQ0YjRkY2YtMTk2MS00NTljLWFhOTUtYWI0ODUzZDlmNDEyIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D">
               </iframe>
             </div>
             <!-- <div v-if="!isRevise" style="padding: 5px 10px;" :class="chartRemarkClass()" :contentEditable="isRevise" class="width100" required> {{inputChartRemarks[chartIndex]}} </div> -->
