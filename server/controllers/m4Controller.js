@@ -308,8 +308,7 @@ const indexFunctions = {
 							LEFT JOIN mmchddb.TCLS t ON t.TCLID = td.TCLID
 							LEFT JOIN mmchddb.PATIENTS p ON p.patientID = td.patientID
 							LEFT JOIN mmchddb.ADDRESSES a ON a.addressID = p.caddressID
-							WHERE td.TCLID = '${r[r.length - 1].TCLID}'
-							GROUP BY td.TCLID;`);
+							WHERE td.TCLID = '${r[r.length - 1].TCLID}';`);
 					res.status(200).send({
 						TCL: r[r.length - 1],
 						tclData: data,
@@ -453,7 +452,7 @@ const indexFunctions = {
 				...immunisationData
 			};
 			await db.insertOne("mmchddb.TCL_DATA", insertObj);
-			res.status(200).send("Update targets successful!");
+			res.status(200).send(insertObj);
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");

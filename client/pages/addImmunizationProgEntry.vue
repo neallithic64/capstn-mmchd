@@ -1418,7 +1418,7 @@ export default {
           const res = await this.save();
 		  console.log(res);
           // redirect to view page with update action
-		  window.location.href = "/viewImmunizationProgEntry";
+		  window.location.href = "/viewImmunizationProgEntry?action=update&patientID=" + res.patientID;
         }
         else {
           // alert('Please fill up the required fields');
