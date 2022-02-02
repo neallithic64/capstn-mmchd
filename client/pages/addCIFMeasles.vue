@@ -2750,7 +2750,7 @@ export default {
       this.formData.cases.reportedBy = this.$auth.user.userID;
       this.formData.cases.caseLevel = this.formData.caseData.finalClassification;
       const result = await axios.post('http://localhost:8080/api/newCase', {formData: this.formData});
-      console.log('');
+      console.log(result);
       if (result.status === 200) {
         // alert('Case submitted!');
         this.$toast.success('Case submitted!', {duration: 4000, icon: 'check_circle'});

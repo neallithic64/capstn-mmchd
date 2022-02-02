@@ -1939,7 +1939,7 @@ export default {
           caseId: this.formData.cases.caseID,
           newStatus: this.newStatus
         });
-        console.log('');
+        console.log(result);
         if (result.status === 200) {
           // alert('CRF case status updated!');
           if(result.data.outbreakID){
