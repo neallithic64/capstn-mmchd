@@ -201,10 +201,10 @@ export default {
     this.crfData = rows.crfData;
     this.weekNo = rows.CRF.year + "-" + rows.CRF.week;
     this.CRFID = this.$route.query.CRFID;
-    this.druCity = rows.userData.druCity;
-    this.druName = rows.userData.druName;
-    this.druType = rows.userData.druType;
-    this.druAddr = rows.userData.druAddr;
+    this.druCity = rows.CRF.druCity;
+    this.druName = rows.CRF.druName;
+    this.druType = rows.CRF.druType;
+    this.druAddr = rows.CRF.druAddr;
   },
   head() {
     return {
