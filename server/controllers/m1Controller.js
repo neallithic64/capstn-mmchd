@@ -775,7 +775,7 @@ const indexFunctions = {
 					GROUP BY cr.CRFID ${ havingClause }
 					ORDER BY cr.year DESC, cr.week DESC;`);
 			for (let i = 0; i < match.length; i++) {
-				match[i].submitStatus = match[i].isPushed > 0 ? "Pushed" : "Submitted";
+				match[i].submitStatus = match[i].isPushed > 0 ? "Pushed" : "Ongoing";
 				match[i].submittedOn = match[i].submittedOn ? convDatePHT(new Date(match[i].submittedOn)) : "N/A";
 				match[i].lastCase = match[i].lastCase ? convDatePHT(new Date(match[i].lastCase)) : "N/A";
 				if (match[i].isPushed > 0) {
@@ -1093,7 +1093,12 @@ const indexFunctions = {
 					WHERE u.userID = '${ req.query.userID }';`);
 			if (req.query.CRFID) {
 				// if viewing the CRF as a report
-				let CRFobj = await db.findRows("mmchddb.CRFS", {CRFID: req.query.CRFID});
+				let CRFobj = await db.exec(`SELECT cr.*, u.userType AS druType, u.druName,
+						a.city AS druCity, CONCAT(a.houseStreet, ', ', a.brgy) AS druAddr
+						FROM mmchddb.CRFS cr
+						LEFT JOIN mmchddb.USERS u ON u.userID = cr.userID
+						LEFT JOIN mmchddb.ADDRESSES a ON a.addressID = u.addressID
+						WHERE cr.CRFID = '${req.query.CRFID}';`);
 				let data = await db.exec(`SELECT c.*, d.diseaseName,
 						CONCAT(p.lastName, ", ", p.firstName, " ", p.midName) AS patientName,
 						p.ageNo, p.sex, a.city, MAX(al.dateModified) AS updatedDate
