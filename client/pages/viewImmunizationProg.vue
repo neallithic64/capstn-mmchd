@@ -28,7 +28,7 @@
             />
             </ul>
           </div>
-          <!--p>Submitted on: <b class="VIPb"> {{ submittedDate }} </b> </p>
+          <!--p>Reported on: <b class="VIPb"> {{ submittedDate }} </b> </p>
           <p>Last updated: <b class="VIPb"> {{ updatedDate }} </b> </p-->
         </div>
       </div>
@@ -117,7 +117,7 @@ export default {
             filter: true,
           },
           {
-            title: 'Date added',
+            title: 'Reported on',
             key: 'dateAdded',
             type: 'text',
             dateFormat: true,

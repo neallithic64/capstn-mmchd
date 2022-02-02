@@ -42,3 +42,8 @@ When there are changes in the `master` branch that you would like to sync with y
 
 ### Committing, Staging, and Pushing
 Making commits and pushing them is pretty simple. There is a checkmark icon at the top of the sidebar in the Git section, which is clickable if there is a blue badge on the Git icon itself. Enter your commit message (that is compliant with the description made above), then click on the said checkmark. This should push your changes to your respective branch.
+
+<hr>
+
+### First Stage Complete
+Date: 31/01/2022

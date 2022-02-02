@@ -777,12 +777,12 @@ const indexFunctions = {
 				match[i].submittedOn = match[i].submittedOn ? convDatePHT(new Date(match[i].submittedOn)) : "N/A";
 				match[i].lastCase = match[i].lastCase ? convDatePHT(new Date(match[i].lastCase)) : "N/A";
 				if (match[i].isPushed > 0) {
-					if (match[i].caseCount > 0) {
-						if (match[i].lastCase >= new Date(match[i].year, 0, 1 + match[i].week * 7)) {
-							match[i].reportStatus = "Late Cases";
+					if (match[i].lastCase >= new Date(match[i].year, 0, 1 + match[i].week * 7)) {
+						if (match[i].caseCount <= 0) {
+							match[i].reportStatus = "Zero Report";
 						} else match[i].reportStatus = "Cases Submitted";
-					} else match[i].reportStatus = "Zero Report";
-				} else "Ongoing";
+					} else match[i].reportStatus = "Late Cases";
+				} else match[i].reportStatus = "Ongoing";
 			}
 			res.status(200).send(match);
 		} catch (e) {
@@ -1668,8 +1668,7 @@ const indexFunctions = {
 				if(result)
 					res.status(200).send("Update disease Successful");
 				else res.status(500).send("Add Notifications Failed");
-			}
-			else res.status(500).send("Update Case Definition error!");
+			} else res.status(500).send("Update Case Definition error!");
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");

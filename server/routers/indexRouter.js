@@ -44,6 +44,7 @@ router.get("/dashboardData", m2Cont.getIndexData);
 router.get("/getFileBlob", m3Cont.getFileBlob);
 router.get("/getReport", m3Cont.getReport);
 router.get("/getReports", m3Cont.getAllReports);
+router.get("/getReportBulletin", m3Cont.getReportBulletin);
 
 router.get("/getProgTargets", m4Cont.getAllProgTargets);
 router.get("/getProgAccomps", m4Cont.getAllProgAccomps);
@@ -73,6 +74,7 @@ router.post("/updatePushData", m1Cont.postUpdatePushData);
 router.post("/updateOutbreakStatus", m1Cont.postUpdateOutbreakStatus);
 
 router.post("/postFileBlob", m3Cont.postFileBlob);
+router.post("/postAddReport", m3Cont.postAddReport);
 
 router.post("/editProgTargets", m4Cont.postEditProgTargets);
 router.post("/editProgAccomp", m4Cont.postEditProgAccomp);

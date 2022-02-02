@@ -4,16 +4,16 @@
     <div class="bulletin-page">
 
       <div class="bulletin-filters">
-        <select class="filter">
+        <select class="filter" v-model="diseaseFilter" @change="filter('d')">
             <option v-for="(name, i) in diseases" :key="i" :value="name"> {{ name }} </option>
         </select>
-        <select class="filter">
+        <select class="filter" v-model="typeFilter" @change="filter('t')">
             <option v-for="(name, i) in reportTypes" :key="i" :value="name"> {{ name }} </option>
         </select>
       </div>
 
       <ul>
-        <li>
+        <li v-for="(report, i) in allFeedReports" :key="i">
           <div class="bulletin-container">
             <div class="each-bulletin">
 
@@ -25,127 +25,38 @@
                     <span class="post-desc"> posted a feedback report. </span>
                   </div>
                   <div class="bulletin-header-bottom">
-                    <span :class="reportTypeClass(allFeedReports.reportType)"> {{ allFeedReports.reportType }} Report </span>  
-                    <span class="report-disease"> • {{ allFeedReports.reportDisease }} • </span>
-                    <span class="post-time"> {{ allFeedReports.dateString }} </span>
+                    <span :class="reportTypeClass(report.reportType)"> {{ report.reportType }} Report </span>  
+                    <span class="report-disease"> • {{ report.reportDisease }}</span>
+                    <!--span class="post-time"> • {{ report.dateString }}</span-->
                   </div>
                 </div>
               </div>
 
               <div class="bulletin-body">
                 <div class="bulletin-caption">
-                  <span> The <b class="content-bold"> {{ allFeedReports.reportType }} Feedback Report </b> for <b class="content-bold"> {{ allFeedReports.reportDisease }} </b> for 
-                          <b class="content-bold"> {{ allFeedReports.reportDate }} </b> is now available for viewing. The report was approved by the MMCHD Director 
-                          on <b class="content-bold"> {{ allFeedReports.dateApproved }}</b>. <br> Click the link below to view the report. </span>
+                  <span> The <b class="content-bold"> {{ report.reportType }} Feedback Report </b> for <b class="content-bold"> {{ report.reportDisease }} </b> for
+				    <b class="content-bold"> {{ report.reportDate }} </b> is now available for viewing.
+					<span v-if="report.dateApproved !== 'N/A'">The report was approved on <b class="content-bold">{{ report.dateApproved }}</b>.</span>
+				    <br>
+				    Click the link below to view the report.
+				  </span>
                 </div>
 
-                <a href="/viewReport?reportID=">
+                <a :href="'/viewReport?reportID=' + report.reportID">
                   <div class="bulletin-link">
                     <img class="link-pic" src="~/assets/img/hyperlink.png">
                     <div class="bulletin-link-text">
-                      <span class="feedback-title"> {{ allFeedReports.reportTitle }} </span>
-                      <span class="feedback-date"> {{ allFeedReports.reportDate }} </span>
-                      <span class="feedback-date"> {{ allFeedReports.reportYear }} </span>
+                      <span class="feedback-title"> {{ report.reportTitle }} </span>
+                      <span class="feedback-date"> {{ report.reportDate }} </span>
+                      <span class="feedback-date"> {{ report.reportYear }} </span>
                     </div>
                   </div>
                 </a>
               </div>
 
-              <div class="bulletin-views">
-                <span> Report viewed by {{ allFeedReports.reportViews }} </span>
-              </div>
-
-            </div>
-          </div>
-        </li>
-
-        <li>
-          <div class="bulletin-container">
-            <div class="each-bulletin">
-
-              <div class="bulletin-header">
-                <img class="display-pic" src="~/assets/img/doh-logo.png">
-                <div class="bulletin-header-text">
-                  <div class="bulletin-header-top">
-                    <span class="display-name"> Metro Manila Center for Health Development </span> 
-                    <span class="post-desc"> posted a feedback report. </span>
-                  </div>
-                  <div class="bulletin-header-bottom">
-                    <span :class="reportTypeClass(allFeedReports.reportType)"> {{ allFeedReports.reportType }} Report </span>  
-                    <span class="report-disease"> • {{ allFeedReports.reportDisease }} • </span>
-                    <span class="post-time"> {{ allFeedReports.dateString }} </span>
-                  </div>
-                </div>
-              </div>
-
-              <div class="bulletin-body">
-                <div class="bulletin-caption">
-                  <span> The <b class="content-bold"> {{ allFeedReports.reportType }} Feedback Report </b> for <b class="content-bold"> {{ allFeedReports.reportDisease }} </b> for 
-                          <b class="content-bold"> {{ allFeedReports.reportDate }} </b> is now available for viewing. The report was approved by the MMCHD Director 
-                          on <b class="content-bold"> {{ allFeedReports.dateApproved }}</b>. <br> Click the link below to view the report. </span>
-                </div>
-
-                <a href="/viewReport?reportID=">
-                  <div class="bulletin-link">
-                    <img class="link-pic" src="~/assets/img/hyperlink.png">
-                    <div class="bulletin-link-text">
-                      <span class="feedback-title"> {{ allFeedReports.reportTitle }} </span>
-                      <span class="feedback-date"> {{ allFeedReports.reportDate }} </span>
-                      <span class="feedback-date"> {{ allFeedReports.reportYear }} </span>
-                    </div>
-                  </div>
-                </a>
-              </div>
-
-              <div class="bulletin-views">
-                <span> Report viewed by {{ allFeedReports.reportViews }} </span>
-              </div>
-
-            </div>
-          </div>
-        </li>
-
-        <li>
-          <div class="bulletin-container">
-            <div class="each-bulletin">
-
-              <div class="bulletin-header">
-                <img class="display-pic" src="~/assets/img/doh-logo.png">
-                <div class="bulletin-header-text">
-                  <div class="bulletin-header-top">
-                    <span class="display-name"> Metro Manila Center for Health Development </span> 
-                    <span class="post-desc"> posted a feedback report. </span>
-                  </div>
-                  <div class="bulletin-header-bottom">
-                    <span :class="reportTypeClass(allFeedReports.reportType)"> {{ allFeedReports.reportType }} Report </span>  
-                    <span class="report-disease"> • {{ allFeedReports.reportDisease }} • </span>
-                    <span class="post-time"> {{ allFeedReports.dateString }} </span>
-                  </div>
-                </div>
-              </div>
-
-              <div class="bulletin-body">
-                <div class="bulletin-caption">
-                  <span> The <b class="content-bold"> {{ allFeedReports.reportType }} Feedback Report </b> for <b class="content-bold"> {{ allFeedReports.reportDisease }} </b> for 
-                          <b class="content-bold"> {{ allFeedReports.reportDate }} </b> is now available for viewing. The report was approved by the MMCHD Director 
-                          on <b class="content-bold"> {{ allFeedReports.dateApproved }}</b>. <br> Click the link below to view the report. </span>
-                </div>
-
-                <a href="/viewReport?reportID=">
-                  <div class="bulletin-link">
-                    <img class="link-pic" src="~/assets/img/hyperlink.png">
-                    <div class="bulletin-link-text">
-                      <span class="feedback-title"> {{ allFeedReports.reportTitle }} </span>
-                      <span class="feedback-date"> {{ allFeedReports.reportDate }} </span>
-                      <span class="feedback-date"> {{ allFeedReports.reportYear }} </span>
-                    </div>
-                  </div>
-                </a>
-              </div>
-
-              <div class="bulletin-views">
-                <span> Report viewed by {{ allFeedReports.reportViews }} </span>
-              </div>
+              <!--div class="bulletin-views">
+                <span> Report viewed by {{ report.reportViews }} </span>
+              </div-->
 
             </div>
           </div>
@@ -156,22 +67,17 @@
 </template>
 
 <script>
+const axios = require("axios");
+
 export default {
   middleware: 'is-auth',
   data() {
     return {
-      allFeedReports: {
-        reportDisease: 'Measles',
-        reportType: 'Weekly',
-        reportDate: 'Week 22',
-        reportYear: '2022',
-        reportTitle: 'Malaria Cases in the Philippines Malaria Cases in the Philippines Malaria Cases in the Philippines',
-        reportViews: '3123',
-        dateString: '5h',
-        dateApproved: 'January 26, 2022 8:58 PM',
-      },
-      diseases: ['Disease','Malaria', 'Measles', 'Tetanus', 'Pertussis', 'Meningococcal', 'Dengue', 'Cholera', 'Leptospirosis', 'Chikungunya', 'Typhoid'],
-      reportTypes: ['Report Type', 'Weekly', 'Monthly', 'Annual', 'Adhoc', 'Outbreak']
+      allFeedReports: [],
+      diseases: ['Disease', 'Malaria', 'Measles/Rubella', 'Tetanus', 'Pertussis', 'Meningococcal', 'Dengue', 'Cholera', 'Leptospirosis', 'Chikungunya', 'Typhoid'],
+      reportTypes: ['Report Type', 'Weekly', 'Monthly', 'Annual', 'Adhoc', 'Outbreak'],
+	  diseaseFilter: 'Disease',
+	  typeFilter: 'Report Type',
     }
   },
   head() {
@@ -179,7 +85,9 @@ export default {
       title: 'Bulletin'
     }
   },
-  mounted() {
+  async mounted() {
+    const feedreports = (await axios.get('http://localhost:8080/api/getReportBulletin')).data;
+	this.allFeedReports = feedreports;
   },
   methods: {
     reportTypeClass(type) {
@@ -191,6 +99,8 @@ export default {
         else if (type.toString().includes('Outbreak')) return 'report-status red';
       }
     },
+	filter(type) {
+	},
   }
 }
 </script>
