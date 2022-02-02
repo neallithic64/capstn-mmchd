@@ -603,10 +603,12 @@ export default {
       setTimeout(() => (this.isPrint = !this.isPrint), 5000)
     },
     caseStatusClass(c) {
-      if (c.toString().includes('PHELC')) return 'healthAssess assessRed';
-      else if (c.toString().includes('PHERC')) return 'healthAssess assessRed';
-      else if (c.toString().includes('PHENC')) return 'healthAssesss assessRed';
-      else if (c.toString().includes('PHEIC')) return 'healthAssess assessRed';
+      if (c) {
+        if (c.toString().includes('PHELC')) return 'healthAssess assessRed';
+        else if (c.toString().includes('PHERC')) return 'healthAssess assessRed';
+        else if (c.toString().includes('PHENC')) return 'healthAssesss assessRed';
+        else if (c.toString().includes('PHEIC')) return 'healthAssess assessRed';
+      }
     },
   },
 }

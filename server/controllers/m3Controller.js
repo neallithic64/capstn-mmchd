@@ -171,6 +171,22 @@ const indexFunctions = {
 		}
 	},
 	
+	getReportBulletin: async function(req, res) {
+		try {
+			let reports = await db.exec(`SELECT r.reportID, r.type AS reportType, r.title AS reportTitle,
+					CONCAT(MONTH(r.dateCreated), ' ', DAY(r.dateCreated)) AS reportDate,
+					r.year AS reportYear, IFNULL(r.approvedByDate, 'N/A') AS dateApproved,
+					d.diseaseName AS reportDisease
+					FROM mmchddb.REPORTS r
+					LEFT JOIN mmchddb.USERS u ON u.userID = r.preparedBy
+					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = r.diseaseID;`);
+			res.status(200).send(reports);
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
+	
 	/*
 	 * POST METHODS
 	 */
@@ -201,7 +217,7 @@ const indexFunctions = {
 				preparedBy: report.preparedBy,
 				reportType: report.type,
 				status: "Pending",
-				dateCreated: new Date(), // dateTime
+				dateCreated: (new Date()).toISOString(), // dateTime
 				title: report.title,
 				year: report.year,
 				duration: report.duration,
@@ -223,10 +239,10 @@ const indexFunctions = {
 			let updateObj = {
 				status: "Approved",
 				approvedBy: userID,
-				approvedByDate: newDate
+				approvedByDate: newDate.toISOString()
 			}, audit = {
 				reportID: reportID,
-				dateModified: newDate,
+				dateModified: newDate.toISOString(),
 				modifiedBy: userID,
 				action: "Approved",
 				remarks: remarks

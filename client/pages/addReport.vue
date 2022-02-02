@@ -301,6 +301,7 @@ export default {
       'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     for (let i=0; i<53; i++) this.weekOption[i] = 'Week ' + (i+1);
     setInterval(() => { this.getDate() }, 10000)
+	this.report.preparedBy = this.$auth.user.userID;
   },
   methods: {
     call() {console.log(this.report.reportsIncluded); console.log(this.chartRemarks);},
@@ -402,11 +403,15 @@ export default {
           console.log(result);
         };
     },
-    submit() {
+    async submit() {
       if (!this.readySubmit) this.$toast.error('Please upload the file.', {duration: 4000, icon: 'error'});
       else {
-        // TO DO
-        this.$toast.success('Feedback Report Submitted!', {duration: 4000, icon: 'check_circle'});
+        const response = (await axios.post('http://localhost:8080/api/postAddReport', {
+		  report: this.report
+		}));
+		if (response.status === 200) {
+          this.$toast.success('Feedback Report Submitted!', {duration: 4000, icon: 'check_circle'});
+		}
       }
     },
   }
