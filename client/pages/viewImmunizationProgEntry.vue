@@ -1250,23 +1250,23 @@ export default {
   mounted() {
     this.today = this.convDatePHT(new Date());
 	
-    this.dataSets[0].BCGdate = this.loadedData[0].BCGdate;
-    this.dataSets[0].HEPAwithdate = this.loadedData[0].HEPAwithdate;
-    this.dataSets[0].HEPAmoredate = this.loadedData[0].HEPAmoredate;
-    this.dataSets[0].OPV1date = this.loadedData[0].OPV1date;
-    this.dataSets[0].OPV2date = this.loadedData[0].OPV2date;
-    this.dataSets[0].OPV3date = this.loadedData[0].OPV3date;
-    this.dataSets[0].PENTA1date = this.loadedData[0].PENTA1date;
-    this.dataSets[0].PENTA2date = this.loadedData[0].PENTA2date;
-    this.dataSets[0].PENTA3date = this.loadedData[0].PENTA3date;
-    this.dataSets[0].PCV1date = this.loadedData[0].PCV1date;
-    this.dataSets[0].PCV2date = this.loadedData[0].PCV2date;
-    this.dataSets[0].PCV3date = this.loadedData[0].PCV3date;
-    this.dataSets[0].MCV1date = this.loadedData[0].MCV1date;
-    this.dataSets[0].MCV2date = this.loadedData[0].MCV2date;
-    this.dataSets[0].Dengue1date = this.loadedData[0].Dengue1date;
-    this.dataSets[0].Dengue2date = this.loadedData[0].Dengue2date;
-    this.dataSets[0].Dengue3date = this.loadedData[0].Dengue3date;
+    this.dataSets[0].BCGdate = this.dateToString(this.loadedData[0].BCGdate);
+    this.dataSets[0].HEPAwithdate = this.dateToString(this.loadedData[0].HEPAwithdate);
+    this.dataSets[0].HEPAmoredate = this.dateToString(this.loadedData[0].HEPAmoredate);
+    this.dataSets[0].OPV1date = this.dateToString(this.loadedData[0].OPV1date);
+    this.dataSets[0].OPV2date = this.dateToString(this.loadedData[0].OPV2date);
+    this.dataSets[0].OPV3date = this.dateToString(this.loadedData[0].OPV3date);
+    this.dataSets[0].PENTA1date = this.dateToString(this.loadedData[0].PENTA1date);
+    this.dataSets[0].PENTA2date = this.dateToString(this.loadedData[0].PENTA2date);
+    this.dataSets[0].PENTA3date = this.dateToString(this.loadedData[0].PENTA3date);
+    this.dataSets[0].PCV1date = this.dateToString(this.loadedData[0].PCV1date);
+    this.dataSets[0].PCV2date = this.dateToString(this.loadedData[0].PCV2date);
+    this.dataSets[0].PCV3date = this.dateToString(this.loadedData[0].PCV3date);
+    this.dataSets[0].MCV1date = this.dateToString(this.loadedData[0].MCV1date);
+    this.dataSets[0].MCV2date = this.dateToString(this.loadedData[0].MCV2date);
+    this.dataSets[0].Dengue1date = this.dateToString(this.loadedData[0].Dengue1date);
+    this.dataSets[0].Dengue2date = this.dateToString(this.loadedData[0].Dengue2date);
+    this.dataSets[0].Dengue3date = this.dateToString(this.loadedData[0].Dengue3date);
 
     console.log(this.dataSets[0]);
     this.$forceUpdate();
@@ -1491,10 +1491,15 @@ export default {
       // eslint-disable-next-line no-console
       console.log(this.formData.patient.currBrgy)
     },
-	convDatePHT(d) { // only accepts Date object; includes checking
+  	convDatePHT(d) { // only accepts Date object; includes checking
       return !isNaN(Date.parse(d))
 	      ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10).split("-").join("/")
 		  : "N/A";
+    },
+    dateToString(date) {
+      const dateString = new Date(date);
+      const month = dateString.getMonth() + 1;
+      return dateString.getFullYear()+'-'+ month.toString().padStart(2,'0') +'-'+dateString.getDate().toString().padStart(2,'0');
     },
   },
 }
