@@ -773,7 +773,7 @@ const indexFunctions = {
 					GROUP BY cr.CRFID ${ havingClause }
 					ORDER BY cr.year DESC, cr.week DESC;`);
 			for (let i = 0; i < match.length; i++) {
-				match[i].submitStatus = match[i].isPushed > 0 ? "Pushed" : "Submitted";
+				match[i].submitStatus = match[i].isPushed > 0 ? "Pushed" : "Ongoing";
 				match[i].submittedOn = match[i].submittedOn ? convDatePHT(new Date(match[i].submittedOn)) : "N/A";
 				match[i].lastCase = match[i].lastCase ? convDatePHT(new Date(match[i].lastCase)) : "N/A";
 				if (match[i].isPushed > 0) {

@@ -186,15 +186,16 @@ export default {
     this.submittedDate = rows.CRF.isPushed
         ? this.convDatePHT(new Date(rows.CRF.year, 0, (1 + rows.CRF.week * 7)))
         : "N/A";
+	console.log(rows.crfData);
     this.updatedDate = rows.crfData.reduce((acc, val) => {
       let accD = new Date(acc.updatedDate), valD = new Date(val.updatedDate);
       return accD > valD ? accD : valD;
-    }).updatedDate;
+    }, []).updatedDate;
     if (this.updatedDate === "N/A") {
       this.updatedDate = rows.crfData.reduce((acc, val) => {
         let accD = new Date(acc.reportDate), valD = new Date(val.reportDate);
         return accD > valD ? accD : valD;
-      }).reportDate;
+      }, []).reportDate;
     }
     console.log(rows);
     this.crfData = rows.crfData;
