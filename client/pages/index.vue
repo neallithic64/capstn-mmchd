@@ -409,6 +409,7 @@ export default {
       else if (c.toString().includes('PHERC')) return 'caseStatus confirmedCase';
       else if (c.toString().includes('PHENC')) return 'caseStatus confirmedCase';
       else if (c.toString().includes('PHEIC')) return 'caseStatus confirmedCase';
+      else if (c.toString().includes('forValidation')) return 'For Validation';
     },
     // moveProgress() {
     //   for (let i = 0; i < this.cities.length; i++) {

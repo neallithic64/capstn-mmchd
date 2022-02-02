@@ -285,22 +285,24 @@ async function sendBulkNotifs(userTypes, notificationType, message, caseID) {
 	}
 }
 
-async function createOutbreak(diseaseID, outbreakStatus) {
+async function createOutbreak(diseaseID, type) {
 	try {
 		let match = await db.exec("SELECT * FROM mmchddb.OUTBREAKS WHERE diseaseID='" + diseaseID +
 								"' AND NOT outbreakStatus='Closed';");
 		if(match.length > 0) {
-			if(match[0].outbreakStatus == outbreakStatus)
+			if(match[0].type == type)
 				return match[0];
 			else if(outbreakStatus == 'Epidemic') {
-				let result = await db.updateRows("mmchddb.OUTBREAKS", {outbreakID:match[0].outbreakID}, {outbreakStatus:outbreakStatus});
+				let result = await db.updateRows("mmchddb.OUTBREAKS", {outbreakID:match[0].outbreakID}, {type:type});
 				if(result)
 					return match[0];
 				else
 					return false;
-			}	
+			}
+			else 
+				return match[0];
 		} else {
-			let newOutbreak = new Outbreak((await generateID("mmchddb.OUTBREAKS")).id, diseaseID, 'Ongoing', new Date(), null,outbreakStatus, null);
+			let newOutbreak = new Outbreak((await generateID("mmchddb.OUTBREAKS")).id, diseaseID, 'Ongoing', new Date(), null, type, null);
 			let result = await db.insertOne("mmchddb.OUTBREAKS", newOutbreak);
 			return result;
 		}
@@ -1516,6 +1518,8 @@ const indexFunctions = {
 			event.dateCaptured = new Date(event.dateCaptured + ' ' + event.timeCaptured);
 			event.numCases = Number.parseInt(event.numCases);
 			event.numDeaths = Number.parseInt(event.numDeaths);
+			event.dateReported = new Date();
+			event.assessment = "TBD";
 
 			delete event.locHouseStreet;
 			delete event.locBrgy;
