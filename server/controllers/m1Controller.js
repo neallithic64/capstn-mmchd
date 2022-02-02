@@ -1511,6 +1511,8 @@ const indexFunctions = {
 			event.dateCaptured = new Date(event.dateCaptured + ' ' + event.timeCaptured);
 			event.numCases = Number.parseInt(event.numCases);
 			event.numDeaths = Number.parseInt(event.numDeaths);
+			event.dateReported = new Date();
+			event.assessment = "TBD";
 
 			delete event.locHouseStreet;
 			delete event.locBrgy;

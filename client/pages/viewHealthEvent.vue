@@ -344,10 +344,10 @@
               </div>
             </div>
 
-            <h2 v-if="newStatus != 'Discarded' && healthEvent.assessment === ''" id="form-header" class="required">
+            <h2 v-if="(newStatus != 'Discarded' && newStatus != '')" id="form-header" class="required">
               Please select the health event assessment.
             </h2>
-            <div v-if="newStatus != 'Discarded' && healthEvent.assessment === ''">
+            <div v-if="(newStatus != 'Discarded' && newStatus != '')">
               <!-- ASSESSMENT -->
               <div>
                 <div class="collpaseWrapper">
@@ -517,6 +517,7 @@ export default {
     const data = (await axios.get('http://localhost:8080/api/getEvent?eventID=' + this.$route.query.eventID)).data;
     // const data = (await axios.get('http://localhost:8080/api/getCRF?caseID=' + 'CA-0000000000007')).data;
     this.healthEvent = data.event;
+    this.assessment = this.healthEvent.assessment;
     if(this.healthEvent.eventStatus == 'forValidation')
       this.status = "For Validation"
     else this.status = this.healthEvent.eventStatus;
@@ -557,7 +558,7 @@ export default {
           eventID: this.healthEvent.eventID,
           newStatus: this.newStatus,
           modifiedBy: this.$auth.user.userID,
-          eventAssess: this.healthEvent.assessment
+          assessment: this.healthEvent.assessment
         });
         if (updateCase.status === 200) {
           // alert('Event status updated!');
@@ -570,7 +571,8 @@ export default {
         }
       }
       if (change==='cancel') {
-        this.newStatus = this.healthEvent.eventStatus;
+        this.newStatus = '';
+        this.healthEvent.assessment = this.assessment;
       }
       this.popup()
     },
