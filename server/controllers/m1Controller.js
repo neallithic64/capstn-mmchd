@@ -22,6 +22,7 @@ function convDatePHT(d) {
 }
 
 const math = require('mathjs');
+const { fractionDependencies } = require("mathjs");
 const DRUUserTypes = ['BHS','RHU','CHO', 'govtHosp', 'privHosp', 'clinic', 'privLab', 'airseaPort'];
 /** OBJECT CONSTRUCTORS
 */
@@ -292,7 +293,7 @@ async function createOutbreak(diseaseID, type) {
 		if(match.length > 0) {
 			if(match[0].type == type)
 				return match[0];
-			else if(outbreakStatus == 'Epidemic') {
+			else if(type == 'Epidemic') {
 				let result = await db.updateRows("mmchddb.OUTBREAKS", {outbreakID:match[0].outbreakID}, {type:type});
 				if(result)
 					return match[0];
@@ -1305,7 +1306,7 @@ const indexFunctions = {
 		try {
 			let match = await db.exec("SELECT e.*, a.city FROM mmchddb.EVENTS e " +
 									"JOIN mmchddb.ADDRESSES a ON a.addressID = e.addressID;");
-			console.log(match);
+			// console.log(match);
 			match.forEach(function(element){
 				element.dateCaptured = dateToString(element.dateCaptured);
 				element.dateReported = dateToString(element.dateReported);
@@ -1546,6 +1547,7 @@ const indexFunctions = {
 		let { formData, CRFID } = req.body;
 		console.log(formData);
 		let result;
+		let occuresult = true;
 
 		try {
 			let currAddrID = await generateID("mmchddb.ADDRESSES", {
@@ -1554,6 +1556,23 @@ const indexFunctions = {
 				city: formData.patient.currCity
 			});
 			formData.patient.caddressID = currAddrID.id;
+
+			if(formData.patient.occuStreet != '' && formData.patient.occuBrgy != '' && formData.patient.occuCity != ''){
+				let occuAddrID = await generateID("mmchddb.ADDRESSES", {
+					houseStreet: formData.patient.occuStreet,
+					brgy: formData.patient.occuBrgy,
+					city: formData.patient.occuCity
+				});
+	
+				if (!occuAddrID.exists) {
+					let occuAddr = new Address(occuAddrID, formData.patient.occuStreet, formData.patient.occuBrgy, formData.patient.occuCity);
+					occuresult = await db.insertOne("mmchddb.ADDRESSES", occuAddr);
+					if(occuresult)
+						formData.patient.occuAddrID = occuAddrID.id;
+				}
+			}
+			
+
 			if (!currAddrID.exists) {
 				let currAddr = new Address(formData.patient.caddressID, formData.patient.currHouseStreet, formData.patient.currBrgy, formData.patient.currCity);
 				result = await db.insertOne("mmchddb.ADDRESSES", currAddr);
@@ -1571,13 +1590,16 @@ const indexFunctions = {
 					result = await db.insertOne("mmchddb.ADDRESSES", permAddr);
 				}
 				
-				if (result || permAddrID.exists) {
+				if ((result || permAddrID.exists) && (occuresult)) {
 					delete formData.patient.currHouseStreet;
 					delete formData.patient.currBrgy;
 					delete formData.patient.currCity;
 					delete formData.patient.permHouseStreet;
 					delete formData.patient.permBrgy;
 					delete formData.patient.permCity;
+					delete formData.patient.occuCity;
+					delete formData.patient.occuBrgy;
+					delete formData.patient.occuStreet;
 					
 					// temp fix for occuAddr
 					formData.patient.occuAddrID = null;

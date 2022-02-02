@@ -2849,7 +2849,7 @@ export default {
           caseId: this.formData.cases.caseID,
           newStatus: this.newStatus
         });
-        console.log('');
+        console.log(result);
         if (result.status === 200) {
           // alert('CIF status updated!');
           if(result.data.outbreakID){
