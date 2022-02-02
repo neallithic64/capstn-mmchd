@@ -396,7 +396,7 @@ export default {
       healthEvent: {
         eventID:'',
         userID:'',
-        eventStatus:'forValidation',
+        eventStatus:'For Validation',
         dateCaptured: '',
         timeCaptured: '',
         source: '',

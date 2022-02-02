@@ -196,7 +196,7 @@
           </div> -->
 
           <!-- for DRU -->
-          <div v-if="$auth.user.userType === 'BHS' || $auth.user.userType === 'RHU' || $auth.user.userType === 'CHO' ||
+          <!-- <div v-if="$auth.user.userType === 'BHS' || $auth.user.userType === 'RHU' || $auth.user.userType === 'CHO' ||
               $auth.user.userType === 'govtHosp' || $auth.user.userType === 'privHosp' || $auth.user.userType === 'clinic' ||
               $auth.user.userType === 'govtLab' || $auth.user.userType === 'privLab' || $auth.user.userType === 'airseaPort'" id="tracker-container">
             <span class="dboard-right-titles" style="padding: 3px 3px 3px 5px; background-image: linear-gradient(to bottom right, #008d41, #74d680);"> Case Report Forms Week {{ weekNo }} </span>
@@ -214,10 +214,10 @@
                       <div id="tracker-content-row">
                         <div style="width: 30%; font-weight: 600;">
                           {{ name }}
-                        </div>
+                        </div> -->
 
                         <!-- Submit Status -->
-                        <div v-if="crfStatus[name][0] == 0" style="width: 34%;">
+                        <!-- <div v-if="crfStatus[name][0] == 0" style="width: 34%;">
                           <div style="display: flex; flex-direction: row;">
                             <div class="crfOngoing"> </div> <span style="margin-left: 5px;"> Ongoing </span>
                           </div>
@@ -231,10 +231,10 @@
                           <div style="display: flex; flex-direction: row;">
                             <div class="crfPushed"> </div> <span style="margin-left: 5px;"> Pushed </span>
                           </div>
-                        </div>
+                        </div> -->
 
                         <!-- Report Status -->
-                        <div v-if="crfStatus[name][1] == 0" style="width: 32%;">
+                        <!-- <div v-if="crfStatus[name][1] == 0" style="width: 32%;">
                           <div style="display: flex; flex-direction: row;">
                             <div class="crfOngoing"> </div> <span style="margin-left: 5px;"> Ongoing </span>
                           </div>
@@ -249,13 +249,13 @@
                             <div class="crfCases"> </div> <span style="margin-left: 5px;"> With Cases </span>
                           </div>
                         </div>
-                      </div>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </a>
-          </div>
+                      </div> -->
+                    <!-- </li> -->
+                  <!-- </ul> -->
+                <!-- </div> -->
+              <!-- </div> -->
+            <!-- </a> -->
+          <!-- </div> -->
         </div>
       </div>
     </div>
@@ -409,6 +409,7 @@ export default {
       else if (c.toString().includes('PHERC')) return 'caseStatus confirmedCase';
       else if (c.toString().includes('PHENC')) return 'caseStatus confirmedCase';
       else if (c.toString().includes('PHEIC')) return 'caseStatus confirmedCase';
+      else if (c.toString().includes('forValidation')) return 'For Validation';
     },
     // moveProgress() {
     //   for (let i = 0; i < this.cities.length; i++) {

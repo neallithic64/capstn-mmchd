@@ -121,7 +121,7 @@ export default {
           {
             // PHELC, PHERC, PHENC, PHEIC
             title: 'Assessment',
-            key: 'eventAssess',
+            key: 'assessment',
             type: 'text',
             source: 'events',
             sortable: true,
