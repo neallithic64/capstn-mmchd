@@ -1877,7 +1877,7 @@ export default {
       this.formData.cases.reportedBy = this.$auth.user.userID;
       this.formData.cases.reportDate = now.getFullYear() + '-' + (now.getMonth()+1) + '-' + now.getDate();
       const result = await axios.post('http://localhost:8080/api/newCase', {formData: this.formData, CRFID: this.$route.query.CRFID});
-      console.log('');
+      console.log(result);
       if (result.status === 200) {
         // alert('CRF case submitted!');
         this.$toast.success('Case saved!', {duration: 4000, icon: 'check_circle'});
