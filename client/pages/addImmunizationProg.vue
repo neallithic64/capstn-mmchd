@@ -43,16 +43,16 @@
         </div>
       </div>
 
-      <div v-if="dataSets.length > 0" class="addIPcomponent" style="margin-top: 20px;">
+      <div class="addIPcomponent" style="margin-top: 20px;">
         <dataTable
           :options="tableOptions"
           :datavalues="dataSets"
           :casetype="'immunProg'"
         />
-        <div v-if="year+'' === new Date().getFullYear()+'' && month+'' === new Date().getMonth()+''" class="addIPaddButton">
+        <div v-if="year+'' === (new Date()).getFullYear()+'' && month+'' === (new Date()).getMonth()+''" class="addIPaddButton">
           <button class="addIPaddText"><a :href="'/addImmunizationProgEntry?TCLID=' + TCLID">+ add an entry</a></button></div>
       </div>
-        <div v-if="year+'' === new Date().getFullYear()+'' && month+'' === new Date().getMonth()+''" class="addIPendButt">
+        <div v-if="year+'' === (new Date()).getFullYear()+'' && month+'' === (new Date()).getMonth()+''" class="addIPendButt">
           <!--button class="back-button" type="button" @click="save()">
             Save
           </button-->
