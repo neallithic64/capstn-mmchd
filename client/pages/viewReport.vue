@@ -261,7 +261,7 @@ export default {
       if (this.inputStatus === '' || this.inputStatus === null) this.isValidated = false;
       else this.isValidated = true;
     },
-    submit(action) {
+    async submit(action) {
       if (action === 'cancel') {
         // CANCEL ASSESSMENT / one with drop down
         this.isAssess = false;
@@ -282,6 +282,11 @@ export default {
           this.isAssess = false;
 
           // TO DO: SAVE SAVE in db
+		  const approvedData = (await axios.post("http://localhost:8080/api/editApproveReport", {
+		    reportID: this.report.reportID,
+			userID: this.$auth.user.userID,
+			remarks: this.inputRemarks
+		  })).data;
           this.$toast.success('Status saved!', {duration: 4000, icon: 'check_circle'});
         }
       }
