@@ -43,7 +43,7 @@ router.get("/dashboardData", m2Cont.getIndexData);
 
 router.get("/getFileBlob", m3Cont.getFileBlob);
 router.get("/getReport", m3Cont.getReport);
-router.get("/getReports", m3Cont.getAllReports);
+router.get("/getAllReports", m3Cont.getAllReports);
 router.get("/getReportBulletin", m3Cont.getReportBulletin);
 
 router.get("/getProgTargets", m4Cont.getAllProgTargets);

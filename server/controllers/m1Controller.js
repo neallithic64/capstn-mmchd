@@ -554,7 +554,7 @@ async function getOutbreakData(outbreakID) {
 				tempOutbreak.numDeaths = deathCount[i].numDeaths;
 				tempOutbreak.growthRate = growth[i].growthRate;
 				tempOutbreak.attackRate = attack[i].attackRate;
-				console.log(attack[i]);
+				// console.log(attack[i]);
 				if (!!caseCount[i].responseTime) {
 					let seconds = caseCount[i].responseTime;
 					caseCount[i].responseTime = Math.floor(seconds / 3600) + "h ";
@@ -563,7 +563,7 @@ async function getOutbreakData(outbreakID) {
 					seconds %= 60;
 					caseCount[i].responseTime += seconds + "s";
 					console.log("response time: " + caseCount[i].responseTime);
-				} else outbreaks.outbreak.responseTime = "N/A";
+				} else tempOutbreak.responseTime = "N/A";
 				outbreaks.push(tempOutbreak);
 			}
 		}
@@ -622,7 +622,7 @@ const indexFunctions = {
 				await db.insertRows("mmchddb.RISK_FACTORS_D", Object.keys(rows[0]), rows.map(Object.values));
 			}
 			*/
-			res.status(200).send([]);
+			res.status(200).send((new Date()).getWeek() + "");
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
@@ -780,11 +780,11 @@ const indexFunctions = {
 				match[i].submittedOn = match[i].submittedOn ? convDatePHT(new Date(match[i].submittedOn)) : "N/A";
 				match[i].lastCase = match[i].lastCase ? convDatePHT(new Date(match[i].lastCase)) : "N/A";
 				if (match[i].isPushed > 0) {
-					if (match[i].lastCase >= new Date(match[i].year, 0, 1 + match[i].week * 7)) {
-						if (match[i].caseCount <= 0) {
-							match[i].reportStatus = "Zero Report";
+					if (match[i].caseCount > 0) {
+						if (match[i].lastCase >= new Date(match[i].year, 0, 1 + match[i].week * 7)) {
+							match[i].reportStatus = "Late Cases";
 						} else match[i].reportStatus = "Cases Submitted";
-					} else match[i].reportStatus = "Late Cases";
+					} else match[i].reportStatus = "Zero Report";
 				} else match[i].reportStatus = "Ongoing";
 			}
 			res.status(200).send(match);

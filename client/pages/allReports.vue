@@ -109,40 +109,7 @@ export default {
         // source: 'http://demo.datatable/api/users',
         search: true,
       },
-      allReports: [
-        {
-          reportID: '123',
-          reportDisease: 'Measles',
-          reportType: 'Monthly Feedback',
-          reportDateSub: '2021-12-13',
-          reportStatus: 'For Approval',
-          reportDateApp: ''
-        },
-        {
-          reportID: '124',
-          reportDisease: 'Measles',
-          reportType: 'Annual Feedback',
-          reportDateSub: '2021-12-13',
-          reportStatus: 'For Approval',
-          reportDateApp: ''
-        },
-        {
-          reportID: '125',
-          reportDisease: 'Measles',
-          reportType: 'Adhoc Feedback',
-          reportDateSub: '2021-12-13',
-          reportStatus: 'For Revision',
-          reportDateApp: ''
-        },
-        {
-          reportID: '126',
-          reportDisease: 'Measles',
-          reportType: 'Outbreak Feedback',
-          reportDateSub: '2021-12-13',
-          reportStatus: 'Approved',
-          reportDateApp: '2021-12-25'
-        }
-      ],
+      allReports: [],
     }
   },
   head() {
@@ -151,7 +118,7 @@ export default {
     }
   },
   async mounted() {
-    if (this.dataSets.length === 0) {
+    if (this.allReports.length === 0) {
       this.$toast.show('Loading...', {className: 'blink', icon: 'hourglass_top'});
     }
     
@@ -163,12 +130,12 @@ export default {
     // } else this.allEvents = rows;
 	
 	for (let i = 0; i < rows.length; i++) {
-      rows[i].dateCreated = this.convDatePHT(new Date(rows[i].dateCreated));
-      rows[i].approvedByDate = this.convDatePHT(new Date(rows[i].approvedByDate));
+      rows[i].dateCreated = rows[i].dateCreated ? this.convDatePHT(new Date(rows[i].dateCreated)) : "N/A";
+      rows[i].approvedByDate = rows[i].approvedByDate ? this.convDatePHT(new Date(rows[i].approvedByDate)) : "N/A";
 	}
 	this.allReports = rows;
     
-    if (this.dataSets.length > 0) {
+    if (this.allReports.length > 0) {
       this.$toast.clear();
       this.$toast.success('All Reports loaded!', {duration: 4000, icon: 'check_circle'});
     }

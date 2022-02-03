@@ -1,3 +1,4 @@
+const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
@@ -19,6 +20,32 @@ Date.prototype.getWeek = function() {
  */
 function convDatePHT (d) {
 	return !isNaN(Date.parse(d)) ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10) : "N/A";
+}
+
+/** Email Order:
+ * 1. noted by: LHSD chief
+ * 2. recom by: RESU head
+ * 3. appro by: CHD director
+ */
+function sendReportEmail(email, reportID, status) {
+	// sending email
+	var smtpTransport = nodemailer.createTransport({
+		service: "Gmail",
+		auth: {
+			user: process.env.EMAIL_ADDR,
+			pass: process.env.EMAIL_PASS
+		}
+	});
+	var mailOpts = {
+		from: "MM CHD",
+		to: email,
+		subject: "MMCHD: New Report For Approval",
+		text: `Good day! New report ${reportID} has been created with status "${status}". Review it here: http://localhost:3000/viewReport?reportID=${reportID}. Thank you very much!`
+	};
+	smtpTransport.sendMail(mailOpts, function(err) {
+		if (err) console.log(err);
+		smtpTransport.close();
+	});
 }
 
 /** ON ID CREATION
@@ -149,7 +176,7 @@ const indexFunctions = {
 					LEFT JOIN mmchddb.REPORT_AUDIT ra ON ra.reportID = r.reportID
 					WHERE r.reportID = '${req.query.reportID}';`);
 			res.status(200).send({
-				report: report,
+				report: report[0],
 				dataSet: auditLog
 			});
 		} catch (e) {
@@ -173,7 +200,7 @@ const indexFunctions = {
 	
 	getReportBulletin: async function(req, res) {
 		try {
-			let reports = await db.exec(`SELECT r.reportID, r.type AS reportType, r.title AS reportTitle,
+			let reports = await db.exec(`SELECT r.reportID, r.reportType, r.title AS reportTitle,
 					CONCAT(MONTH(r.dateCreated), ' ', DAY(r.dateCreated)) AS reportDate,
 					r.year AS reportYear, IFNULL(r.approvedByDate, 'N/A') AS dateApproved,
 					d.diseaseName AS reportDisease
@@ -194,13 +221,9 @@ const indexFunctions = {
 	postFileBlob: async function(req, res) {
 		let { file, reportID } = req.body;
 		try {
-			console.log(file);
-			/* let insert = await db.insertOne("mmchddb.zzzREPORT_COMMENTS", {
-				reportID: "001",
-				file: file
-			}); */
+			// console.log(file);
 			await db.updateRows("mmchddb.REPORTS", { reportID: reportID }, { file: file });
-			res.status(200).send(rows);
+			res.status(200).send("File uploaded!");
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
@@ -211,12 +234,13 @@ const indexFunctions = {
 		let { report } = req.body;
 		try {
 			let reportID = (await generateID("mmchddb.REPORTS")).id;
-			let rows = await db.findRows("mmchddb.REPORTS", {
+			let diseaseID = await db.findRows("mmchddb.DISEASES", {diseaseName: report.diseaseID});
+			let rows = await db.insertOne("mmchddb.REPORTS", {
 				reportID: reportID,
-				diseaseID: report.disease,
+				diseaseID: diseaseID[0].diseaseID,
 				preparedBy: report.preparedBy,
-				reportType: report.type,
-				status: "Pending",
+				reportType: report.reportType,
+				status: "For Approval",
 				dateCreated: (new Date()).toISOString(), // dateTime
 				title: report.title,
 				year: report.year,
@@ -224,7 +248,10 @@ const indexFunctions = {
 				reportsIncluded: JSON.stringify(report.reportsIncluded),
 				chartRemarks: JSON.stringify(report.chartRemarks)
 			});
-			res.status(200).send(rows);
+			
+			sendReportEmail("matthewneal2006@yahoo.com", reportID, "For Approval");
+			
+			res.status(200).send(reportID);
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");

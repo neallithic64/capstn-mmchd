@@ -536,6 +536,7 @@ export default {
     console.log(this.datavalues);
     
     this.requestParams.sortedKey = this.options.sortKey;
+    this.requestParams.sortedType = this.options.sortType;
 
     this.sortedKeyValue(this.requestParams.sortedKey, this.requestParams.sortedType);
     this.totalCount = Object.keys(this.dataSets).length;

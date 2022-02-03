@@ -92,7 +92,7 @@ export default {
           },
           {
             title: 'Patient',
-            key: 'patientName',
+            key: 'patientID',
             type: 'number',
             source: 'crf',
           },
