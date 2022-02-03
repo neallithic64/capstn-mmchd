@@ -60,6 +60,7 @@ export default {
       tableOptions: {
         tableName: 'events',
         sortKey: 'dateReported',
+        sortType:'desc',
         columns: [
           {
             title: 'Event ID',
