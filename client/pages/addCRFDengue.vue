@@ -7,7 +7,7 @@
         <div class="addCRFnumbers">
           <h1 class="addCRFh1" style="margin-top: -1px">{{ disease }} Case Report Form </h1>
           <h2 class="addCRFh2" style="margin-top: -7px">Week No: {{ weekNo }}</h2>
-          <h3 class="addCRFh3">Last updated: {{ updatedDate }}</h3>
+          <!-- <h3 class="addCRFh3">Last updated: {{ updatedDate }}</h3> -->
         </div>
       </div>
       <div style="margin-top: 20px;">
@@ -23,11 +23,11 @@
         <div class="addCRFadditionalButtons">
           <button class="addCRF-addText"><a :href="'/addCRFDengueCase?CRFID=' + CRFID">+ Add a Case</a></button>
         </div>
-        <div class="addCRF-endButton">
+        <!-- <div class="addCRF-endButton">
           <button class="submit-button" type="button" @click="submit()">
             Submit
           </button>
-        </div>
+        </div> -->
       </div>
     </div>
     <div v-show="popupOpen" class="addCRFoverlay">
