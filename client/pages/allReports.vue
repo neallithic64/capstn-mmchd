@@ -130,8 +130,8 @@ export default {
     // } else this.allEvents = rows;
 	
 	for (let i = 0; i < rows.length; i++) {
-      rows[i].dateCreated = this.convDatePHT(new Date(rows[i].dateCreated));
-      rows[i].approvedByDate = this.convDatePHT(new Date(rows[i].approvedByDate));
+      rows[i].dateCreated = rows[i].dateCreated ? this.convDatePHT(new Date(rows[i].dateCreated)) : "N/A";
+      rows[i].approvedByDate = rows[i].approvedByDate ? this.convDatePHT(new Date(rows[i].approvedByDate)) : "N/A";
 	}
 	this.allReports = rows;
     
