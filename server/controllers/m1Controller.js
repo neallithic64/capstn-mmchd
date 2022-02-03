@@ -622,7 +622,7 @@ const indexFunctions = {
 				await db.insertRows("mmchddb.RISK_FACTORS_D", Object.keys(rows[0]), rows.map(Object.values));
 			}
 			*/
-			res.status(200).send([]);
+			res.status(200).send((new Date()).getWeek() + "");
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");

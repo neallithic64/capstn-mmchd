@@ -204,12 +204,12 @@ export default {
                       + ' ' + hour + ':' + mins;
 
     for (let i=0; i<this.report.chartRemarks.length; i++) this.inputChartRemarks[i] = this.report.chartRemarks[i];
-    if (this.report.status === 'Pending') this.isAssess = true;
+    if (this.report.status === 'For Approval') this.isAssess = true;
 
     const pdfFile = await axios.get("http://localhost:8080/api/getFileBlob", {
 	  params: {reportID: this.$route.query.reportID}
 	});
-	console.log(pdfFile.data);
+	// console.log(pdfFile.data);
 	const pdfPreview = document.querySelector('iframe');
 	pdfPreview.src = pdfFile.data;
 	pdfPreview.classList.add("width100");

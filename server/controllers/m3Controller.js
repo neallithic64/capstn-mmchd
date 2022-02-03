@@ -1,3 +1,4 @@
+const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
@@ -19,6 +20,32 @@ Date.prototype.getWeek = function() {
  */
 function convDatePHT (d) {
 	return !isNaN(Date.parse(d)) ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10) : "N/A";
+}
+
+/** Email Order:
+ * 1. noted by: LHSD chief
+ * 2. recom by: RESU head
+ * 3. appro by: CHD director
+ */
+function sendReportEmail(email, reportID, status) {
+	// sending email
+	var smtpTransport = nodemailer.createTransport({
+		service: "Gmail",
+		auth: {
+			user: process.env.EMAIL_ADDR,
+			pass: process.env.EMAIL_PASS
+		}
+	});
+	var mailOpts = {
+		from: "MM CHD",
+		to: email,
+		subject: "MMCHD: New Report For Approval",
+		text: `Good day! New report ${reportID} has been created with status "${status}". Review it here: http://localhost:3000/viewReport?reportID=${reportID}. Thank you very much!`
+	};
+	smtpTransport.sendMail(mailOpts, function(err) {
+		if (err) console.log(err);
+		smtpTransport.close();
+	});
 }
 
 /** ON ID CREATION
@@ -213,7 +240,7 @@ const indexFunctions = {
 				diseaseID: diseaseID[0].diseaseID,
 				preparedBy: report.preparedBy,
 				reportType: report.reportType,
-				status: "Pending",
+				status: "For Approval",
 				dateCreated: (new Date()).toISOString(), // dateTime
 				title: report.title,
 				year: report.year,
@@ -221,6 +248,8 @@ const indexFunctions = {
 				reportsIncluded: JSON.stringify(report.reportsIncluded),
 				chartRemarks: JSON.stringify(report.chartRemarks)
 			});
+			
+			sendReportEmail("matthewneal2006@yahoo.com", reportID, "For Approval");
 			
 			res.status(200).send(reportID);
 		} catch (e) {
