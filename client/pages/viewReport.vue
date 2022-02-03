@@ -287,7 +287,9 @@ export default {
 			userID: this.$auth.user.userID,
 			remarks: this.inputRemarks
 		  })).data;
-          this.$toast.success('Status saved!', {duration: 4000, icon: 'check_circle'});
+		  if (approvedData.status === 200) {
+            this.$toast.success('Status saved!', {duration: 4000, icon: 'check_circle'});
+		  }
         }
       }
     },
