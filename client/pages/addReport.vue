@@ -12,10 +12,10 @@
         <div class="space-inline marginTop5">
           <h3 class="weight500 size18"> {{report.title}} </h3>
           <h3 class="weight500 size18">
-              {{report.type}} Report - {{report.year}}
+              {{report.reportType}} Report - {{report.year}}
               <span v-if="report.duration!==''">, {{report.duration}} </span> 
           </h3>
-          <h3 class="weight500 size18"> {{report.disease}} </h3>
+          <h3 class="weight500 size18"> {{report.diseaseID}} </h3>
         </div>
         <hr class="marginTop20" id="2"/>
       </div>
@@ -35,8 +35,8 @@
 
               <div class="inlineFlex alignCenter marginTopBot2">
                 <legend for="reportType" class="inputLegend required"> Report Type: </legend>
-                <select id="reportType" v-model="report.type" type="text" class="input-form-field"
-                  :class="isRequired()" :disabled="!inputEdit()" required @change="changeTime(report.type)">
+                <select id="reportType" v-model="report.reportType" type="text" class="input-form-field"
+                  :class="isRequired()" :disabled="!inputEdit()" required @change="changeTime(report.reportType)">
                   <option v-for="(reportType, index) in reportTypeOption" :key="index">
                     {{reportType}}
                   </option>
@@ -67,9 +67,9 @@
 
               <div class="inlineFlex alignCenter marginTopBot2">
                 <legend for="reportDisease" class="inputLegend required"> Disease: </legend>
-                <select id="reportDisease" v-model="report.disease" type="text" class="input-form-field"
+                <select id="reportDisease" v-model="report.diseaseID" type="text" class="input-form-field"
                   :class="isRequired()" :disabled="!inputEdit()" required>
-                  <option v-for="(disease, index) in diseaseOption" :key="index">
+                  <option v-for="(disease, index) in diseaseOption" :key="index" :value="disease">
                     {{disease}}
                   </option>
                 </select>
@@ -139,7 +139,7 @@
                 <span class="approval-people"> <b> &nbsp;{{report.preparedBy}} </b> </span>
               </div>
               <div class="inlineFlex alignCenter marginTopBot2">  <span class="width105"> Prepared On: </span>
-                <span class="approval-people"> <b> &nbsp;{{report.dateTime}} </b> </span>
+                <span class="approval-people"> <b> &nbsp;{{report.dateCreated}} </b> </span>
               </div>
               <div class="inlineFlex alignCenter marginTopBot2"></div>
             </div>
@@ -175,7 +175,7 @@
                 </div>
                 <div class="inlineFlex alignCenter marginTopBot2">
                   <legend for="reportType" class="inputLegend required"> Date and Time: </legend>
-                  <input id="reportType" v-model="report.dateTime" type="text" class="input-form-field" disabled/>
+                  <input id="reportType" v-model="report.dateCreated" type="text" class="input-form-field" disabled/>
                 </div>
                 <div v-if="isValidated & readyPrint" class="inlineFlex alignCenter marginTopBot2">
                   <legend for="reportType" class="inputLegend required"> Upload Report: </legend>
@@ -233,38 +233,34 @@ export default {
       report: {
         status: '',
         title: '',
-        type: '',
+        reportType: '',
         year: '',
         duration: '',
-        disease: '',
+        diseaseID: '',
         reportsIncluded: [],
         chartRemarks: [],
-
-        // reportsIncluded: ['Person Analysis', 'Summary1', 'Summary2', 'Time Analysis'],
-        // chartRemarks: ['AB', 'ABC1', 'ABC2', 'ABCD',],
-
-        preparedBy: '',
-        dateTime: '',
+		preparedBy: '',
+        dateCreated: '',
         notedBy: '',
-        notedByDate: 'Jan 28, 2013',
+        notedByDate: '',
         recommendedBy: '',
-        recommendedByDate: 'Feb 02, 2013',
-        approvedBy: 'I',
+        recommendedByDate: '',
+        approvedBy: '',
         approvedByDate: '',
       },
       reportTypeOption: ['Weekly', 'Monthly', 'Annual', 'Adhoc', 'Outbreak'],
       timeOption: [], weekOption: [], monthOption: [], yearOption: [],
       diseaseOption: [
         'Malaria',
-        'Measles',
-        'Tetanus',
+        'Measles/Rubella',
+        // 'Tetanus',
         'Pertussis',
-        'Meningococcal',
+        // 'Meningococcal',
         'Dengue',
-        'Cholera',
+        // 'Cholera',
         'Leptospirosis',
-        'Chikungunya',
-        'Typhoid',
+        // 'Chikungunya',
+        // 'Typhoid',
       ],
       reportsOption: [
         'Prevalence Analysis',
@@ -277,7 +273,7 @@ export default {
         'Health Events',
       ],
       biLinks: [
-        "https://app.powerbi.com/view?r=eyJrIjoiNTAwZDAxNDktM2E2Zi00ZWQxLWEyYzQtYzkwNDY1OTljZDg1IiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D",
+	    "https://app.powerbi.com/view?r=eyJrIjoiNTAwZDAxNDktM2E2Zi00ZWQxLWEyYzQtYzkwNDY1OTljZDg1IiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D",
         "https://app.powerbi.com/view?r=eyJrIjoiNTRhNTRmN2MtMjU2NC00YmRhLWE0ZmYtYjFhZGU0MmYwOTlkIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D",
         "https://app.powerbi.com/view?r=eyJrIjoiNWI4OTdkOGUtYzNiZS00ZjQwLWJkNzItZWY3Yjk1YjU1MTVjIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D",
         "https://app.powerbi.com/view?r=eyJrIjoiNjMyNzJjYjUtNDMyOS00YmE4LTk2MDQtMzM1OGNlYzc5ZmI1IiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D",
@@ -296,26 +292,40 @@ export default {
   },
   mounted() {
     this.getDate();
-    this.yearOption= [2022, 2021, 2020, 2019, 2018];
-    this.monthOption= ['January', 'February', 'March', 'April', 'May',
+    this.yearOption = [2022, 2021, 2020, 2019, 2018];
+    this.monthOption = ['January', 'February', 'March', 'April', 'May',
       'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     for (let i=0; i<53; i++) this.weekOption[i] = 'Week ' + (i+1);
     setInterval(() => { this.getDate() }, 10000)
 	this.report.preparedBy = this.$auth.user.userID;
   },
   methods: {
-    call() {console.log(this.report.reportsIncluded); console.log(this.chartRemarks);},
-    getLink(i) { return this.biLinks[i]; },
-    isRequired() {  if (!this.isValidated) return 'input-required'; },
-    isOptionRequired() { if (!this.isValidated && this.report.reportsIncluded.length < 1) return 'input-required'; },
-    inputEdit() { if (this.isPrint) return false; else return true; },
-    biSize() { if (!this.isPrint) return 'min-height: 70vh;    min-width: 70vh;'},
+    call() {
+	  console.log(this.report.reportsIncluded);
+	  console.log(this.chartRemarks);
+	},
+    getLink(i) {
+	  return this.biLinks[i];
+	},
+    isRequired() {
+	  if (!this.isValidated) return 'input-required';
+    },
+    isOptionRequired() {
+	  if (!this.isValidated && this.report.reportsIncluded.length < 1) return 'input-required';
+	},
+    inputEdit() {
+	  if (this.isPrint) return false;
+	  else return true;
+	},
+    biSize() {
+	  if (!this.isPrint) return 'min-height: 70vh; min-width: 70vh;';
+	},
     getDate() {
       const today = new Date();
       const hour = today.getHours()>9 ? today.getHours() : '0'+today.getHours()
       const mins = today.getMinutes()>9 ? today.getMinutes() : '0'+today.getMinutes()
       const monthsList = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Aug', 'Oct', 'Nov', 'Dec'];
-      this.report.dateTime = monthsList[today.getMonth()] + ' ' + today.getDate() + ', ' + today.getFullYear()
+      this.report.dateCreated = monthsList[today.getMonth()] + ' ' + today.getDate() + ', ' + today.getFullYear()
                       + ' ' + hour + ':' + mins;
     },
     changeTime(reportType) {
@@ -336,13 +346,13 @@ export default {
       else return 'fullHeightNotFirst';
     },
     validate() {
-      if (this.report.title!=='' && this.report.type!== '' && this.report.year!== '' &&
-          this.report.disease!== '' && this.report.preparedBy!== '' &&
+      if (this.report.title!=='' && this.report.reportType!== '' && this.report.year!== '' &&
+          this.report.diseaseID!== '' && this.report.preparedBy!== '' &&
           this.report.reportsIncluded.length > 0 && this.report.chartRemarks.length > 0 &&
           this.report.reportsIncluded.length === this.report.chartRemarks.length) {
         this.isValidated = true;
         console.log(this.isValidated)
-        if (this.report.type !== 'Annual' && this.report.duration === '')
+        if (this.report.reportType !== 'Annual' && this.report.duration === '')
           this.isValidated = false;
         else {
           this.isValidated = true;
@@ -352,10 +362,9 @@ export default {
                 if (this.report.chartRemarks[i] === '' || this.report.chartRemarks[i] === null)
                   this.isValidated = this.isValidated & false;
         }
-      }
-      else this.isValidated = false;
+      } else this.isValidated = false;
     },
-    print() {window.print();},
+    print() { window.print(); },
     downloadPDF() {
       this.validate();
       if (!this.isValidated) { // eslint-disable-next-line no-lonely-if
@@ -378,14 +387,12 @@ export default {
         // })
       }
     },
-    async addFile(event) {
+    addFile(event) {
       this.readySubmit = true;
       this.file = event.target.files[0];      
-      console.log(this.file);
-
-      await this.convertPDFToBase64(this.file)
+      // console.log(this.file);
     },
-    convertPDFToBase64(fileToLoad) {
+    convertPDFToBase64(fileToLoad, newReportID) {
         // FileReader function for read the file.
         const fileReader = new FileReader();
         // Convert data to base64
@@ -395,11 +402,10 @@ export default {
         // Onload of file read the file content
         fileReader.onload = async function(fileLoadedEvent) {
           base64 = fileLoadedEvent.target.result;
-          const result = (
-            await axios.post ('http://localhost:8080/api/postFileBlob', {
-              file: base64
-            })
-          );
+          const result = (await axios.post('http://localhost:8080/api/postFileBlob', {
+		    file: base64,
+			reportID: newReportID
+	      }));
           console.log(result);
         };
     },
@@ -409,7 +415,9 @@ export default {
         const response = (await axios.post('http://localhost:8080/api/postAddReport', {
 		  report: this.report
 		}));
+        console.log(response);
 		if (response.status === 200) {
+          this.convertPDFToBase64(this.file, response.data);
           this.$toast.success('Feedback Report Submitted!', {duration: 4000, icon: 'check_circle'});
 		}
       }

@@ -6,16 +6,16 @@
       <!-- HEADER -->
       <div class="centerSide paddingSide25">
         <div class="space-inline">
-          <h1 class="textAlighRight greenC weight800 size32 marginTop2 marginBottom-3"> Feedback Report # 123 </h1>
+          <h1 class="textAlighRight greenC weight800 size32 marginTop2 marginBottom-3"> Feedback Report {{report.reportID}} </h1>
           <div class="viewRep-mainStatus marginLeft10 marginTop10" :class="getColor(report.status)"> {{report.status}} </div>
         </div>
         <div class="space-inline marginTop5">
           <h3 class="weight500 size18"> {{report.title}} </h3>
           <h3 class="weight500 size18">
-              {{report.type}} Report - {{report.year}}
+              {{report.reportType}} Report - {{report.year}}
               <span v-if="report.duration!==''">, {{report.duration}} </span> 
           </h3>
-          <h3 class="weight500 size18"> {{report.disease}} </h3>
+          <h3 class="weight500 size18"> {{report.diseaseName}} </h3>
         </div>
         <hr class="marginTopBot10" id="2"/>
       </div>
@@ -33,10 +33,10 @@
           <div class="space-inline alignStart block marginBottom30">
             <div class="grid">
               <div class="inlineFlex alignCenter marginTopBot2">  <span class="width105"> Prepared By: </span>
-                <span class="approval-people"> <b> &nbsp;{{report.preparedBy}} </b> </span>
+                <span class="approval-people"> <b> &nbsp;{{report.dateCreated}} </b> </span>
               </div>
               <div class="inlineFlex alignCenter marginTopBot2">  <span class="width105"> Prepared On: </span>
-                <span class="approval-people"> <b> &nbsp;{{report.dateTime}} </b> </span>
+                <span class="approval-people"> <b> &nbsp;{{report.dateCreated}} </b> </span>
               </div>
               <div class="inlineFlex alignCenter marginTopBot2"></div>
             </div>
@@ -132,29 +132,25 @@ export default {
       today:'',
       timeUnit:'',
       report: {
-        status: 'Pending',
-        title: 'THe Best Report',
-        type: 'Weekly',
-        year: '2020',
-        duration: 'Week 54',
-        disease: 'Dengue',
-        reportsIncluded: ['Person Analysis', 'Time Analysis'],
-        chartRemarks: ['AB', 'ABCD',],
+	    reportID: '',
+        status: '',
+        title: '',
+        reportType: '',
+        year: '',
+        duration: '',
+        diseaseName: '',
+        reportsIncluded: [],
+        chartRemarks: [],
+        dateCreated: '',
+        // dateTime: '',
 
-        // reportsIncluded: ['Person Analysis', 'Summary1', 'Summary2', 'Time Analysis'],
-        // chartRemarks: ['AB', 'ABC1', 'ABC2', 'ABCD',],
-
-        preparedBy: 'Secret',
-        dateTime: 'Feb 29 2022',
-
-        notedBy: 'me',
-        notedByDate: 'Jan 28, 2013',
-        recommendedBy: 'mysef',
-        recommendedByDate: 'Feb 02, 2013',
-        approvedBy: 'I',
+        notedBy: '',
+        notedByDate: '',
+        recommendedBy: '',
+        recommendedByDate: '',
+        approvedBy: '',
         approvedByDate: '',
       },
-
       tableOptions: {
         tableName: 'cases',
         sortKey: '',
@@ -211,18 +207,19 @@ export default {
     if (this.report.status === 'Pending') this.isAssess = true;
 
     const pdfFile = await axios.get("http://localhost:8080/api/getFileBlob", {
-	  responseType: 'blob'
-	}, {
 	  params: {reportID: this.$route.query.reportID}
 	});
-    // const url = window.URL.createObjectURL(pdfFile.data);
-    const iFrameElement = document.querySelector('iframe');
-    iFrameElement.src = pdfFile.data;
+	console.log(pdfFile.data);
+	const pdfPreview = document.querySelector('iframe');
+	pdfPreview.src = pdfFile.data;
+	pdfPreview.classList.add("width100");
+	pdfPreview.style = "height: 70vh;"
 	
 	// report data
-    const reportData = await axios.get("http://localhost:8080/api/getReport", {
+    const reportData = (await axios.get("http://localhost:8080/api/getReport", {
 	  params: { reportID: this.$route.query.reportID }
-	});
+	})).data;
+	console.log(reportData);
 	for (let i = 0; i < reportData.dataSet.length; i++) {
 	  reportData.dataSet[i].dateModified = reportData.dataSet[i].dateModified
 	    ? this.convDatePHT(new Date(reportData.dataSet[i].dateModified))
@@ -236,13 +233,15 @@ export default {
 	reportData.report.approvedByDate = reportData.report.approvedByDate
 	  ? this.convDatePHT(new Date(reportData.report.approvedByDate))
 	  : "N/A";
+	reportData.report.reportsIncluded = JSON.parse(reportData.report.reportsIncluded);
+	reportData.report.chartRemarks = JSON.parse(reportData.report.chartRemarks);
 	this.report = reportData.report;
   },
   methods: {
     getColor(status) {
       switch (status) {
         case 'Approved': return 'greenB';
-        case 'Pending': return 'darkGrayB';
+        case 'For Approval': return 'darkGrayB';
         case 'Rejected': return 'redB';
       }
     },

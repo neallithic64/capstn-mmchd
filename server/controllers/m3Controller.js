@@ -149,7 +149,7 @@ const indexFunctions = {
 					LEFT JOIN mmchddb.REPORT_AUDIT ra ON ra.reportID = r.reportID
 					WHERE r.reportID = '${req.query.reportID}';`);
 			res.status(200).send({
-				report: report,
+				report: report[0],
 				dataSet: auditLog
 			});
 		} catch (e) {
@@ -173,7 +173,7 @@ const indexFunctions = {
 	
 	getReportBulletin: async function(req, res) {
 		try {
-			let reports = await db.exec(`SELECT r.reportID, r.type AS reportType, r.title AS reportTitle,
+			let reports = await db.exec(`SELECT r.reportID, r.reportType, r.title AS reportTitle,
 					CONCAT(MONTH(r.dateCreated), ' ', DAY(r.dateCreated)) AS reportDate,
 					r.year AS reportYear, IFNULL(r.approvedByDate, 'N/A') AS dateApproved,
 					d.diseaseName AS reportDisease
@@ -194,13 +194,9 @@ const indexFunctions = {
 	postFileBlob: async function(req, res) {
 		let { file, reportID } = req.body;
 		try {
-			console.log(file);
-			/* let insert = await db.insertOne("mmchddb.zzzREPORT_COMMENTS", {
-				reportID: "001",
-				file: file
-			}); */
+			// console.log(file);
 			await db.updateRows("mmchddb.REPORTS", { reportID: reportID }, { file: file });
-			res.status(200).send(rows);
+			res.status(200).send("File uploaded!");
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
@@ -211,11 +207,12 @@ const indexFunctions = {
 		let { report } = req.body;
 		try {
 			let reportID = (await generateID("mmchddb.REPORTS")).id;
-			let rows = await db.findRows("mmchddb.REPORTS", {
+			let diseaseID = await db.findRows("mmchddb.DISEASES", {diseaseName: report.diseaseID});
+			let rows = await db.insertOne("mmchddb.REPORTS", {
 				reportID: reportID,
-				diseaseID: report.disease,
+				diseaseID: diseaseID[0].diseaseID,
 				preparedBy: report.preparedBy,
-				reportType: report.type,
+				reportType: report.reportType,
 				status: "Pending",
 				dateCreated: (new Date()).toISOString(), // dateTime
 				title: report.title,
@@ -224,7 +221,8 @@ const indexFunctions = {
 				reportsIncluded: JSON.stringify(report.reportsIncluded),
 				chartRemarks: JSON.stringify(report.chartRemarks)
 			});
-			res.status(200).send(rows);
+			
+			res.status(200).send(reportID);
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
