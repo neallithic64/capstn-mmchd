@@ -315,6 +315,20 @@ const database = {
 			return false;
 		}
 	},
+
+	insertCRFS: async function(object) {
+		try {
+			console.log(object);
+			let statement = "INSERT INTO mmchddb.CRFS (CRFID, diseaseID, userID, week, year, isPushed) VALUES ?";
+			let [rows, fields] = await pool.query(statement, [object]);
+			console.log("Inserted " + rows.affectedRows + " rows");
+			// if (rows.serverStatus === 2)
+			return true;
+		} catch (e) {
+			console.log(e);
+			return false;
+		}
+	},
 };
 
 module.exports = database;

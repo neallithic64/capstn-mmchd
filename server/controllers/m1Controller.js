@@ -1383,7 +1383,7 @@ const indexFunctions = {
 	
 	postLogin: async function(req, res) {
 		let { userEmail, userPassword } = req.body;
-		let match;
+		let match, updateCRF, newCRF;
 		try {
 			// checking if email or username
 			if (userEmail.indexOf("@") != -1) {
@@ -1392,10 +1392,31 @@ const indexFunctions = {
 				match = await db.findRows("mmchddb.USERS", {userName: userEmail});
 			}
 			if (match.length > 0) {
-				bcrypt.compare(userPassword, match[0].userPassword, function(err, result) {
+				console.log(match);
+				bcrypt.compare(userPassword, match[0].userPassword, async function(err, result) {
 					console.log(result);
 					if (result) {
 						req.session.user = match[0];
+						//  automatically push existing crfs that are not pushed
+						console.log("SELECT * FROM mmchddb.CRFS WHERE userID = '" + match[0].userID + 
+						"' AND isPushed = 0 AND (week != " + (new Date).getWeek() + " OR year != " + (new Date).getFullYear() + ");");
+						let notPushedCRFS =await  db.exec("SELECT * FROM mmchddb.CRFS WHERE userID = '" + match[0].userID + 
+						"' AND isPushed = 0 AND (week != " + (new Date).getWeek() + " OR year != " + (new Date).getFullYear() + ");");
+						if(notPushedCRFS.length > 0){
+							for(let i = 0; i < notPushedCRFS.length; i++) {
+								updateCRF = await db.updateRows("mmchddb.CRFS",{CRFID:notPushedCRFS[i].CRFID}, {isPushed:1});
+							}
+							newCRF = Object.entries(await generateIDs("mmchddb.CRFS", notPushedCRFS.length));
+							newCRF.forEach(function(element,index){
+								element.push(notPushedCRFS[index].diseaseID);
+								element.push(match[0].userID);
+								element.push((new Date).getWeek());
+								element.push((new Date).getFullYear());
+								element.push(0);
+								element.shift();
+							});
+							result = await db.insertCRFS(newCRF);
+						}
 						res.status(200).send({user: match[0]});
 						// res.status(200).send("Login successful.");
 					} else res.status(403).send("Incorrect password.");

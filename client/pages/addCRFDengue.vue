@@ -23,11 +23,11 @@
         <div class="addCRFadditionalButtons">
           <button class="addCRF-addText"><a :href="'/addCRFDengueCase?CRFID=' + CRFID">+ Add a Case</a></button>
         </div>
-        <div class="addCRF-endButton">
+        <!-- <div class="addCRF-endButton">
           <button class="submit-button" type="button" @click="submit()">
             Submit
           </button>
-        </div>
+        </div> -->
       </div>
     </div>
     <div v-show="popupOpen" class="addCRFoverlay">
