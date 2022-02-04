@@ -276,7 +276,7 @@ const indexFunctions = {
 			};
 			await db.updateRows("mmchddb.REPORTS", { reportID: reportID }, updateObj);
 			await db.insertOne("mmchddb.REPORT_AUDIT", audit);
-			res.status(200).send(rows);
+			res.status(200).send("Report approved!");
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");

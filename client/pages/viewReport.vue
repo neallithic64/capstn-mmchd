@@ -204,7 +204,6 @@ export default {
                       + ' ' + hour + ':' + mins;
 
     for (let i=0; i<this.report.chartRemarks.length; i++) this.inputChartRemarks[i] = this.report.chartRemarks[i];
-    if (this.report.status === 'For Approval') this.isAssess = true;
 
     const pdfFile = await axios.get("http://localhost:8080/api/getFileBlob", {
 	  params: {reportID: this.$route.query.reportID}
@@ -236,6 +235,7 @@ export default {
 	reportData.report.reportsIncluded = JSON.parse(reportData.report.reportsIncluded);
 	reportData.report.chartRemarks = JSON.parse(reportData.report.chartRemarks);
 	this.report = reportData.report;
+    if (this.report.status === 'For Approval') this.isAssess = true;
   },
   methods: {
     getColor(status) {
