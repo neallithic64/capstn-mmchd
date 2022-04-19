@@ -32,7 +32,7 @@
     </div>
     <div v-show="popupOpen" class="addCRFoverlay">
       <div class="addCRF-overlayForm">
-        <h2 style="color:red; text-align:center"> PUSH DATA APPROACH CONSENT </h2>
+        <h2 style="color:red; text-align:center"> AUTOMATIC DATA SUBMISSION CONSENT </h2>
         <hr style="border-color: inherit;" class="addCRFhr"/>
         <div style="padding:10px; text-align:justify;">
           <p style="margin:10px 5px; font-size:16px"> If you agree, all details will be pushed to MMCHD-RESU.
