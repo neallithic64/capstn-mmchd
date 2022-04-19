@@ -377,7 +377,7 @@ export default {
   },
   head() {
     return {
-      title: 'Dashboard'
+      title: 'Dashboard Title'
     }
   },
   mounted() {
