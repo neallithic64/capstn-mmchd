@@ -204,7 +204,6 @@ export default {
                       + ' ' + hour + ':' + mins;
 
     for (let i=0; i<this.report.chartRemarks.length; i++) this.inputChartRemarks[i] = this.report.chartRemarks[i];
-    if (this.report.status === 'For Approval') this.isAssess = true;
 
     const pdfFile = await axios.get("http://localhost:8080/api/getFileBlob", {
 	  params: {reportID: this.$route.query.reportID}
@@ -236,6 +235,7 @@ export default {
 	reportData.report.reportsIncluded = JSON.parse(reportData.report.reportsIncluded);
 	reportData.report.chartRemarks = JSON.parse(reportData.report.chartRemarks);
 	this.report = reportData.report;
+    if (this.report.status === 'For Approval') this.isAssess = true;
   },
   methods: {
     getColor(status) {
@@ -261,7 +261,7 @@ export default {
       if (this.inputStatus === '' || this.inputStatus === null) this.isValidated = false;
       else this.isValidated = true;
     },
-    submit(action) {
+    async submit(action) {
       if (action === 'cancel') {
         // CANCEL ASSESSMENT / one with drop down
         this.isAssess = false;
@@ -282,7 +282,14 @@ export default {
           this.isAssess = false;
 
           // TO DO: SAVE SAVE in db
-          this.$toast.success('Status saved!', {duration: 4000, icon: 'check_circle'});
+		  const approvedData = (await axios.post("http://localhost:8080/api/editApproveReport", {
+		    reportID: this.report.reportID,
+			userID: this.$auth.user.userID,
+			remarks: this.inputRemarks
+		  })).data;
+		  if (approvedData.status === 200) {
+            this.$toast.success('Status saved!', {duration: 4000, icon: 'check_circle'});
+		  }
         }
       }
     },
