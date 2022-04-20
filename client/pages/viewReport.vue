@@ -42,19 +42,19 @@
             </div>
             <div class="grid">
               <div class="inlineFlex alignCenter marginTopBot2">  <span class="width155"> Noted By: </span>
-                <img v-if="report.notedByDate" class="width20" src="~/assets/img/check.png">
+                <img v-if="report.notedByDate && report.notedByDate !== 'N/A'" class="width20" src="~/assets/img/check.png">
                 <img v-else class="width20" src="~/assets/img/arrow.png" style="opacity: 0.75;">
                   <span class="approval-people"> <b> &nbsp;{{report.notedBy}} </b> </span> <span v-if="report.notedByDate"> &nbsp;({{report.notedByDate}}) </span>
               </div>
               <div class="inlineFlex alignCenter marginTopBot2">  <span class="width155"> Recommended By: </span>
-                <img v-if="report.recommendedByDate" class="width20" src="~/assets/img/check.png">
-                <img v-else-if="report.notedByDate" class="width20" src="~/assets/img/arrow.png" style="opacity: 0.75;">
+                <img v-if="report.recommendedByDate && report.recommendedByDate !== 'N/A'" class="width20" src="~/assets/img/check.png">
+                <img v-else-if="report.notedByDate && report.notedByDate !== 'N/A'" class="width20" src="~/assets/img/arrow.png" style="opacity: 0.75;">
                 <img v-else class="width20" src="~/assets/img/circle.png" style="opacity: 0.3;">
                   <span class="approval-people"> <b> &nbsp;{{report.recommendedBy}} </b> </span> <span v-if="report.recommendedByDate"> &nbsp;({{report.recommendedByDate}}) </span>
               </div>
               <div class="inlineFlex alignCenter marginTopBot2">  <span class="width155"> Approved By: </span>
-                <img v-if="report.approvedByDate" class="width20" src="~/assets/img/check.png" >
-                <img v-else-if="report.recommendedByDate" class="width20" src="~/assets/img/arrow.png" style="opacity: 0.75;">
+                <img v-if="report.approvedByDate && report.approvedByDate !== 'N/A'" class="width20" src="~/assets/img/check.png" >
+                <img v-else-if="report.recommendedByDate && report.recommendedByDate !== 'N/A'" class="width20" src="~/assets/img/arrow.png" style="opacity: 0.75;">
                 <img v-else class="width20" src="~/assets/img/circle.png" style="opacity: 0.3;">
                   <span class="approval-people"> <b> &nbsp;{{report.approvedBy}} </b></span> <span v-if="report.approvedByDate"> &nbsp;({{report.approvedByDate}}) </span>
               </div>
@@ -72,7 +72,7 @@
          class="marginTopBot20 padding5">
           <div>
             <div class="inlineFlex marginTopBot2">
-              <legend for="inputStatus" class="inputLegend required"> Status (from person name): </legend>
+              <legend for="inputStatus" class="inputLegend required"> Status ({{$auth.user.firstName}} {{$auth.user.lastName}}): </legend>
               <select id="inputStatus" v-model="inputStatus" type="text" class="input-form-field marginLeft5"
                 :class="isRequired()" required>
                 <option value="Approve"> Approve </option>
@@ -235,13 +235,15 @@ export default {
 	reportData.report.reportsIncluded = JSON.parse(reportData.report.reportsIncluded);
 	reportData.report.chartRemarks = JSON.parse(reportData.report.chartRemarks);
 	this.report = reportData.report;
-    if (this.report.status === 'For Approval') this.isAssess = true;
+    if (this.report.status !== "Approved" && this.report.status !== "Rejected") this.isAssess = true;
   },
   methods: {
     getColor(status) {
       switch (status) {
+        case 'For Approval':
+        case 'Noted':
+        case 'Recommended': return 'darkGrayB';
         case 'Approved': return 'greenB';
-        case 'For Approval': return 'darkGrayB';
         case 'Rejected': return 'redB';
       }
     },
@@ -285,6 +287,7 @@ export default {
 		  const approvedData = (await axios.post("http://localhost:8080/api/editApproveReport", {
 		    reportID: this.report.reportID,
 			userID: this.$auth.user.userID,
+			userType: this.$auth.user.userType,
 			remarks: this.inputRemarks
 		  })).data;
 		  if (approvedData.status === 200) {

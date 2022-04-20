@@ -29,18 +29,19 @@ function convDatePHT (d) {
  */
 function sendReportEmail(email, reportID, status) {
 	// sending email
-	var smtpTransport = nodemailer.createTransport({
+	let smtpTransport = nodemailer.createTransport({
 		service: "Gmail",
 		auth: {
 			user: process.env.EMAIL_ADDR,
 			pass: process.env.EMAIL_PASS
 		}
 	});
-	var mailOpts = {
-		from: "MM CHD",
+	let mailOpts = {
+		from: "MM-CHD",
 		to: email,
 		subject: "MMCHD: New Report For Approval",
-		text: `Good day! New report ${reportID} has been created with status "${status}". Review it here: http://localhost:3000/viewReport?reportID=${reportID}. Thank you very much!`
+		text: `Good day! New report ${reportID} has been created with status "${status}". Review it
+				here: http://localhost:3000/viewReport?reportID=${reportID}. Thank you very much!`
 	};
 	smtpTransport.sendMail(mailOpts, function(err) {
 		if (err) console.log(err);
@@ -259,19 +260,24 @@ const indexFunctions = {
 	},
 	
 	postEditApproveReport: async function(req, res) {
-		let { reportID, userID, remarks } = req.body;
-		let newDate = new Date();
+		let { reportID, userID, userType, remarks } = req.body;
+		let newDate = new Date(), newStatus = "Approved";
+		switch (userType) {
+			case "lhsdChief": newStatus = "Noted"; break;
+			case "resuHead": newStatus = "Recommended"; break;
+			case "chdDirector": newStatus = "Approved"; break;
+		}
 		try {
 			// let rows = await db.findRows("mmchddb.REPORTS", {});
 			let updateObj = {
-				status: "Approved",
+				status: newStatus,
 				approvedBy: userID,
 				approvedByDate: newDate.toISOString()
 			}, audit = {
 				reportID: reportID,
 				dateModified: newDate.toISOString(),
 				modifiedBy: userID,
-				action: "Approved",
+				action: "Report is now " + newStatus + ".",
 				remarks: remarks
 			};
 			await db.updateRows("mmchddb.REPORTS", { reportID: reportID }, updateObj);
