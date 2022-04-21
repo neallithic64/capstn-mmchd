@@ -11,7 +11,7 @@
           <iframe v-if="$auth.user.userType === 'fhsisStaff'" id="dashboard-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiYTdlYWJmYzEtMDliOC00NzBiLTlkYjEtNjViN2E1MjkxMjFlIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D">
           </iframe>
           <iframe v-if="$auth.user.userType === 'BHS' || $auth.user.userType === 'privHosp' || $auth.user.userType === 'privLab' 
-                  || $auth.user.userType === 'govtLab' || $auth.user.userType === 'govtHosp'" 
+                  || $auth.user.userType === 'govtLab' || $auth.user.userType === 'govtHosp' || $auth.user.userType === 'CHO'" 
             id="dashboard-powerbi-iframe" 
             src="https://app.powerbi.com/view?r=eyJrIjoiNWFhOWE0NTAtYWIwMy00MjRmLTk2YmYtNGY2OTFmNGQzYTliIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D&pageName=ReportSectionaeb3cc4ecb8e7e8b1d66">
           </iframe>
