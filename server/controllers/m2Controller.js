@@ -2,7 +2,8 @@ const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
 const db = require("../models/db");
-
+const monthName= ["January","February","March","April","May","June","July",
+            "August","September","October","November","December"];
 /** ON ID CREATION
 */
 function getPrefix(table) {
@@ -83,6 +84,15 @@ function dateToString(date) {
 	return dateString.getFullYear()+'-'+ month.toString().padStart(2,'0') +'-'+dateString.getDate().toString().padStart(2,'0');
 }
 
+/* Converts Date to String with the format 
+	MonthName DD YYYY hh:mm:ss
+*/ 
+function datetimeToString(date) {
+	let dateString = new Date(date);
+	return monthName[dateString.getMonth()] + " " + dateString.getDate() + ", " + dateString.getFullYear() + " " + 
+			dateString.getHours() + ":" + dateString.getMinutes() + ":" + dateString.getSeconds();
+}
+
 const indexFunctions = {
 	/*
 	 * GET METHODS
@@ -111,6 +121,10 @@ const indexFunctions = {
 			if(ongoingOutbreak.length > 0){	
 				let activeCases = await db.exec("SELECT * FROM mmchddb.CASES WHERE diseaseID='"+ ongoingOutbreak[0].diseaseID + "' AND reportDate >= '" +
 									dateToString(ongoingOutbreak[0].startDate) +"';");
+
+				// add 24 hour timer from the initial date of the start of the outbreak
+				ongoingOutbreak[0].timer = datetimeToString(new Date(ongoingOutbreak[0].startDate.getTime() + 86400000));
+
 				res.status(200).send({
 					latestAccomp : latestAccomp[0],
 					latestCase : latestCase[0],

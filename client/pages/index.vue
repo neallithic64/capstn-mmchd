@@ -30,10 +30,11 @@
                   <span style="padding-top: 5px; font-weight: 900"> {{ ongoingOutbreak.obDisease }} </span>
                   <span> <span style="color: red; font-size: 16px; font-weight: 600"> {{ ongoingOutbreak.obActive }} </span> Active Cases </span>
                 </div>
-                <div v-if="$auth.user.userType === 'pidsrStaff'" id="outbreak-countdown" style="color: red;">
-                  <client-only>
-                    <Countdown deadline="January 22, 2022 22:41:00"></Countdown>
-                  </client-only>
+                <div v-if="$auth.user.userType === 'pidsrStaff' && obTimer !== ''" id="outbreak-countdown" style="color: red;">
+                  <!-- <client-only> -->
+                    <!-- test this one lol -->
+                    <Countdown :end=obTimer></Countdown>
+                  <!-- </client-only> -->
                 </div>
               </div>
             </a>
@@ -47,10 +48,10 @@
                   <span style="padding-top: 5px; font-weight: 900"> {{ ongoingOutbreak.obDisease }} </span>
                   <span> <span style="color: red; font-size: 16px; font-weight: 600"> {{ ongoingOutbreak.obActive }} </span> Active Cases </span>
                 </div>
-                <div v-if="$auth.user.userType === 'pidsrStaff'" id="outbreak-countdown" style="color: red;">
-                  <client-only>
-                    <Countdown deadline="January 22, 2022 22:41:00"></Countdown>
-                  </client-only>
+                <div v-if="$auth.user.userType === 'pidsrStaff' && obTimer !== ''" id="outbreak-countdown" style="color: red;">
+                  <!-- <client-only> -->
+                    <Countdown :end=obTimer></Countdown>
+                  <!-- </client-only> -->
                 </div>
               </div>
             </a>
@@ -274,6 +275,7 @@ export default {
   data() {
     return {
       isOutbreak: true,
+      obTimer:'',
       ongoingOutbreak: {
         obDisease: 'Measles',
         obActive: '1826',
@@ -367,13 +369,13 @@ export default {
     this.latestAccomplish.laCity = data.latestAccomp.city;
     this.latestAccomplish.laBrgy = data.latestAccomp.brgy;
 
-    if(data.ongoingOutbreak.length < 0)
+    if(data.ongoingOutbreak.length === 0)
       this.isOutbreak = false;
     else {
       this.ongoingOutbreak.obDisease = data.ongoingOutbreak[0].diseaseName;
       this.ongoingOutbreak.obActive = data.activeCases;
+      this.obTimer = data.ongoingOutbreak[0].timer;
     }
-
   },
   head() {
     return {
