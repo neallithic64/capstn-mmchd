@@ -17,7 +17,7 @@
           </h3>
           <h3 class="weight500 size18"> {{report.diseaseName}} </h3>
         </div>
-        <hr class="marginTopBot10" id="2"/>
+        <hr id="2" class="marginTopBot10"/>
       </div>
 
       <!-- PDF -->
@@ -26,7 +26,7 @@
       </div>
 
       <div class="addReportInnerContainter">
-        <hr class="marginTopBot10" id="3"/>
+        <hr id="3" class="marginTopBot10"/>
         <!-- BOTTOM : prepare + submit buttons -->
         <div class="marginTopBot5 padding5 alignTop">
           <!-- name -->
@@ -47,21 +47,21 @@
                   <span class="approval-people"> <b> &nbsp;{{report.notedBy}} </b> </span> <span v-if="report.notedByDate"> &nbsp;({{report.notedByDate}}) </span>
               </div>
               <div class="inlineFlex alignCenter marginTopBot2">  <span class="width155"> Recommended By: </span>
-                <img v-if="report.recommendedByDate && report.recommendedByDate !== 'N/A'" class="width20" src="~/assets/img/check.png">
+                <img v-if="report.recommByDate && report.recommByDate !== 'N/A'" class="width20" src="~/assets/img/check.png">
                 <img v-else-if="report.notedByDate && report.notedByDate !== 'N/A'" class="width20" src="~/assets/img/arrow.png" style="opacity: 0.75;">
                 <img v-else class="width20" src="~/assets/img/circle.png" style="opacity: 0.3;">
-                  <span class="approval-people"> <b> &nbsp;{{report.recommendedBy}} </b> </span> <span v-if="report.recommendedByDate"> &nbsp;({{report.recommendedByDate}}) </span>
+                  <span class="approval-people"> <b> &nbsp;{{report.recommBy}} </b> </span> <span v-if="report.recommByDate"> &nbsp;({{report.recommByDate}}) </span>
               </div>
               <div class="inlineFlex alignCenter marginTopBot2">  <span class="width155"> Approved By: </span>
                 <img v-if="report.approvedByDate && report.approvedByDate !== 'N/A'" class="width20" src="~/assets/img/check.png" >
-                <img v-else-if="report.recommendedByDate && report.recommendedByDate !== 'N/A'" class="width20" src="~/assets/img/arrow.png" style="opacity: 0.75;">
+                <img v-else-if="report.recommByDate && report.recommByDate !== 'N/A'" class="width20" src="~/assets/img/arrow.png" style="opacity: 0.75;">
                 <img v-else class="width20" src="~/assets/img/circle.png" style="opacity: 0.3;">
                   <span class="approval-people"> <b> &nbsp;{{report.approvedBy}} </b></span> <span v-if="report.approvedByDate"> &nbsp;({{report.approvedByDate}}) </span>
               </div>
             </div>
           </div>
 
-        <hr class="marginTopBot5" id="5"/>
+        <hr id="5" class="marginTopBot5"/>
         </div>
 
         <!-- APPROVAL / REMARKS -->
@@ -146,8 +146,8 @@ export default {
 
         notedBy: '',
         notedByDate: '',
-        recommendedBy: '',
-        recommendedByDate: '',
+        recommBy: '',
+        recommByDate: '',
         approvedBy: '',
         approvedByDate: '',
       },
@@ -218,7 +218,7 @@ export default {
     const reportData = (await axios.get("http://localhost:8080/api/getReport", {
 	  params: { reportID: this.$route.query.reportID }
 	})).data;
-	console.log(reportData);
+	// console.log(reportData);
 	for (let i = 0; i < reportData.dataSet.length; i++) {
 	  reportData.dataSet[i].dateModified = reportData.dataSet[i].dateModified
 	    ? this.convDatePHT(new Date(reportData.dataSet[i].dateModified))
@@ -228,6 +228,12 @@ export default {
 	
 	reportData.report.dateCreated = reportData.report.dateCreated
 	  ? this.convDatePHT(new Date(reportData.report.dateCreated))
+	  : "N/A";
+	reportData.report.notedByDate = reportData.report.notedByDate
+	  ? this.convDatePHT(new Date(reportData.report.notedByDate))
+	  : "N/A";
+	reportData.report.recommByDate = reportData.report.recommByDate
+	  ? this.convDatePHT(new Date(reportData.report.recommByDate))
 	  : "N/A";
 	reportData.report.approvedByDate = reportData.report.approvedByDate
 	  ? this.convDatePHT(new Date(reportData.report.approvedByDate))
@@ -269,8 +275,7 @@ export default {
         this.isAssess = false;
         this.inputStatus = '';
         this.inputRemarks = '';
-      }
-      else {
+      } else {
         // SUBMIT ASSESSMENT (drop down)
         this.validate();
         if (!this.isValidated) this.$toast.error('Please select a status!', {duration: 4000, icon: 'error'});

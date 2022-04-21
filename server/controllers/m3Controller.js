@@ -261,19 +261,33 @@ const indexFunctions = {
 	
 	postEditApproveReport: async function(req, res) {
 		let { reportID, userID, userType, remarks } = req.body;
-		let newDate = new Date(), newStatus = "Approved";
-		switch (userType) {
-			case "lhsdChief": newStatus = "Noted"; break;
-			case "resuHead": newStatus = "Recommended"; break;
-			case "chdDirector": newStatus = "Approved"; break;
-		}
+		let newDate = new Date(), newStatus = "Approved", updateObj = {};
 		try {
-			// let rows = await db.findRows("mmchddb.REPORTS", {});
-			let updateObj = {
-				status: newStatus,
-				approvedBy: userID,
-				approvedByDate: newDate.toISOString()
-			}, audit = {
+			// checking of userType; different columns will be updated per case
+			switch (userType) {
+				case "lhsdChief": {
+					newStatus = "Noted";
+					updateObj.status = newStatus;
+					updateObj.notedBy = userID;
+					updateObj.notedByDate = newDate.toISOString();
+					break;
+				}
+				case "resuHead": {
+					newStatus = "Recommended";
+					updateObj.status = newStatus;
+					updateObj.recommBy = userID;
+					updateObj.recommByDate = newDate.toISOString();
+					break;
+				}
+				case "chdDirector": {
+					newStatus = "Approved";
+					updateObj.status = newStatus;
+					updateObj.approvedBy = userID;
+					updateObj.approvedByDate = newDate.toISOString();
+					break;
+				}
+			}
+			let audit = {
 				reportID: reportID,
 				dateModified: newDate.toISOString(),
 				modifiedBy: userID,
