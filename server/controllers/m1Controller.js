@@ -2064,6 +2064,34 @@ const indexFunctions = {
 		}
 	},
 	
+	postUpdateSettings: async function(req, res) {
+		try {
+			let { day, time, userID, consent } = req.body;
+			console.log(req.body);
+			/* two updates: (1) consent and (2) cron time
+				for (2) userType === 'pidsrStaff', 'techStaff', 'lhsdChief', 'resuHead', 'chdDirector', 'fhsisStaff'
+			*/
+			let userType = await db.exec(`SELECT userType FROM mmchddb.USERS WHERE userID = '${userID}'`);
+			if (["pidsrStaff", "techStaff", "lhsdChief", "resuHead", "chdDirector", "fhsisStaff"].includes(userType)) {
+				// processing time variable
+				
+				console.log(`UPDATE mmchddb.SYSTEM_SETTINGS ss
+						SET ss.reportingDay = ${day}, ss.reportingHour = ${time}, ss.reportingMinute = ${time};`);
+				//let reporting = await db.exec(`UPDATE mmchddb.SYSTEM_SETTINGS ss
+				//		SET ss.reportingDay = ${day}, ss.reportingHour = ${time}, ss.reportingMinute = ${time};`);
+			}
+			console.log(`UPDATE mmchddb.USER_SETTINGS us
+					SET us.pushDataAccept = ${consent}
+					WHERE us.userID = '${userID}';`);
+			//let consent = await db.exec(`UPDATE mmchddb.USER_SETTINGS us
+			//		SET us.pushDataAccept = ${consent}
+			//		WHERE us.userID = '${userID}';`);
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error.");
+		}
+	},
+	
 	/*
 	 * CRON METHODS
 	 */

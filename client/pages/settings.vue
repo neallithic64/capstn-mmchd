@@ -76,7 +76,7 @@
 </template>
 
 <script>
-// const axios = require('axios');
+const axios = require('axios');
 export default {
   middleware: 'is-auth',
   data() {
@@ -93,10 +93,14 @@ export default {
       timeChange: false,
     }
   },
-  // async fetch() {
-  //   // need to fetch notifs here
-  //   const rows = (await axios.get('http://localhost:8080/api/getNotifs?userID=' + this.$auth.user.userID)).data;
-  // },
+  async fetch() {
+    // dummy code first
+    const rows = (await axios.get('http://localhost:8080/api/getNotifs?userID=' + this.$auth.user.userID)).data;
+	console.log(rows);
+	
+	// setting form field
+	this.cronDetails.userID = this.$auth.user.userID;
+  },
   head() {
     return {
       title: 'Settings'
@@ -111,7 +115,7 @@ export default {
       else if (type === 'checkbox')
         this.consentChange = true;
     },
-    save() {
+    async save() {
       switch (this.cronDetails.day) {
         case "Sunday": this.dayText = 0; break;
         case "Monday": this.dayText = 1; break;
@@ -124,6 +128,10 @@ export default {
       this.dayChange = false;
       this.timeChange = false;
       this.consentChange = false;
+	  const settingsData = await axios.post("http://localhost:8080/api/updateSettings", {
+		cronDetails: this.cronDetails
+	  });
+	  console.log(settingsData);
     }
   }
 }
