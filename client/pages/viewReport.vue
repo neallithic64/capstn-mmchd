@@ -99,13 +99,13 @@
         <hr class="marginTop30" />
         </div>
 
-        <!-- Historry -->
-        <div v-show="!isPrint" id="case-investigation-form" class="center">
+        <!-- History -->
+        <div v-if="dataSet.length > 0" v-show="!isPrint" id="case-investigation-form" class="center">
           <h3 class="caps viewRep-chartTitle marginBottom5 viewRep-formHeader"> Report History </h3>
           <dataTable
-          :options="tableOptions"
-          :datavalues="dataSet"
-          :casetype="'feedbackReport'"
+            :options="tableOptions"
+            :datavalues="dataSet"
+            :casetype="'feedbackReport'"
           />
         </div>
 
@@ -168,8 +168,8 @@ export default {
             // sortable: true,
           },
           {
-            title: 'Action', // approve, Reject, edit, comment, etc.
-            key: 'action',
+            title: 'Action',
+            key: 'updateAction',
           },
           {
             title: 'By',
@@ -183,14 +183,7 @@ export default {
         // source: 'http://demo.datatable/api/users',
         search: false,
       },
-      dataSet: [
-        {
-          dateModified: 'today',
-          action: 'approve',
-          modifiedBy: 'me',
-          remarks: 'nice report ...',
-        },
-      ]
+      dataSet: []
     }
   },
   head() {
@@ -221,13 +214,6 @@ export default {
     const reportData = (await axios.get("http://localhost:8080/api/getReport", {
       params: { reportID: this.$route.query.reportID }
     })).data;
-    // console.log(reportData);
-    for (let i = 0; i < reportData.dataSet.length; i++) {
-      reportData.dataSet[i].dateModified = reportData.dataSet[i].dateModified
-        ? this.convDatePHT(new Date(reportData.dataSet[i].dateModified))
-        : "N/A";
-    }
-    this.dataSet = reportData.dataSet;
     
     reportData.report.dateCreated = reportData.report.dateCreated
       ? this.convDatePHT(new Date(reportData.report.dateCreated))
@@ -244,6 +230,14 @@ export default {
     reportData.report.reportsIncluded = JSON.parse(reportData.report.reportsIncluded);
     reportData.report.chartRemarks = JSON.parse(reportData.report.chartRemarks);
     this.report = reportData.report;
+    
+    for (let i = 0; i < reportData.dataSet.length; i++) {
+      reportData.dataSet[i].dateModified = reportData.dataSet[i].dateModified
+        ? this.convDatePHT(new Date(reportData.dataSet[i].dateModified))
+        : "N/A";
+    }
+    this.dataSet = reportData.dataSet;
+    // console.log(reportData);
     
     /* conditions to hide approval form:
         1. status is approved or rejected
@@ -301,15 +295,15 @@ export default {
           // QUESTION: what happens pag nareject, does the 3 people sa lower part have to change (if so, use x.png)
           this.isAssess = false;
 
-          const approvedData = (await axios.post("http://localhost:8080/api/editApproveReport", {
+          const approvedData = await axios.post("http://localhost:8080/api/editApproveReport", {
             reportID: this.report.reportID,
             userID: this.$auth.user.userID,
             userType: this.$auth.user.userType,
             remarks: this.inputRemarks
-          })).data;
+          });
           if (approvedData.status === 200) {
             this.$toast.success('Status saved!', {duration: 4000, icon: 'check_circle'});
-            // i think refresh page here
+            location.reload();
           }
         }
       }

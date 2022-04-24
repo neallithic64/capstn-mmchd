@@ -178,7 +178,8 @@ const indexFunctions = {
 					LEFT JOIN mmchddb.USERS u4 ON u4.userID = r.approvedBy
 					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = r.diseaseID
 					WHERE r.reportID = '${req.query.reportID}';`);
-			let auditLog = await db.exec(`SELECT r.*, ra.*
+			let auditLog = await db.exec(`SELECT r.*, ra.remarks, ra.modifiedBy,
+					ra.dateModified, ra.action AS updateAction
 					FROM mmchddb.REPORTS r
 					LEFT JOIN mmchddb.REPORT_AUDIT ra ON ra.reportID = r.reportID
 					WHERE r.reportID = '${req.query.reportID}';`);
