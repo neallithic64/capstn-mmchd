@@ -166,10 +166,16 @@ const indexFunctions = {
 	
 	getReport: async function(req, res) {
 		try {
-			let report = await db.exec(`SELECT r.*, d.diseaseName, u1.*, u2.*
+			let report = await db.exec(`SELECT r.*, d.diseaseName,
+					u1.firstName AS "preparedByFN", u1.lastName AS "preparedByLN",
+					u2.firstName AS "notedByFN", u2.lastName AS "notedByLN",
+					u3.firstName AS "recommByFN", u3.lastName AS "recommByLN",
+					u4.firstName AS "approvedByFN", u4.lastName AS "approvedByLN"
 					FROM mmchddb.REPORTS r
 					LEFT JOIN mmchddb.USERS u1 ON u1.userID = r.preparedBy
-					LEFT JOIN mmchddb.USERS u2 ON u2.userID = r.approvedBy
+					LEFT JOIN mmchddb.USERS u2 ON u2.userID = r.notedBy
+					LEFT JOIN mmchddb.USERS u3 ON u3.userID = r.recommBy
+					LEFT JOIN mmchddb.USERS u4 ON u4.userID = r.approvedBy
 					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = r.diseaseID
 					WHERE r.reportID = '${req.query.reportID}';`);
 			let auditLog = await db.exec(`SELECT r.*, ra.*
@@ -287,16 +293,20 @@ const indexFunctions = {
 					break;
 				}
 			}
-			let audit = {
-				reportID: reportID,
-				dateModified: newDate.toISOString(),
-				modifiedBy: userID,
-				action: "Report is now " + newStatus + ".",
-				remarks: remarks
-			};
-			await db.updateRows("mmchddb.REPORTS", { reportID: reportID }, updateObj);
-			await db.insertOne("mmchddb.REPORT_AUDIT", audit);
-			res.status(200).send("Report approved!");
+			if (updateObj.status) {
+				let audit = {
+					reportID: reportID,
+					dateModified: newDate.toISOString(),
+					modifiedBy: userID,
+					action: "Report is now " + newStatus + ".",
+					remarks: remarks
+				};
+				await db.updateRows("mmchddb.REPORTS", { reportID: reportID }, updateObj);
+				await db.insertOne("mmchddb.REPORT_AUDIT", audit);
+				res.status(200).send("Report approved!");
+			} else {
+				res.status(200).send("Invalid user type!");
+			}
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");

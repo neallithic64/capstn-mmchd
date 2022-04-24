@@ -44,19 +44,22 @@
               <div class="inlineFlex alignCenter marginTopBot2">  <span class="width155"> Noted By: </span>
                 <img v-if="report.notedByDate && report.notedByDate !== 'N/A'" class="width20" src="~/assets/img/check.png">
                 <img v-else class="width20" src="~/assets/img/arrow.png" style="opacity: 0.75;">
-                  <span class="approval-people"> <b> &nbsp;{{report.notedBy}} </b> </span> <span v-if="report.notedByDate"> &nbsp;({{report.notedByDate}}) </span>
+                  <span class="approval-people"> <b> &nbsp;{{report.notedByFN}} {{report.notedByLN}}</b> </span>
+				  <span v-if="report.notedByDate"> &nbsp;({{report.notedByDate}}) </span>
               </div>
               <div class="inlineFlex alignCenter marginTopBot2">  <span class="width155"> Recommended By: </span>
                 <img v-if="report.recommByDate && report.recommByDate !== 'N/A'" class="width20" src="~/assets/img/check.png">
                 <img v-else-if="report.notedByDate && report.notedByDate !== 'N/A'" class="width20" src="~/assets/img/arrow.png" style="opacity: 0.75;">
                 <img v-else class="width20" src="~/assets/img/circle.png" style="opacity: 0.3;">
-                  <span class="approval-people"> <b> &nbsp;{{report.recommBy}} </b> </span> <span v-if="report.recommByDate"> &nbsp;({{report.recommByDate}}) </span>
+                  <span class="approval-people"> <b> &nbsp;{{report.recommByFN}} {{report.recommByLN}}</b> </span>
+				  <span v-if="report.recommByDate"> &nbsp;({{report.recommByDate}}) </span>
               </div>
               <div class="inlineFlex alignCenter marginTopBot2">  <span class="width155"> Approved By: </span>
                 <img v-if="report.approvedByDate && report.approvedByDate !== 'N/A'" class="width20" src="~/assets/img/check.png" >
                 <img v-else-if="report.recommByDate && report.recommByDate !== 'N/A'" class="width20" src="~/assets/img/arrow.png" style="opacity: 0.75;">
                 <img v-else class="width20" src="~/assets/img/circle.png" style="opacity: 0.3;">
-                  <span class="approval-people"> <b> &nbsp;{{report.approvedBy}} </b></span> <span v-if="report.approvedByDate"> &nbsp;({{report.approvedByDate}}) </span>
+                  <span class="approval-people"> <b> &nbsp;{{report.approvedByFN}} {{report.approvedByLN}}</b></span>
+				  <span v-if="report.approvedByDate"> &nbsp;({{report.approvedByDate}}) </span>
               </div>
             </div>
           </div>
@@ -241,7 +244,17 @@ export default {
 	reportData.report.reportsIncluded = JSON.parse(reportData.report.reportsIncluded);
 	reportData.report.chartRemarks = JSON.parse(reportData.report.chartRemarks);
 	this.report = reportData.report;
-    if (this.report.status !== "Approved" && this.report.status !== "Rejected") this.isAssess = true;
+	
+	/* conditions to hide approval form:
+	    1. status is approved or rejected
+		2. status is noted and logged in user is LHSD
+		3. status is recommended and logged in user is resuHead
+	*/
+    if (this.report.status === "Approved" || this.report.status === "Rejected" ||
+		(this.report.status === "Noted" && this.$auth.user.userType === "lhsdChief") ||
+		(this.report.status === "Recommended" && this.$auth.user.userType === "resuHead")) {
+	  this.isAssess = false;
+	} else this.isAssess = true;
   },
   methods: {
     getColor(status) {
@@ -288,8 +301,7 @@ export default {
           // QUESTION: what happens pag nareject, does the 3 people sa lower part have to change (if so, use x.png)
           this.isAssess = false;
 
-          // TO DO: SAVE SAVE in db
-		  const approvedData = (await axios.post("http://localhost:8080/api/editApproveReport", {
+          const approvedData = (await axios.post("http://localhost:8080/api/editApproveReport", {
 		    reportID: this.report.reportID,
 			userID: this.$auth.user.userID,
 			userType: this.$auth.user.userType,
@@ -297,6 +309,7 @@ export default {
 		  })).data;
 		  if (approvedData.status === 200) {
             this.$toast.success('Status saved!', {duration: 4000, icon: 'check_circle'});
+			// i think refresh page here
 		  }
         }
       }
