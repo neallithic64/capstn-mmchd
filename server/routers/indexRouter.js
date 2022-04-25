@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express();
 const cron = require('node-cron');
+const db = require("../models/db");
 const m1Cont = require("../controllers/m1Controller");
 const m2Cont = require("../controllers/m2Controller");
 const m3Cont = require("../controllers/m3Controller");
@@ -54,6 +55,7 @@ router.get("/getTCLEntry", m4Cont.getTCLEntry);
 router.get("/getTCL", m4Cont.getTCL);
 router.get("/getAllTCLs", m4Cont.getAllTCLs);
 
+
 // POST Routes
 router.post("/login", m1Cont.postLogin);
 router.post("/newUser", m1Cont.postRegUser);
@@ -86,8 +88,17 @@ router.post("/editPatientTCL", m4Cont.postEditPatientTCL);
 router.post("/submitTCL", m4Cont.postSubmitTCL);
 
 
-
 // CRON Routes
+(async () => {
+	try {
+		let sysSet = await db.exec(`SELECT * FROM mmchddb.SYSTEM_SETTINGS;`);
+		console.log(sysSet[0]); // delete this
+		// move cron up here
+		cron.schedule("* * * * *", () => console.log("hi!"));
+	} catch (e) {
+		console.log(e);
+	}
+})();
 cron.schedule("00 14 * * 3", m1Cont.cronCRFDeadlineNotif);
 cron.schedule("00 17 * * 5", m1Cont.cronCRFPushData);
 cron.schedule("00 17 * * 6", m1Cont.cronUpdateThresholds);
