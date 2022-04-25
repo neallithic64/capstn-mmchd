@@ -1376,6 +1376,20 @@ const indexFunctions = {
 			res.status(500).send("Server error");
 		}
 	},
+	
+	getSettings: async function(req, res) {
+		let settingsObj = {};
+		try {
+			let sysSet = (await db.exec(`SELECT * FROM mmchddb.SYSTEM_SETTINGS;`))[0];
+			let userSet = (await db.exec(`SELECT * FROM mmchddb.USER_SETTINGS WHERE userID = '${req.query.userID}';`))[0];
+			settingsObj.systemSettings = sysSet;
+			settingsObj.userSettings = userSet;
+			res.status(200).send(settingsObj);
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error.");
+		}
+	},
 
 	/*
 	 * POST METHODS
@@ -2066,26 +2080,23 @@ const indexFunctions = {
 	
 	postUpdateSettings: async function(req, res) {
 		try {
-			let { day, time, userID, consent } = req.body;
-			console.log(req.body);
-			/* two updates: (1) consent and (2) cron time
-				for (2) userType === 'pidsrStaff', 'techStaff', 'lhsdChief', 'resuHead', 'chdDirector', 'fhsisStaff'
-			*/
-			let userType = await db.exec(`SELECT userType FROM mmchddb.USERS WHERE userID = '${userID}'`);
-			if (["pidsrStaff", "techStaff", "lhsdChief", "resuHead", "chdDirector", "fhsisStaff"].includes(userType)) {
-				// processing time variable
-				
-				console.log(`UPDATE mmchddb.SYSTEM_SETTINGS ss
-						SET ss.reportingDay = ${day}, ss.reportingHour = ${time}, ss.reportingMinute = ${time};`);
-				//let reporting = await db.exec(`UPDATE mmchddb.SYSTEM_SETTINGS ss
-				//		SET ss.reportingDay = ${day}, ss.reportingHour = ${time}, ss.reportingMinute = ${time};`);
+			let { day, time, userID, consent } = req.body.cronDetails, settingUpdate;
+			console.log(req.body.cronDetails);
+			let userType = await db.exec(`SELECT u.userType FROM mmchddb.USERS u WHERE u.userID = '${userID}'`);
+			
+			/* two updates: (1) consent and (2) cron time */
+			if (["pidsrStaff", "techStaff", "lhsdChief", "resuHead", "chdDirector", "fhsisStaff"].includes(userType[0].userType)) {
+				settingUpdate = await db.exec(`UPDATE mmchddb.SYSTEM_SETTINGS ss
+						SET ss.reportingDay = '${day}', ss.reportingHour = ${time.split(":")[0]},
+						ss.reportingMinute = ${time.split(":")[1]}
+						WHERE ss.settingID = 0;`);
+			} else {
+				settingUpdate = await db.exec(`UPDATE mmchddb.USER_SETTINGS us
+						SET us.pushDataAccept = ${consent}
+						WHERE us.userID = '${userID}';`);
 			}
-			console.log(`UPDATE mmchddb.USER_SETTINGS us
-					SET us.pushDataAccept = ${consent}
-					WHERE us.userID = '${userID}';`);
-			//let consent = await db.exec(`UPDATE mmchddb.USER_SETTINGS us
-			//		SET us.pushDataAccept = ${consent}
-			//		WHERE us.userID = '${userID}';`);
+			if (settingUpdate) res.status(200).send("Settings saved.");
+			else res.status(200).send("Settings not saved properly.");
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error.");

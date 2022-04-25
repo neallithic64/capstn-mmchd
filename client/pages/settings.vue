@@ -26,7 +26,7 @@
           <div class="field-row-straight-cron">
             <div class="field">
               <label for="cronDay" class="cronLabel"> Submission Day </label>
-                <select id="cronDay" v-model="cronDetails.day" class="cronInputField"
+                <select id="cronDay" v-model="dayText" class="cronInputField"
                   name="cronDay" @change="hasChanged('day')">
                   <option value="Sunday">Sunday</option>
                   <option value="Monday">Monday</option>
@@ -62,7 +62,7 @@
         </div>
 
         <div>
-          <p v-if="dayChange == true || timeChange == true" class="cronRemind"> Sure? Next automatic data submit will be on {{ cronDetails.day }} at {{ cronDetails.time }}. </p>
+          <p v-if="dayChange == true || timeChange == true" class="cronRemind"> Sure? Next automatic data submit will be on {{ dayText }} at {{ cronDetails.time }}. </p>
         </div>
 
         <div style="display: flex; flex-direction: row; justify-content: flex-end; padding-right: 25px;">
@@ -82,23 +82,37 @@ export default {
   data() {
     return {
       cronDetails: {
-        day: 'Friday',
-        time: '17:00',
+        day: '',
+        time: '',
         userID: '',
         consent: '',
       },
-      dayText: 'Friday',
+      dayText: '',
       consentChange: false,
       dayChange: false,
       timeChange: false,
     }
   },
   async fetch() {
-    // dummy code first
-    const rows = (await axios.get('http://localhost:8080/api/getNotifs?userID=' + this.$auth.user.userID)).data;
-	console.log(rows);
+    const rows = (await axios.get('http://localhost:8080/api/getSettings?userID=' + this.$auth.user.userID)).data;
+	let strTemp;
 	
-	// setting form field
+	// setting form fields
+	this.cronDetails.day = rows.systemSettings.reportingDay;
+	switch (this.cronDetails.day) {
+      case 0: this.dayText = "Sunday"; break;
+      case 1: this.dayText = "Monday"; break;
+      case 2: this.dayText = "Tuesday"; break;
+      case 3: this.dayText = "Wednesday"; break;
+      case 4: this.dayText = "Thursday"; break;
+      case 5: this.dayText = "Friday"; break;
+      case 6: this.dayText = "Saturday"; break;
+    }
+	strTemp = rows.systemSettings.reportingHour + "";
+	this.cronDetails.time = strTemp.padStart(2, "0") + ":";
+	strTemp = rows.systemSettings.reportingMinute + "";
+	this.cronDetails.time += strTemp.padStart(2, "0");
+	this.cronDetails.consent = rows.userSettings.pushDataAccept;
 	this.cronDetails.userID = this.$auth.user.userID;
   },
   head() {
@@ -116,14 +130,14 @@ export default {
         this.consentChange = true;
     },
     async save() {
-      switch (this.cronDetails.day) {
-        case "Sunday": this.dayText = 0; break;
-        case "Monday": this.dayText = 1; break;
-        case "Tuesday": this.dayText = 2; break;
-        case "Wednesday": this.dayText = 3; break;
-        case "Thursday": this.dayText = 4; break;
-        case "Friday": this.dayText = 5; break;
-        case "Saturday": this.dayText = 6; break;
+      switch (this.dayText) {
+        case "Sunday": this.cronDetails.day = 0; break;
+        case "Monday": this.cronDetails.day = 1; break;
+        case "Tuesday": this.cronDetails.day = 2; break;
+        case "Wednesday": this.cronDetails.day = 3; break;
+        case "Thursday": this.cronDetails.day = 4; break;
+        case "Friday": this.cronDetails.day = 5; break;
+        case "Saturday": this.cronDetails.day = 6; break;
       }
       this.dayChange = false;
       this.timeChange = false;
@@ -131,6 +145,9 @@ export default {
 	  const settingsData = await axios.post("http://localhost:8080/api/updateSettings", {
 		cronDetails: this.cronDetails
 	  });
+	  if (settingsData.status === 200) {
+	    this.$toast.success(settingsData.data, {duration: 4000, icon: 'check_circle'});
+	  } else this.$toast.error("Error saving settings.", {duration: 4000, icon: 'error'});
 	  console.log(settingsData);
     }
   }

@@ -38,6 +38,7 @@ router.get("/getOutbreakAlertDetails", m1Cont.getOutbreakAlertDetails);
 router.get("/getOngoingOutbreaks", m1Cont.getOngoingOutbreaks);
 router.get("/getAllEvents", m1Cont.getAllEvents);
 router.get("/getEvent", m1Cont.getEvent);
+router.get("/getSettings", m1Cont.getSettings);
 
 router.get("/dashboardData", m2Cont.getIndexData);
 
