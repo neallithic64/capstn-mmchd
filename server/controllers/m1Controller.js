@@ -24,6 +24,8 @@ function convDatePHT(d) {
 const math = require('mathjs');
 const { fractionDependencies } = require("mathjs");
 const DRUUserTypes = ['BHS','RHU','CHO', 'govtHosp', 'privHosp', 'clinic', 'privLab', 'airseaPort'];
+const monthName= ["January","February","March","April","May","June","July",
+            "August","September","October","November","December"];
 /** OBJECT CONSTRUCTORS
 */
 
@@ -247,6 +249,12 @@ function dateToString(date) {
 	let dateString = new Date(date);
 	let month = dateString.getMonth() + 1;
 	return dateString.getFullYear()+'-'+ month.toString().padStart(2,'0') +'-'+dateString.getDate().toString().padStart(2,'0');
+}
+
+function datetimeToString(date) {
+	let dateString = new Date(date);
+	return monthName[dateString.getMonth()] + " " + dateString.getDate() + ", " + dateString.getFullYear() + " " + 
+			dateString.getHours() + ":" + dateString.getMinutes() + ":" + dateString.getSeconds();
 }
 
 async function createCase(cases) {
@@ -1211,6 +1219,8 @@ const indexFunctions = {
 	getOutbreak: async function(req, res) {
 		try {
 			let outbreak = await getOutbreakData(req.query.outbreakID);
+			console.log(outbreak);
+			outbreak.outbreak.timer = datetimeToString(new Date(outbreak.outbreak.startDate.getTime() + 86400000));
 			// get all cities across all arrays
 			let lookup = [...new Set([
 					...outbreak.caseCount.map(e => e.city),
