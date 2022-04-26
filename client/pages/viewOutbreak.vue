@@ -446,7 +446,7 @@ export default {
       else this.obSummary[i].risk = "Low";
     }
 	
-	this.resDeadline = (new Date((new Date(this.outbreak.startDate)).getTime() + 115200000)).toString();
+	this.resDeadline = data.outbreak.timer;
   }, 
   head() {
     return {
