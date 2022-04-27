@@ -691,11 +691,5 @@ select {
   margin: auto 5px auto 0;
 }
 
-:disabled {
-  background: #ffffff;
-  border: 1px solid #c4c4c4;
-  color:#c4c4c4;
-}
-
 </style>
 

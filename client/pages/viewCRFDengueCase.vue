@@ -2683,5 +2683,39 @@ hr {
 .hide {
   display: none;
 }
+
+
+.overlay {
+  display: block;
+  z-index: 11;
+  margin: 0px;
+  padding: 10% 30% 20%;
+  width: -webkit-fill-available;
+  height: -webkit-fill-available;
+  /* background: gray; */
+  /* opacity: 55%; */
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: rgba(100, 100, 100, 0.4);
+  /* border: 100px solid rgba(100, 100, 100, 0.4); */
+}
+
+@media only screen and (max-width:1000px) {
+  .overlay  {
+    padding: 20% 15%;
+  }
+}
+
+.overlay-form {
+  padding: 30px;
+  border-radius: 40px;
+  background: white;
+  /* width: -webkit-fill-available;
+  height: -webkit-fill-available; */
+  overflow-y: auto;
+  box-shadow: 1px 4px 8px rgb(0 0 0 / 40%);
+}
+
 </style>
 
