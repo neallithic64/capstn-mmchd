@@ -1,7 +1,18 @@
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
+const cron = require('node-cron');
 const db = require("../models/db");
+let task;
+(async () => {
+	try {
+		return (await db.exec(`SELECT * FROM mmchddb.SYSTEM_SETTINGS;`))[0];
+	} catch (e) {
+		console.log(e);
+	}
+})().then(sysSet => {
+	task = cron.schedule(sysSet.reportingMinute + " " + sysSet.reportingHour + " * * " + sysSet.reportingDay, indexFunctions.cronCRFPushData);
+});
 
 Date.prototype.getWeek = function() {
 	let d = new Date(Date.UTC(this.getFullYear(), this.getMonth(), this.getDate()));
@@ -2096,10 +2107,13 @@ const indexFunctions = {
 			
 			/* two updates: (1) consent and (2) cron time */
 			if (["pidsrStaff", "techStaff", "lhsdChief", "resuHead", "chdDirector", "fhsisStaff"].includes(userType[0].userType)) {
+				console.log(task);
 				settingUpdate = await db.exec(`UPDATE mmchddb.SYSTEM_SETTINGS ss
 						SET ss.reportingDay = '${day}', ss.reportingHour = ${time.split(":")[0]},
 						ss.reportingMinute = ${time.split(":")[1]}
 						WHERE ss.settingID = 0;`);
+				task.destroy();
+				task = cron.schedule(minute + " " + hour + " * * " + day, callback);
 			} else {
 				settingUpdate = await db.exec(`UPDATE mmchddb.USER_SETTINGS us
 						SET us.pushDataAccept = ${consent}
