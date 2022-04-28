@@ -26,8 +26,8 @@
               style="width: 100%; align-content: center"
             >
               <!-- <div v-if="i > 1" :id="name" :class="formColor(i - 1)"> -->
-              <!-- <a :href="'/addCIF'+value" style="margin: auto"> -->
-              <a :href="'/addCIFMeasles'" style="margin: auto">
+              <a :href="'/addCIF'+value" style="margin: auto">
+              <!-- <a :href="'/addCIFMeasles'" style="margin: auto"> -->
                 <div class="addCases-disease-name">{{ name }}</div>
               </a>
             </div>
@@ -52,8 +52,8 @@
               style="width: 100%; align-content: center"
             >
               <!-- <div v-if="i > 1" :id="name" :class="formColor(i - 1)"> -->
-              <!-- <a :href="'/addCRF'+value" style="margin: auto"> -->
-              <a :href="'/addCRFDengue'" style="margin: auto">
+              <a :href="'/addCRF'+value" style="margin: auto">
+              <!-- <a :href="'/addCRFDengue'" style="margin: auto"> -->
                 <div class="addCases-disease-name">{{ name }}</div>
               </a>
             </div>
@@ -71,18 +71,18 @@ export default {
     return {
       diseases: {
         cif: {
-          Malaria: 'Malaria',
           Measles: 'Measles',
-          Tetanus: 'Tetanus',
+          Rabies: 'Rabies',
           Pertussis: 'Pertussis',
-          Meningococcal: 'Meningococcal',
+          // Tetanus: 'Tetanus',
+          // Meningococcal: 'Meningococcal',
         },
         crf: {
           Dengue: 'Dengue',
           Cholera: 'Cholera',
           Leptospirosis: 'Leptospirosis',
-          Chikungunya: 'Chikungunya',
-          Typhoid: 'Typhoid',
+          // Chikungunya: 'Chikungunya',
+          // Typhoid: 'Typhoid',
         },
       },
     }
