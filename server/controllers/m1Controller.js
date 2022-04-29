@@ -2102,18 +2102,17 @@ const indexFunctions = {
 	postUpdateSettings: async function(req, res) {
 		try {
 			let { day, time, userID, consent } = req.body.cronDetails, settingUpdate;
-			console.log(req.body.cronDetails);
+			timeArr = time.split(":");
 			let userType = await db.exec(`SELECT u.userType FROM mmchddb.USERS u WHERE u.userID = '${userID}'`);
 			
 			/* two updates: (1) consent and (2) cron time */
 			if (["pidsrStaff", "techStaff", "lhsdChief", "resuHead", "chdDirector", "fhsisStaff"].includes(userType[0].userType)) {
-				console.log(task);
 				settingUpdate = await db.exec(`UPDATE mmchddb.SYSTEM_SETTINGS ss
-						SET ss.reportingDay = '${day}', ss.reportingHour = ${time.split(":")[0]},
-						ss.reportingMinute = ${time.split(":")[1]}
+						SET ss.reportingDay = '${day}', ss.reportingHour = ${timeArr[0]},
+						ss.reportingMinute = ${timeArr[1]}
 						WHERE ss.settingID = 0;`);
-				task.destroy();
-				task = cron.schedule(minute + " " + hour + " * * " + day, callback);
+				task.stop();
+				task = cron.schedule(timeArr[1] + " " + timeArr[0] + " * * " + day, indexFunctions.cronCRFPushData);
 			} else {
 				settingUpdate = await db.exec(`UPDATE mmchddb.USER_SETTINGS us
 						SET us.pushDataAccept = ${consent}
