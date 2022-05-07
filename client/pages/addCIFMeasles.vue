@@ -2781,7 +2781,8 @@ export default {
 
       if (this.pageDone[this.pageNum] || this.pageDone[page] || page===0 || this.pageNum ===0) {
         if (page===10) {
-          if (!this.pageColor[10]) alert('Please fill up the required fields in all pages');
+          if (!this.pageColor[10])
+            this.$toast.error('Please make sure all pages are accomplished.', {position: 'top-right', duration: 4000, icon: 'error'});
           else this.pageNum = page;
         }
         else if (this.pageNum===10) {
@@ -2800,7 +2801,7 @@ export default {
         }
 
         this.$nextTick(() => {
-        if ((page === 1 || page === 10) && this.formData.patient.occuBrgy != null) {
+        if ((page === 1) && this.formData.patient.occuBrgy != null) {
           const dropdown = document.getElementById('occuBarangay');
           const defaultOption = document.createElement('option');
           defaultOption.text = this.formData.patient.occuBrgy;
@@ -2808,7 +2809,7 @@ export default {
           dropdown.selectedIndex = 0;
         }
 
-        if ((page === 1 || page === 10) && this.formData.patient.currBrgy != null) {
+        if ((page === 1) && this.formData.patient.currBrgy != null) {
           const dropdown = document.getElementById('currBarangay');
           const defaultOption = document.createElement('option');
           defaultOption.text = this.formData.patient.currBrgy;
@@ -2816,7 +2817,7 @@ export default {
           dropdown.selectedIndex = 0;
         }
 
-        if ((page === 1 || page === 10) && this.formData.patient.permBrgy != null) {
+        if ((page === 1) && this.formData.patient.permBrgy != null) {
           const dropdown = document.getElementById('permBarangay');
           const defaultOption = document.createElement('option');
           defaultOption.text = this.formData.patient.permBrgy;

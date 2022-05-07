@@ -1151,7 +1151,9 @@
                           class="input-checkbox"
                           name="exposureBite"
                           type="checkbox"
+                          :class="isRequired()"
                           :disabled="inputEdit()"
+                          required
                         />
                         <label for="exposureBite"> Bite </label>
                       </div>
@@ -1164,7 +1166,9 @@
                           class="input-checkbox"
                           name="exposureScratch"
                           type="checkbox"
+                          :class="isRequired()"
                           :disabled="inputEdit()"
+                          required
                         />
                         <label for="exposureScratch"> Scratch </label>
                       </div>
@@ -1192,7 +1196,9 @@
                           class="input-checkbox"
                           name="exposureSaliva"
                           type="checkbox"
+                          :class="isRequired()"
                           :disabled="inputEdit()"
+                          required
                         />
                         <label for="exposureSaliva"> Saliva </label>
                       </div>
@@ -1205,7 +1211,9 @@
                           class="input-checkbox"
                           name="exposureConsumedMeat"
                           type="checkbox"
+                          :class="isRequired()"
                           :disabled="inputEdit()"
+                          required
                         />
                         <label for="exposureConsumedMeat"> Consumed Meat </label>
                       </div>
@@ -1218,7 +1226,9 @@
                           class="input-checkbox"
                           name="exposureUnknown"
                           type="checkbox"
+                          :class="isRequired()"
                           :disabled="inputEdit()"
+                          required
                         />
                         <label for="exposureUnknown"> Unknown </label>
                       </div>
@@ -1230,6 +1240,7 @@
                           class="input-checkbox"
                           name="exposureOthers"
                           type="checkbox"
+                          :class="isRequired()"
                           :disabled="inputEdit()"
                         />
                         <label for="exposureOthers">
@@ -1255,8 +1266,10 @@
                                 :max="today"
                                 class="input-form-field"
                                 type="date"
-                                style="width: 175px; height: 19px; margin: 0 2px"
+                                style="width: 175px; height: 19px; margin: 0 2px" 
+                                :class="isRequired()"
                                 :disabled="inputEdit()"
+                                required
                             />
                         </label>
                       </div>
@@ -1270,7 +1283,9 @@
                                 class="input-form-field"
                                 type="text"
                                 style="width: 175px; height: 19px; margin: 0 2px"
+                                :class="isRequired()"
                                 :disabled="inputEdit()"
+                                required
                             />
                         </label>
                       </div>
@@ -1312,7 +1327,9 @@
                           class="input-checkbox"
                           name="exposeAnimal"
                           type="radio"
+                          :class="isRequired()"
                           :disabled="inputEdit()"
+                          required
                         />
                         <label for="exposeAnimalDog"> Dog </label>
                       </div>
@@ -1325,7 +1342,9 @@
                           class="input-checkbox"
                           name="exposeAnimalCat"
                           type="radio"
+                          :class="isRequired()"
                           :disabled="inputEdit()"
+                          required
                         />
                         <label for="exposeAnimalCat"> Cat </label>
                       </div>
@@ -1338,7 +1357,9 @@
                           class="input-checkbox"
                           name="exposeAnimalBat"
                           type="radio"
+                          :class="isRequired()"
                           :disabled="inputEdit()"
+                          required
                         />
                         <label for="exposeAnimalBat"> Bat </label>
                       </div>
@@ -1351,7 +1372,9 @@
                           class="input-checkbox"
                           name="exposeAnimalOthers"
                           type="radio"
+                          :class="isRequired()"
                           :disabled="inputEdit()"
+                          required
                         />
                         <label for="exposeAnimalOthers">
                           Others, specify
@@ -1377,7 +1400,9 @@
                           class="input-checkbox"
                           name="exposeAnimalStatusDomestic"
                           type="radio"
+                          :class="isRequired()"
                           :disabled="inputEdit()"
+                          required
                         />
                         <label for="exposeAnimalStatusDomestic"> Domestic </label>
                       </div>
@@ -1390,7 +1415,9 @@
                           class="input-checkbox"
                           name="exposeAnimalStatusStray"
                           type="radio"
+                          :class="isRequired()"
                           :disabled="inputEdit()"
+                          required
                         />
                         <label for="exposeAnimalStatusStray"> Stray </label>
                       </div>
@@ -1403,7 +1430,9 @@
                           class="input-checkbox"
                           name="exposeAnimalStatusWild"
                           type="radio"
+                          :class="isRequired()"
                           :disabled="inputEdit()"
+                          required
                         />
                         <label for="exposeAnimalStatusWild"> Wild </label>
                       </div>
@@ -1416,7 +1445,9 @@
                           class="input-checkbox"
                           name="exposeAnimalStatusOthers"
                           type="radio"
+                          :class="isRequired()"
                           :disabled="inputEdit()"
+                          required
                         />
                         <label for="exposeAnimalStatusOthers">
                           Others, specify
@@ -2070,8 +2101,8 @@ export default {
       patientResult: [],
       pageNum: 0,
       formPart: 'Rabies0',
-      pageDone: [true,true,true,true,true,true,true,true,true,true,false],
-      pageColor: [true,false,false,false,false,false,false,false,false,false,false],
+      pageDone: [true,true,true,true,true,true,true,true,false],
+      pageColor: [true,false,false,false,false,false,false,false,false],
       formData: {
         cases: {
           caseID: '',
@@ -2340,16 +2371,13 @@ export default {
       }
     },
     move(page) {
-      // this.pageDone[this.pageNum] = false
-      // this.pageDone[page] = false
       this.validateForm(this.pageNum);
-      this.pageColor[this.pageNum] = this.pageDone[this.pageNum];
       this.validateForm(page);
-      this.pageColor[page] = this.pageDone[page];
 
       if (this.pageDone[this.pageNum] || this.pageDone[page] || page===0 || this.pageNum ===0) {
         if (page===Object.keys(this.disease.formNames).length) {
-          if (!this.pageColor[Object.keys(this.disease.formNames).length]) alert('Please fill up the required fields in all pages');
+          if (!this.pageColor[Object.keys(this.disease.formNames).length]) 
+            this.$toast.error('Please make sure all pages are accomplished.', {position: 'top-right', duration: 4000, icon: 'error'});
           else this.pageNum = page;
         }
         else if (this.pageNum===Object.keys(this.disease.formNames).length) {
@@ -2368,7 +2396,7 @@ export default {
         }
 
         this.$nextTick(() => {
-        if ((page === 1 || page === 10) && this.formData.patient.occuBrgy != null) {
+        if ((page === 1) && this.formData.patient.occuBrgy != null) {
           const dropdown = document.getElementById('occuBarangay');
           const defaultOption = document.createElement('option');
           defaultOption.text = this.formData.patient.occuBrgy;
@@ -2376,7 +2404,7 @@ export default {
           dropdown.selectedIndex = 0;
         }
 
-        if ((page === 1 || page === 10) && this.formData.patient.currBrgy != null) {
+        if ((page === 1) && this.formData.patient.currBrgy != null) {
           const dropdown = document.getElementById('currBarangay');
           const defaultOption = document.createElement('option');
           defaultOption.text = this.formData.patient.currBrgy;
@@ -2384,7 +2412,7 @@ export default {
           dropdown.selectedIndex = 0;
         }
 
-        if ((page === 1 || page === 10) && this.formData.patient.permBrgy != null) {
+        if ((page === 1) && this.formData.patient.permBrgy != null) {
           const dropdown = document.getElementById('permBarangay');
           const defaultOption = document.createElement('option');
           defaultOption.text = this.formData.patient.permBrgy;
@@ -2394,13 +2422,9 @@ export default {
       })
       }
       else {
-        // alert('Please fill up the required fields');
         this.$toast.error('Please fill up the required fields.', {position: 'top-right', duration: 4000, icon: 'error'});
-        // document.getElementsByClassName('input-form-field').className = 'input-form-field input-required';
         this.$forceUpdate();
       }
-      // console.log(this.pageDone)
-
     },
     validateForm(page) {
       switch (page) {
@@ -2534,30 +2558,27 @@ export default {
           else this.pageDone[page] = false;
           break;
         case 7:
-          if (this.formData.cases.labTestStatus!=='') {
-            if (this.formData.cases.labTestStatus==='Processing' ||
-                this.formData.cases.labTestStatus==='Unknown' ||
-                (this.formData.cases.labTestStatus==='No' && 
+          if (this.formData.caseData.labTestStatus!=='') {
+            if (this.formData.caseData.labTestStatus==='Processing' ||
+                this.formData.caseData.labTestStatus==='Unknown' ||
+                (this.formData.caseData.labTestStatus==='No' && 
                 this.formData.cases.investigatorLab!=='') ||
-                (this.formData.cases.labTestStatus==='Yes' &&
+                (this.formData.caseData.labTestStatus==='Yes' &&
                 this.formData.cases.labDateCollected!=='' &&
                 this.formData.cases.labDateReceived!=='' &&
                 this.formData.cases.labTestResult!==''))
               this.pageDone[page] = true;
             else this.pageDone[page] = false;
-            // console.log(this.pageDone[page])
           }
           else this.pageDone[page] = false;
           break;
         case 8:
           if(this.pageColor[1] && this.pageColor[2] && this.pageColor[3] && this.pageColor[4] && this.pageColor[5]
-             && this.pageColor[6] && this.pageColor[7]) {
-               this.pageColor[8] = true;
+             && this.pageColor[6] && this.pageColor[7])
                this.pageDone[8] = true;
-             }
           break;
       }
-      if (this.pageDone[page]) this.pageColor[page] = true;
+      this.pageColor[page] = this.pageDone[page];
     },
     isRequired() {
       if (!this.pageDone[this.pageNum]) return "input-required";
