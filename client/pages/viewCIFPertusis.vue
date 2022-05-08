@@ -1698,7 +1698,7 @@
                   <div class="center-center">
                     <input
                       id="sampleCollectedYes"
-                      v-model="formData.caseData.sampleCollected"
+                      v-model="newLabData.sampleCollected"
                       value="Yes"
                       class="input-radio"
                       name="sampleCollected"
@@ -1712,7 +1712,7 @@
                   <div class="center-center" style="margin: 0 20px">
                     <input
                       id="sampleCollectedNo"
-                      v-model="formData.caseData.sampleCollected"
+                      v-model="newLabData.sampleCollected"
                       value="No"
                       class="input-radio"
                       name="sampleCollected"
@@ -1726,13 +1726,13 @@
                 </div>
               </div>
 
-              <div v-show="formData.caseData.sampleCollected==='Yes'" class="field-row-straight">
+              <div v-show="newLabData.sampleCollected==='Yes'" class="field-row-straight">
                 <div class="patientAdmitted-field field" style="width:20%">
                     <label class="required"> Type of Sample </label>
                     <div style="display: inline-flex; align-items: center">
                       <input
                         id="sampleCollectionTypeThroat"
-                        v-model="formData.caseData.sampleCollectionType"
+                        v-model="newLabData.sampleCollectionType"
                         value="Throat Swab"
                         class="input-radio"
                         name="sampleCollectionType"
@@ -1746,7 +1746,7 @@
                     <div style="display: inline-flex; align-items: center">
                       <input
                         id="sampleCollectionTypeNasal"
-                        v-model="formData.caseData.sampleCollectionType"
+                        v-model="newLabData.sampleCollectionType"
                         value="Nasal Swab"
                         class="input-radio"
                         name="sampleCollectionType"
@@ -1764,7 +1764,7 @@
                     </label>
                     <input
                     id="sampleDateCollection"
-                    v-model="formData.caseData.sampleDateCollection"
+                    v-model="newLabData.sampleDateCollection"
                     :max="today"
                     class="input-form-field"
                     :class="isRequired()"
@@ -1779,7 +1779,7 @@
                     </label>
                     <input
                     id="sampleDateSent"
-                    v-model="formData.caseData.sampleDateSent"
+                    v-model="newLabData.sampleDateSent"
                     :max="today"
                     class="input-form-field"
                     :class="isRequired()"
@@ -1798,7 +1798,7 @@
                 <div class="center-center">
                   <input
                     id="noLabTest"
-                    v-model="newLabData.hasLabTest"
+                    v-model="newLabData.labTestStatus"
                     value="No"
                     class="input-radio"
                     name="labTest"
@@ -1812,7 +1812,7 @@
                 <div class="center-center" style="margin: 0 20px">
                   <input
                     id="processingLabTest"
-                    v-model="newLabData.hasLabTest"
+                    v-model="newLabData.labTestStatus"
                     value="Processing"
                     class="input-radio"
                     name="labTest"
@@ -1826,7 +1826,7 @@
                 <div class="center-center" style="margin: 0 20px">
                   <input
                     id="yesLabTest"
-                    v-model="newLabData.hasLabTest"
+                    v-model="newLabData.labTestStatus"
                     value="Yes"
                     class="input-radio"
                     name="labTest"
@@ -1840,7 +1840,7 @@
               </div>
             </div>
 
-            <div v-show="newLabData.hasLabTest==='No'">
+            <div v-show="newLabData.labTestStatus==='No'">
               <div class="name-field" style="width:50%">
                 <label for="investigatorLab" class="required"> Choose Lab to forward the case to </label>
                   <select id="investigatorLab"
@@ -1856,40 +1856,42 @@
               </div>
             </div>
 
-            <div v-show="hasLabTest==='Yes' || newLabData.hasLabTest==='Yes'">
-              <div class="field">
-                    <label for="labDateReceived" class="required">
-                      Date Received
-                    </label>
-                    <input
-                      id="labDateReceived"
-                      v-model="formData.caseData.labDateResult"
-                      :max="today"
-                      class="input-form-field"
-                      type="date"
-                      :disabled="inputEdit()"
-                      :class="isRequired()"
-                      required
-                    />
-                </div>
+            <div v-show="newLabData.labTestStatus==='Yes'">
+                <div class="field-row-straight">
+                    <div class="field" style="width:30%">
+                        <label for="labDateReceived" class="required">
+                        Date Received
+                        </label>
+                        <input
+                        id="labDateReceived"
+                        v-model="newLabData.labDateResult"
+                        :max="today"
+                        class="input-form-field"
+                        type="date"
+                        :disabled="inputEdit()"
+                        :class="isRequired()"
+                        required
+                        />
+                    </div>
 
-                <div class="field">
-                <label for="labTestResult" class="required">
-                    Lab Result
-                </label>
-                <select
-                    id="labTestResult"
-                    v-model="formData.caseData.labTestResult"
-                    name="labTestResult"
-                    :disabled="inputEdit()"
-                    :class="isRequired()"
-                    required
-                >
-                    <option value="Positive">Positive</option>
-                    <option value="Negative">Negative</option>
-                    <option value="Undetermined">Undetermined</option>
-                    <option value="Not Processed">Not Processed</option>
-                </select>
+                    <div class="field" style="width:30%">
+                    <label for="labTestResult" class="required">
+                        Lab Result
+                    </label>
+                    <select
+                        id="labTestResult"
+                        v-model="newLabData.labTestResult"
+                        name="labTestResult"
+                        :disabled="inputEdit()"
+                        :class="isRequired()"
+                        required
+                    >
+                        <option value="Positive">Positive</option>
+                        <option value="Negative">Negative</option>
+                        <option value="Undetermined">Undetermined</option>
+                        <option value="Not Processed">Not Processed</option>
+                    </select>
+                    </div>
                 </div>
             </div>
             <div v-show="editLab" style="margin: -10px 10 5px; margin-left: auto;text-align: -webkit-right;">
@@ -2004,19 +2006,13 @@ export default {
       formPart: 'pertusis0',
       dateLastUpdated: '',
       newLabData: {
-        hasLabTest : '',
+        sampleCollected : '',
+        sampleCollectionType : '',
+        sampleDateCollection : '',
+        sampleDateSent : '',
         investigatorLab : '',
-        labSpecimen : '',
-        labDateCollected : '',
-        labDateSent : '',
-        labDateReceived : '',
-        labMeaslesResult : '',
-        labRubellaResult : '',
-        labVirusResult : '',
-        labPCRResult : '',
-        investigationDate : '',
-        investigatorName : '',
-        investigatorContact : '',
+        labDateResult : '',
+        labTestResult : '',
       },
       tableOptions: {
         tableName: 'cases',
@@ -2228,6 +2224,16 @@ export default {
       dateDied: this.formData.cases.dateDied,
       finalDiagnosis: this.formData.cases.finalDiagnosis,
     }
+    this.newLabData = {
+        sampleCollected : this.formData.caseData.sampleCollected,
+        sampleCollectionType : this.formData.caseData.sampleCollectionType,
+        sampleDateCollection : this.formData.caseData.sampleDateCollection,
+        sampleDateSent : this.formData.caseData.sampleDateSent,
+        investigatorLab : this.formData.caseData.investigatorLab,
+        labTestStatus : this.formData.caseData.labTestStatus,
+        labDateResult : this.formData.caseData.labDateResult,
+        labTestResult : this.formData.caseData.labTestResult,
+    }
   }, 
   head() {
     return {
@@ -2324,49 +2330,46 @@ export default {
     },
     validateLab() {
       this.editLabValidate = false;
-      if (this.newLabData.hasLabTest!=='') {
-        if (this.newLabData.hasLabTest==='Processing' ||
-            (this.newLabData.hasLabTest==='No' && 
-            this.newLabData.investigatorLab!=='') ||
-            (this.newLabData.hasLabTest==='Yes' &&
-            this.newLabData.labSpecimen!=='' &&
-            this.newLabData.labDateCollected!=='' &&
-            this.newLabData.labDateSent!=='' &&
-            this.newLabData.labDateReceived!=='' &&
-            this.newLabData.labMeaslesResult!=='' &&
-            this.newLabData.labRubellaResult!=='' &&
-            this.newLabData.labVirusResult!=='' &&
-            this.newLabData.labPCRResult!=='' &&
-            this.newLabData.investigationDate!=='' &&
-            this.newLabData.investigatorName!=='' &&
-            this.newLabData.investigatorContact!==''))
-          this.editLabValidate = true;
+      if (this.newLabData.sampleCollected!=='' &&
+            this.newLabData.labTestStatus!=='' &&
+            this.newLabData.sampleCollected!==undefined &&
+            this.newLabData.labTestStatus!==undefined) {
+        if (
+            (this.newLabData.sampleCollected==='No' ||
+            (this.newLabData.sampleCollected==='Yes' &&
+            this.newLabData.sampleCollectionType!=='' &&
+            this.newLabData.sampleDateSent!=='' &&
+            this.newLabData.sampleCollectionType!==undefined &&
+            this.newLabData.sampleDateSent!==undefined)
+            ) &&
+            (this.newLabData.labTestStatus==='Processing' ||
+            this.newLabData.labTestStatus==='Unknown' ||
+            (this.newLabData.labTestStatus==='No' && 
+            this.newLabData.investigatorLab!=='' && 
+            this.newLabData.investigatorLab!==undefined) ||
+            (this.newLabData.labTestStatus==='Yes' &&
+            this.newLabData.labDateResult!=='' &&
+            this.newLabData.labTestResult!=='' &&
+            this.newLabData.labDateResult!==undefined &&
+            this.newLabData.labTestResult!==undefined)))
+            this.editLabValidate = true;
         else this.editLabValidate = false;
-        if (this.newLabData.investigatorContact<0) {
-          this.newLabData.investigatorContact = '';
-          this.editLabValidate = false;
         }
-      }
       else this.editLabValidate = false;
     },
     async editLabResult(change) {
       if (change==='save') {
         this.validateLab();
         if (this.editLabValidate) {
-          this.hasLabTest = this.newLabData.hasLabTest
-          this.formData.cases.investigatorLab = this.newLabData.investigatorLab
-          this.formData.cases.investigationDate = this.newLabData.investigationDate
-          this.formData.cases.investigatorName = this.newLabData.investigatorName
-          this.formData.cases.investigatorContact = this.newLabData.investigatorContact
-          this.formData.caseData.labDateCollected = this.newLabData.labDateCollected
-          this.formData.caseData.labDateSent = this.newLabData.labDateSent
-          this.formData.caseData.labDateReceived = this.newLabData.labDateReceived
-          this.formData.caseData.labMeaslesResult = this.newLabData.labMeaslesResult
-          this.formData.caseData.labRubellaResult = this.newLabData.labRubellaResult
-          this.formData.caseData.labVirusResult = this.newLabData.labVirusResult
-          this.formData.caseData.labPCRResult = this.newLabData.labPCRResult
-          this.formData.caseData.labSpecimen = this.newLabData.labSpecimen
-        
+            this.formData.caseData.sampleCollected = this.newLabData.sampleCollected
+            this.formData.caseData.sampleCollectionType = this.newLabData.sampleCollectionType
+            this.formData.caseData.sampleDateCollection = this.newLabData.sampleDateCollection
+            this.formData.caseData.sampleDateSent = this.newLabData.sampleDateSent
+            this.formData.caseData.investigatorLab = this.newLabData.investigatorLab
+            this.formData.caseData.labTestStatus = this.newLabData.labTestStatus
+            this.formData.caseData.labDateResult = this.newLabData.labDateResult
+            this.formData.caseData.labTestResult = this.newLabData.labTestResult
+    
           const serve = (await axios.post("http://localhost:8080/api/editCIFLab", {
             caseID: this.formData.cases.caseID,
             newLabData: this.newLabData,
@@ -2388,20 +2391,15 @@ export default {
         }
       }
       if (change==='cancel') {
-        this.newLabData.hasLabTest = this.hasLabTest
-        this.newLabData.investigatorLab = this.formData.cases.investigatorLab
-        this.newLabData.investigationDate = this.formData.cases.investigationDate
-        this.newLabData.investigatorName = this.formData.cases.investigatorName
-        this.newLabData.investigatorContact = this.formData.cases.investigatorContact
-        this.newLabData.labDateCollected = this.formData.caseData.labDateCollected
-        this.newLabData.labDateSent = this.formData.caseData.labDateSent
-        this.newLabData.labDateReceived = this.formData.caseData.labDateReceived
-        this.newLabData.labMeaslesResult = this.formData.caseData.labMeaslesResult
-        this.newLabData.labRubellaResult = this.formData.caseData.labRubellaResult
-        this.newLabData.labVirusResult = this.formData.caseData.labVirusResult
-        this.newLabData.labPCRResult = this.formData.caseData.labPCRResult
-        this.newLabData.labSpecimen = this.formData.caseData.labSpecimen
-        
+        this.newLabData.sampleCollected = this.formData.caseData.sampleCollected
+        this.newLabData.sampleCollectionType = this.formData.caseData.sampleCollectionType
+        this.newLabData.sampleDateCollection = this.formData.caseData.sampleDateCollection
+        this.newLabData.sampleDateSent = this.formData.caseData.sampleDateSent
+        this.newLabData.sampleCollected = this.formData.caseData.sampleCollected
+        this.newLabData.investigatorLab = this.formData.caseData.investigatorLab
+        this.newLabData.labTestStatus = this.formData.caseData.labTestStatus
+        this.newLabData.labDateResult = this.formData.caseData.labDateResult
+    
         this.editLab = false;
       }
     },
