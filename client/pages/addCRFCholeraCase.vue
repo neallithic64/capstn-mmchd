@@ -1125,7 +1125,7 @@
           </form>
           <hr v-if="pageNum == Object.keys(disease.formNames).length" class="addCRF-hr"/>
 
-          <form v-if="pageNum == 3 || pageNum == Object.keys(disease.formNames).length" id="cholera5" type="submit">
+          <form v-if="pageNum == 3 || pageNum == Object.keys(disease.formNames).length" id="cholera3" type="submit">
             <div id="case-investigation-form" class="center">
               <h2 id="addCRFD-formHeader">
                 {{ Object.values(disease.formNames)[pageNum] }}
@@ -1206,7 +1206,7 @@
           </form>
           <hr v-if="pageNum == Object.keys(disease.formNames).length" class="addCRF-hr"/>
 
-          <form v-if="pageNum == 4 || pageNum == Object.keys(disease.formNames).length" id="cholera6" type="submit">
+          <form v-if="pageNum == 4 || pageNum == Object.keys(disease.formNames).length" id="cholera4" type="submit">
             <div id="case-investigation-form" class="center">
               <h2 id="addCRFD-formHeader">
                 {{ Object.values(disease.formNames)[pageNum] }}
@@ -1316,7 +1316,7 @@
           </form>
           <hr v-if="pageNum == Object.keys(disease.formNames).length" class="addCRF-hr"/>
 
-          <form v-if="pageNum == 5 || pageNum == Object.keys(disease.formNames).length" id="cholera7" type="submit">
+          <form v-if="pageNum == 5 || pageNum == Object.keys(disease.formNames).length" id="cholera5" type="submit">
             <div id="case-investigation-form" class="center">
               <h2 id="addCRFD-formHeader">
                 {{ Object.values(disease.formNames)[pageNum] }}
