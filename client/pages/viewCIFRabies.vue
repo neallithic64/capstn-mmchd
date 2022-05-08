@@ -653,7 +653,7 @@
                           <div style="display: flex; align-items: center;">
                             <input
                               id="LNone"
-                              v-model="riskFactors.Lifestyle"
+                              v-model="formData.riskFactors.Lifestyle"
                               value="LNone"
                               name="riskFactorsL"
                               type="checkbox"
@@ -755,7 +755,7 @@
                           <div style="display: flex; align-items: center;">
                             <input
                               id="CNone"
-                              v-model="riskFactors.CurrentCondition"
+                              v-model="formData.riskFactors.CurrentCondition"
                               value="CNone"
                               name="riskFactorsC"
                               type="checkbox"
@@ -829,7 +829,7 @@
                           <div style="display: flex; align-items: center;">
                             <input
                               id="HNone"
-                              v-model="riskFactors.Historical"
+                              v-model="formData.riskFactors.Historical"
                               value="HNone"
                               name="riskFactorsH"
                               type="checkbox"
@@ -929,7 +929,7 @@
                           <div style="display: flex; align-items: center;">
                             <input
                               id="ONone"
-                              v-model="riskFactors.Other"
+                              v-model="formData.riskFactors.Other"
                               value="ONone"
                               name="riskFactorsO"
                               type="checkbox"
@@ -1112,10 +1112,10 @@
                       <div class="checkbox-options" style="display: inline-flex; margin-right: 25px;">
                         <input
                           id="exposureBite"
-                          v-model="formData.caseData.exposureBite"
-                          value="exposureBite"
+                          v-model="formData.caseData.exposure[0]"
+                          value="Bite"
                           class="input-checkbox"
-                          name="exposureBite"
+                          name="exposure"
                           type="checkbox"
                           :class="isRequired()"
                           :disabled="inputEdit()"
@@ -1127,10 +1127,10 @@
                       <div class="checkbox-options" style="display: inline-flex; margin-right: 25px;">
                         <input
                           id="exposureScratch"
-                          v-model="formData.caseData.exposureScratch"
-                          value="exposureScratch"
+                          v-model="formData.caseData.exposure[1]"
+                          value="Scratch"
                           class="input-checkbox"
-                          name="exposureScratch"
+                          name="exposure"
                           type="checkbox"
                           :class="isRequired()"
                           :disabled="inputEdit()"
@@ -1157,10 +1157,10 @@
                       <div class="checkbox-options" style="display: inline-flex; margin-right: 25px;">
                         <input
                           id="exposureSaliva"
-                          v-model="formData.caseData.exposureSaliva"
-                          value="exposureSaliva"
+                          v-model="formData.caseData.exposure[2]"
+                          value="Saliva"
                           class="input-checkbox"
-                          name="exposureSaliva"
+                          name="exposure"
                           type="checkbox"
                           :class="isRequired()"
                           :disabled="inputEdit()"
@@ -1172,10 +1172,10 @@
                       <div class="checkbox-options" style="display: inline-flex; margin-right: 25px;">
                         <input
                           id="exposureConsumedMeat"
-                          v-model="formData.caseData.exposureConsumedMeat"
-                          value="exposureConsumedMeat"
+                          v-model="formData.caseData.exposure[3]"
+                          value="Consumed Meat"
                           class="input-checkbox"
-                          name="exposureConsumedMeat"
+                          name="exposure"
                           type="checkbox"
                           :class="isRequired()"
                           :disabled="inputEdit()"
@@ -1187,10 +1187,10 @@
                       <div class="checkbox-options" style="display: inline-flex; margin-right: 25px;">
                         <input
                           id="exposureUnknown"
-                          v-model="formData.caseData.exposureUnknown"
-                          value="exposureUnknown"
+                          v-model="formData.caseData.exposure[4]"
+                          value="Unknown"
                           class="input-checkbox"
-                          name="exposureUnknown"
+                          name="exposure"
                           type="checkbox"
                           :class="isRequired()"
                           :disabled="inputEdit()"
@@ -1306,7 +1306,7 @@
                           v-model="formData.caseData.exposeAnimal"
                           value="Cat"
                           class="input-checkbox"
-                          name="exposeAnimalCat"
+                          name="exposeAnimal"
                           type="radio"
                           :class="isRequired()"
                           :disabled="inputEdit()"
@@ -1321,7 +1321,7 @@
                           v-model="formData.caseData.exposeAnimal"
                           value="Bat"
                           class="input-checkbox"
-                          name="exposeAnimalBat"
+                          name="exposeAnimal"
                           type="radio"
                           :class="isRequired()"
                           :disabled="inputEdit()"
@@ -1336,7 +1336,7 @@
                           v-model="formData.caseData.exposeAnimal"
                           value="Others"
                           class="input-checkbox"
-                          name="exposeAnimalOthers"
+                          name="exposeAnimal"
                           type="radio"
                           :class="isRequired()"
                           :disabled="inputEdit()"
@@ -1364,7 +1364,7 @@
                           v-model="formData.caseData.exposeAnimalStatus"
                           value="Domestic"
                           class="input-checkbox"
-                          name="exposeAnimalStatusDomestic"
+                          name="exposeAnimalStatus"
                           type="radio"
                           :class="isRequired()"
                           :disabled="inputEdit()"
@@ -1379,7 +1379,7 @@
                           v-model="formData.caseData.exposeAnimalStatus"
                           value="Stray"
                           class="input-checkbox"
-                          name="exposeAnimalStatusStray"
+                          name="exposeAnimalStatus"
                           type="radio"
                           :class="isRequired()"
                           :disabled="inputEdit()"
@@ -1394,7 +1394,7 @@
                           v-model="formData.caseData.exposeAnimalStatus"
                           value="Wild"
                           class="input-checkbox"
-                          name="exposeAnimalStatusWild"
+                          name="exposeAnimalStatus"
                           type="radio"
                           :class="isRequired()"
                           :disabled="inputEdit()"
@@ -1409,7 +1409,7 @@
                           v-model="formData.caseData.exposeAnimalStatus"
                           value="Others"
                           class="input-checkbox"
-                          name="exposeAnimalStatusOthers"
+                          name="exposeAnimalStatus"
                           type="radio"
                           :class="isRequired()"
                           :disabled="inputEdit()"
@@ -2301,12 +2301,8 @@ export default {
         caseData: {
           patientAdmitted: '',
           // page 3
-          exposureBite: '',
-          exposureScratch: '',
+          exposure: [],
           exposureAffectedSite: '',
-          exposureSaliva: '',
-          exposureConsumedMeat: '',
-          exposureUnknown: '',
           exposureOthers: '',
           exposeDate: '',
           exposePlace: '',
