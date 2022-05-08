@@ -71,11 +71,6 @@
                 <h2 id="addCRFD-formHeader">
                   {{ Object.values(disease.formNames)[pageNum] }}
                 </h2>
-                <div v-if="patientExist" style="display:inline-flex; flex-direction:row;">
-                  <a class="patient-click" @click="clearPatientInfo()">Clear Patient</a>
-                    <div style="color:gray;">&nbsp; | &nbsp;</div>
-                  <a :href="'/patient?patientID='+formData.patient.patientID" class="patient-click" target="_blank">Edit Patient</a>
-                </div>
               </div>
 
               <div class="field-row-straight">
@@ -374,21 +369,6 @@
                     required
                   >
                   </select>
-                </div>
-              </div>
-
-              <div class="field-row-straight">
-                <div class="field-row-straight">
-                  <input
-                    id="sameAddress"
-                    v-model="sameAddress"
-                    class="input-radio "
-                    type="checkbox"
-                    :disabled="inputEdit()"
-                    style="width: auto; margin:0 5px;"
-                    @change="getAddress()"
-                  />
-                  <label for="sameAddress" style="font-size:12px"> Same permanent address as current address </label>
                 </div>
               </div>
 
@@ -1119,125 +1099,91 @@
           <div id="case-investigation-form" class="center">
             <h2 id="form-header" class="viewCRFDCh2" style="display: inline-flex;">
               {{ Object.values(disease.formNames)[pageNum] }}
-              <!-- ADD this in ul v-show below: 
-                && $auth.user.userID === formData.cases.investigatorLab -->
               <ul
                 v-show="!isPrint && !editLab && !editOutcome"
                 class="CRFEdit"
-                @click="editLab=true"
+                @click="editOutcome=true"
               >
                 <img src="~/assets/img/pen.png" />
               </ul>
             </h2>
 
-            <div class="vaccine-field field">
-                <label class="required" style="margin-right: 50px">
-                  Do you have the lab result?
-                </label>
-                <div style="display: inline-flex; flex-direction: row">
-                  <div class="center-center">
+            <div class="field-row">
+              <div class="field">
+                <label class="required"> Please select the outcome </label>
+                <div style="display: inline-flex; flex-display: row; margin-right: 50px;">
+                  <div style="display: inline-flex; align-items: center; margin-right: 30px;">
                     <input
-                      id="noLabTest"
-                      v-model="newLabData.labTestStatus"
-                      value="No"
+                      id="Alive"
+                      v-model="newOutcome.outcome"
+                      value="Alive"
                       class="input-radio"
-                      name="labTest"
+                      name="outcome"
                       type="radio"
                       :disabled="inputEdit()"
                       :class="isRequired()"
                       required
                     />
-                    <label for="noLabTest"> No </label>
+                    <label for="Alive"> Alive </label>
                   </div>
-                  <div class="center-center" style="margin: 0 20px">
+
+                  <div style="display: inline-flex; align-items: center; margin-right: 30px;">
                     <input
-                      id="processingLabTest"
-                      v-model="newLabData.labTestStatus"
-                      value="Processing"
+                      id="Dead"
+                      v-model="newOutcome.outcome"
+                      value="Dead"
                       class="input-radio"
-                      name="labTest"
+                      name="outcome"
                       type="radio"
                       :disabled="inputEdit()"
                       :class="isRequired()"
                       required
                     />
-                    <label for="processingLabTest"> Processing </label>
-                  </div>
-                  <div class="center-center" style="margin: 0 20px">
-                    <input
-                      id="yesLabTest"
-                      v-model="newLabData.labTestStatus"
-                      value="Yes"
-                      class="input-radio"
-                      name="labTest"
-                      type="radio"
-                      :disabled="inputEdit()"
-                      :class="isRequired()"
-                      required
-                    />
-                    <label for="yesLabTest"> Yes </label>
+                    <label for="Dead"> Dead </label>
                   </div>
                 </div>
+
+                <div v-if="newOutcome.outcome == 'Dead'" class="field-row-straight">
+                  <div class="field" style="margin-left: 95px">
+                    <label for="dateDied" class="required"> Date died </label>
+                    <input
+                      id="dateDied"
+                      v-model="newOutcome.dateDied"
+                      class="input-form-field"
+                      style="width: 175px"
+                      type="date"
+                      :disabled="inputEdit()"
+                      :class="isRequired()"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <div v-show="newLabData.labTestStatus==='No'">
-            <div class="name-field" style="width:50%">
-                <label for="investigatorLab" class="required"> Choose Lab to forward the case to </label>
-                <select id="investigatorLab" 
-                    v-model="newLabData.investigatorLab" 
-                    name="investigatorLab" 
-                    :disabled="inputEdit()"
-                    class="input-form-field "
-                    :class="isRequired()"
-                    required>
-                <option v-for="(lab, i) in labList" :key=i :value=lab.userID> {{ lab.druName }} </option>
-                </select>
-            </div>
-            </div>
-
-            <div v-show="newLabData.labTestStatus==='Yes'" style="margin-left:7px;">
-            <div class="field-row-straight" style="display: inline-flex; flex-direction: row">
-                <div style="width:40%" class="field">
-                <label for="labTestCollectDate" class="required">
-                    Date Collected
+            <div class="field-row-straight">
+              <div class="field">
+                <label for="finalDiagnosis" class="required">
+                  Other Remarks
                 </label>
                 <input
-                    id="labTestCollectDate"
-                    v-model="newLabData.labTestCollectDate"
-                    :max="today"
-                    class="input-form-field"
-                    type="date"
-                    :disabled="inputEdit()"
+                  id="finalDiagnosis"
+                  v-model="newOutcome.finalDiagnosis"
+                  class="input-form-field"
+                  style="width: 50%"
+                  type="text"
+                  :disabled="inputEdit()"
+                  :class="isRequired()"
+                  required
                 />
-                </div>
-                <div style="width:51%" class="field">
-                <label for="labTestResult" class="required">
-                    Stool Culture Result
-                </label>
-                <select
-                    id="labTestResult"
-                    v-model="newLabData.labTestResult"
-                    name="labTestResult"
-                    :disabled="inputEdit()"
-                >
-                    <option value="Positive">Positive</option>
-                    <option value="Negative">Negative</option>
-                    <option value="Pending Result">Pending Result</option>
-                    <option value="Not Done">Not Done</option>
-                </select>
-                </div>
+              </div>
             </div>
-            </div>
-            <div v-if="noLabTest" class="errorLab"> Please input atleast 1 lab test </div>
-              
-
-            <div v-show="editLab" style="margin: -10px 10 5px; margin-left: auto;text-align: -webkit-right;">
-              <button class="back-button" type="button" @click="editLabResult('cancel')">
+            <div v-show="editOutcome" style="margin: -10px 10 5px; margin-left: auto;text-align: -webkit-right;">
+              <button class="back-button" type="button" @click="editPatientOutcome('cancel')">
                 Cancel </button>
-              <button class="next-button" type="button" @click="editLabResult('save')">
+              <button class="next-button" type="button" @click="editPatientOutcome('save')">
                 Save </button>
             </div>
-
           </div>
         </form>
         <hr v-if="isPrint" class="viewCRFDChr"/>
@@ -1415,7 +1361,7 @@
                 </div>
               </div>
             </div>
-          </form>
+        </form>
       
       </div>
       <div class="CRF-statusHistory">
