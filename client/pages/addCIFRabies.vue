@@ -1914,6 +1914,7 @@
               </div>
             </div>
           </form>
+          <hr v-if="pageNum == Object.keys(disease.formNames).length" class="addCIFhr"/>
 
           <form v-if="pageNum == 7 || pageNum == Object.keys(disease.formNames).length" id="measles7" type="submit">
             <div id="case-investigation-form" class="center">

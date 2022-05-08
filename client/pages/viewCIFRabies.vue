@@ -64,10 +64,10 @@
         </ul>
       </div>
       <div class="viewCIF-component">
-        <form v-if="pageNum == 1 || pageNum == Object.keys(disease.formNames).length" id="pertussis1" type="submit">
+        <form v-if="pageNum == 1 || pageNum == Object.keys(disease.formNames).length" id="Rabies1" type="submit">
             <div id="case-investigation-form" class="center">
               <div style="display:flex; flex-direction:row; justify-content: space-between;">
-                <h2 id="form-header">
+                <h2 id="addCIF-formHeader">
                   {{ Object.values(disease.formNames)[pageNum] }}
                 </h2>
               </div>
@@ -425,7 +425,7 @@
                   />
                 </div>
                 <div class="field">
-                  <label for="ILHZ"> ILHZ </label>
+                  <label for="ILHZ" class="required"> ILHZ </label>
                   <input
                     id="ILHZ"
                     v-model="formData.patient.ILHZ"
@@ -468,12 +468,13 @@
           </form>
         <hr v-if="isPrint" class="viewCIFhr"/>
 
-        <form v-if="pageNum == 2 || pageNum == Object.keys(disease.formNames).length" id="pertussis2" type="submit">
+        <form v-if="pageNum == 2 || pageNum == Object.keys(disease.formNames).length" id="Rabies2" type="submit">
             <div id="case-investigation-form" class="center">
-              <h2 id="form-header"> {{ Object.values(disease.formNames)[pageNum] }} </h2>
+              <h2 id="addCIF-formHeader"> {{ Object.values(disease.formNames)[pageNum] }} </h2>
 
-              <div class="field-row-straight">
-                <div class="patientAdmitted-field field width33" style="width:33%">
+              <div class="field-row">
+                <div class="sixtyDesk" style="display: inline-flex; flex-direction: row">
+                  <div class="patientAdmitted-field field">
                     <label class="required"> Patient Admitted </label>
                     <div style="display: inline-flex; align-items: center">
                       <input
@@ -504,7 +505,22 @@
                       <label for="noAdmitted"> No </label>
                     </div>
                   </div>
-                <div v-if="formData.caseData.patientAdmitted=='Yes'" class="dateAdmitted-field field width33" style="width:33%">
+                  <div class="dateAdmitted-field field">
+                    <label for="dateAdmitted" class="required">
+                      Date Onset of Illness
+                    </label>
+                    <input
+                      id="dateAdmitted"
+                      v-model="formData.cases.dateOnset"
+                      :max="today"
+                      class="input-form-field"
+                      :class="isRequired()"
+                      type="date"
+                      :disabled="inputEdit()"
+                      required
+                    />
+                  </div>
+                  <div v-if="formData.caseData.patientAdmitted=='Yes'" class="dateAdmitted-field field">
                     <label for="dateAdmitted" class="required">
                       Date Admitted / Seen
                     </label>
@@ -519,6 +535,7 @@
                       required
                     />
                   </div>
+                </div>
               </div>
 
               <div class="field-row-straight">
@@ -615,7 +632,7 @@
 
             <div id="case-investigation-form" class="center">
               <div style="display: flex; flex-direction: row;">
-                <h2 id="form-header">Risk Factors</h2>
+                <h2 id="addCIF-formHeader">Risk Factors</h2>
                 <button
                   class="tooltip"
                   data-tooltip="Identify all possible risk factors that may contribute to the analysis of disease spread"
@@ -636,7 +653,7 @@
                           <div style="display: flex; align-items: center;">
                             <input
                               id="LNone"
-                              v-model="formData.riskFactors.Lifestyle"
+                              v-model="riskFactors.Lifestyle"
                               value="LNone"
                               name="riskFactorsL"
                               type="checkbox"
@@ -738,7 +755,7 @@
                           <div style="display: flex; align-items: center;">
                             <input
                               id="CNone"
-                              v-model="formData.riskFactors.CurrentCondition"
+                              v-model="riskFactors.CurrentCondition"
                               value="CNone"
                               name="riskFactorsC"
                               type="checkbox"
@@ -812,7 +829,7 @@
                           <div style="display: flex; align-items: center;">
                             <input
                               id="HNone"
-                              v-model="formData.riskFactors.Historical"
+                              v-model="riskFactors.Historical"
                               value="HNone"
                               name="riskFactorsH"
                               type="checkbox"
@@ -912,7 +929,7 @@
                           <div style="display: flex; align-items: center;">
                             <input
                               id="ONone"
-                              v-model="formData.riskFactors.Other"
+                              v-model="riskFactors.Other"
                               value="ONone"
                               name="riskFactorsO"
                               type="checkbox"
@@ -1081,77 +1098,407 @@
           </form>
         <hr v-if="isPrint" class="viewCIFhr"/>
 
-        <form v-if="pageNum == 3 || pageNum == Object.keys(disease.formNames).length" id="pertussis3" type="submit">
+        <form v-if="pageNum == 3 || pageNum == Object.keys(disease.formNames).length" id="Rabies3" type="submit">
             <div id="case-investigation-form" class="center">
-              <h2 id="form-header">
+              <h2 id="addCIF-formHeader">
+                {{ Object.values(disease.formNames)[pageNum] }}
+              </h2>
+            </div>
+            <div class="field-row" style="margin-bottom: -1 px; display: block;">
+                <div class="field">
+                  <label class="required"> <b style="font-size: 15px;"> Type of Exposure </b> </label>
+                  <div style="margin-left: 5px; display:flex; flex-direction:column;">
+                    <div class="symptoms-half" style="display: inline-flex; flex-direction:row;">
+                      <div class="checkbox-options" style="display: inline-flex; margin-right: 25px;">
+                        <input
+                          id="exposureBite"
+                          v-model="formData.caseData.exposureBite"
+                          value="exposureBite"
+                          class="input-checkbox"
+                          name="exposureBite"
+                          type="checkbox"
+                          :class="isRequired()"
+                          :disabled="inputEdit()"
+                          required
+                        />
+                        <label for="exposureBite"> Bite </label>
+                      </div>
+
+                      <div class="checkbox-options" style="display: inline-flex; margin-right: 25px;">
+                        <input
+                          id="exposureScratch"
+                          v-model="formData.caseData.exposureScratch"
+                          value="exposureScratch"
+                          class="input-checkbox"
+                          name="exposureScratch"
+                          type="checkbox"
+                          :class="isRequired()"
+                          :disabled="inputEdit()"
+                          required
+                        />
+                        <label for="exposureScratch"> Scratch </label>
+                      </div>
+
+                      <div class="checkbox-options">
+                        <label for="exposureAffectedSite">
+                        Affected Site
+                        <input
+                            id="exposureAffectedSite"
+                            v-model="formData.caseData.exposureAffectedSite"
+                            class="input-form-field"
+                            type="text"
+                            style="width: 125px; height: 19px; margin: 0 2px"
+                            :disabled="inputEdit()"
+                        />
+                        </label>
+                      </div>
+                    </div>
+                    <div class="symptoms-half" style="display: inline-flex; flex-direction:row;">
+                      <div class="checkbox-options" style="display: inline-flex; margin-right: 25px;">
+                        <input
+                          id="exposureSaliva"
+                          v-model="formData.caseData.exposureSaliva"
+                          value="exposureSaliva"
+                          class="input-checkbox"
+                          name="exposureSaliva"
+                          type="checkbox"
+                          :class="isRequired()"
+                          :disabled="inputEdit()"
+                          required
+                        />
+                        <label for="exposureSaliva"> Saliva </label>
+                      </div>
+
+                      <div class="checkbox-options" style="display: inline-flex; margin-right: 25px;">
+                        <input
+                          id="exposureConsumedMeat"
+                          v-model="formData.caseData.exposureConsumedMeat"
+                          value="exposureConsumedMeat"
+                          class="input-checkbox"
+                          name="exposureConsumedMeat"
+                          type="checkbox"
+                          :class="isRequired()"
+                          :disabled="inputEdit()"
+                          required
+                        />
+                        <label for="exposureConsumedMeat"> Consumed Meat </label>
+                      </div>
+
+                      <div class="checkbox-options" style="display: inline-flex; margin-right: 25px;">
+                        <input
+                          id="exposureUnknown"
+                          v-model="formData.caseData.exposureUnknown"
+                          value="exposureUnknown"
+                          class="input-checkbox"
+                          name="exposureUnknown"
+                          type="checkbox"
+                          :class="isRequired()"
+                          :disabled="inputEdit()"
+                          required
+                        />
+                        <label for="exposureUnknown"> Unknown </label>
+                      </div>
+
+                      <div class="checkbox-options">
+                        <input
+                          id="exposureOthers"
+                          value="exposureOthers"
+                          class="input-checkbox"
+                          name="exposureOthers"
+                          type="checkbox"
+                          :class="isRequired()"
+                          :disabled="inputEdit()"
+                        />
+                        <label for="exposureOthers">
+                          Others, specify
+                            <input
+                                id="exposureOthers"
+                                v-model="formData.caseData.exposureOthers"
+                                class="input-form-field"
+                                type="text"
+                                style="width: 175px; height: 19px; margin: 0 2px"
+                                :disabled="inputEdit()"
+                            />
+                        </label>
+                      </div>
+                    </div>
+                    <div class="symptoms-half" style="display: inline-flex; flex-direction:row;">
+                      <div class="checkbox-options" style="display: inline-flex; margin-right: 55px;">
+                        <label for="exposeDate" style=" margin-left: 5px;">
+                            Date of Exposure:
+                            <input
+                                id="exposeDate"
+                                v-model="formData.caseData.exposeDate"
+                                :max="today"
+                                class="input-form-field"
+                                type="date"
+                                style="width: 175px; height: 19px; margin: 0 2px" 
+                                :class="isRequired()"
+                                :disabled="inputEdit()"
+                                required
+                            />
+                        </label>
+                      </div>
+
+                      <div class="checkbox-options" style="display: inline-flex">
+                        <label for="exposePlace">
+                            Place of Exposure:
+                            <input
+                                id="exposePlace"
+                                v-model="formData.caseData.exposePlace"
+                                class="input-form-field"
+                                type="text"
+                                style="width: 175px; height: 19px; margin: 0 2px"
+                                :class="isRequired()"
+                                :disabled="inputEdit()"
+                                required
+                            />
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="field" style="display: block">
+                  <label class="required"> <b style="font-size: 15px;"> Category of Exposure: </b> </label>
+                  <div style="flex-direction: column; align-items: center; margin-left: 5px;">
+                    <div v-for="(category, i) in categoryExposure" :key="i" style="display: flex; flex-direction: row; align-items: center;">
+                      <input
+                        :id="category"
+                        v-model="formData.caseData.categoryExposure[i]"
+                        :value="category"
+                        class="input-radio"
+                        name="categoryExposure"
+                        type="checkbox"
+                        :disabled="inputEdit()"
+                        :class="isRequired()"
+                        style="margin-bottom: auto; margin-top: 3px;"
+                        required
+                      />
+                      <label :for="category" style="display: inline-flex">
+                        {{ category }}
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="field">
+                  <label> <b style="font-size: 15px;"> Others </b> </label>
+                  <div style="margin-left:5px;">
+                    <div class="symptoms-half" style="display: inline-flex; flex-direction:row;">
+                      <label class="required" style="width:150px">Type of Animal</label>
+                      <div class="checkbox-options" style="display: inline-flex; margin-right: 25px;">
+                        <input
+                          id="exposeAnimalDog"
+                          v-model="formData.caseData.exposeAnimal"
+                          value="Dog"
+                          class="input-checkbox"
+                          name="exposeAnimal"
+                          type="radio"
+                          :class="isRequired()"
+                          :disabled="inputEdit()"
+                          required
+                        />
+                        <label for="exposeAnimalDog"> Dog </label>
+                      </div>
+
+                      <div class="checkbox-options" style="display: inline-flex; margin-right: 25px;">
+                        <input
+                          id="exposeAnimalCat"
+                          v-model="formData.caseData.exposeAnimal"
+                          value="Cat"
+                          class="input-checkbox"
+                          name="exposeAnimalCat"
+                          type="radio"
+                          :class="isRequired()"
+                          :disabled="inputEdit()"
+                          required
+                        />
+                        <label for="exposeAnimalCat"> Cat </label>
+                      </div>
+
+                      <div class="checkbox-options" style="display: inline-flex; margin-right: 25px;">
+                        <input
+                          id="exposeAnimalBat"
+                          v-model="formData.caseData.exposeAnimal"
+                          value="Bat"
+                          class="input-checkbox"
+                          name="exposeAnimalBat"
+                          type="radio"
+                          :class="isRequired()"
+                          :disabled="inputEdit()"
+                          required
+                        />
+                        <label for="exposeAnimalBat"> Bat </label>
+                      </div>
+
+                      <div class="checkbox-options">
+                        <input
+                          id="exposeAnimalOthers"
+                          v-model="formData.caseData.exposeAnimal"
+                          value="Others"
+                          class="input-checkbox"
+                          name="exposeAnimalOthers"
+                          type="radio"
+                          :class="isRequired()"
+                          :disabled="inputEdit()"
+                          required
+                        />
+                        <label for="exposeAnimalOthers">
+                          Others, specify
+                            <input
+                                id="exposeAnimalOthers"
+                                v-model="formData.caseData.exposeAnimalOthers"
+                                class="input-form-field"
+                                type="text"
+                                style="width: 175px; height: 19px; margin: 0 2px"
+                                :disabled="inputEdit()"
+                            />
+                        </label>
+                      </div>
+                    </div>
+
+                    <div class="symptoms-half" style="display: inline-flex; flex-direction:row;">
+                      <label class="required" style="width:150px">Animal Status</label>
+                      <div class="checkbox-options" style="display: inline-flex; margin-right: 25px;">
+                        <input
+                          id="exposeAnimalStatusDomestic"
+                          v-model="formData.caseData.exposeAnimalStatus"
+                          value="Domestic"
+                          class="input-checkbox"
+                          name="exposeAnimalStatusDomestic"
+                          type="radio"
+                          :class="isRequired()"
+                          :disabled="inputEdit()"
+                          required
+                        />
+                        <label for="exposeAnimalStatusDomestic"> Domestic </label>
+                      </div>
+
+                      <div class="checkbox-options" style="display: inline-flex; margin-right: 25px;">
+                        <input
+                          id="exposeAnimalStatusStray"
+                          v-model="formData.caseData.exposeAnimalStatus"
+                          value="Stray"
+                          class="input-checkbox"
+                          name="exposeAnimalStatusStray"
+                          type="radio"
+                          :class="isRequired()"
+                          :disabled="inputEdit()"
+                          required
+                        />
+                        <label for="exposeAnimalStatusStray"> Stray </label>
+                      </div>
+
+                      <div class="checkbox-options" style="display: inline-flex; margin-right: 25px;">
+                        <input
+                          id="exposeAnimalStatusWild"
+                          v-model="formData.caseData.exposeAnimalStatus"
+                          value="Wild"
+                          class="input-checkbox"
+                          name="exposeAnimalStatusWild"
+                          type="radio"
+                          :class="isRequired()"
+                          :disabled="inputEdit()"
+                          required
+                        />
+                        <label for="exposeAnimalStatusWild"> Wild </label>
+                      </div>
+
+                      <div class="checkbox-options">
+                        <input
+                          id="exposeAnimalStatusOthers"
+                          v-model="formData.caseData.exposeAnimalStatus"
+                          value="Others"
+                          class="input-checkbox"
+                          name="exposeAnimalStatusOthers"
+                          type="radio"
+                          :class="isRequired()"
+                          :disabled="inputEdit()"
+                          required
+                        />
+                        <label for="exposeAnimalStatusOthers">
+                          Others, specify
+                            <input
+                                id="exposeAnimalStatusOthers"
+                                v-model="formData.caseData.exposeAnimalStatusOther"
+                                class="input-form-field"
+                                type="text"
+                                style="width: 175px; height: 19px; margin: 0 2px"
+                                :disabled="inputEdit()"
+                            />
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+          </form>
+        <hr v-if="isPrint" class="viewCIFhr"/>
+
+        <form v-if="pageNum == 4 || pageNum == Object.keys(disease.formNames).length" id="Rabies4" type="submit">
+            <div id="case-investigation-form" class="center">
+              <h2 id="addCIF-formHeader">
                 {{ Object.values(disease.formNames)[pageNum] }}
               </h2>
 
               <div>
-                <div class="vaccine-field field">
-                    <label class="required" style="margin-right: 50px">
-                    Pertussis-containing Vaccine?
+                <div class="vaccine-field field vaccine-label" style="flex-direction: row;">
+                    <label class="required" style="margin-right: 50px;flex-direction: row;">
+                    Has the patient received Measles-Containing Vaccine (MCV)?
                     </label>
                     <div style="display: inline-flex; flex-direction: row">
-                        <div class="center-center">
-                            <input
-                            id="vaccineYes"
-                            v-model="formData.caseData.vaccine"
-                            value="Yes"
-                            class="input-radio"
-                            name="vaccine"
-                            type="radio"
-                            :disabled="inputEdit()"
-                            :class="isRequired()"
-                            required
-                            />
-                            <label for="vaccineYes"> Yes </label>
-                        </div>
-                        <div class="center-center" style="margin: 0 20px">
-                            <input
-                            id="vaccineNo"
-                            v-model="formData.caseData.vaccine"
-                            value="No"
-                            class="input-radio"
-                            name="vaccine"
-                            type="radio"
-                            :disabled="inputEdit()"
-                            :class="isRequired()"
-                            required
-                            />
-                            <label for="vaccineNo"> No </label>
-                        </div>
+                    <div class="center-center" style="margin-right: 25px;">
+                        <input
+                        id="vaccinationHistoryVaccinated"
+                        v-model="formData.caseData.vaccinationHistory"
+                        value="Vaccinated"
+                        class="input-radio"
+                        name="vaccinationHistoryVaccinated"
+                        type="radio"
+                        :disabled="inputEdit()"
+                        :class="isRequired()"
+                        required
+                        />
+                        <label for="vaccinationHistoryVaccinated"> Vaccinated </label>
+                    </div>
+                    <div class="center-center" style="margin-right: 25px;">
+                        <input
+                        id="vaccinationHistoryUnvaccinated"
+                        v-model="formData.caseData.vaccinationHistory"
+                        value="Unvaccinated"
+                        class="input-radio"
+                        name="vaccinationHistoryUnvaccinated"
+                        type="radio"
+                        :disabled="inputEdit()"
+                        :class="isRequired()"
+                        required
+                        />
+                        <label for="vaccinationHistoryUnvaccinated"> Unvaccinated </label>
+                    </div>
+                    <div class="center-center">
+                        <input
+                        id="vaccinationHistoryUnknown"
+                        v-model="formData.caseData.vaccinationHistory"
+                        value="Unknown"
+                        class="input-radio"
+                        name="vaccinationHistoryUnknown"
+                        type="radio"
+                        :disabled="inputEdit()"
+                        :class="isRequired()"
+                        required
+                        />
+                        <label for="vaccinationHistoryUnknown"> Unknown </label>
+                    </div>
                     </div>
                 </div>
 
-                <div v-show="formData.caseData.vaccine==='Yes'" class="field" style="display: inline-flex; flex-direction: row">
-                    <div class="vaccine-field field"  style="margin-right: 50px; width:33%">
-                        <label class="required">
-                        Number of Total Doses
-                        </label>
-                        <select
-                            id="vaccineDoses"
-                            v-model="formData.caseData.vaccineDoses"
-                            name="vaccineDoses"
-                            style="width: 150px; text-align-last: auto;height: 25px;"
-                            :disabled="inputEdit()"
-                            :class="isRequired()"
-                            required
-                        >
-                            <option value="0">0</option>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="Unknown">Unknown</option>
-                        </select>
-                    </div>
-
-                    <div class="vaccine-field field"  style="margin-right: 50px; width:33%">
-                        <label for="dateOnset" class="required">
-                        Date of Last Vaccination
+                <div v-if="formData.caseData.vaccinationHistory==='Vaccinated'" style="padding-left: 7px">
+                    <div class="field" style="display: inline-flex; flex-direction: row">
+                        <label for="vaccineDateStart" class="required width300">
+                            Date vaccine started:
                         </label>
                         <input
-                            id="dateOnset"
-                            v-model="formData.caseData.vaccineLastDate"
+                            id="vaccineDateStart"
+                            v-model="formData.caseData.vaccineDateStart"
                             :max="today"
                             class="input-form-field"
                             :class="isRequired()"
@@ -1161,362 +1508,255 @@
                             required
                         />
                     </div>
-
-                    <div class="vaccine-field field"  style="margin-right: 50px; width:33%">
-                        <label class="required">
-                        Source of Information
+                    <div class="field" style="display: inline-flex; flex-direction: row">
+                        <label for="vaccineBrand" class="required width300">
+                            Brand name of vaccine: 
                         </label>
-                        <select
-                            id="vaccineInfoSource"
-                            v-model="formData.caseData.vaccineInfoSource"
-                            name="vaccineInfoSource"
-                            style="width: 150px; text-align-last: auto;height: 25px;"
-                            :disabled="inputEdit()"
+                        <input
+                            id="vaccineBrand"
+                            v-model="formData.caseData.vaccineBrand"
+                            class="input-form-field"
                             :class="isRequired()"
+                            type="text"
+                            style="width: 175px; height: 25px"
+                            :disabled="inputEdit()"
                             required
-                        >
-                            <option value="Card">Card</option>
-                            <option value="Recall">Recall</option>
-                            <option value="TCL">TCL</option>
-                        </select>
+                        />
                     </div>
-                </div>
-
-                <div class="field">
-                    <label class="required"> Known exposure to: </label>
-                    <div style="margin-left: 5px; display:flex; flex-direction:column;">
-                        <div class="symptoms-half" style="display: inline-flex; flex-direction:row;">
-                        <div class="checkbox-options" style="display: inline-flex; margin-right: 25px;">
-                            <input
-                            id="exposureConfirmed"
-                            v-model="formData.caseData.exposure"
-                            value="Confirmed Case"
-                            class="input-checkbox"
-                            name="exposure"
-                            type="checkbox"
-                            :class="isRequired()"
-                            :disabled="inputEdit()"
-                            required
-                            />
-                            <label for="exposureConfirmed"> Confirmed Case </label>
-                        </div></div>
-
-                        <div class="symptoms-half" style="display: inline-flex; flex-direction:row;">
-                        <div class="checkbox-options" style="display: inline-flex; margin-right: 25px;">
-                            <input
-                            id="exposureProbable"
-                            v-model="formData.caseData.exposure"
-                            value="Probable Case"
-                            class="input-checkbox"
-                            name="symptoms"
-                            type="checkbox"
-                            :class="isRequired()"
-                            :disabled="inputEdit()"
-                            required
-                            />
-                            <label for="exposureProbable"> Probable Case </label>
-                        </div></div>
-
-                        <div class="symptoms-half" style="display: inline-flex; flex-direction:row;">
-                        <div class="checkbox-options" style="display: inline-flex; margin-right: 25px;">
-                            <input
-                            id="exposureCarrier"
-                            v-model="formData.caseData.exposure"
-                            value="Carrier"
-                            class="input-checkbox"
-                            name="exposure"
-                            type="checkbox"
-                            :class="isRequired()"
-                            :disabled="inputEdit()"
-                            required
-                            />
-                            <label for="exposureCarrier"> Carrier </label>
-                        </div></div>
-
-                        <div class="symptoms-half" style="display: inline-flex; flex-direction:row;">
-                        <div class="checkbox-options" style="display: inline-flex; margin-right: 25px;">
-                            <input
-                            id="exposureTraveler"
-                            v-model="formData.caseData.exposure"
-                            value="International Traveler"
-                            class="input-checkbox"
-                            name="exposure"
-                            type="checkbox"
-                            :class="isRequired()"
-                            :disabled="inputEdit()"
-                            required
-                            />
-                            <label for="exposureTraveler"> International Traveler </label>
-                        </div></div>
-
-                        <div class="symptoms-half" style="display: inline-flex; flex-direction:row;">
-                        <div class="checkbox-options">
-                            <input
-                            id="exposureOther"
-                            value="exposureOther"
-                            class="input-checkbox"
-                            name="exposureOther"
-                            type="checkbox"
-                            :class="isRequired()"
-                            :disabled="inputEdit()"
-                            />
-                            <label for="exposureOther">
-                            Others, specify
-                                <input
-                                    id="exposureOther"
-                                    v-model="formData.caseData.exposureOther"
-                                    class="input-form-field"
-                                    type="text"
-                                    style="width: 175px; height: 19px; margin: 0 2px"
-                                    :disabled="inputEdit()"
-                                />
+                    <div class="vaccine-field field vaccine-label" style="flex-direction: row;">
+                            <label class="required width300" for="routeAdmin">
+                                Route of Administration?
                             </label>
-                        </div> </div>
-                    </div>
+                            <div style="display: inline-flex; flex-direction: row">
+                                <div class="center-center margin-right25">
+                                    <input
+                                    id="routeAdminIM"
+                                    v-model="formData.caseData.routeAdmin"
+                                    value="IM"
+                                    class="input-radio"
+                                    name="routeAdmin"
+                                    type="radio"
+                                    :disabled="inputEdit()"
+                                    :class="isRequired()"
+                                    required
+                                    />
+                                    <label for="routeAdmin"> IM </label>
+                                </div>
+                                <div class="center-center margin-right25">
+                                    <input
+                                    id="routeAdminIntradermal"
+                                    v-model="formData.caseData.routeAdmin"
+                                    value="Intradermal"
+                                    class="input-radio"
+                                    name="routeAdminIntradermal"
+                                    type="radio"
+                                    :disabled="inputEdit()"
+                                    :class="isRequired()"
+                                    required
+                                    />
+                                    <label for="routeAdminIntradermal"> Intradermal </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="vaccine-field field vaccine-label" style="flex-direction: row;">
+                            <label class="required width300" for="postexpoure">
+                                Post exposure completed?
+                            </label>
+                            <div style="display: inline-flex; flex-direction: row">
+                                <div class="center-center margin-right25">
+                                    <input
+                                    id="postExposureYes"
+                                    v-model="formData.caseData.postExposure"
+                                    value="Yes"
+                                    class="input-radio"
+                                    name="postExposureYes"
+                                    type="radio"
+                                    :disabled="inputEdit()"
+                                    :class="isRequired()"
+                                    required
+                                    />
+                                    <label for="postExposureYes"> Yes </label>
+                                </div>
+                                <div class="center-center margin-right25">
+                                    <input
+                                    id="postExposureNo"
+                                    v-model="formData.caseData.postExposure"
+                                    value="No"
+                                    class="input-radio"
+                                    name="postExposureNo"
+                                    type="radio"
+                                    :disabled="inputEdit()"
+                                    :class="isRequired()"
+                                    required
+                                    />
+                                    <label for="postExposureNo"> No </label>
+                                </div>
+                            </div>
+                        </div>
                 </div>
 
-                <div class="field-row-straight" style="margin-left: 0px;">
-                    <div class="patientAdmitted-field field width33" style="width:33%">
-                        <label class="required"> Any travel within 14 days before onset of illness? </label>
-                        <div style="display: inline-flex; align-items: center">
-                        <input
-                            id="travelYes"
-                            v-model="formData.caseData.travel"
-                            value="Yes"
-                            class="input-radio"
-                            name="travel"
-                            type="radio"
-                            :disabled="inputEdit()"
-                            :class="isRequired()"
-                            required
-                        />
-                        <label for="travelYes"> Yes </label>
+                <div>
+                    <b style="font-size:15px; margin-left:5px;"> Patient History </b>
+                    <div style="margin-left:5px;">
+                        <div class="vaccine-field field vaccine-label" style="flex-direction: row;">
+                            <label class="required width300" for="woundCleaned">
+                                Wound cleaned?
+                            </label>
+                            <div style="display: inline-flex; flex-direction: row">
+                                <div class="center-center margin-right25">
+                                    <input
+                                    id="woundCleanYes"
+                                    v-model="formData.caseData.woundClean"
+                                    value="Yes"
+                                    class="input-radio"
+                                    name="woundCleanYes"
+                                    type="radio"
+                                    :disabled="inputEdit()"
+                                    :class="isRequired()"
+                                    required
+                                    />
+                                    <label for="woundCleanYes"> Yes </label>
+                                </div>
+                                <div class="center-center margin-right25">
+                                    <input
+                                    id="woundCleanNo"
+                                    v-model="formData.caseData.woundClean"
+                                    value="No"
+                                    class="input-radio"
+                                    name="woundCleanNo"
+                                    type="radio"
+                                    :disabled="inputEdit()"
+                                    :class="isRequired()"
+                                    required
+                                    />
+                                    <label for="woundCleanNo"> No </label>
+                                </div>
+                                <div class="center-center margin-right25">
+                                    <input
+                                    id="woundCleanUnknown"
+                                    v-model="formData.caseData.woundClean"
+                                    value="Unknown"
+                                    class="input-radio"
+                                    name="woundCleanUnknown"
+                                    type="radio"
+                                    :disabled="inputEdit()"
+                                    :class="isRequired()"
+                                    required
+                                    />
+                                    <label for="woundCleanUnknown"> Unknown </label>
+                                </div>
+                            </div>
                         </div>
-                        <div style="display: inline-flex; align-items: center">
-                        <input
-                            id="travelNo"
-                            v-model="formData.caseData.travel"
-                            value="No"
-                            class="input-radio"
-                            name="travel"
-                            type="radio"
-                            :disabled="inputEdit()"
-                            :class="isRequired()"
-                            required
-                        />
-                        <label for="travelNo"> No </label>
+
+                        <div class="vaccine-field field vaccine-label" style="flex-direction: row;">
+                            <label class="required width300" for="patientRIG">
+                                Patient given RIG (Rabies Immunoglobutin)?
+                            </label>
+                            <div style="display: inline-flex; flex-direction: row">
+                                <div class="center-center margin-right25">
+                                    <input
+                                    id="patientRIGYes"
+                                    v-model="formData.caseData.patientRIG"
+                                    value="Yes"
+                                    class="input-radio"
+                                    name="patientRIGYes"
+                                    type="radio"
+                                    :disabled="inputEdit()"
+                                    :class="isRequired()"
+                                    required
+                                    />
+                                    <label for="patientRIGYes"> Yes </label>
+                                </div>
+                                <div class="center-center margin-right25">
+                                    <input
+                                    id="patientRIGNo"
+                                    v-model="formData.caseData.patientRIG"
+                                    value="No"
+                                    class="input-radio"
+                                    name="patientRIGNo"
+                                    type="radio"
+                                    :disabled="inputEdit()"
+                                    :class="isRequired()"
+                                    required
+                                    />
+                                    <label for="patientRIGNo"> No </label>
+                                </div>
+                                <div class="center-center margin-right25">
+                                    <input
+                                    id="patientRIGUnknown"
+                                    v-model="formData.caseData.patientRIG"
+                                    value="Unknown"
+                                    class="input-radio"
+                                    name="patientRIGUnknown"
+                                    type="radio"
+                                    :disabled="inputEdit()"
+                                    :class="isRequired()"
+                                    required
+                                    />
+                                    <label for="patientRIGUnknown"> Unknown </label>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div v-if="formData.caseData.travel=='Yes'" class="dateAdmitted-field field width33" style="width:33%">
-                        <label for="travelPlace" class="required">
-                        Where (in detail)
-                        </label>
-                        <input
-                        id="travelPlace"
-                        v-model="formData.caseData.travelPlace"
-                        class="input-form-field"
-                        :class="isRequired()"
-                        type="text"
-                        :disabled="inputEdit()"
-                        required
-                        />
+
+                        <div class="vaccine-field field vaccine-label" style="flex-direction: row;">
+                            <label class="required width300" for="patientVaccine">
+                                Patient given Rabies Vaccine?
+                            </label>
+                            <div style="display: inline-flex; flex-direction: row">
+                                <div class="center-center margin-right25">
+                                    <input
+                                    id="patientVaccineYes"
+                                    v-model="formData.caseData.patientVaccine"
+                                    value="Yes"
+                                    class="input-radio"
+                                    name="patientVaccineYes"
+                                    type="radio"
+                                    :disabled="inputEdit()"
+                                    :class="isRequired()"
+                                    required
+                                    />
+                                    <label for="patientVaccineYes"> Yes </label>
+                                </div>
+                                <div class="center-center margin-right25">
+                                    <input
+                                    id="patientVaccineNo"
+                                    v-model="formData.caseData.patientVaccine"
+                                    value="No"
+                                    class="input-radio"
+                                    name="patientVaccineNo"
+                                    type="radio"
+                                    :disabled="inputEdit()"
+                                    :class="isRequired()"
+                                    required
+                                    />
+                                    <label for="patientVaccineNo"> No </label>
+                                </div>
+                                <div class="center-center margin-right25">
+                                    <input
+                                    id="patientVaccineUnknown"
+                                    v-model="formData.caseData.patientVaccine"
+                                    value="Unknown"
+                                    class="input-radio"
+                                    name="patientVaccineUnknown"
+                                    type="radio"
+                                    :disabled="inputEdit()"
+                                    :class="isRequired()"
+                                    required
+                                    />
+                                    <label for="patientVaccineUnknown"> Unknown </label>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
               </div>
             </div>
-            
           </form>
         <hr v-if="isPrint" class="viewCIFhr"/>
 
-        <form v-if="pageNum == 4 || pageNum == Object.keys(disease.formNames).length" id="pertussis4" type="submit">
+        <form v-if="pageNum == 5 || pageNum == Object.keys(disease.formNames).length" id="Rabies5" type="submit">
             <div id="case-investigation-form" class="center">
-              <h2 id="form-header">
-                {{ Object.values(disease.formNames)[pageNum] }}
-              </h2>
-
-              <div>
-                <div class="field" style="display: inline-flex; flex-direction: row">
-                    <label for="dateOnset" class="required width300">
-                        Date onset of fever and/or sore throat
-                    </label>
-                    <input
-                        id="dateOnset"
-                        v-model="formData.cases.dateOnset"
-                        :max="today"
-                        class="input-form-field"
-                        :class="isRequired()"
-                        type="date"
-                        style="width: 175px; height: 25px"
-                        :disabled="inputEdit()"
-                        required
-                    />
-                </div>
-
-                <div class="field">
-                    <label class="required"> Check Symptoms / Signs which apply: </label>
-                    <div style="margin-left: 5px; display:flex; flex-direction:column;">
-                        <div class="symptoms-half" style="display: inline-flex; flex-direction:row;">
-                        <div class="checkbox-options" style="display: inline-flex; margin-right: 25px;">
-                            <input
-                            id="symptomsVomit"
-                            v-model="formData.caseData.symptoms"
-                            value="Post-tussive Vomiting"
-                            class="input-checkbox"
-                            name="symptoms"
-                            type="checkbox"
-                            :class="isRequired()"
-                            :disabled="inputEdit()"
-                            required
-                            />
-                            <label for="symptomsVomit"> Post-tussive Vomiting </label>
-                        </div></div>
-
-                        <div class="symptoms-half" style="display: inline-flex; flex-direction:row;">
-                        <div class="checkbox-options" style="display: inline-flex; margin-right: 25px;">
-                            <input
-                            id="symptomsApnea"
-                            v-model="formData.caseData.symptoms"
-                            value="Apnea (for infants)"
-                            class="input-checkbox"
-                            name="symptoms"
-                            type="checkbox"
-                            :class="isRequired()"
-                            :disabled="inputEdit()"
-                            required
-                            />
-                            <label for="symptomsApnea"> Apnea (for infants) </label>
-                        </div></div>
-
-                        <div class="symptoms-half" style="display: inline-flex; flex-direction:row;">
-                        <div class="checkbox-options" style="display: inline-flex; margin-right: 25px;">
-                            <input
-                            id="symptomsParoxysms"
-                            v-model="formData.caseData.symptoms"
-                            value="Paroxysms"
-                            class="input-checkbox"
-                            name="symptoms"
-                            type="checkbox"
-                            :class="isRequired()"
-                            :disabled="inputEdit()"
-                            required
-                            />
-                            <label for="symptomsParoxysms"> Paroxysms </label>
-                        </div></div>
-
-                        <div class="symptoms-half" style="display: inline-flex; flex-direction:row;">
-                        <div class="checkbox-options" style="display: inline-flex; margin-right: 25px;">
-                            <input
-                            id="symptomsWhooping"
-                            v-model="formData.caseData.symptoms"
-                            value="Inspiratory Whooping"
-                            class="input-checkbox"
-                            name="symptoms"
-                            type="checkbox"
-                            :class="isRequired()"
-                            :disabled="inputEdit()"
-                            required
-                            />
-                            <label for="symptomsWhooping"> Inspiratory Whooping </label>
-                        </div></div>
-
-                        <div class="symptoms-half" style="display: inline-flex; flex-direction:row;">
-                        <div class="checkbox-options" style="display: inline-flex; margin-right: 25px;">
-                            <input
-                            id="symptomsCoughing"
-                            v-model="formData.caseData.symptoms"
-                            value="Coughing lasting atleast 2 weeks"
-                            class="input-checkbox"
-                            name="symptoms"
-                            type="checkbox"
-                            :class="isRequired()"
-                            :disabled="inputEdit()"
-                            required
-                            />
-                            <label for="symptomsCoughing"> Coughing lasting atleast 2 weeks </label>
-                        </div></div>
-
-                        <div class="symptoms-half" style="display: inline-flex; flex-direction:row;">
-                        <div class="checkbox-options">
-                            <input
-                            id="symptomsOther"
-                            value="symptomsOther"
-                            class="input-checkbox"
-                            name="symptomsOther"
-                            type="checkbox"
-                            :class="isRequired()"
-                            :disabled="inputEdit()"
-                            />
-                            <label for="symptomsOther">
-                            Others, specify
-                                <input
-                                    id="symptomsOther"
-                                    v-model="formData.caseData.symptomsOther"
-                                    class="input-form-field"
-                                    type="text"
-                                    style="width: 175px; height: 19px; margin: 0 2px"
-                                    :disabled="inputEdit()"
-                                />
-                            </label>
-                        </div> </div>
-                    </div>
-                </div>
-
-                <div class="field-row-straight" style="margin-left: 0px;">
-                    <div class="patientAdmitted-field field width33" style="width:33%">
-                        <label class="required"> Administered Antiobiotic Therapy? </label>
-                        <div style="display: inline-flex; align-items: center">
-                        <input
-                            id="administeredABtherapyYes"
-                            v-model="formData.caseData.administeredABtherapy"
-                            value="Yes"
-                            class="input-radio"
-                            name="administeredABtherapy"
-                            type="radio"
-                            :disabled="inputEdit()"
-                            :class="isRequired()"
-                            required
-                        />
-                        <label for="administeredABtherapyYes"> Yes </label>
-                        </div>
-                        <div style="display: inline-flex; align-items: center">
-                        <input
-                            id="administeredABtherapyNo"
-                            v-model="formData.caseData.administeredABtherapy"
-                            value="No"
-                            class="input-radio"
-                            name="administeredABtherapy"
-                            type="radio"
-                            :disabled="inputEdit()"
-                            :class="isRequired()"
-                            required
-                        />
-                        <label for="administeredABtherapyNo"> No </label>
-                        </div>
-                    </div>
-                    <div v-if="formData.caseData.administeredABtherapy=='Yes'" class="dateAdmitted-field field width33" style="width:33%">
-                        <label for="dateAdministered" class="required">
-                        Date Administered
-                        </label>
-                        <input
-                        id="dateAdministered"
-                        v-model="formData.caseData.dateAdministered"
-                        :max="today"
-                        class="input-form-field"
-                        :class="isRequired()"
-                        type="date"
-                        :disabled="inputEdit()"
-                        required
-                        />
-                    </div>
-                </div>
-              </div>
-            </div>
-        </form>
-        <hr v-if="isPrint" class="viewCIFhr"/>
-
-        <form v-if="pageNum == 5 || pageNum == Object.keys(disease.formNames).length" id="pertussis5" type="submit">
-            <div id="case-investigation-form" class="center">
-              <h2 id="form-header">
+              <h2 id="addCIF-formHeader">
                 {{ Object.values(disease.formNames)[pageNum] }}
               </h2>
 
@@ -1674,6 +1914,7 @@
             </div>
           </div>
         </form>
+        <hr v-if="isPrint" class="viewCIFhr"/>
 
         <form v-if="pageNum == 7 || isPrint" id="measles7" type="submit">
           <div id="case-investigation-form" class="center">
@@ -1689,106 +1930,6 @@
                 <img src="~/assets/img/pen.png" />
               </ul>
             </h2>
-
-            <div class="vaccine-field field">
-                <label class="required" style="margin-right: 50px">
-                  Is the sample collected?
-                </label>
-                <div style="display: inline-flex; flex-direction: row">
-                  <div class="center-center">
-                    <input
-                      id="sampleCollectedYes"
-                      v-model="newLabData.sampleCollected"
-                      value="Yes"
-                      class="input-radio"
-                      name="sampleCollected"
-                      type="radio"
-                      :disabled="inputEdit()"
-                      :class="isRequired()"
-                      required
-                    />
-                    <label for="sampleCollectedYes"> Yes </label>
-                  </div>
-                  <div class="center-center" style="margin: 0 20px">
-                    <input
-                      id="sampleCollectedNo"
-                      v-model="newLabData.sampleCollected"
-                      value="No"
-                      class="input-radio"
-                      name="sampleCollected"
-                      type="radio"
-                      :disabled="inputEdit()"
-                      :class="isRequired()"
-                      required
-                    />
-                    <label for="sampleCollectedNo"> No </label>
-                  </div>
-                </div>
-              </div>
-
-              <div v-show="newLabData.sampleCollected==='Yes'" class="field-row-straight">
-                <div class="patientAdmitted-field field" style="width:20%">
-                    <label class="required"> Type of Sample </label>
-                    <div style="display: inline-flex; align-items: center">
-                      <input
-                        id="sampleCollectionTypeThroat"
-                        v-model="newLabData.sampleCollectionType"
-                        value="Throat Swab"
-                        class="input-radio"
-                        name="sampleCollectionType"
-                        type="radio"
-                        :disabled="inputEdit()"
-                        :class="isRequired()"
-                        required
-                      />
-                      <label for="sampleCollectionTypeThroat"> Throat Swab </label>
-                    </div>
-                    <div style="display: inline-flex; align-items: center">
-                      <input
-                        id="sampleCollectionTypeNasal"
-                        v-model="newLabData.sampleCollectionType"
-                        value="Nasal Swab"
-                        class="input-radio"
-                        name="sampleCollectionType"
-                        type="radio"
-                        :disabled="inputEdit()"
-                        :class="isRequired()"
-                        required
-                      />
-                      <label for="sampleCollectionTypeNasal"> Nasal Swab </label>
-                    </div>
-                  </div>
-                <div class="dateAdmitted-field field" style="width:30%">
-                    <label for="sampleDateCollection" class="required">
-                    Date of Collection
-                    </label>
-                    <input
-                    id="sampleDateCollection"
-                    v-model="newLabData.sampleDateCollection"
-                    :max="today"
-                    class="input-form-field"
-                    :class="isRequired()"
-                    type="date"
-                    :disabled="inputEdit()"
-                    required
-                    />
-                </div>
-                <div class="dateAdmitted-field field" style="width:30%">
-                    <label for="sampleDateSent" class="required">
-                    Date of Sample Sent
-                    </label>
-                    <input
-                    id="sampleDateSent"
-                    v-model="newLabData.sampleDateSent"
-                    :max="today"
-                    class="input-form-field"
-                    :class="isRequired()"
-                    type="date"
-                    :disabled="inputEdit()"
-                    required
-                    />
-                </div>
-              </div>
 
             <div class="vaccine-field field">
               <label class="required" style="margin-right: 50px">
@@ -1858,40 +1999,54 @@
 
             <div v-show="newLabData.labTestStatus==='Yes'">
                 <div class="field-row-straight">
-                    <div class="field" style="width:30%">
-                        <label for="labDateReceived" class="required">
-                        Date Received
-                        </label>
-                        <input
-                        id="labDateReceived"
-                        v-model="newLabData.labDateResult"
-                        :max="today"
-                        class="input-form-field"
-                        type="date"
-                        :disabled="inputEdit()"
-                        :class="isRequired()"
-                        required
-                        />
-                    </div>
-
-                    <div class="field" style="width:30%">
-                    <label for="labTestResult" class="required">
-                        Lab Result
+                  <div class="field">
+                    <label for="labDateCollected" class="required">
+                      Date Collected
                     </label>
-                    <select
-                        id="labTestResult"
-                        v-model="newLabData.labTestResult"
-                        name="labTestResult"
-                        :disabled="inputEdit()"
-                        :class="isRequired()"
-                        required
-                    >
-                        <option value="Positive">Positive</option>
-                        <option value="Negative">Negative</option>
-                        <option value="Undetermined">Undetermined</option>
-                        <option value="Not Processed">Not Processed</option>
-                    </select>
-                    </div>
+                    <input
+                      id="labDateCollected"
+                      v-model="newLabData.labDateCollected"
+                      :max="today"
+                      class="input-form-field"
+                      type="date"
+                      :disabled="inputEdit()"
+                      :class="isRequired()"
+                      required
+                    />
+                  </div>
+
+                  <div class="field">
+                    <label for="labDateReceived" class="required">
+                      Date Received
+                    </label>
+                    <input
+                      id="labDateReceived"
+                      v-model="newLabData.labDateReceived"
+                      :max="today"
+                      class="input-form-field"
+                      type="date"
+                      :disabled="inputEdit()"
+                      :class="isRequired()"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div class="field-row-straight">
+                  <div class="field">
+                    <label for="labTestResult" class="required">
+                      Lab Result
+                    </label>
+                    <input
+                      id="labTestResult"
+                      v-model="newLabData.labTestResult"
+                      class="input-form-field"
+                      type="text"
+                      :disabled="inputEdit()"
+                      :class="isRequired()"
+                      required
+                    />
+                  </div>
                 </div>
             </div>
             <div v-show="editLab" style="margin: -10px 10 5px; margin-left: auto;text-align: -webkit-right;">
@@ -2003,16 +2158,13 @@ export default {
       caseDefs: [],
       cityList: [],
       pageNum: 1,
-      formPart: 'pertusis0',
+      formPart: 'rabies0',
       dateLastUpdated: '',
       newLabData: {
-        sampleCollected : '',
-        sampleCollectionType : '',
-        sampleDateCollection : '',
-        sampleDateSent : '',
-        investigatorLab : '',
         labTestStatus: '',
-        labDateResult : '',
+        investigatorLab : '',
+        labDateCollected: '',
+        labDateReceived : '',
         labTestResult : '',
       },
       tableOptions: {
@@ -2149,42 +2301,49 @@ export default {
         caseData: {
           patientAdmitted: '',
           // page 3
-          vaccine: '',
-          vaccineDoses: '',
-          vaccineLastDate:'',
-          vaccineInfoSource: '',
-          exposure: [],
+          exposureBite: '',
+          exposureScratch: '',
+          exposureAffectedSite: '',
+          exposureSaliva: '',
+          exposureConsumedMeat: '',
+          exposureUnknown: '',
           exposureOthers: '',
-          travel: '',
-          travelPlace: '',
+          exposeDate: '',
+          exposePlace: '',
+          categoryExposure: [],
+          exposeAnimal: '',
+          exposeAnimalOther: '',
+          exposeAnimalStatus: '',
+          exposeAnimalStatusOther: '',
           // page 4
-          symptoms: [],
-          symptomsOthers: '',
-          administeredABtherapy: '',
-          dateAdministered: '',
+          vaccinationHistory: '',
+          vaccineDateStart: '',
+          vaccineBrand: '',
+          routeAdmin: '',
+          postExposre: '',
+          woundClean: '',
+          patientRIG: '',
+          patientVaccine: '',
           // Page 5+6+7
           finalClassification: '',
           outcome: '',
           dateDied: '',
           finalDiagnosis: '',
-          sampleCollected: '',
-          sampleCollectionType: '',
-          sampleDateCollection: '',
-          sampleDateSent: '',
           labTestStatus: '',
-          labDateResult: '',
+          labDateCollected: '',
+          labDateReceived: '',
           labTestResult: '',
         },
       },
       disease: {
-        idname: 'pertussis',
-        name: 'Pertussis',
+        idname: 'Rabies',
+        name: 'Rabies',
         formNames: {
           form0: 'Search Patient',
           form1: 'Patient Record',
           form2: 'Patient Information',
-          form3: 'Background Info',
-          form4: 'Clinical Details',
+          form3: 'Exposure History',
+          form4: 'Vaccination History',
           form5: 'Classification',
           form6: 'Outcome',
           form7: 'Laboratory Tests',
@@ -2192,7 +2351,7 @@ export default {
       },
       rowData: {
         caseID: 1234,
-        disease: 'Pertusis',
+        disease: 'Rabies',
         city: 'Manila',
         patientNo: '123',
         submittedDate: '2020-10-10',
@@ -2226,19 +2385,16 @@ export default {
       finalDiagnosis: this.formData.cases.finalDiagnosis,
     }
     this.newLabData = {
-        sampleCollected : this.formData.caseData.sampleCollected,
-        sampleCollectionType : this.formData.caseData.sampleCollectionType,
-        sampleDateCollection : this.formData.caseData.sampleDateCollection,
-        sampleDateSent : this.formData.caseData.sampleDateSent,
         investigatorLab : this.formData.caseData.investigatorLab,
         labTestStatus : this.formData.caseData.labTestStatus,
-        labDateResult : this.formData.caseData.labDateResult,
+        labDateCollected : this.formData.caseData.labDateCollected,
+        labDateReceived : this.formData.caseData.labDateReceived,
         labTestResult : this.formData.caseData.labTestResult,
     }
   }, 
   head() {
     return {
-      title: 'Pertusis ' + this.formData.cases.caseID
+      title: 'Rabies ' + this.formData.cases.caseID
     }
   },
   mounted() {
@@ -2331,44 +2487,36 @@ export default {
     },
     validateLab() {
       this.editLabValidate = false;
-      if (this.newLabData.sampleCollected!=='' &&
-            this.newLabData.labTestStatus!=='' &&
-            this.newLabData.sampleCollected!==undefined &&
-            this.newLabData.labTestStatus!==undefined) {
-        if (
-            (this.newLabData.sampleCollected==='No' ||
-            (this.newLabData.sampleCollected==='Yes' &&
-            this.newLabData.sampleCollectionType!=='' &&
-            this.newLabData.sampleDateSent!=='' &&
-            this.newLabData.sampleCollectionType!==undefined &&
-            this.newLabData.sampleDateSent!==undefined)
-            ) &&
-            (this.newLabData.labTestStatus==='Processing' ||
-            this.newLabData.labTestStatus==='Unknown' ||
-            (this.newLabData.labTestStatus==='No' && 
-            this.newLabData.investigatorLab!=='' && 
-            this.newLabData.investigatorLab!==undefined) ||
-            (this.newLabData.labTestStatus==='Yes' &&
-            this.newLabData.labDateResult!=='' &&
-            this.newLabData.labTestResult!=='' &&
-            this.newLabData.labDateResult!==undefined &&
-            this.newLabData.labTestResult!==undefined)))
-            this.editLabValidate = true;
-        else this.editLabValidate = false;
-        }
-      else this.editLabValidate = false;
+
+      if (this.newLabData.labTestStatus!=='' &&
+          this.newLabData.labTestStatus!==undefined) {
+            if (this.newLabData.labTestStatus==='Processing' ||
+                this.newLabData.labTestStatus==='Unknown' ||
+                (this.newLabData.labTestStatus==='No' && 
+                this.newLabData.investigatorLab!=='' && 
+                this.newLabData.investigatorLab!==undefined) ||
+                (this.newLabData.labTestStatus==='Yes' &&
+                this.newLabData.labDateCollected!=='' &&
+                this.newLabData.labDateReceived!=='' &&
+                this.newLabData.labTestResult!=='' &&
+                this.newLabData.labDateCollected!==undefined &&
+                this.newLabData.labDateReceived!==undefined &&
+                this.newLabData.labTestResult!==undefined))
+              this.editLabValidate = true;
+            else this.editLabValidate = false;
+          }
+          else this.editLabValidate = false;
+
+          console.log(this.newLabData)
     },
     async editLabResult(change) {
       if (change==='save') {
         this.validateLab();
         if (this.editLabValidate) {
-            this.formData.caseData.sampleCollected = this.newLabData.sampleCollected
-            this.formData.caseData.sampleCollectionType = this.newLabData.sampleCollectionType
-            this.formData.caseData.sampleDateCollection = this.newLabData.sampleDateCollection
-            this.formData.caseData.sampleDateSent = this.newLabData.sampleDateSent
             this.formData.caseData.investigatorLab = this.newLabData.investigatorLab
             this.formData.caseData.labTestStatus = this.newLabData.labTestStatus
-            this.formData.caseData.labDateResult = this.newLabData.labDateResult
+            this.formData.caseData.labDateCollected = this.newLabData.labDateCollected
+            this.formData.caseData.labDateReceived = this.newLabData.labDateReceived
             this.formData.caseData.labTestResult = this.newLabData.labTestResult
     
           const serve = (await axios.post("http://localhost:8080/api/editCIFLab", {
@@ -2392,14 +2540,11 @@ export default {
         }
       }
       if (change==='cancel') {
-        this.newLabData.sampleCollected = this.formData.caseData.sampleCollected
-        this.newLabData.sampleCollectionType = this.formData.caseData.sampleCollectionType
-        this.newLabData.sampleDateCollection = this.formData.caseData.sampleDateCollection
-        this.newLabData.sampleDateSent = this.formData.caseData.sampleDateSent
-        this.newLabData.sampleCollected = this.formData.caseData.sampleCollected
         this.newLabData.investigatorLab = this.formData.caseData.investigatorLab
         this.newLabData.labTestStatus = this.formData.caseData.labTestStatus
-        this.newLabData.labDateResult = this.formData.caseData.labDateResult
+        this.newLabData.labDateCollected = this.formData.caseData.labDateCollected
+        this.newLabData.labDateReceived = this.formData.caseData.labDateReceived
+        this.newLabData.labTestResult = this.formData.caseData.labTestResult
     
         this.editLab = false;
       }
