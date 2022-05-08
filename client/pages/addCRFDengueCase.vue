@@ -41,7 +41,7 @@
           <form v-if="pageNum == 0" id="dengue0" type="submit">
             <div id="case-report-form" class="center">
               <h2 id="addCRFD-formHeader">
-                {{ Object.values(disease.formNames)[0] }}
+                {{ Object.values(disease.formNames)[pageNum] }}
               </h2>
 
               <!-- <p style="margin-bottom: -20px">Search for Patient:</p> -->
@@ -81,9 +81,9 @@
             <div id="case-report-form" class="center">
               <div style="display:flex; flex-direction:row; justify-content: space-between;">
                 <h2 id="addCRFD-formHeader">
-                  {{ Object.values(disease.formNames)[1] }}
+                  {{ Object.values(disease.formNames)[pageNum] }}
                 </h2>
-                <div v-if="patientExist" style="display:inline-flex; flex-direction:row;">
+                <div v-if="patientExist && pageNum == 1" style="display:inline-flex; flex-direction:row;">
                   <a class="patient-click" @click="clearPatientInfo()">Clear Patient</a>
                     <div style="color:gray;">&nbsp; | &nbsp;</div>
                   <a :href="'/patient?patientID='+formData.patient.patientID" class="patient-click" target="_blank">Edit Patient</a>
@@ -504,7 +504,7 @@
 
           <form v-if="pageNum == 2 || pageNum == Object.keys(disease.formNames).length" id="dengue2" type="submit">
             <div id="case-report-form" class="center">
-              <h2 id="addCRFD-formHeader"> {{ Object.values(disease.formNames)[2] }} </h2>
+              <h2 id="addCRFD-formHeader"> {{ Object.values(disease.formNames)[pageNum] }} </h2>
 
               <div class="field-row">
                 <div class="thirtyDesk" style="display: inline-flex; flex-direction: row">
@@ -1111,7 +1111,7 @@
 
           <form v-if="pageNum == 3 || pageNum == Object.keys(disease.formNames).length" id="dengue3" type="submit">
             <div id="case-report-form" class="center">
-              <h2 id="addCRFD-formHeader"> {{ Object.values(disease.formNames)[3] }} </h2>
+              <h2 id="addCRFD-formHeader"> {{ Object.values(disease.formNames)[pageNum] }} </h2>
 
               <div class="field-row">
                 <div class="thirtyDesk" style="display: inline-flex; flex-direction: row; width:22%">
@@ -1185,7 +1185,7 @@
           <form v-if="pageNum == 4 || pageNum == Object.keys(disease.formNames).length" id="dengue4" type="submit">
             <div id="case-investigation-form" class="center">
               <h2 id="addCRFD-formHeader">
-                {{ Object.values(disease.formNames)[4] }}
+                {{ Object.values(disease.formNames)[pageNum] }}
               </h2>
 
               <div class="field-row" style="display: inline-flex; margin-bottom: -1 px">
@@ -1237,7 +1237,7 @@
           <form v-if="pageNum == 5 || pageNum == Object.keys(disease.formNames).length" id="dengue5" type="submit">
             <div id="case-investigation-form" class="center">
               <h2 id="addCRFD-formHeader">
-                {{ Object.values(disease.formNames)[5] }}
+                {{ Object.values(disease.formNames)[pageNum] }}
               </h2>
 
               <div class="field-row">
@@ -1318,7 +1318,7 @@
           <form v-if="pageNum == 6 || pageNum == Object.keys(disease.formNames).length" id="dengue6" type="submit">
             <div id="case-investigation-form" class="center">
               <h2 id="addCRFD-formHeader">
-                {{ Object.values(disease.formNames)[6] }}
+                {{ Object.values(disease.formNames)[pageNum] }}
               </h2>
 
               <div class="vaccine-field field">
@@ -1551,7 +1551,7 @@
           <form v-if="pageNum == 7 || pageNum == Object.keys(disease.formNames).length" id="dengue7" type="submit">
             <div id="case-investigation-form" class="center">
               <h2 id="addCRFD-formHeader">
-                {{ Object.values(disease.formNames)[7] }}
+                {{ Object.values(disease.formNames)[pageNum] }}
               </h2>
 
               <div class="field-row" style="display: inline-flex; margin-bottom: -1 px">

@@ -1755,53 +1755,6 @@
         <hr v-if="isPrint" class="viewCIFhr"/>
 
         <form v-if="pageNum == 5 || isPrint" id="Rabies5" type="submit">
-            <div id="case-investigation-form" class="center">
-              <h2 id="addCIF-formHeader">
-                {{ Object.values(disease.formNames)[pageNum] }}
-              </h2>
-
-              <div class="field-row" style="display: inline-flex; margin-bottom: -1 px">
-                <div class="field">
-                  <label class="required">
-                    Please select the final classification
-                  </label>
-                  <div>
-                    <!-- <div style="display: inline-flex; flex-direction: column"> -->
-                    <!-- CASE DEFINITION -->
-                    <div>
-                      <div class="collpaseWrapper">
-                        <ul v-for="(value, name, i) in classification" :key="i" style="displayLinline-flex">
-                          <li>
-                            <input :id="name" type="checkbox" class="collapseInput"/>
-                            <label :for="name" class="collapseLabel">
-                              <input
-                                :id="name"
-                                v-model="formData.caseData.finalClassification"
-                                :value="name"
-                                class="input-checkbox"
-                                name="finalClassification"
-                                type="radio"
-                                :disabled="inputEdit()"
-                                :class="isRequired()"
-                                required
-                              />
-                              {{ name }}
-                            </label>
-                            <ul>
-                              <li>{{ value }}</li>
-                            </ul>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </form>
-        <hr v-if="isPrint" class="viewCIFhr"/>
-
-        <form v-if="pageNum == 6 || isPrint" id="measles6" type="submit">
           <div id="case-investigation-form" class="center">
             <h2 id="form-header" class="viewCIFh2" style="display: inline-flex;">
               {{ Object.values(disease.formNames)[pageNum] }}
@@ -1916,7 +1869,7 @@
         </form>
         <hr v-if="isPrint" class="viewCIFhr"/>
 
-        <form v-if="pageNum == 7 || isPrint" id="measles7" type="submit">
+        <form v-if="pageNum == 6 || isPrint" id="Rabies6" type="submit">
           <div id="case-investigation-form" class="center">
             <h2 id="form-header" class="viewCIFh2" style="display: inline-flex;">
               {{ Object.values(disease.formNames)[pageNum] }}
@@ -2057,6 +2010,54 @@
             </div>
           </div>
         </form>
+        <hr v-if="isPrint" class="viewCIFhr"/>
+
+        <form v-if="pageNum == 7 || isPrint" id="Rabies7" type="submit">
+            <div id="case-investigation-form" class="center">
+              <h2 id="addCIF-formHeader">
+                {{ Object.values(disease.formNames)[pageNum] }}
+              </h2>
+
+              <div class="field-row" style="display: inline-flex; margin-bottom: -1 px">
+                <div class="field">
+                  <label class="required">
+                    Please select the final classification
+                  </label>
+                  <div>
+                    <!-- <div style="display: inline-flex; flex-direction: column"> -->
+                    <!-- CASE DEFINITION -->
+                    <div>
+                      <div class="collpaseWrapper">
+                        <ul v-for="(value, name, i) in classification" :key="i" style="displayLinline-flex">
+                          <li>
+                            <input :id="name" type="checkbox" class="collapseInput"/>
+                            <label :for="name" class="collapseLabel">
+                              <input
+                                :id="name"
+                                v-model="formData.caseData.finalClassification"
+                                :value="name"
+                                class="input-checkbox"
+                                name="finalClassification"
+                                type="radio"
+                                :disabled="inputEdit()"
+                                :class="isRequired()"
+                                required
+                              />
+                              {{ name }}
+                            </label>
+                            <ul>
+                              <li>{{ value }}</li>
+                            </ul>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+
         <hr v-if="isPrint" class="viewCIFhr"/>
       </div>
       <div class="CIF-statusHistory">
@@ -2340,9 +2341,9 @@ export default {
           form2: 'Patient Information',
           form3: 'Exposure History',
           form4: 'Vaccination History',
-          form5: 'Classification',
-          form6: 'Outcome',
-          form7: 'Laboratory Tests',
+          form5: 'Outcome',
+          form6: 'Laboratory Tests',
+          form7: 'Classification',
         },
       },
       rowData: {

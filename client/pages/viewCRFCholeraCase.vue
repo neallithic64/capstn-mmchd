@@ -1116,53 +1116,6 @@
         <hr v-if="isPrint" class="viewCRFDChr"/>
 
         <form v-if="pageNum == 3 || isPrint" id="cholera3" type="submit">
-            <div id="case-investigation-form" class="center">
-              <h2 id="addCRFD-formHeader">
-                {{ Object.values(disease.formNames)[pageNum] }}
-              </h2>
-
-              <div class="field-row" style="display: inline-flex; margin-bottom: -1 px">
-                <div class="field">
-                  <label class="required">
-                    Please select the case classification
-                  </label>
-                  <div>
-                    <!-- <div style="display: inline-flex; flex-direction: column"> -->
-                    <!-- CASE CLASSIFICATION -->
-                    <div>
-                      <div class="collpaseWrapper">
-                        <ul v-for="(value, name, i) in classification" :key="i" style="displayLinline-flex">
-                          <li>
-                            <input :id="name" type="checkbox" class="collapseInput"/>
-                            <label :for="name" class="collapseLabel">
-                              <input
-                                :id="name"
-                                v-model="formData.cases.caseClassification"
-                                :value="name"
-                                class="input-checkbox"
-                                name="caseClassification"
-                                type="radio"
-                                :disabled="inputEdit()"
-                                :class="isRequired()"
-                                required
-                              />
-                              {{ name }}
-                            </label>
-                            <ul>
-                              <li>{{ value }}</li>
-                            </ul>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </form>
-        <hr v-if="isPrint" class="viewCRFDChr"/>
-
-        <form v-if="pageNum == 4 || isPrint" id="cholera4" type="submit">
           <div id="case-investigation-form" class="center">
             <h2 id="form-header" class="viewCRFDCh2" style="display: inline-flex;">
               {{ Object.values(disease.formNames)[pageNum] }}
@@ -1289,10 +1242,10 @@
         </form>
         <hr v-if="isPrint" class="viewCRFDChr"/>
 
-        <form v-if="pageNum == 5 || isPrint" id="cholera5" type="submit">
+        <form v-if="pageNum == 4 || isPrint" id="cholera4" type="submit">
           <div id="case-investigation-form" class="center">
             <h2 id="form-header" class="viewCRFDCh2" style="display: inline-flex;">
-              {{ Object.values(disease.formNames)[6] }}
+              {{ Object.values(disease.formNames)[pageNum] }}
               <!-- ADD this in ul v-show below: 
                 && $auth.user.userID === formData.cases.investigatorLab -->
               <ul
@@ -1416,6 +1369,53 @@
 
           </div>
         </form>
+        <hr v-if="isPrint" class="viewCRFDChr"/>
+
+        <form v-if="pageNum == 5 || isPrint" id="cholera5" type="submit">
+            <div id="case-investigation-form" class="center">
+              <h2 id="addCRFD-formHeader">
+                {{ Object.values(disease.formNames)[pageNum] }}
+              </h2>
+
+              <div class="field-row" style="display: inline-flex; margin-bottom: -1 px">
+                <div class="field">
+                  <label class="required">
+                    Please select the case classification
+                  </label>
+                  <div>
+                    <!-- <div style="display: inline-flex; flex-direction: column"> -->
+                    <!-- CASE CLASSIFICATION -->
+                    <div>
+                      <div class="collpaseWrapper">
+                        <ul v-for="(value, name, i) in classification" :key="i" style="displayLinline-flex">
+                          <li>
+                            <input :id="name" type="checkbox" class="collapseInput"/>
+                            <label :for="name" class="collapseLabel">
+                              <input
+                                :id="name"
+                                v-model="formData.cases.caseClassification"
+                                :value="name"
+                                class="input-checkbox"
+                                name="caseClassification"
+                                type="radio"
+                                :disabled="inputEdit()"
+                                :class="isRequired()"
+                                required
+                              />
+                              {{ name }}
+                            </label>
+                            <ul>
+                              <li>{{ value }}</li>
+                            </ul>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
       
       </div>
       <div class="CRF-statusHistory">
@@ -1677,9 +1677,9 @@ export default {
           form0: 'Search Patient',
           form1: 'Patient Record',
           form2: 'Patient Information',
-          form3: 'Case Classification',
-          form4: 'Outcome',
-          form5: 'Laboratory Tests',
+          form3: 'Outcome',
+          form4: 'Laboratory Tests',
+          form5: 'Case Classification',
         },
       },
       rowData: {
