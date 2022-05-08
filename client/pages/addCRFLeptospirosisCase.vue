@@ -83,7 +83,7 @@
                 <h2 id="addCRFD-formHeader">
                   {{ Object.values(disease.formNames)[pageNum] }}
                 </h2>
-                <div v-if="patientExist" style="display:inline-flex; flex-direction:row;">
+                <div v-if="patientExist && pageNum == 1" style="display:inline-flex; flex-direction:row;">
                   <a class="patient-click" @click="clearPatientInfo()">Clear Patient</a>
                     <div style="color:gray;">&nbsp; | &nbsp;</div>
                   <a :href="'/patient?patientID='+formData.patient.patientID" class="patient-click" target="_blank">Edit Patient</a>
@@ -1218,7 +1218,7 @@
                   <div class="center-center">
                     <input
                       id="noLabTest"
-                      v-model="hasLabTest"
+                      v-model="formData.caseData.labTestStatus"
                       value="No"
                       class="input-radio"
                       name="labTest"
@@ -1232,7 +1232,7 @@
                   <div class="center-center" style="margin: 0 20px">
                     <input
                       id="processingLabTest"
-                      v-model="hasLabTest"
+                      v-model="formData.caseData.labTestStatus"
                       value="Processing"
                       class="input-radio"
                       name="labTest"
@@ -1246,7 +1246,7 @@
                   <div class="center-center" style="margin: 0 20px">
                     <input
                       id="yesLabTest"
-                      v-model="hasLabTest"
+                      v-model="formData.caseData.labTestStatus"
                       value="Yes"
                       class="input-radio"
                       name="labTest"
@@ -1260,7 +1260,7 @@
                 </div>
               </div>
 
-              <div v-show="hasLabTest==='No'">
+              <div v-show="formData.caseData.labTestStatus==='No'">
                 <div class="name-field" style="width:50%">
                   <label for="investigatorLab" class="required"> Choose Lab to forward the case to </label>
                   <select id="investigatorLab" 
@@ -1275,7 +1275,7 @@
                 </div>
               </div>
 
-              <div v-show="hasLabTest==='Yes'" style="margin-left:7px;">
+              <div v-show="formData.caseData.labTestStatus==='Yes'" style="margin-left:7px;">
                 <div class="field-row-straight" style="display: inline-flex; flex-direction: row">
                   <div style="width:30%" class="field">
                     <label for="labTestType" class="required">
@@ -1766,7 +1766,6 @@ export default {
         case 2:
           if (this.formData.caseData.patientConsulted!=='' &&
           this.formData.patient.admitStatus!=='' &&
-          this.formData.cases.dateOnset!=='' &&
           this.formData.cases.exposure!=='' &&
           this.formData.cases.exposurePlace!=='' &&
           (this.riskFactors.Lifestyle || this.formData.riskFactors.LSmoking || 
@@ -1808,14 +1807,17 @@ export default {
           else this.pageDone[page] = false;
           break;
         case 4:
-          if (this.hasLabTest!=='') {
-            if (this.hasLabTest==='Processing') {this.pageDone[page] = true; this.errorLab = false;}
-            else if (this.hasLabTest==='No' && this.formData.cases.investigatorLab!=='' && this.formData.cases.investigatorLab!==undefined)
+          if (this.formData.caseData.labTestStatus!=='') {
+            if (this.formData.caseData.labTestStatus==='Processing') 
               {this.pageDone[page] = true; this.errorLab = false;}
-            else if(this.hasLabTest==='Yes' &&
-              (this.formData.caseData.labTestResult!== '' && 
-              this.formData.caseData.labTestCollectDate!== '' &&
-              this.formData.caseData.labTestType !==''))
+            else if (this.formData.caseData.labTestStatus==='No' &&
+                     this.formData.cases.investigatorLab!=='' && 
+                     this.formData.cases.investigatorLab!==undefined)
+              {this.pageDone[page] = true; this.errorLab = false;}
+            else if(this.formData.caseData.labTestStatus==='Yes' &&
+                  (this.formData.caseData.labTestResult!== '' && 
+                   this.formData.caseData.labTestCollectDate!== '' &&
+                   this.formData.caseData.labTestType !==''))
               {this.pageDone[page] = true; this.errorLab = false;}
             else {this.pageDone[page] = false;this.errorLab = true;}
           }
