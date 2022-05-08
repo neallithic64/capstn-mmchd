@@ -2786,20 +2786,16 @@ export default {
       }
     },
     move(page) {
-      // this.pageDone[this.pageNum] = false
-      // this.pageDone[page] = false
       this.validateForm(this.pageNum);
-      this.pageColor[this.pageNum] = this.pageDone[this.pageNum];
       this.validateForm(page);
-      this.pageColor[page] = this.pageDone[page];
 
       if (this.pageDone[this.pageNum] || this.pageDone[page] || page===0 || this.pageNum ===0) {
-        if (page===10) {
-          if (!this.pageColor[10])
+        if (page===Object.keys(this.disease.formNames).length) {
+          if (!this.pageColor[Object.keys(this.disease.formNames).length]) 
             this.$toast.error('Please make sure all pages are accomplished.', {position: 'top-right', duration: 4000, icon: 'error'});
           else this.pageNum = page;
         }
-        else if (this.pageNum===10) {
+        else if (this.pageNum===Object.keys(this.disease.formNames).length) {
           this.pageNum = page;
         }
         else if (page < Object.keys(this.disease.formNames).length && this.pageNum < Object.keys(this.disease.formNames).length) {
@@ -3037,7 +3033,7 @@ export default {
              }
           break;
       }
-      if (this.pageDone[page]) this.pageColor[page] = true;
+      this.pageColor[page] = this.pageDone[page];
     },
     isRequired() {
       if (!this.pageDone[this.pageNum]) return "input-required";

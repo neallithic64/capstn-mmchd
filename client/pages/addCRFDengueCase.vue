@@ -1897,16 +1897,15 @@ export default {
     },
     move(page) {
       this.validateForm(this.pageNum);
-      this.pageColor[this.pageNum] = this.pageDone[this.pageNum];
       this.validateForm(page);
-      this.pageColor[page] = this.pageDone[page];
       
       if (this.pageDone[this.pageNum] || this.pageDone[page] || page===0 || this.pageNum ===0) {
-        if (page===8) {
-          if (!this.pageColor[8]) alert('Please fill up the required fields in all pages');
+        if (page===Object.keys(this.disease.formNames).length) {
+          if (!this.pageColor[Object.keys(this.disease.formNames).length]) 
+            this.$toast.error('Please make sure all pages are accomplished.', {position: 'top-right', duration: 4000, icon: 'error'});
           else this.pageNum = page;
         }
-        else if (this.pageNum===8) {
+        else if (this.pageNum===Object.keys(this.disease.formNames).length) {
           this.pageNum = page;
         }
         else if (page < Object.keys(this.disease.formNames).length && this.pageNum < Object.keys(this.disease.formNames).length) {
@@ -1952,9 +1951,7 @@ export default {
     
       }
       else {
-        // alert('Please fill up the required fields');
         this.$toast.error('Please fill up the required fields.', {position: 'top-right', duration: 4000, icon: 'error'});
-        // document.getElementsByClassName('input-form-field').className = 'input-form-field input-required';
         this.$forceUpdate();
       }
       // console.log(this.pageDone)
@@ -2103,7 +2100,7 @@ export default {
              }
           break;
       }
-      if (this.pageDone[page]) this.pageColor[page] = true;
+      this.pageColor[page] = true = this.pageDone[page];
     },
     isRequired() {
       if (!this.pageDone[this.pageNum]) return "input-required";
