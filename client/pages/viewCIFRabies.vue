@@ -1112,7 +1112,7 @@
                       <div class="checkbox-options" style="display: inline-flex; margin-right: 25px;">
                         <input
                           id="exposureBite"
-                          v-model="formData.caseData.exposure[0]"
+                          v-model="formData.caseData.exposure"
                           value="Bite"
                           class="input-checkbox"
                           name="exposure"
@@ -1127,7 +1127,7 @@
                       <div class="checkbox-options" style="display: inline-flex; margin-right: 25px;">
                         <input
                           id="exposureScratch"
-                          v-model="formData.caseData.exposure[1]"
+                          v-model="formData.caseData.exposure"
                           value="Scratch"
                           class="input-checkbox"
                           name="exposure"
@@ -1157,7 +1157,7 @@
                       <div class="checkbox-options" style="display: inline-flex; margin-right: 25px;">
                         <input
                           id="exposureSaliva"
-                          v-model="formData.caseData.exposure[2]"
+                          v-model="formData.caseData.exposure"
                           value="Saliva"
                           class="input-checkbox"
                           name="exposure"
@@ -1172,7 +1172,7 @@
                       <div class="checkbox-options" style="display: inline-flex; margin-right: 25px;">
                         <input
                           id="exposureConsumedMeat"
-                          v-model="formData.caseData.exposure[3]"
+                          v-model="formData.caseData.exposure"
                           value="Consumed Meat"
                           class="input-checkbox"
                           name="exposure"
@@ -1187,7 +1187,7 @@
                       <div class="checkbox-options" style="display: inline-flex; margin-right: 25px;">
                         <input
                           id="exposureUnknown"
-                          v-model="formData.caseData.exposure[4]"
+                          v-model="formData.caseData.exposure"
                           value="Unknown"
                           class="input-checkbox"
                           name="exposure"
@@ -2302,7 +2302,7 @@ export default {
         caseData: {
           patientAdmitted: '',
           // page 3
-          exposure: [],
+          exposure: [false, false, true, false, false], // NOTE: idk if need to delete this
           exposureAffectedSite: '',
           exposureOthers: '',
           exposeDate: '',
