@@ -64,7 +64,7 @@
         </ul>
       </div>
       <div class="viewCIF-component">
-        <form v-if="pageNum == 1 || pageNum == Object.keys(disease.formNames).length" id="Rabies1" type="submit">
+        <form v-if="pageNum == 1 || isPrint" id="Rabies1" type="submit">
             <div id="case-investigation-form" class="center">
               <div style="display:flex; flex-direction:row; justify-content: space-between;">
                 <h2 id="addCIF-formHeader">
@@ -468,7 +468,7 @@
           </form>
         <hr v-if="isPrint" class="viewCIFhr"/>
 
-        <form v-if="pageNum == 2 || pageNum == Object.keys(disease.formNames).length" id="Rabies2" type="submit">
+        <form v-if="pageNum == 2 || isPrint" id="Rabies2" type="submit">
             <div id="case-investigation-form" class="center">
               <h2 id="addCIF-formHeader"> {{ Object.values(disease.formNames)[pageNum] }} </h2>
 
@@ -1098,7 +1098,7 @@
           </form>
         <hr v-if="isPrint" class="viewCIFhr"/>
 
-        <form v-if="pageNum == 3 || pageNum == Object.keys(disease.formNames).length" id="Rabies3" type="submit">
+        <form v-if="pageNum == 3 || isPrint" id="Rabies3" type="submit">
             <div id="case-investigation-form" class="center">
               <h2 id="addCIF-formHeader">
                 {{ Object.values(disease.formNames)[pageNum] }}
@@ -1434,7 +1434,7 @@
           </form>
         <hr v-if="isPrint" class="viewCIFhr"/>
 
-        <form v-if="pageNum == 4 || pageNum == Object.keys(disease.formNames).length" id="Rabies4" type="submit">
+        <form v-if="pageNum == 4 || isPrint" id="Rabies4" type="submit">
             <div id="case-investigation-form" class="center">
               <h2 id="addCIF-formHeader">
                 {{ Object.values(disease.formNames)[pageNum] }}
@@ -1754,7 +1754,7 @@
           </form>
         <hr v-if="isPrint" class="viewCIFhr"/>
 
-        <form v-if="pageNum == 5 || pageNum == Object.keys(disease.formNames).length" id="Rabies5" type="submit">
+        <form v-if="pageNum == 5 || isPrint" id="Rabies5" type="submit">
             <div id="case-investigation-form" class="center">
               <h2 id="addCIF-formHeader">
                 {{ Object.values(disease.formNames)[pageNum] }}

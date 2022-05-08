@@ -83,7 +83,7 @@
                 <h2 id="addCRFD-formHeader">
                   {{ Object.values(disease.formNames)[pageNum] }}
                 </h2>
-                <div v-if="patientExist" style="display:inline-flex; flex-direction:row;">
+                <div v-if="patientExist && pageNum == 1" style="display:inline-flex; flex-direction:row;">
                   <a class="patient-click" @click="clearPatientInfo()">Clear Patient</a>
                     <div style="color:gray;">&nbsp; | &nbsp;</div>
                   <a :href="'/patient?patientID='+formData.patient.patientID" class="patient-click" target="_blank">Edit Patient</a>
@@ -645,6 +645,8 @@
                       v-model="formData.caseData.waterSource"
                       name="waterSource"
                       :disabled="inputEdit()"
+                      :class="isRequired()"
+                      required
                     >
                       <option value="Well">Well</option>
                       <option value="Spring">Spring</option>
@@ -1131,6 +1133,53 @@
                 {{ Object.values(disease.formNames)[pageNum] }}
               </h2>
 
+              <div class="field-row" style="display: inline-flex; margin-bottom: -1 px">
+                <div class="field">
+                  <label class="required">
+                    Please select the case classification
+                  </label>
+                  <div>
+                    <!-- <div style="display: inline-flex; flex-direction: column"> -->
+                    <!-- CASE CLASSIFICATION -->
+                    <div>
+                      <div class="collpaseWrapper">
+                        <ul v-for="(value, name, i) in classification" :key="i" style="displayLinline-flex">
+                          <li>
+                            <input :id="name" type="checkbox" class="collapseInput"/>
+                            <label :for="name" class="collapseLabel">
+                              <input
+                                :id="name"
+                                v-model="formData.cases.caseClassification"
+                                :value="name"
+                                class="input-checkbox"
+                                name="caseClassification"
+                                type="radio"
+                                :disabled="inputEdit()"
+                                :class="isRequired()"
+                                required
+                              />
+                              {{ name }}
+                            </label>
+                            <ul>
+                              <li>{{ value }}</li>
+                            </ul>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+          <hr v-if="pageNum == Object.keys(disease.formNames).length" class="addCRF-hr"/>
+
+          <form v-if="pageNum == 4 || pageNum == Object.keys(disease.formNames).length" id="cholera4" type="submit">
+            <div id="case-investigation-form" class="center">
+              <h2 id="addCRFD-formHeader">
+                {{ Object.values(disease.formNames)[pageNum] }}
+              </h2>
+
               <div class="field-row">
                 <div class="field">
                   <label class="required"> Please select the outcome </label>
@@ -1206,7 +1255,7 @@
           </form>
           <hr v-if="pageNum == Object.keys(disease.formNames).length" class="addCRF-hr"/>
 
-          <form v-if="pageNum == 4 || pageNum == Object.keys(disease.formNames).length" id="cholera4" type="submit">
+          <form v-if="pageNum == 5 || pageNum == Object.keys(disease.formNames).length" id="cholera5" type="submit">
             <div id="case-investigation-form" class="center">
               <h2 id="addCRFD-formHeader">
                 {{ Object.values(disease.formNames)[pageNum] }}
@@ -1220,7 +1269,7 @@
                   <div class="center-center">
                     <input
                       id="noLabTest"
-                      v-model="hasLabTest"
+                      v-model="formData.caseData.labTestStatus"
                       value="No"
                       class="input-radio"
                       name="labTest"
@@ -1234,7 +1283,7 @@
                   <div class="center-center" style="margin: 0 20px">
                     <input
                       id="processingLabTest"
-                      v-model="hasLabTest"
+                      v-model="formData.caseData.labTestStatus"
                       value="Processing"
                       class="input-radio"
                       name="labTest"
@@ -1248,7 +1297,7 @@
                   <div class="center-center" style="margin: 0 20px">
                     <input
                       id="yesLabTest"
-                      v-model="hasLabTest"
+                      v-model="formData.caseData.labTestStatus"
                       value="Yes"
                       class="input-radio"
                       name="labTest"
@@ -1262,7 +1311,7 @@
                 </div>
               </div>
 
-              <div v-show="hasLabTest==='No'">
+              <div v-show="formData.caseData.labTestStatus==='No'">
                 <div class="name-field" style="width:50%">
                   <label for="investigatorLab" class="required"> Choose Lab to forward the case to </label>
                   <select id="investigatorLab" 
@@ -1277,7 +1326,7 @@
                 </div>
               </div>
 
-              <div v-show="hasLabTest==='Yes'" style="margin-left:7px;">
+              <div v-show="formData.caseData.labTestStatus==='Yes'" style="margin-left:7px;">
                 <div class="field-row-straight" style="display: inline-flex; flex-direction: row">
                   <div style="width:40%" class="field">
                     <label for="labTestCollectDate" class="required">
@@ -1290,6 +1339,8 @@
                       class="input-form-field"
                       type="date"
                       :disabled="inputEdit()"
+                      :class="isRequired()"
+                      required
                     />
                   </div>
                   <div style="width:51%" class="field">
@@ -1301,6 +1352,8 @@
                       v-model="formData.caseData.labTestResult"
                       name="labTestResult"
                       :disabled="inputEdit()"
+                      :class="isRequired()"
+                      required
                     >
                       <option value="Positive">Positive</option>
                       <option value="Negative">Negative</option>
@@ -1314,53 +1367,7 @@
               
             </div>
           </form>
-          <hr v-if="pageNum == Object.keys(disease.formNames).length" class="addCRF-hr"/>
 
-          <form v-if="pageNum == 5 || pageNum == Object.keys(disease.formNames).length" id="cholera5" type="submit">
-            <div id="case-investigation-form" class="center">
-              <h2 id="addCRFD-formHeader">
-                {{ Object.values(disease.formNames)[pageNum] }}
-              </h2>
-
-              <div class="field-row" style="display: inline-flex; margin-bottom: -1 px">
-                <div class="field">
-                  <label class="required">
-                    Please select the case classification
-                  </label>
-                  <div>
-                    <!-- <div style="display: inline-flex; flex-direction: column"> -->
-                    <!-- CASE CLASSIFICATION -->
-                    <div>
-                      <div class="collpaseWrapper">
-                        <ul v-for="(value, name, i) in classification" :key="i" style="displayLinline-flex">
-                          <li>
-                            <input :id="name" type="checkbox" class="collapseInput"/>
-                            <label :for="name" class="collapseLabel">
-                              <input
-                                :id="name"
-                                v-model="formData.cases.caseClassification"
-                                :value="name"
-                                class="input-checkbox"
-                                name="caseClassification"
-                                type="radio"
-                                :disabled="inputEdit()"
-                                :class="isRequired()"
-                                required
-                              />
-                              {{ name }}
-                            </label>
-                            <ul>
-                              <li>{{ value }}</li>
-                            </ul>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </form>
 
         </div>
 
@@ -1493,6 +1500,7 @@ export default {
           patientConsultPlace:'',
           waterSource: '',
           // Lab
+          labTestStatus:'',
           labTestResult:'',
           labTestCollectDate: '',
           // Page 6++
@@ -1521,9 +1529,9 @@ export default {
           form0: 'Search Patient',
           form1: 'Patient Record',
           form2: 'Patient Information',
-          form3: 'Outcome',
-          form4: 'Laboratory Tests',
-          form5: 'Case Classification',
+          form3: 'Case Classification',
+          form4: 'Outcome',
+          form5: 'Laboratory Tests',
         },
       },
       classification: {},
@@ -1744,7 +1752,7 @@ export default {
           if (this.formData.caseData.patientConsulted!=='' &&
           this.formData.patient.admitStatus!=='' &&
           this.formData.cases.dateOnset!=='' &&
-          this.formData.cases.waterSource!=='' &&
+          this.formData.caseData.waterSource!=='' &&
           (this.riskFactors.Lifestyle || this.formData.riskFactors.LSmoking || 
             this.formData.riskFactors.LAlcoholism || this.formData.riskFactors.LDrugUse || 
             this.formData.riskFactors.LPhysicalInactivity || this.formData.riskFactors.LOthers) && 
@@ -1771,6 +1779,13 @@ export default {
           else this.pageDone[page] = false;
           break;
         case 3:
+          if (this.formData.cases.caseClassification !=='' &&
+              this.formData.cases.caseClassification !== null &&
+              this.formData.cases.caseClassification !== undefined)
+            this.pageDone[page] = true;
+          else this.pageDone[page] = false;
+          break;
+        case 4:
           if (this.formData.caseData.outcome!=='' && this.formData.caseData.finalDiagnosis!=='' &&
               this.formData.caseData.finalDiagnosis!==null && this.formData.caseData.finalDiagnosis!==undefined) {
             if (this.formData.caseData.outcome==='Alive' ||
@@ -1783,24 +1798,21 @@ export default {
           }
           else this.pageDone[page] = false;
           break;
-        case 4:
-          if (this.hasLabTest!=='') {
-            if (this.hasLabTest==='Processing') {this.pageDone[page] = true; this.errorLab = false;}
-            else if (this.hasLabTest==='No' && this.formData.cases.investigatorLab!=='' && this.formData.cases.investigatorLab!==undefined)
+        case 5:
+          if (this.formData.caseData.labTestStatus!=='') {
+            if (this.formData.caseData.labTestStatus==='Processing')
               {this.pageDone[page] = true; this.errorLab = false;}
-            else if(this.hasLabTest==='Yes' &&
-              (this.formData.caseData.labTestResult!== '' && this.formData.caseData.labTestCollectDate!== ''))
+            else if (this.formData.caseData.labTestStatus==='No' && 
+                    this.formData.cases.investigatorLab!=='' && 
+                    this.formData.cases.investigatorLab!==undefined)
+              {this.pageDone[page] = true; this.errorLab = false;}
+            else if(this.formData.caseData.labTestStatus==='Yes' &&
+                   (this.formData.caseData.labTestResult!== '' && 
+                    this.formData.caseData.labTestCollectDate!== ''))
               {this.pageDone[page] = true; this.errorLab = false;}
             else {this.pageDone[page] = false;this.errorLab = true;}
           }
           else {this.pageDone[page] = false; this.errorLab = true;}
-          break;
-        case 5:
-          if (this.formData.cases.caseClassification !=='' &&
-              this.formData.cases.caseClassification !== null &&
-              this.formData.cases.caseClassification !== undefined)
-            this.pageDone[page] = true;
-          else this.pageDone[page] = false;
           break;
         case 6:
           if(this.pageColor[1] && this.pageColor[2] && this.pageColor[3] && this.pageColor[4]
