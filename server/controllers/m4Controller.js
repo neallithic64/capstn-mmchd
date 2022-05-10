@@ -281,17 +281,20 @@ const indexFunctions = {
 					LEFT JOIN mmchddb.ADDRESSES a ON a.addressID = u.addressID
 					WHERE u.userID = '${ req.query.userID }';`);
 			if (!!req.query.TCLID) { // getting for view page
-				let match = await db.exec(`SELECT t.*, td.*, p.*, a1.city AS patientCity,
+				let match = await db.exec(`SELECT td.*, t.*, p.*, a1.city AS patientCity,
 						u.druName, a2.city AS druCity, a2.brgy AS druBrgy
-						FROM mmchddb.TCLS t
-						LEFT JOIN mmchddb.TCL_DATA td ON td.TCLID = t.TCLID
+						FROM mmchddb.TCL_DATA td
+						LEFT JOIN mmchddb.TCLS t ON t.TCLID = td.TCLID
 						LEFT JOIN mmchddb.PATIENTS p ON p.patientID = td.patientID
 						LEFT JOIN mmchddb.ADDRESSES a1 ON a1.addressID = p.caddressID
 						LEFT JOIN mmchddb.USERS u ON u.userID = t.userID
 						LEFT JOIN mmchddb.ADDRESSES a2 ON a2.addressID = u.addressID
 						WHERE t.TCLID = '${ req.query.TCLID }';`);
+				let TCL = await db.exec(`SELECT t.*
+						FROM mmchddb.TCLS t
+						WHERE t.TCLID = '${ req.query.TCLID }';`);
 				res.status(200).send({
-					TCL: match.length ? match[match.length - 1] : [],
+					TCL: match.length ? match[match.length - 1] : TCL[0],
 					tclData: match,
 					pushDataAccept: userSettings[0].pushDataAccept,
 					userData: userData[0]
