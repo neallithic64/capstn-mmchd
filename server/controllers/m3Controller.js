@@ -39,8 +39,8 @@ function sendReportEmail(email, reportID, status) {
 	let mailOpts = {
 		from: "MM-CHD",
 		to: email,
-		subject: "MMCHD: New Report For Approval",
-		text: `Good day! New report ${reportID} has been created with status "${status}". Review it
+		subject: "MMCHD: Report Status Update",
+		text: `Good day! Report ${reportID} has been created/updated with status "${status}". Review it
 				here: http://localhost:3000/viewReport?reportID=${reportID}. Thank you very much!`
 	};
 	smtpTransport.sendMail(mailOpts, function(err) {
@@ -258,7 +258,6 @@ const indexFunctions = {
 			});
 			
 			sendReportEmail("matthewneal2006@yahoo.com", reportID, "For Approval");
-			
 			res.status(200).send(reportID);
 		} catch (e) {
 			console.log(e);
@@ -304,6 +303,7 @@ const indexFunctions = {
 				};
 				await db.updateRows("mmchddb.REPORTS", { reportID: reportID }, updateObj);
 				await db.insertOne("mmchddb.REPORT_AUDIT", audit);
+				sendReportEmail("matthewneal2006@yahoo.com", reportID, newStatus);
 				res.status(200).send("Report approved!");
 			} else {
 				res.status(200).send("Invalid user type!");
