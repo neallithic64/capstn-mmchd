@@ -399,6 +399,77 @@ const indexFunctions = {
 		}
 	},
 	
+	postSubmitProgAccomp: async function(req, res) {
+		let { progAccompID, userID, diseaseID } = req.body;
+		try {
+			// get all data rows
+			let progData = await db.exec(`SELECT pa.year, pad.*
+					FROM mmchddb.PROGRAM_ACCOMPS pa
+					JOIN PROGRAM_ACCOMP_DATA pad
+					ON pad.progAccompID = pa.progAccompID
+					WHERE pa.progAccompID = '${progAccompID}'`);
+			let newProgObj;
+			if (progData.length < 12) {
+				// make new month
+				newProgObj = {
+					progAccompID: progAccompID,
+					month: progData.length,
+					populationTotal: progData.length > 0 ? progData[progData.length - 1].populationTotal : 0,
+					populationRisk: 0,
+					confCasesTotal: "0, 0",
+					confCases5above: "0, 0",
+					confCases5below: "0, 0",
+					confCasesPreg: "0, 0",
+					malariaLabConf: "0, 0",
+					malariaLabConfFalci: "0, 0",
+					malariaLabConfVivax: "0, 0",
+					malariaLabConfOvale: "0, 0",
+					malariaLabConfMalar: "0, 0",
+					confCasesMethod: "0, 0",
+					confCasesMethodSlide: "0, 0",
+					confCasesMethodRDT: "0, 0",
+					totalLLIN: "0, 0",
+					totalMalariaDeaths: "0, 0"
+				};
+			} else {
+				// make new prog accomp
+				let newAccomp = await generateID("mmchddb.PROGRAM_ACCOMPS");
+				await db.insertOne("mmchddb.PROGRAM_ACCOMPS", {
+					progAccompID: newAccomp.id,
+					diseaseID: diseaseID,
+					userID: userID,
+					year: progData[0].year + 1,
+					dateUpdated: new Date()
+				});
+				newProgObj = {
+					progAccompID: newAccomp.id,
+					month: 0,
+					populationTotal: 0,
+					populationRisk: 0,
+					confCasesTotal: "0, 0",
+					confCases5above: "0, 0",
+					confCases5below: "0, 0",
+					confCasesPreg: "0, 0",
+					malariaLabConf: "0, 0",
+					malariaLabConfFalci: "0, 0",
+					malariaLabConfVivax: "0, 0",
+					malariaLabConfOvale: "0, 0",
+					malariaLabConfMalar: "0, 0",
+					confCasesMethod: "0, 0",
+					confCasesMethodSlide: "0, 0",
+					confCasesMethodRDT: "0, 0",
+					totalLLIN: "0, 0",
+					totalMalariaDeaths: "0, 0"
+				};
+			}
+			await db.insertOne("mmchddb.PROGRAM_ACCOMP_DATA", newProgObj);
+			res.status(200).send("Update targets successful!");
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
+	
 	postNewImmuProgEntry: async function(req, res) {
 		let { formData, immunisationData, TCLID } = req.body;
 		try {

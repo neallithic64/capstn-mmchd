@@ -83,6 +83,7 @@ router.post("/editApproveReport", m3Cont.postEditApproveReport);
 
 router.post("/editProgTargets", m4Cont.postEditProgTargets);
 router.post("/editProgAccomp", m4Cont.postEditProgAccomp);
+router.post("/submitProgAccomp", m4Cont.postSubmitProgAccomp);
 router.post("/newImmuProgEntry", m4Cont.postNewImmuProgEntry);
 router.post("/editPatientTCL", m4Cont.postEditPatientTCL);
 router.post("/submitTCL", m4Cont.postSubmitTCL);

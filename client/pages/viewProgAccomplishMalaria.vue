@@ -99,10 +99,9 @@
       </div>
       <div>
         <div v-show="!isEdit" style="margin: 20px 10px 40px; text-align: -webkit-right;">
-          <button class="cancel-button" type="button" @click="save('Save')">
-            Save </button>
-          <button class="save-button" type="button" @click="save('Submit')">
-            Submit </button>
+          <button class="save-button" type="button" @click="save()">
+            Submit
+		  </button>
         </div>
       </div>
     </div>
@@ -236,6 +235,7 @@ export default {
           diseaseID: 'DI-0000000000002'
         }
       })).data;
+	  console.log(data);
     } else {
       data = (await axios.get('http://localhost:8080/api/getViewProgAccomp', {
         params: {
@@ -258,6 +258,7 @@ export default {
   methods: {
     countMonth() {
       this.month = this.year == 2022 ? (new Date()).getMonth() : 11;
+	  console.log(this.month);
       this.yearData = this.dataSets['y' + this.year];
     },
     borderSide(val) {
@@ -329,13 +330,13 @@ export default {
       link.setAttribute("download", "MalariaProgAccomplish.csv");
       link.click();
     },
-    save(action) {
-      if (action==='Save') {
-        // TO DO
-      }
-      else if (action === 'Submit') {
-        // TO DO
-      }
+    async save() {
+      const res = (await axios.post('http://localhost:8080/api/submitProgAccomp', {
+        progAccompID: this.$route.query.paID,
+        userID: this.$auth.user.userID,
+        diseaseID: 'DI-0000000000002'
+      }));
+      console.log(res);
     }
   },
 }
