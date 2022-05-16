@@ -1303,7 +1303,13 @@ export default {
     }
   },
   async fetch() {
-    this.patients = (await axios.get('http://localhost:8080/api/getPatients')).data;
+    // needs checking if there's filtering needed for this one, assume yes first
+    this.patients = (await axios.get('http://localhost:8080/api/getPatients', {
+	  params: {
+	    userID: this.$auth.user.userID,
+		userOnly: false
+	  }
+	})).data;
   },
   computed: {},
   mounted() {

@@ -425,7 +425,7 @@
                     class="input-form-field"
                     name="permCity"
                     :disabled="inputEdit()"
-					@change="getLocBrgyList(formData.patient.permCity, 'permBarangay')"
+                    @change="getLocBrgyList(formData.patient.permCity, 'permBarangay')"
                   >
                   <option v-for="(city, i) in cityList" :key=i>{{city}}</option>
                   </select>
@@ -2682,7 +2682,12 @@ export default {
     for (let i = 0; i < rows.length; i++) {
       this.classification[rows[i].class] = rows[i].definition;
     }
-    rows = (await axios.get('http://localhost:8080/api/getPatients')).data;
+    rows = (await axios.get('http://localhost:8080/api/getPatients', {
+      params: {
+        userID: this.$auth.user.userID,
+        userOnly: false
+      }
+    })).data;
     this.patients = rows;
     rows = (await axios.get('http://localhost:8080/api/getLabUsers')).data;
     this.labList = rows;

@@ -674,8 +674,11 @@ const indexFunctions = {
 	
 	getPatients: async function(req, res) {
 		let match = [];
+		// checking type of userOnly (must be boolean)
+		console.log(req.query);
 		try {
-			if (req.query.userID) {
+			if (req.query.userOnly) {
+				// filtered by user only
 				match = await db.exec(`SELECT p.*, a1.houseStreet AS currHouseStreet,
 						a1.brgy AS currBrgy, a1.city AS currCity, a2.houseStreet AS permHouseStreet,
 						a2.brgy AS permBrgy, a2.city AS permCity, MAX(c.reportDate) AS updatedDate
@@ -686,6 +689,7 @@ const indexFunctions = {
 						WHERE c.reportedBy = '${req.query.userID}'
 						GROUP BY p.patientID;`);
 			} else {
+				// must be fitered by logged in user's city
 				match = await db.exec(`SELECT p.*, a1.houseStreet AS currHouseStreet,
 						a1.brgy AS currBrgy, a1.city AS currCity, a2.houseStreet AS permHouseStreet,
 						a2.brgy AS permBrgy, a2.city AS permCity, MAX(c.reportDate) AS updatedDate
@@ -693,6 +697,11 @@ const indexFunctions = {
 						INNER JOIN mmchddb.ADDRESSES a1 ON p.caddressID = a1.addressID
 						INNER JOIN mmchddb.ADDRESSES a2 ON p.paddressID = a2.addressID
 						LEFT JOIN mmchddb.CASES c ON p.patientID = c.patientID
+						WHERE a1.city IN (SELECT a.city
+							FROM mmchddb.USERS u
+							JOIN mmchddb.ADDRESSES a
+							ON a.addressID = u.addressID
+							WHERE u.userID = '${req.query.userID}')
 						GROUP BY p.patientID;`);
 			}
 			res.status(200).send(match);
