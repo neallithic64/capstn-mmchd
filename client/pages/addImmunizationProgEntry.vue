@@ -971,87 +971,87 @@
                   <table v-if="dataSets[0]" id="datatable">
                     <tbody>
                       <template>
-						<tr>
-						  <th colspan="2">BCG</th>
-						  <td> <input v-if="loadedData[0].BCGdate != '' || action!='view'" v-model="dataSets[0].BCGdate" type="date" max="today" :disabled="loadedData[0].BCGdate != '' || inputEdit()"/> </td>
-						  <td> <span v-if="loadedData[0].BCGdate != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="IPentryComplete"/> COMPLETE </span> </td>
-						</tr>
-						<tr>
-						  <th rowspan="2"> HEPA B1</th>
-						  <th> w/in 24 hrs </th>
-						  <td> <input v-if="loadedData[0].HEPAwithdate != '' || action!='view'" v-model="dataSets[0].HEPAwithdate" type="date" max="today" :disabled="loadedData[0].HEPAwithdate != '' || inputEdit()"/> </td>
-						  <td rowspan="2"> <span v-if="loadedData[0].HEPAwithdate != '' && loadedData[0].HEPAmoredate != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="IPentryComplete"/> COMPLETE </span></td>
-						</tr>
-						<tr>
-						  <th>more than 24 hrs</th>
-						  <td> <input v-if="loadedData[0].HEPAmoredate != '' || action!='view'" v-model="dataSets[0].HEPAmoredate" type="date" max="today" :disabled="loadedData[0].HEPAmoredate != '' || inputEdit()"/> </td>
-						</tr>
-						<tr>
-						  <th rowspan="3"> OPV </th>
-						  <th> 1 </th>
-						  <td> <input v-if="loadedData[0].OPV1date != '' || action!='view'" v-model="dataSets[0].OPV1date" type="date" max="today" :disabled="loadedData[0].OPV1date != '' || inputEdit()"/> </td>
-						  <td rowspan="3"> <span v-if="loadedData[0].OPV1date != '' && loadedData[0].OPV2date != '' && loadedData[0].OPV3date != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="IPentryComplete"/> COMPLETE </span> </td>
-						</tr>
-						<tr>
-						  <th> 2 </th>
-						  <td> <input v-if="loadedData[0].OPV2date != '' || action!='view'" v-model="dataSets[0].OPV2date" type="date" max="today" :disabled="loadedData[0].OPV2date != '' || inputEdit()"/> </td>
-						</tr>
-						<tr>
-						  <th> 3 </th>
-						  <td> <input v-if="loadedData[0].OPV3date != '' || action!='view'" v-model="dataSets[0].OPV3date" type="date" max="today" :disabled="loadedData[0].OPV3date != '' || inputEdit()"/> </td>
-						</tr>
-						<tr>
-						  <th rowspan="3"> PENTA </th>
-						  <th> 1 </th>
-						  <td> <input v-if="loadedData[0].PENTA1date != '' || action!='view'" v-model="dataSets[0].PENTA1date" type="date" max="today" :disabled="loadedData[0].PENTA1date != '' || inputEdit()"/> </td>
-						  <td rowspan="3"> <span v-if="loadedData[0].PENTA1date != '' && loadedData[0].PENTA2date != '' && loadedData[0].PENTA3date != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="IPentryComplete"/> COMPLETE </span> </td>
-						</tr>
-						<tr>
-						  <th> 2 </th>
-						  <td> <input v-if="loadedData[0].PENTA2date != '' || action!='view'" v-model="dataSets[0].PENTA2date" type="date" max="today" :disabled="loadedData[0].PENTA2date != '' || inputEdit()"/> </td>
-						</tr>
-						<tr>
-						  <th> 3 </th>
-						  <td> <input v-if="loadedData[0].PENTA3date != '' || action!='view'" v-model="dataSets[0].PENTA3date" type="date" max="today" :disabled="loadedData[0].PENTA3date != '' || inputEdit()"/> </td>
-						</tr>
-						<tr>
-						  <th rowspan="3"> PCV </th>
-						  <th> 1 </th>
-						  <td> <input v-if="loadedData[0].PCV1date != '' || action!='view'" v-model="dataSets[0].PCV1date" type="date" max="today" :disabled="loadedData[0].PCV1date != '' || inputEdit()"/> </td>
-						  <td rowspan="3"> <span v-if="loadedData[0].PCV1date != '' && loadedData[0].PCV2date != '' && loadedData[0].PCV3date != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="IPentryComplete"/> </span> </td>
-						</tr>
-						<tr>
-						  <th> 2 </th>
-						  <td> <input v-if="loadedData[0].PCV2date != '' || action!='view'" v-model="dataSets[0].PCV2date" type="date" max="today" :disabled="loadedData[0].PCV2date != '' || inputEdit()"/> </td>
-						</tr>
-						<tr>
-						  <th> 3 </th>
-						  <td> <input v-if="loadedData[0].PCV3date != '' || action!='view'" v-model="dataSets[0].PCV3date" type="date" max="today" :disabled="loadedData[0].PCV3date != '' || inputEdit()"/> </td>
-						</tr>
-						<tr>
-						  <th rowspan="2">MCV</th>
-						  <th> MCV 1 (AMV)</th>
-						  <td> <input v-if="loadedData[0].MCV1date != '' || action!='view'" v-model="dataSets[0].MCV1date" type="date" max="today" :disabled="loadedData[0].MCV1date != '' || inputEdit()"/> </td>
-						  <td rowspan="2"> <span v-if="loadedData[0].MCV1date != '' && loadedData[0].MCV2date != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="IPentryComplete"/> COMPLETE </span> </td>
-						</tr>
-						<tr>
-						  <th> MCV 2 (MMR)</th>
-						  <td> <input v-if="loadedData[0].MCV2date != '' || action!='view'" v-model="dataSets[0].MCV2date" type="date" max="today" :disabled="loadedData[0].MCV2date != '' || inputEdit()"/> </td>
-						</tr>
-						<tr>
-						  <th rowspan="3"> Dengue </th>
-						  <th> 1 </th>
-						  <td> <input v-if="loadedData[0].Dengue1date != '' || action!='view'" v-model="dataSets[0].Dengue1date" type="date" max="today" :disabled="loadedData[0].Dengue1date != '' || inputEdit()"/> </td>
-						  <td rowspan="3"> <span v-if="loadedData[0].Dengue1date != '' && loadedData[0].Dengue2date != '' && loadedData[0].Dengue3date != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="IPentryComplete"/> COMPLETE </span> </td>
-						</tr>
-						<tr>
-						  <th> 2 </th>
-						  <td> <input v-if="loadedData[0].Dengue2date != '' || action!='view'" v-model="dataSets[0].Dengue2date" type="date" max="today" :disabled="loadedData[0].Dengue2date != '' || inputEdit()"/> </td>
-						</tr>
-						<tr>
-						  <th> 3 </th>
-						  <td> <input v-if="loadedData[0].Dengue3date != '' || action!='view'" v-model="dataSets[0].Dengue3date" type="date" max="today" :disabled="loadedData[0].Dengue3date != '' || inputEdit()"/> </td>
-						</tr>
+                        <tr>
+                          <th colspan="2">BCG</th>
+                          <td> <input v-if="loadedData[0].BCGdate != '' || action!='view'" v-model="dataSets[0].BCGdate" type="date" max="today" :disabled="loadedData[0].BCGdate != '' || inputEdit()"/> </td>
+                          <td> <span v-if="loadedData[0].BCGdate != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="IPentryComplete"/> COMPLETE </span> </td>
+                        </tr>
+                        <tr>
+                          <th rowspan="2"> HEPA B1</th>
+                          <th> w/in 24 hrs </th>
+                          <td> <input v-if="loadedData[0].HEPAwithdate != '' || action!='view'" v-model="dataSets[0].HEPAwithdate" type="date" max="today" :disabled="loadedData[0].HEPAwithdate != '' || inputEdit()"/> </td>
+                          <td rowspan="2"> <span v-if="loadedData[0].HEPAwithdate != '' && loadedData[0].HEPAmoredate != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="IPentryComplete"/> COMPLETE </span></td>
+                        </tr>
+                        <tr>
+                          <th>more than 24 hrs</th>
+                          <td> <input v-if="loadedData[0].HEPAmoredate != '' || action!='view'" v-model="dataSets[0].HEPAmoredate" type="date" max="today" :disabled="loadedData[0].HEPAmoredate != '' || inputEdit()"/> </td>
+                        </tr>
+                        <tr>
+                          <th rowspan="3"> OPV </th>
+                          <th> 1 </th>
+                          <td> <input v-if="loadedData[0].OPV1date != '' || action!='view'" v-model="dataSets[0].OPV1date" type="date" max="today" :disabled="loadedData[0].OPV1date != '' || inputEdit()"/> </td>
+                          <td rowspan="3"> <span v-if="loadedData[0].OPV1date != '' && loadedData[0].OPV2date != '' && loadedData[0].OPV3date != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="IPentryComplete"/> COMPLETE </span> </td>
+                        </tr>
+                        <tr>
+                          <th> 2 </th>
+                          <td> <input v-if="loadedData[0].OPV2date != '' || action!='view'" v-model="dataSets[0].OPV2date" type="date" max="today" :disabled="loadedData[0].OPV2date != '' || inputEdit()"/> </td>
+                        </tr>
+                        <tr>
+                          <th> 3 </th>
+                          <td> <input v-if="loadedData[0].OPV3date != '' || action!='view'" v-model="dataSets[0].OPV3date" type="date" max="today" :disabled="loadedData[0].OPV3date != '' || inputEdit()"/> </td>
+                        </tr>
+                        <tr>
+                          <th rowspan="3"> PENTA </th>
+                          <th> 1 </th>
+                          <td> <input v-if="loadedData[0].PENTA1date != '' || action!='view'" v-model="dataSets[0].PENTA1date" type="date" max="today" :disabled="loadedData[0].PENTA1date != '' || inputEdit()"/> </td>
+                          <td rowspan="3"> <span v-if="loadedData[0].PENTA1date != '' && loadedData[0].PENTA2date != '' && loadedData[0].PENTA3date != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="IPentryComplete"/> COMPLETE </span> </td>
+                        </tr>
+                        <tr>
+                          <th> 2 </th>
+                          <td> <input v-if="loadedData[0].PENTA2date != '' || action!='view'" v-model="dataSets[0].PENTA2date" type="date" max="today" :disabled="loadedData[0].PENTA2date != '' || inputEdit()"/> </td>
+                        </tr>
+                        <tr>
+                          <th> 3 </th>
+                          <td> <input v-if="loadedData[0].PENTA3date != '' || action!='view'" v-model="dataSets[0].PENTA3date" type="date" max="today" :disabled="loadedData[0].PENTA3date != '' || inputEdit()"/> </td>
+                        </tr>
+                        <tr>
+                          <th rowspan="3"> PCV </th>
+                          <th> 1 </th>
+                          <td> <input v-if="loadedData[0].PCV1date != '' || action!='view'" v-model="dataSets[0].PCV1date" type="date" max="today" :disabled="loadedData[0].PCV1date != '' || inputEdit()"/> </td>
+                          <td rowspan="3"> <span v-if="loadedData[0].PCV1date != '' && loadedData[0].PCV2date != '' && loadedData[0].PCV3date != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="IPentryComplete"/> </span> </td>
+                        </tr>
+                        <tr>
+                          <th> 2 </th>
+                          <td> <input v-if="loadedData[0].PCV2date != '' || action!='view'" v-model="dataSets[0].PCV2date" type="date" max="today" :disabled="loadedData[0].PCV2date != '' || inputEdit()"/> </td>
+                        </tr>
+                        <tr>
+                          <th> 3 </th>
+                          <td> <input v-if="loadedData[0].PCV3date != '' || action!='view'" v-model="dataSets[0].PCV3date" type="date" max="today" :disabled="loadedData[0].PCV3date != '' || inputEdit()"/> </td>
+                        </tr>
+                        <tr>
+                          <th rowspan="2">MCV</th>
+                          <th> MCV 1 (AMV)</th>
+                          <td> <input v-if="loadedData[0].MCV1date != '' || action!='view'" v-model="dataSets[0].MCV1date" type="date" max="today" :disabled="loadedData[0].MCV1date != '' || inputEdit()"/> </td>
+                          <td rowspan="2"> <span v-if="loadedData[0].MCV1date != '' && loadedData[0].MCV2date != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="IPentryComplete"/> COMPLETE </span> </td>
+                        </tr>
+                        <tr>
+                          <th> MCV 2 (MMR)</th>
+                          <td> <input v-if="loadedData[0].MCV2date != '' || action!='view'" v-model="dataSets[0].MCV2date" type="date" max="today" :disabled="loadedData[0].MCV2date != '' || inputEdit()"/> </td>
+                        </tr>
+                        <tr>
+                          <th rowspan="3"> Dengue </th>
+                          <th> 1 </th>
+                          <td> <input v-if="loadedData[0].Dengue1date != '' || action!='view'" v-model="dataSets[0].Dengue1date" type="date" max="today" :disabled="loadedData[0].Dengue1date != '' || inputEdit()"/> </td>
+                          <td rowspan="3"> <span v-if="loadedData[0].Dengue1date != '' && loadedData[0].Dengue2date != '' && loadedData[0].Dengue3date != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="IPentryComplete"/> COMPLETE </span> </td>
+                        </tr>
+                        <tr>
+                          <th> 2 </th>
+                          <td> <input v-if="loadedData[0].Dengue2date != '' || action!='view'" v-model="dataSets[0].Dengue2date" type="date" max="today" :disabled="loadedData[0].Dengue2date != '' || inputEdit()"/> </td>
+                        </tr>
+                        <tr>
+                          <th> 3 </th>
+                          <td> <input v-if="loadedData[0].Dengue3date != '' || action!='view'" v-model="dataSets[0].Dengue3date" type="date" max="today" :disabled="loadedData[0].Dengue3date != '' || inputEdit()"/> </td>
+                        </tr>
                       </template>
                     </tbody>
                   </table>
@@ -1305,11 +1305,11 @@ export default {
   async fetch() {
     // needs checking if there's filtering needed for this one, assume yes first
     this.patients = (await axios.get('http://localhost:8080/api/getPatients', {
-	  params: {
-	    userID: this.$auth.user.userID,
-		userOnly: false
-	  }
-	})).data;
+      params: {
+        userID: this.$auth.user.userID,
+        userOnly: false
+      }
+    })).data;
   },
   computed: {},
   mounted() {
@@ -1369,10 +1369,10 @@ export default {
       if (this.formData.patient.ageNo<0) this.formData.patient.ageNo = 0;
     },
     async save() {
-	  const result = await axios.post('http://localhost:8080/api/newImmuProgEntry', {
-	    formData: this.formData,
-		immunisationData: this.loadedData[0],
-		TCLID: this.$route.query.TCLID
+      const result = await axios.post('http://localhost:8080/api/newImmuProgEntry', {
+        formData: this.formData,
+        immunisationData: this.loadedData[0],
+        TCLID: this.$route.query.TCLID
       });
       if (result.status === 200) {
         // alert('CRF case submitted!');
@@ -1382,7 +1382,7 @@ export default {
         console.log(result);
         this.$toast.error('Something went wrong!', {duration: 4000, icon: 'error'});
       }
-	  return result.data;
+      return result.data;
     },
     saveData() {
       this.loadedData[0].BCGdate = this.dataSets[0].BCGdate;
@@ -1422,9 +1422,9 @@ export default {
         if (this.patientExist || (this.pageDone[1] && this.pageDone[2] && this.pageColor[1] && this.Color[2])) {
           this.saveData();
           const res = await this.save();
-		  console.log(res);
+          console.log(res);
           // redirect to view page with update action
-		  window.location.href = "/viewImmunizationProgEntry?action=update&patientID=" + res.patientID;
+          window.location.href = "/viewImmunizationProgEntry?action=update&patientID=" + res.patientID;
         }
         else {
           // alert('Please fill up the required fields');
