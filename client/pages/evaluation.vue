@@ -318,6 +318,7 @@ export default {
     for (let i = 0; i < rows.length; i++) {
       this.classification[rows[i].class] = rows[i].definition;
     }
+    // below has wrong URL. don't forget to change the link. needs to retrieve all DRUs instead
     rows = (await axios.get('http://localhost:8080/api/getPatients')).data;
     this.DRUs = rows;
     rows = (await axios.get('http://localhost:8080/api/getLabUsers')).data;
@@ -689,12 +690,6 @@ select {
   height: 25px;
   width: 25px;
   margin: auto 5px auto 0;
-}
-
-:disabled {
-  background: #ffffff;
-  border: 1px solid #c4c4c4;
-  color:#c4c4c4;
 }
 
 </style>

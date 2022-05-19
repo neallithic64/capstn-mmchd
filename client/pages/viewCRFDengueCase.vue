@@ -68,7 +68,7 @@
         <form v-if="pageNum == 1 || isPrint" id="dengue1" type="submit">
           <div id="case-report-form" class="center">
             <h2 id="form-header" class="viewCRFDCh2">
-              {{ Object.values(disease.formNames)[1] }}
+              {{ Object.values(disease.formNames)[pageNum] }}
             </h2>
 
             <div class="field-row-straight">
@@ -421,7 +421,7 @@
 
         <form v-if="pageNum == 2 || isPrint" id="dengue2" type="submit">
           <div id="case-report-form" class="center">
-            <h2 id="form-header" class="viewCRFDCh2"> {{ Object.values(disease.formNames)[2] }} </h2>
+            <h2 id="form-header" class="viewCRFDCh2"> {{ Object.values(disease.formNames)[pageNum] }} </h2>
 
             <div class="field-row">
               <div class="thirtyDesk" style="display: inline-flex; flex-direction: row">
@@ -943,7 +943,7 @@
 
         <form v-if="pageNum == 3 || isPrint" id="dengue3" type="submit">
           <div id="case-report-form" class="center">
-            <h2 id="form-header" class="viewCRFDCh2"> {{ Object.values(disease.formNames)[3] }} </h2>
+            <h2 id="form-header" class="viewCRFDCh2"> {{ Object.values(disease.formNames)[pageNum] }} </h2>
 
             <div class="field-row">
               <div class="thirtyDesk" style="display: inline-flex; flex-direction: row; width:22%">
@@ -1005,7 +1005,7 @@
         <form v-if="pageNum == 4 || isPrint" id="dengue4" type="submit">
           <div id="case-investigation-form" class="center">
             <h2 id="form-header" class="viewCRFDCh2">
-              {{ Object.values(disease.formNames)[4] }}
+              {{ Object.values(disease.formNames)[pageNum] }}
             </h2>
 
             <div
@@ -1058,7 +1058,7 @@
         <form v-if="pageNum == 5 || isPrint" id="dengue5" type="submit">
           <div id="case-investigation-form" class="center">
             <h2 id="form-header" class="viewCRFDCh2" style="display: inline-flex;">
-              {{ Object.values(disease.formNames)[5] }}
+              {{ Object.values(disease.formNames)[pageNum] }}
               <ul
                 v-show="!isPrint && !editLab && !editOutcome"
                 class="CRFEdit"
@@ -1150,7 +1150,7 @@
         <form v-if="pageNum == 6 || isPrint" id="dengue6" type="submit">
           <div id="case-investigation-form" class="center">
             <h2 id="form-header" class="viewCRFDCh2" style="display: inline-flex;">
-              {{ Object.values(disease.formNames)[6] }}
+              {{ Object.values(disease.formNames)[pageNum] }}
               <!-- ADD this in ul v-show below: 
                 && $auth.user.userID === formData.cases.investigatorLab -->
               <ul
@@ -1375,7 +1375,7 @@
         <form v-if="pageNum == 7 || isPrint" id="dengue7" type="submit">
           <div id="case-investigation-form" class="center">
             <h2 id="form-header" class="viewCRFDCh2">
-              {{ Object.values(disease.formNames)[7] }}
+              {{ Object.values(disease.formNames)[pageNum] }}
             </h2>
 
             <div
@@ -2683,5 +2683,39 @@ hr {
 .hide {
   display: none;
 }
+
+
+.overlay {
+  display: block;
+  z-index: 11;
+  margin: 0px;
+  padding: 10% 30% 20%;
+  width: -webkit-fill-available;
+  height: -webkit-fill-available;
+  /* background: gray; */
+  /* opacity: 55%; */
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: rgba(100, 100, 100, 0.4);
+  /* border: 100px solid rgba(100, 100, 100, 0.4); */
+}
+
+@media only screen and (max-width:1000px) {
+  .overlay  {
+    padding: 20% 15%;
+  }
+}
+
+.overlay-form {
+  padding: 30px;
+  border-radius: 40px;
+  background: white;
+  /* width: -webkit-fill-available;
+  height: -webkit-fill-available; */
+  overflow-y: auto;
+  box-shadow: 1px 4px 8px rgb(0 0 0 / 40%);
+}
+
 </style>
 

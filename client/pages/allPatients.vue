@@ -109,7 +109,10 @@ export default {
       this.$toast.show('Loading...', {className: 'blink', icon: 'hourglass_top'});
     }
     const rows = (await axios.get('http://localhost:8080/api/getPatients', {
-      params: { userID: this.$auth.user.userID }
+      params: {
+        userID: this.$auth.user.userID,
+        userOnly: true
+      }
     })).data;
     for (let i = 0; i < rows.length; i++) {
       rows[i].patientName = rows[i].lastName + ", " + rows[i].firstName + " " + rows[i].midName;

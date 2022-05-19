@@ -1,93 +1,76 @@
 <template>
-  <div id="addCRFDengue" class="addCRFD-body">
+  <div id="viewCRF" class="viewCRFDCbody">
     <!--Top Bar of the screen-->
     <TopNav />
-
-    <!--Everything below = main screen-->
-    <div class="addCRFD-caseContainer">
-      <!--SUMMARY: left side-->
-      <div class="addCRFD-formSummary-container">
-        <div class="addCRFD-formSummary">
-          <button id="login-submit" type="submit" style="width: 210px; text-align: left" @click="isOpen = !isOpen">
-            <h2 style="font-weight: 600">Case Registration Form</h2>
-          </button>
-
-          <div v-if="isOpen" class="form-contents">
-            <div v-for="(value, name, i) in disease.formNames" :key="i">
-              <!-- <div v-if="i > 1" :id="name" :class="formColor(i - 1)"> -->
-              <button :id="name" :class="formColor(i)" @click="move(i)">
-                {{ i }}.{{ value }}
-              </button>
+    <div ref="content" class="viewCRF-container">
+      <div class="viewCRF-details" style="align-text: left">
+        <div class="CRFnumbers">
+          <h1 class="viewCRFDCh1" style="margin: -10px 0">Case No. {{ formData.cases.caseID }}</h1>
+           <h2 class="viewCRFDCh2" style="margin-top: -1px">
+            Patient No. <a :href="'/viewPatient?patientID=' + formData.patient.patientID" class="patientlink"> {{ formData.patient.patientID }} </a>
+          </h2>
+        </div>
+        <div class="CRFstatus" style="align-text: right">
+          <span style="display: inline-flex; align-items: center"
+            >Case Classification:&nbsp;
+            <div v-show="!editStatus" class="CRFActionButtons">
+              <h1 class="viewCRFDCh1" style="line-height: 1; align-items: center">
+                {{ formData.cases.caseLevel }}
+              </h1>
+              <ul
+                v-show="!isPrint"
+                class="CRFEdit"
+                @click="popup()"
+              >
+                <img src="~/assets/img/pen.png" />
+              </ul>
             </div>
+          </span>
+          <div v-show="!editStatus && !isPrint" class="CRFActionButtons">
+            <img
+              src="~/assets/img/pdf.png"
+              class="printCaseButton"
+              @click="downloadPDF"
+            />
           </div>
         </div>
-        <!-- <div>All info: {{ formData }}</div> -->
       </div>
-
-      <!--Everything in the right-->
-      <div class="faddCRFD-formSectionContainer">
-        <!--Name of form-->
-        <div class="addCRFD-diseaseName">
-          <h1 style="margin: 0; font-weight: 600; font-size: 24px">
-            {{ disease.name }}
-          </h1>
-          <p style="margin: 0 5px 5px 5px; font-size: 16px">
-            Please fill up the form with complete and correct information
-          </p>
+      <div class="viewCRF-details" style="align-text: left">
+        <div class="CIFnumbers">
+          <p>DRU City: <b class="viewCRFDChr"> {{DRUData.druCity}} </b></p>
+          <p>DRU Name: <b class="viewCRFDChr"> {{DRUData.druName}} </b></p>
+          <p>DRU Type: <b class="viewCRFDChr"> {{DRUData.druType}} </b></p>
+          <p>DRU Address: <b class="viewCRFDChr"> {{DRUData.druCity + ", " + DRUData.druBrgy + ", " + DRUData.druHouseStreet}} </b></p>
         </div>
+        <div class="CRFstatus" style="align-text: right">
+          <p>Week No: <b class="viewCRFDChr"> {{ CRFData.year }}-{{ CRFData.week }} </b> </p>
+          <p>Reported Date: <b class="viewCRFDChr">{{ formData.cases.reportDate }}</b></p>
+          <p>Last Updated: <b class="viewCRFDChr">{{ dateLastUpdated }}</b></p>
+        </div>
+      </div>
+      <div v-show="!isPrint" class="CRF-SummaryContainer">
+        <ul
+          v-for="(value, name, i) in disease.formNames"
+          v-show="i > 0"
+          :key="i"
+          :class="formListClass(i)"
+          @click="move(i)"
+        >
+          {{
+            i
+          }}.{{
+            value
+          }}
+        </ul>
+      </div>
+      <div class="viewCRFform-component">
 
-        <!--Form itself-->
-        <div class="addCRFD-formComponent">
-          <form v-if="pageNum == 0" id="dengue0" type="submit">
-            <div id="case-report-form" class="center">
-              <h2 id="addCRFD-formHeader">
-                {{ Object.values(disease.formNames)[pageNum] }}
-              </h2>
-
-              <!-- <p style="margin-bottom: -20px">Search for Patient:</p> -->
-
-              <div class="container">
-                <div class="bar">
-                  <input
-                    id="input"
-                    class="searchbar"
-                    type="search"
-                    autocomplete="off"
-                    spellcheck="false"
-                    role="combobox"
-                    aria-live="off"
-                    placeholder="Search Patient"
-                    @keyup="searchPatient"
-                  />
-                  <div v-if="patientResult.length" class="searchPatientValues">
-                    <div v-for="(patient, i) in patientResult" :key="i" class="searchResult">
-                      <!-- <img class="searchPersonIcon" /> -->
-                      <div class="searchResultInfo" @click="autoFillPatient(patient)">
-                        <div class="searchPerson">
-                          {{ patient.firstName + ' ' + patient.midName + ' ' + patient.lastName }}
-                        </div>
-                        <div class="searchAddress">
-                          {{ patient.currHouseStreet + ', ' + patient.currBrgy + ', ' + patient.currCity }}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </form>
-
-          <form v-if="pageNum == 1 || pageNum == Object.keys(disease.formNames).length" id="dengue1" type="submit">
+        <form v-if="pageNum == 1 || isPrint" id="cholera1" type="submit">
             <div id="case-report-form" class="center">
               <div style="display:flex; flex-direction:row; justify-content: space-between;">
                 <h2 id="addCRFD-formHeader">
                   {{ Object.values(disease.formNames)[pageNum] }}
                 </h2>
-                <div v-if="patientExist && pageNum == 1" style="display:inline-flex; flex-direction:row;">
-                  <a class="patient-click" @click="clearPatientInfo()">Clear Patient</a>
-                    <div style="color:gray;">&nbsp; | &nbsp;</div>
-                  <a :href="'/patient?patientID='+formData.patient.patientID" class="patient-click" target="_blank">Edit Patient</a>
-                </div>
               </div>
 
               <div class="field-row-straight">
@@ -389,21 +372,6 @@
                 </div>
               </div>
 
-              <div class="field-row-straight">
-                <div class="field-row-straight">
-                  <input
-                    id="sameAddress"
-                    v-model="sameAddress"
-                    class="input-radio "
-                    type="checkbox"
-                    :disabled="inputEdit()"
-                    style="width: auto; margin:0 5px;"
-                    @change="getAddress()"
-                  />
-                  <label for="sameAddress" style="font-size:12px"> Same permanent address as current address </label>
-                </div>
-              </div>
-
               <div class="field-row">
                 <div class="field">
                   <label for="permAddress"> Permanent Address: Street / House No. </label>
@@ -426,7 +394,7 @@
                     name="permCity"
                     class="input-form-field"
                     :disabled="inputEdit()"
-                    @change="getLocBrgyList(formData.patient.permCity,'permBarangay')"
+					@change="getLocBrgyList(formData.patient.permCity,'permBarangay')"
                   >
                   <option v-for="(city, i) in cityList" :key=i>{{city}}</option>
                   </select>
@@ -500,9 +468,9 @@
               </div>
             </div>
           </form>
-          <hr v-if="pageNum == Object.keys(disease.formNames).length" class="addCRF-hr" />
+        <hr v-if="isPrint" class="viewCRFDChr"/>
 
-          <form v-if="pageNum == 2 || pageNum == Object.keys(disease.formNames).length" id="dengue2" type="submit">
+        <form v-if="pageNum == 2 || pageNum == Object.keys(disease.formNames).length" id="leptospirosis2" type="submit">
             <div id="case-report-form" class="center">
               <h2 id="addCRFD-formHeader"> {{ Object.values(disease.formNames)[pageNum] }} </h2>
 
@@ -620,17 +588,31 @@
                     
                   </div>
               </div>
-              <div class="field-row" style="width:50%">
-                <div class="dateOnset-field field">
-                  <label for="dateOnset" class="required">
-                    Date onset of Illness (first Symptom/s)
+              <div class="field-row">
+                <div class="dateOnset-field field" style="width:30%">
+                  <label for="exposure" class="required">
+                    Exposure
+                  </label>
+                  <select
+                      id="exposure"
+                      v-model="formData.caseData.exposure"
+                      name="exposure"
+                      :disabled="inputEdit()"
+                    >
+                      <option value="Infected Animals">Infected Animals</option>
+                      <option value="Animal Urine">Animal Urine</option>
+                      <option value="Contaminated Water">Contaminated Water</option>
+                    </select>
+                </div>
+                <div class="dateOnset-field field" style="width:30%; margin-right:50px">
+                  <label for="exposurePlace" class="required">
+                    Exposure Place
                   </label>
                   <input
-                    id="dateAdmitted"
-                    v-model="formData.cases.dateOnset"
-                    :max="today"
+                    id="exposurePlace"
+                    v-model="formData.cases.exposurePlace"
                     class="input-form-field"
-                    type="date"
+                    type="text"
                     :disabled="inputEdit()"
                     :class="isRequired()"
                     required
@@ -1107,221 +1089,117 @@
               </div>
             </div>
           </form>
-          <hr v-if="pageNum == Object.keys(disease.formNames).length" class="addCRF-hr"/>
+        <hr v-if="isPrint" class="viewCRFDChr"/>
 
-          <form v-if="pageNum == 3 || pageNum == Object.keys(disease.formNames).length" id="dengue3" type="submit">
-            <div id="case-report-form" class="center">
-              <h2 id="addCRFD-formHeader"> {{ Object.values(disease.formNames)[pageNum] }} </h2>
+        <form v-if="pageNum == 3 || isPrint" id="cholera3" type="submit">
+          <div id="case-investigation-form" class="center">
+            <h2 id="form-header" class="viewCRFDCh2" style="display: inline-flex;">
+              {{ Object.values(disease.formNames)[pageNum] }}
+              <ul
+                v-show="!isPrint && !editLab && !editOutcome"
+                class="CRFEdit"
+                @click="editOutcome=true"
+              >
+                <img src="~/assets/img/pen.png" />
+              </ul>
+            </h2>
 
-              <div class="field-row">
-                <div class="thirtyDesk" style="display: inline-flex; flex-direction: row; width:22%">
-                  <div class=" field">
-                    <label class="required"> Vaccinated with Dengue Vaccine </label>
-                    <div style="display: inline-flex; align-items: center">
-                      <input
-                        id="noVaccine"
-                        v-model="formData.caseData.vaccine"
-                        value="No"
-                        class="input-radio"
-                        name="patientConsulted"
-                        type="radio"
-                        :disabled="inputEdit()"
-                        :class="isRequired()"
-                        required
-                      />
-                      <label for="noVaccine"> No </label>
-                    </div>
-                    <div style="display: inline-flex; align-items: center">
-                      <input
-                        id="yesVaccine"
-                        v-model="formData.caseData.vaccine"
-                        value="Yes"
-                        class="input-radio"
-                        name="patientConsulted"
-                        type="radio"
-                        :disabled="inputEdit()"
-                        :class="isRequired()"
-                        required
-                      />
-                      <label for="yesVaccine"> Yes </label>
-                    </div>
+            <div class="field-row">
+              <div class="field">
+                <label class="required"> Please select the outcome </label>
+                <div style="display: inline-flex; flex-display: row; margin-right: 50px;">
+                  <div style="display: inline-flex; align-items: center; margin-right: 30px;">
+                    <input
+                      id="Alive"
+                      v-model="newOutcome.outcome"
+                      value="Alive"
+                      class="input-radio"
+                      name="outcome"
+                      type="radio"
+                      :disabled="inputEdit()"
+                      :class="isRequired()"
+                      required
+                    />
+                    <label for="Alive"> Alive </label>
+                  </div>
+
+                  <div style="display: inline-flex; align-items: center; margin-right: 30px;">
+                    <input
+                      id="Dead"
+                      v-model="newOutcome.outcome"
+                      value="Dead"
+                      class="input-radio"
+                      name="outcome"
+                      type="radio"
+                      :disabled="inputEdit()"
+                      :class="isRequired()"
+                      required
+                    />
+                    <label for="Dead"> Dead </label>
                   </div>
                 </div>
-                <div v-if="formData.caseData.vaccine==='Yes'" class="field" style="width:39%">
-                  <label for="vaccineFirstDate" class="required">
-                    Date First Vaccinated
-                  </label>
-                  <input
-                    id="vaccineFirstDate"
-                    v-model="formData.caseData.vaccineFirstDate"
-                    :max="today"
-                    class="input-form-field"
-                    type="date"
-                    :disabled="inputEdit()"
-                    :class="isRequired()"
-                    required
-                  />
-                </div>
-                <div v-if="formData.caseData.vaccine==='Yes'" class="field" style="width:39%">
-                  <label for="vaccineLastDate" class="required">
-                    Date Last Vaccinated
-                  </label>
-                  <input
-                    id="vaccineLastDate"
-                    v-model="formData.caseData.vaccineLastDate"
-                    :max="today"
-                    class="input-form-field"
-                    type="date"
-                    :disabled="inputEdit()"
-                    :class="isRequired()"
-                    required
-                  />
-                </div>
-              </div>
-            </div>
-          </form>
-          <hr v-if="pageNum == Object.keys(disease.formNames).length" class="addCRF-hr"/>
 
-          <form v-if="pageNum == 4 || pageNum == Object.keys(disease.formNames).length" id="dengue4" type="submit">
-            <div id="case-investigation-form" class="center">
-              <h2 id="addCRFD-formHeader">
-                {{ Object.values(disease.formNames)[pageNum] }}
-              </h2>
-
-              <div class="field-row" style="display: inline-flex; margin-bottom: -1 px">
-                <div class="field">
-                  <label class="required">
-                    Please select the clinical classification
-                  </label>
-                  <div>
-                    <!-- <div style="display: inline-flex; flex-direction: column"> -->
-                    <!-- CLINICAL CLASSIFICATION -->
-                    <div>
-                      <div class="collpaseWrapper">
-                        <ul v-for="(value, i) in clinicalClassification" :key="i" style="displayLinline-flex">
-                          <li>
-                            <input :id="value.name" type="checkbox" class="collapseInput"/>
-                            <label :for="value.name" class="collapseLabel">
-                              <input
-                                :id="value.name"
-                                v-model="formData.caseData.clinicalClassification"
-                                :value="value.name"
-                                class="input-checkbox"
-                                name="clinicalClassification"
-                                type="radio"
-                                :disabled="inputEdit()"
-                                :class="isRequired()"
-                                required
-                              />
-                              {{ value.name }}
-                            </label>
-                            <ul>
-                              <li style="padding-bottom:5px;">{{value.description}}</li>
-                              <ul style="padding-bottom:5px;background: white;">
-                                <li v-for="(symptom, j) in clinicalClassification[i].symptoms" :key="j"
-                                  style="padding:0px 25px 5px" class="listBullet">
-                                  {{ symptom }}</li>
-                              </ul>
-                            </ul>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
+                <div v-if="newOutcome.outcome == 'Dead'" class="field-row-straight">
+                  <div class="field" style="margin-left: 95px">
+                    <label for="dateDied" class="required"> Date died </label>
+                    <input
+                      id="dateDied"
+                      v-model="newOutcome.dateDied"
+                      class="input-form-field"
+                      style="width: 175px"
+                      type="date"
+                      :disabled="inputEdit()"
+                      :class="isRequired()"
+                      required
+                    />
                   </div>
                 </div>
               </div>
             </div>
-          </form>
-          <hr v-if="pageNum == Object.keys(disease.formNames).length" class="addCRF-hr"/>
 
-          <form v-if="pageNum == 5 || pageNum == Object.keys(disease.formNames).length" id="dengue5" type="submit">
-            <div id="case-investigation-form" class="center">
-              <h2 id="addCRFD-formHeader">
-                {{ Object.values(disease.formNames)[pageNum] }}
-              </h2>
-
-              <div class="field-row">
-                <div class="field">
-                  <label class="required"> Please select the outcome </label>
-                  <div style="display: inline-flex; flex-display: row; margin-right: 50px;">
-                    <div style="display: inline-flex; align-items: center; margin-right: 30px;">
-                      <input
-                        id="Alive"
-                        v-model="formData.caseData.outcome"
-                        value="Alive"
-                        class="input-radio"
-                        name="outcome"
-                        type="radio"
-                        :disabled="inputEdit()"
-                        :class="isRequired()"
-                        required
-                      />
-                      <label for="Alive"> Alive </label>
-                    </div>
-
-                    <div style="display: inline-flex; align-items: center; margin-right: 30px;">
-                      <input
-                        id="Dead"
-                        v-model="formData.caseData.outcome"
-                        value="Dead"
-                        class="input-radio"
-                        name="outcome"
-                        type="radio"
-                        :disabled="inputEdit()"
-                        :class="isRequired()"
-                        required
-                      />
-                      <label for="Dead"> Dead </label>
-                    </div>
-                  </div>
-
-                  <div v-if="formData.caseData.outcome == 'Dead'" class="field-row-straight">
-                    <div class="field" style="margin-left: 95px">
-                      <label for="dateDied" class="required"> Date died </label>
-                      <input
-                        id="dateDied"
-                        v-model="formData.caseData.dateDied"
-                        :max="today"
-                        class="input-form-field"
-                        style="width: 175px"
-                        type="date"
-                        :disabled="inputEdit()"
-                        :class="isRequired()"
-                        required
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="field-row-straight">
-                <div class="field">
-                  <label for="finalDiagnosis" class="required">
-                    Other Remarks
-                  </label>
-                  <input
-                    id="finalDiagnosis"
-                    v-model="formData.caseData.finalDiagnosis"
-                    class="input-form-field"
-                    style="width: 50%"
-                    type="text"
-                    :disabled="inputEdit()"
-                    :class="isRequired()"
-                    required
-                  />
-                </div>
+            <div class="field-row-straight">
+              <div class="field">
+                <label for="finalDiagnosis" class="required">
+                  Other Remarks
+                </label>
+                <input
+                  id="finalDiagnosis"
+                  v-model="newOutcome.finalDiagnosis"
+                  class="input-form-field"
+                  style="width: 50%"
+                  type="text"
+                  :disabled="inputEdit()"
+                  :class="isRequired()"
+                  required
+                />
               </div>
             </div>
-          </form>
-          <hr v-if="pageNum == Object.keys(disease.formNames).length" class="addCRF-hr"/>
+            <div v-show="editOutcome" style="margin: -10px 10 5px; margin-left: auto;text-align: -webkit-right;">
+              <button class="back-button" type="button" @click="editPatientOutcome('cancel')">
+                Cancel </button>
+              <button class="next-button" type="button" @click="editPatientOutcome('save')">
+                Save </button>
+            </div>
+          </div>
+        </form>
+        <hr v-if="isPrint" class="viewCRFDChr"/>
 
-          <form v-if="pageNum == 6 || pageNum == Object.keys(disease.formNames).length" id="dengue6" type="submit">
-            <div id="case-investigation-form" class="center">
-              <h2 id="addCRFD-formHeader">
-                {{ Object.values(disease.formNames)[pageNum] }}
-              </h2>
+        <form v-if="pageNum == 4 || isPrint" id="cholera4" type="submit">
+          <div id="case-investigation-form" class="center">
+            <h2 id="form-header" class="viewCRFDCh2" style="display: inline-flex;">
+              {{ Object.values(disease.formNames)[pageNum] }}
+              <!-- ADD this in ul v-show below: 
+                && $auth.user.userID === formData.cases.investigatorLab -->
+              <ul
+                v-show="!isPrint && !editLab && !editOutcome"
+                class="CRFEdit"
+                @click="editLab=true"
+              >
+                <img src="~/assets/img/pen.png" />
+              </ul>
+            </h2>
 
-              <div class="vaccine-field field">
+            <div class="vaccine-field field">
                 <label class="required" style="margin-right: 50px">
                   Do you have the lab result?
                 </label>
@@ -1329,7 +1207,7 @@
                   <div class="center-center">
                     <input
                       id="noLabTest"
-                      v-model="hasLabTest"
+                      v-model="newLabData.labTestStatus"
                       value="No"
                       class="input-radio"
                       name="labTest"
@@ -1343,7 +1221,7 @@
                   <div class="center-center" style="margin: 0 20px">
                     <input
                       id="processingLabTest"
-                      v-model="hasLabTest"
+                      v-model="newLabData.labTestStatus"
                       value="Processing"
                       class="input-radio"
                       name="labTest"
@@ -1357,7 +1235,7 @@
                   <div class="center-center" style="margin: 0 20px">
                     <input
                       id="yesLabTest"
-                      v-model="hasLabTest"
+                      v-model="newLabData.labTestStatus"
                       value="Yes"
                       class="input-radio"
                       name="labTest"
@@ -1371,11 +1249,11 @@
                 </div>
               </div>
 
-              <div v-show="hasLabTest==='No'">
+              <div v-show="newLabData.labTestStatus==='No'">
                 <div class="name-field" style="width:50%">
                   <label for="investigatorLab" class="required"> Choose Lab to forward the case to </label>
                   <select id="investigatorLab" 
-                      v-model="formData.cases.investigatorLab" 
+                      v-model="newLabData.investigatorLab" 
                       name="investigatorLab" 
                       :disabled="inputEdit()"
                       class="input-form-field "
@@ -1386,169 +1264,75 @@
                 </div>
               </div>
 
-              <div v-show="hasLabTest==='Yes'" style="margin-left:7px;">
-                <!-- <div class="field" style="display: inline-flex; flex-direction: row">
-                  <label for="labSpecimen" class="required">
-                    Please select the specimen collected with the following information
-                  </label>
-                  <select id="labSpecimen" v-model="formData.caseData.labSpecimen" name="labSpecimen" style="width: 300px" :disabled="inputEdit()">
-                    <option value="Serum">Serum</option>
-                    <option value="Dried Blood Spot">Dried Blood Spot</option>
-                    <option value="Oropharyngeal">Oropharyngeal / Nasopharyngeal Swab</option>
-                  </select>
-                </div> -->
+              <div v-show="newLabData.labTestStatus==='Yes'" style="margin-left:7px;">
                 <div class="field-row-straight" style="display: inline-flex; flex-direction: row">
-                  <div style="width:10%; align-self:center;font-size:20px;font-weight:500">
-                    <label for="labSpecimen">
-                      NS1
-                    </label>
-                  </div>
-                  <div style="width:40%" class="field">
-                    <label for="ns1Date">
-                      Date done
-                    </label>
-                    <input
-                      id="ns1Date"
-                      v-model="formData.caseData.ns1Date"
-                      :max="today"
-                      class="input-form-field"
-                      type="date"
-                      :disabled="inputEdit()"
-                    />
-                  </div>
-                  <div style="width:51%" class="field">
-                    <label for="ns1Result">
-                      Result
+                  <div style="width:30%" class="field">
+                    <label for="labTestType" class="required">
+                      Lab Test done
                     </label>
                     <select
-                      id="ns1Result"
-                      v-model="formData.caseData.ns1Result"
-                      name="ns1Result"
+                      id="labTestType"
+                      v-model="newLabData.labTestType"
+                      name="labTestType"
                       :disabled="inputEdit()"
+                      class="input-form-field "
+                      :class="isRequired()"
+                      required
                     >
-                      <option value="Positive">Positive</option>
-                      <option value="Negative">Negative</option>
-                      <option value="Equivocal">Equivocal</option>
-                      <option value="Pending Result">Pending Result</option>
+                      <option value="RDT">RDT</option>
+                      <option value="MAT">MAT</option>
+                      <option value="PCR">PCR</option>
                     </select>
                   </div>
-                </div>
-                <div class="field-row-straight" style="display: inline-flex; flex-direction: row">
-                  <div style="width:10%; align-self:center;font-size:20px;font-weight:500">
-                    <label for="labSpecimen">
-                      IgG ELISA
-                    </label>
-                  </div>
-                  <div style="width:40%" class="field">
-                    <label for="iggDate">
-                      Date done
+                  <div style="width:30%" class="field">
+                    <label for="labTestCollectDate" class="required">
+                      Date Collected
                     </label>
                     <input
-                      id="iggDate"
-                      v-model="formData.caseData.iggDate"
+                      id="labTestCollectDate"
+                      v-model="newLabData.labTestCollectDate"
                       :max="today"
                       class="input-form-field"
                       type="date"
                       :disabled="inputEdit()"
+                      :class="isRequired()"
+                      required
                     />
                   </div>
-                  <div style="width:51%" class="field">
-                    <label for="iggResult">
-                      Result
+                  <div style="width:30%" class="field">
+                    <label for="labTestResult" class="required">
+                      Stool Culture Result
                     </label>
                     <select
-                      id="iggResult"
-                      v-model="formData.caseData.iggResult"
-                      name="iggResult"
+                      id="labTestResult"
+                      v-model="newLabData.labTestResult"
+                      name="labTestResult"
                       :disabled="inputEdit()"
+                      class="input-form-field "
+                      :class="isRequired()"
+                      required
                     >
                       <option value="Positive">Positive</option>
                       <option value="Negative">Negative</option>
-                      <option value="Equivocal">Equivocal</option>
                       <option value="Pending Result">Pending Result</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="field-row-straight" style="display: inline-flex; flex-direction: row">
-                  <div style="width:10%; align-self:center;font-size:20px;font-weight:500">
-                    <label for="igmDate">
-                      IgM ELISA
-                    </label>
-                  </div>
-                  <div style="width:40%" class="field">
-                    <label for="igmDate">
-                      Date done
-                    </label>
-                    <input
-                      id="igmDate"
-                      v-model="formData.caseData.igmDate"
-                      :max="today"
-                      class="input-form-field"
-                      type="date"
-                      :disabled="inputEdit()"
-                    />
-                  </div>
-                  <div style="width:51%" class="field">
-                    <label for="igmResult">
-                      Result
-                    </label>
-                    <select
-                      id="igmResult"
-                      v-model="formData.caseData.igmResult"
-                      name="igmResult"
-                      :disabled="inputEdit()"
-                    >
-                      <option value="Positive">Positive</option>
-                      <option value="Negative">Negative</option>
-                      <option value="Equivocal">Equivocal</option>
-                      <option value="Pending Result">Pending Result</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="field-row-straight" style="display: inline-flex; flex-direction: row">
-                  <div style="width:10%; align-self:center;font-size:20px;font-weight:500">
-                    <label for="pcrDate">
-                      PCR
-                    </label>
-                  </div>
-                  <div style="width:40%" class="field">
-                    <label for="iggDate">
-                      Date done
-                    </label>
-                    <input
-                      id="pcrDate"
-                      v-model="formData.caseData.pcrDate"
-                      :max="today"
-                      class="input-form-field"
-                      type="date"
-                      :disabled="inputEdit()"
-                    />
-                  </div>
-                  <div style="width:51%" class="field">
-                    <label for="pcrResult">
-                      Result
-                    </label>
-                    <select
-                      id="pcrResult"
-                      v-model="formData.caseData.pcrResult"
-                      name="pcrResult"
-                      :disabled="inputEdit()"
-                    >
-                      <option value="Positive">Positive</option>
-                      <option value="Negative">Negative</option>
-                      <option value="Equivocal">Equivocal</option>
-                      <option value="Pending Result">Pending Result</option>
+                      <option value="Not Done">Not Done</option>
                     </select>
                   </div>
                 </div>
               </div>
-              <div v-if="noLabTest" class="errorLab"> Please input atleast 1 lab test </div>
-              
-            </div>
-          </form>
-          <hr v-if="pageNum == Object.keys(disease.formNames).length" class="addCRF-hr"/>
 
-          <form v-if="pageNum == 7 || pageNum == Object.keys(disease.formNames).length" id="dengue7" type="submit">
+            <div v-show="editLab" style="margin: -10px 10 5px; margin-left: auto;text-align: -webkit-right;">
+              <button class="back-button" type="button" @click="editLabResult('cancel')">
+                Cancel </button>
+              <button class="next-button" type="button" @click="editLabResult('save')">
+                Save </button>
+            </div>
+
+          </div>
+        </form>
+        <hr v-if="isPrint" class="viewCRFDChr"/>
+
+        <form v-if="pageNum == 5 || isPrint" id="cholera5" type="submit">
             <div id="case-investigation-form" class="center">
               <h2 id="addCRFD-formHeader">
                 {{ Object.values(disease.formNames)[pageNum] }}
@@ -1564,16 +1348,16 @@
                     <!-- CASE CLASSIFICATION -->
                     <div>
                       <div class="collpaseWrapper">
-                        <ul v-for="(value, name, i) in caseLevel" :key="i" style="displayLinline-flex">
+                        <ul v-for="(value, name, i) in classification" :key="i" style="displayLinline-flex">
                           <li>
                             <input :id="name" type="checkbox" class="collapseInput"/>
                             <label :for="name" class="collapseLabel">
                               <input
                                 :id="name"
-                                v-model="formData.cases.caseLevel"
+                                v-model="formData.cases.caseClassification"
                                 :value="name"
                                 class="input-checkbox"
-                                name="caseLevel"
+                                name="caseClassification"
                                 type="radio"
                                 :disabled="inputEdit()"
                                 :class="isRequired()"
@@ -1592,67 +1376,173 @@
                 </div>
               </div>
             </div>
-          </form>
-
-        </div>
-
-        <!-- Bottom 2 buttons -->
-        <div style="margin: -10px 0 5px; float: right">
-          <button v-if="pageNum == 0" class="back-button" type="button">
-            <nuxt-link to="/addCase"> Cancel </nuxt-link>
-          </button>
-          <button v-if="pageNum != 0" class="back-button" type="button" @click="move(pageNum - 1)">
-            Back
-          </button>
-          <button v-if="pageNum < Object.keys(disease.formNames).length - 1" class="next-button" type="button" @click="move(pageNum + 1)">
-            Next
-          </button>
-          <button v-if="pageNum == Object.keys(disease.formNames).length - 1" class="next-button" type="button" @click="move(pageNum + 1)">
-            Review
-          </button>
-          <button v-if="pageNum == Object.keys(disease.formNames).length" class="next-button" type="button" @click="submit()">
-            Save
-          </button>
+        </form>
+      
+      </div>
+      <div class="CRF-statusHistory">
+        <h2 style="border-bottom: gray solid; width: fit-content; padding: 0 7px 0 5px;">Case Status History</h2>
+        <dataTable
+          :options="tableOptions"
+          :datavalues="caseHistory"
+          :casetype="'patient'"
+        />
+      </div>
+    </div>
+    <div v-show="editStatus" class="overlay">
+      <div class="overlay-form">
+        <button class="close" @click="status('cancel')">x</button>
+        <div class="field-row" style="display: inline-flex; margin-bottom: -1 px">
+          <div class="field">
+            <h2 id="form-header" class="viewCRFDCh2 required">
+              Please select the final classification
+            </h2>
+            <div>
+              <!-- <div style="display: inline-flex; flex-direction: column"> -->
+              <!-- CASE DEFINITION -->
+              <div>
+                <div class="collpaseWrapper">
+                  <ul v-for="(value, name, i) in caseLevel" :key="i" style="displayLinline-flex">
+                    <li>
+                      <input :id="name" type="checkbox" class="collapseInput"/>
+                      <label :for="name" class="collapseLabel">
+                        <input
+                          :id="name"
+                          v-model="newStatus"
+                          :value="name"
+                          class="input-checkbox"
+                          name="finalClassification"
+                          type="radio"
+                          :disabled="statusInputEdit(name)"
+                        />
+                        {{ name }}
+                      </label>
+                      <ul>
+                        <li style="background-color: lightgrey;">{{ value }}</li>
+                      </ul>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div style="margin: -10px 10 5px; float: right; margin-left: auto;">
+              <button class="back-button" type="button" @click="status('cancel')">
+                Cancel
+              </button>
+              <button class="next-button" type="button" @click="status('save')">
+                Save
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </template>
 
+<script src="https://code.jquery.com/jquery-1.12.3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/0.9.0rc1/jspdf.min.js"></script>
+
 <script>
-// import infoicon from '../static/infoicon.png'
 const axios = require('axios');
 
+import jsPDF from 'jspdf'
+import html2canvas from 'html2canvas'
+import dataTable from './dataTable.vue'
 export default {
+  components: {
+    dataTable,
+  },
   middleware: 'is-auth',
   header: {
-    title: 'Case Report Form - Dengue',
+    title: 'View CRF',
   },
+  compute: {},
   data() {
     return {
-      patientExist: false,
-      sameAddress:'',
-      locBrgyList: [],
-      today:'',
+      editOutcome: false,
+      editOutcomeValidate: true,
+      newOutcome: {},
+      editLab: false,
+      editLabValidate:true,
+      editStatus:false,
+      weekNo: '2021-20',
+      labList: [],
+      newStatus:'',
       hasLabTest:'',
-      noLabTest:false,
-      isOpen: true,
-      openCollapse: '',
       isDisabled: false,
-      diseaseID: 'DI-0000000000003',
-      patients: [],
-      patientResult: [],
-      labList:[],
-      pageNum: 0,
-      formPart: 'Dengue0',
-      pageDone: [true,true,true,true,true,true,true,true,false],
-      pageColor: [true,false,false,false,false,false,false,false,false],
+      editCase: false,
+      isPrint: false,
+      diseaseID: 'DI-0000000000000',
+      caseDefs: [],
+      pageNum: 1,
+      formPart: 'cholera0',
+      dateLastUpdated:'',
+      newLabData: {
+        // labTestStatus : '',
+        // investigatorLab : '', // formadata.cases, the rest in caseData
+        // labTestType : '',
+        // labTestCollectDate : '',
+        // labTestResult : '',
+      },
+      tableOptions: {
+        tableName: 'cases',
+        columns: [
+          {
+            title: 'Date',
+            key: 'reportDate',
+            type: 'text',
+            dateFormat: true,
+            currentFormat: 'YYYY-MM-DD',
+            expectFormat: 'DD MMM YYYY',
+            // sortable: true,
+          },
+          {
+            title: 'From',
+            key: 'from',
+            type: 'text',
+            source: 'cases',
+            uniqueField: 'id',
+          },
+          {
+            title: 'To',
+            key: 'to',
+            type: 'text',
+            source: 'cases',
+            uniqueField: 'id',
+          },
+          {
+            title: 'Reported By',
+            key: 'reportedBy',
+            type: 'text',
+            source: 'cases',
+            uniqueField: 'id',
+          },
+        ],
+        // source: 'http://demo.datatable/api/users',
+        search: true,
+      },
+      caseHistory: [],
+      CRFData:{
+        CRFID: '',
+        diseaseID: '',
+        userID:'',
+        week:'',
+        year:'',
+        isPushed:false
+      },
+      DRUData:{
+        druName:'',
+        druType:'',
+        druCity:'',
+        druBrgy:'',
+        druHouseStreet:''
+      },
       formData: {
         cases: {
           caseID: '',
           diseaseID: '',
           reportedBy: '',
-          caseLevel: '',
+          caseClassification: '',
           reportDate: '',
           investigationDate: '',
           dateAdmitted: '',
@@ -1720,28 +1610,19 @@ export default {
           OOthers: '',
         },
         caseData: {
+          exposurePlace: '',
           patientConsulted: '',
           patientConsultDate:'',
           patientConsultPlace:'',
+          exposure: '',
           // Lab
-          ns1Date:'',
-          ns1Result:'',
-          iggDate:'',
-          iggResult:'',
-          igmDate:'',
-          igmResult:'',
-          pcrDate:'',
-          pcrResult:'',
+          labTestType: '',
+          labTestResult:'',
+          labTestCollectDate: '',
           // Page 6++
-          finalClassification: '',
-          clinicalClassification:'',
-          sourceInfection: '',
           outcome: '',
           dateDied: '',
           finalDiagnosis: '',
-          vaccine: '',
-          vaccineFirstDate: '',
-          vaccineLastDate: '',
         },
       },
       info: {
@@ -1752,491 +1633,269 @@ export default {
         MCVaccine: '',
         vitA: '',
       },
-      riskFactors: {
-        Lifestyle:'',
-        CurrentCondition:'',
-        Historical:'',
-        Other:'',
-      },
       disease: {
-        idname: 'Dengue',
-        name: 'Dengue',
+        idname: 'Leptospirosis',
+        name: 'Leptospirosis',
         formNames: {
           form0: 'Search Patient',
           form1: 'Patient Record',
           form2: 'Patient Information',
-          form3: 'Vaccination History',
-          form4: 'Clinical Classification',
-          form5: 'Outcome',
-          form6: 'Laboratory Tests',
-          form7: 'Case Classification',
+          form3: 'Outcome',
+          form4: 'Laboratory Tests',
+          form5: 'Case Classification',
         },
       },
-      classification: {},
-      cityList: [
-        'Caloocan City',
-        'Las Piñas City',
-        'Makati City',
-        'Malabon City',
-        'Mandaluyong City',
-        'Manila City',
-        'Marikina City',
-        'Muntinlupa City',
-        'Navotas City',
-        'Parañaque City',
-        'Pasay City',
-        'Pasig City',
-        'Quezon City',
-        'San Juan City',
-        'Taguig City',
-        'Valenzuela City',
-      ],
-      clinicalClassification: [
-        {name: 'Dengue Without Warning Signs',
-          description: 'Person with acute febrile illness of 2-7 days duration plus two of the following:',
-          symptoms:['Headache','Body Malaise','Mylagia','Arthralgia','Retro-orbital pain','Anorexia',
-                    'Nausea','Vomiting','Diarrhea','Flushed Skin','Skin Rash (Petecheal, Herman\'s Sign)']},
-        {name: 'Dengue With Warning Signs',
-          description: 'Person with acute febrile illness of 2-7 days duration with any of the following:',
-          symptoms:['Abdominal Pain or Tenderness','Persistent Vomiting','Clinical Fluid Accumulation (ascites, pleural effussion)',
-                    'Mucosal Bleeding','Lethargy','Restlessness','Liver Enlargement > 2cm','Laboratory: increase in HCT concurrect with rapid decrease in platelet count']},
-        {name: 'Severe Dengue **(requires strict observation and medical intervention)',
-          description: 'Dengue with atleast one of the following critera:',
-          symptoms:['Severe Plasma Leakage: leading to shock and/or fluid accumultation with respiratory distress',
-                    'Severe Bleeding: as evaluated by clinician',
-                    'Severe Organ Involvement: such as AST or ALT ≥ 1000, impaired consciosness and failure of heart and other organs.']}
-      ],
-      caseLevel: {
-        'Suspect':'A previously well person with acute febrile illness of 2-7 days duration with clinical signs and symptoms of dengue',
-        'Probable':'A suspected case with positive dengue IgM antibody test',
-        'Confirmed':'Viral culture isolation, or Polymerase Chain Reaction (PCR), or Dengue NS1 antigen test',
+      rowData: {
+        caseID: 1234,
+        disease: 'Cholera',
+        city: 'Manila',
+        patientNo: '123',
+        submittedDate: '2020-10-10',
+        updatedDate: '2020-10-10',
+        status: 'IDK',
       },
     }
   },
   async fetch() {
-    let rows = (await axios.get('http://localhost:8080/api/getCaseDefs?diseaseID=' + this.diseaseID)).data;
-    for (let i = 0; i < rows.length; i++) {
-      this.classification[rows[i].class] = rows[i].definition;
-    }
-    rows = (await axios.get('http://localhost:8080/api/getPatients', {
-      params: {
-        userID: this.$auth.user.userID,
-        userOnly: false
-      }
-    })).data;
-    this.patients = rows;
-    rows = (await axios.get('http://localhost:8080/api/getLabUsers')).data;
+    const data = (await axios.get('http://localhost:8080/api/getCRF?caseID=' + this.$route.query.caseID)).data;
+    this.formData.cases = data.cases;
+    this.formData.caseData = data.caseData;
+    this.formData.patient = data.patient;
+    this.formData.riskFactors = data.riskFactors; // working already
+    this.DRUData = data.DRUData;
+    this.CRFData = data.crfData;
+    this.dateLastUpdated = data.dateLastUpdated;
+    this.caseHistory = data.caseHistory;
+	if ((!['Chief', 'Staff', 'resuHead', 'chdDirector'].some(e => this.$auth.user.userType.includes(e)) && !this.DRUData.pushDataAccept) ||
+	    (this.$auth.user.druName !== this.DRUData.druName)) {
+	  this.formData.patient.firstName = "";
+	  this.formData.patient.midName = "";
+	  this.formData.patient.lastName = "";
+	  this.formData.patient.currHouseStreet = "";
+	  this.formData.patient.permHouseStreet = "";
+	}
+    this.editLabResult('cancel')
+    this.editPatientOutcome('cancel')
+    
+    // fixing dates
+
+    let rows = (await axios.get('http://localhost:8080/api/getLabUsers')).data;
     this.labList = rows;
+
+    // console.log(data);
+
+    this.newOutcome = {
+      outcome: this.formData.caseData.outcome,
+      dateDied: this.formData.cases.dateDied,
+      finalDiagnosis: this.formData.cases.finalDiagnosis,
+    }
+
+    this.newLabData = {
+      labTestStatus: this.formData.caseData.labTestStatus,
+      investigatorLab: this.formData.cases.investigatorLab,
+      labTestType: this.formData.caseData.labTestType,
+      labTestCollectDate: this.formData.caseData.labTestCollectDate,
+      labTestResult: this.formData.caseData.labTestResult,
+    }
+    
   },
   head() {
     return {
-      title: 'New Dengue Case'
+      title: 'Cholera ' + this.formData.cases.caseID
     }
   },
-  computed: {},
-  mounted() {
-    const today = new Date();
-    let dd = today.getDate();
-    let mm = today.getMonth()+1;
-    const yyyy = today.getFullYear();
-    if(dd<10){
-      dd='0'+dd
-    } 
-    if(mm<10){
-      mm='0'+mm
-    } 
-    this.today = yyyy+'-'+mm+'-'+dd;
-    // document.getElementById('birthdate').setAttribute('max', today);
-    // console.log(today);
-  },
   methods: {
-    formpart(disease, pageNum) {
-      this.formPart = disease + pageNum;
-      // if (this.isOpen) this.formStatus(this.pageNum);
+    formListClass(index) {
+      if (index === this.pageNum) return 'formSummaryItems selected'
+      else return 'formSummaryItems'
     },
-    formColor(index) {
-      if (this.isOpen) {
-        if (index === this.pageNum) return 'formnum formnumcurr';
-        else if (this.pageColor[index]) return 'formnum formnumdone';
-        else return 'formnum';
-      }
-    },
-    getAge() {
-      const today = new Date();
-      const age = today.getFullYear() - parseInt(this.formData.patient.birthDate.substr(0,4));
-      console.log(today.getMonth()+1)
-      console.log(parseInt(this.formData.patient.birthDate.substr(5,2)))
-      if (today.getMonth()+1>parseInt(this.formData.patient.birthDate.substr(5,2))) this.formData.patient.ageNo = age;
-      else if (today.getMonth()+1===parseInt(this.formData.patient.birthDate.substr(5,2))) {
-        console.log(today)
-        console.log(parseInt(this.formData.patient.birthDate.substr(8,2)))
-        if (today.getDate()>=parseInt(this.formData.patient.birthDate.substr(8,2))) this.formData.patient.ageNo = age;
-        else this.formData.patient.ageNo = age-1;
-      }
-      else this.formData.patient.ageNo = age-1;
-      if (this.formData.patient.ageNo<0) this.formData.patient.ageNo = 0;
-    },
-    async submit() {
-      // TODO: this submit is the "save" type, the cases should only be visible to the DRU, not yet submitted to MMCHD
-      const now = new Date();
-      this.formData.cases.diseaseID = this.diseaseID;
-      this.formData.cases.reportedBy = this.$auth.user.userID;
-      this.formData.cases.reportDate = now.getFullYear() + '-' + (now.getMonth()+1) + '-' + now.getDate();
-      const result = await axios.post('http://localhost:8080/api/newCase', {formData: this.formData, CRFID: this.$route.query.CRFID});
-      console.log(result);
-      if (result.status === 200) {
-        // alert('CRF case submitted!');
-        this.$toast.success('Case saved!', {duration: 4000, icon: 'check_circle'});
-        if(result.data.outbreakID){
-          if(result.data.type === 'Alert'){
-            window.open('http://localhost:3000/alertOutbreak?outbreakID='+ result.data.outbreakID)
-          } else
-            window.open('http://localhost:3000/epiOutbreak?outbreakID='+ result.data.outbreakID);
-        }
-        window.location.href = '/allCases';
-      } else {
-        // eslint-disable-next-line no-console
-        console.log(result);
-        this.$toast.error('Something went wrong!', {duration: 4000, icon: 'error'});
-      }
-    },
-    move(page) {
-      this.validateForm(this.pageNum);
-      this.validateForm(page);
-      
-      if (this.pageDone[this.pageNum] || this.pageDone[page] || page===0 || this.pageNum ===0) {
-        if (page===Object.keys(this.disease.formNames).length) {
-          if (!this.pageColor[Object.keys(this.disease.formNames).length]) 
-            this.$toast.error('Please make sure all pages are accomplished.', {position: 'top-right', duration: 4000, icon: 'error'});
-          else this.pageNum = page;
-        }
-        else if (this.pageNum===Object.keys(this.disease.formNames).length) {
-          this.pageNum = page;
-        }
-        else if (page < Object.keys(this.disease.formNames).length && this.pageNum < Object.keys(this.disease.formNames).length) {
-          if (this.isOpen) {
-            const prevFormNum = 'form' + this.pageNum;
-            document.getElementById(prevFormNum).className = 'formnum formnumdone';
-            const currFormNum = 'form' + page;
-            document.getElementById(currFormNum).className = 'formnum formnumcurr';}
-
-          this.pageDone[this.pageNum] = true;
-          this.pageDone[page] = true;
-          this.pageNum = page;
-        }
-
-        this.$nextTick(() => {
-        if ((this.pageNum === 1) && this.formData.patient.occuBrgy != null) {
-          const dropdown = document.getElementById('occuBrgy');
-          while (dropdown.firstChild) dropdown.removeChild(dropdown.firstChild);
-          const defaultOption = document.createElement('option');
-          defaultOption.text = this.formData.patient.occuBrgy;
-          dropdown.add(defaultOption);
-          dropdown.selectedIndex = 0;
-        }
-
-        if ((this.pageNum === 1) && this.formData.patient.currBrgy != null) {
-          const dropdown = document.getElementById('currBarangay');
-          while (dropdown.firstChild) dropdown.removeChild(dropdown.firstChild);
-          const defaultOption = document.createElement('option');
-          defaultOption.text = this.formData.patient.currBrgy;
-          dropdown.add(defaultOption);
-          dropdown.selectedIndex = 0;
-        }
-
-        if ((this.pageNum === 1) && this.formData.patient.permBrgy != null) {
-          const dropdown = document.getElementById('permBarangay');
-          while (dropdown.firstChild) dropdown.removeChild(dropdown.firstChild);
-          const defaultOption = document.createElement('option');
-          defaultOption.text = this.formData.patient.permBrgy;
-          dropdown.add(defaultOption);
-          dropdown.selectedIndex = 0;
-        }
-      })
-    
-      }
-      else {
-        this.$toast.error('Please fill up the required fields.', {position: 'top-right', duration: 4000, icon: 'error'});
-        this.$forceUpdate();
-      }
-      // console.log(this.pageDone)
-
-      },
-    validateForm(page) {
-      switch (page) {
-        case 1:
-          if (this.patientExist) this.pageDone[page] = true;
-          else if (this.formData.patient.lastName!=='' &&
-          this.formData.patient.firstName!=='' &&
-          this.formData.patient.midName!=='' &&
-          this.formData.patient.birthDate!=='' &&
-          this.formData.patient.ageNo!=='' &&
-          this.formData.patient.sex!=='' &&
-          this.formData.patient.pregWeeks!=='' &&
-          this.formData.patient.civilStatus!=='' &&
-          this.formData.patient.currHouseStreet!=='' &&
-          this.formData.patient.currCity!=='' &&
-          this.formData.patient.currBrgy!=='' &&
-          this.formData.patient.occupation!=='' &&
-          this.formData.patient.occuLoc!=='' &&
-          this.formData.patient.occuStreet!=='' &&
-          this.formData.patient.occuCity!=='' &&
-          this.formData.patient.occuBrgy!=='' &&
-          this.formData.patient.guardianName!=='' &&
-          this.formData.patient.guardianContact!=='' &&
-          this.formData.patient.lastName!== null &&
-          this.formData.patient.firstName!== null &&
-          this.formData.patient.midName!== null &&
-          this.formData.patient.birthDate!== null &&
-          this.formData.patient.ageNo!== null &&
-          this.formData.patient.sex!== null &&
-          this.formData.patient.pregWeeks!== null &&
-          this.formData.patient.civilStatus!== null &&
-          this.formData.patient.currHouseStreet!== null &&
-          this.formData.patient.currCity!== null &&
-          this.formData.patient.currBrgy!== null &&
-          this.formData.patient.occupation!== null &&
-          this.formData.patient.occuLoc!== null &&
-          this.formData.patient.occuStreet!== null &&
-          this.formData.patient.occuCity!== null &&
-          this.formData.patient.occuBrgy!== null &&
-          this.formData.patient.guardianName!== null &&
-          this.formData.patient.guardianContact!== null &&
-          this.formData.patient.occuLoc!== 'Choose Barangay' &&
-          this.formData.patient.occuBrgy!== 'Choose Barangay'
-          ) this.pageDone[page] = true;
-          else this.pageDone[page] = false;
-          if (this.formData.patient.ageNo<0) {this.formData.patient.ageNo = ''; this.pageDone[page] = false;}
-          if (this.formData.patient.pregWeeks!=='Not Pregnant' && this.formData.patient.pregWeeks<0)
-            {this.formData.patient.pregWeeks = ''; this.pageDone[page] = false;}
-          if (this.formData.patient.guardianContact<0) {this.formData.patient.guardianContact = ''; this.pageDone[page] = false;}
-          break;
-        case 2:
-          if (this.formData.caseData.patientConsulted!=='' &&
-          this.formData.patient.admitStatus!=='' &&
-          this.formData.cases.dateOnset!=='' &&
-          (this.riskFactors.Lifestyle || this.formData.riskFactors.LSmoking || 
-            this.formData.riskFactors.LAlcoholism || this.formData.riskFactors.LDrugUse || 
-            this.formData.riskFactors.LPhysicalInactivity || this.formData.riskFactors.LOthers) && 
-          (this.riskFactors.CurrentCondition || this.formData.riskFactors.CAsthma || 
-            this.formData.riskFactors.CHereditary || this.formData.riskFactors.COthers) && 
-          (this.riskFactors.Historical || this.formData.riskFactors.HDiabetes || 
-            this.formData.riskFactors.HHeartDisease || this.formData.riskFactors.HHypertension || 
-            this.formData.riskFactors.HObesity || this.formData.riskFactors.HOthers) && 
-          (this.riskFactors.Other || this.formData.riskFactors.OAirPollution || 
-            this.formData.riskFactors.OCleanWater || this.formData.riskFactors.OFlooding || 
-            this.formData.riskFactors.OHealthEdu || this.formData.riskFactors.OHealthFacility || 
-            this.formData.riskFactors.OPoverty || this.formData.riskFactors.OShelter || 
-            this.formData.riskFactors.OWasteMgmt || this.formData.riskFactors.OVacCoverage || 
-            this.formData.riskFactors.OOthers)
-          ) {
-            if ((this.formData.caseData.patientConsulted==='No' ||
-              this.formData.caseData.patientConsulted==='Yes' && 
-                this.formData.caseData.patientConsultDate!=='' && this.formData.caseData.patientConsultPlace!=='') &&
-              (this.formData.patient.admitStatus==='No' ||
-              this.formData.patient.admitStatus==='Yes' && this.formData.cases.dateAdmitted!==''))
-            this.pageDone[page] = true;
-            else this.pageDone[page] = false;
-          }
-          else this.pageDone[page] = false;
-          break;
-        case 3:
-          if (this.formData.caseData.vaccine!=='' &&
-              this.formData.caseData.vaccine!=='') {
-            if (this.formData.caseData.vaccine==='No' ||
-                (this.formData.caseData.vaccine==='Yes' &&
-                this.formData.caseData.vaccineFirstDate!=='' &&
-                this.formData.caseData.vaccineFirstDate!==null &&
-                this.formData.caseData.vaccineLastDate!=='' &&
-                this.formData.caseData.vaccineLastDate!==null))
-              this.pageDone[page] = true;
-            else this.pageDone[page] = false;
-          }
-          else this.pageDone[page] = false;
-          break;
-        case 4:
-          if (this.formData.caseData.clinicalClassification!=='' &&
-              this.formData.caseData.clinicalClassification!==null
-          ) this.pageDone[page] = true;
-          else this.pageDone[page] = false;
-          break;
-        case 5:
-          if (this.formData.caseData.outcome!=='' && this.formData.caseData.finalDiagnosis!=='' &&
-              this.formData.caseData.finalDiagnosis!==null && this.formData.caseData.finalDiagnosis!==undefined) {
-            if (this.formData.caseData.outcome==='Alive' ||
-                (this.formData.caseData.outcome==='Dead' &&
-                this.formData.caseData.dateDied!=='' &&
-                this.formData.caseData.dateDied!==null &&
-                this.formData.caseData.dateDied!==undefined))
-              this.pageDone[page] = true;
-            else this.pageDone[page] = false;
-          }
-          else this.pageDone[page] = false;
-          break;
-        case 6:
-          // console.log(this.formData.caseData.ns1Date!== '')
-          // console.log(this.formData.caseData.ns1Result!== '')
-          if (this.hasLabTest!=='') {
-            if (this.hasLabTest==='Processing') {this.pageDone[page] = true; this.errorLab = false;}
-            else if (this.hasLabTest==='No' && this.formData.cases.investigatorLab!=='' && this.formData.cases.investigatorLab!==undefined)
-              {this.pageDone[page] = true; this.errorLab = false;}
-            else if(this.hasLabTest==='Yes' &&
-              ((this.formData.caseData.ns1Date!== '' && this.formData.caseData.ns1Result!== '') ||
-               (this.formData.caseData.iggDate!== '' && this.formData.caseData.iggResult!== '') ||
-               (this.formData.caseData.igmDate!== '' && this.formData.caseData.igmResult!== '') ||
-               (this.formData.caseData.pcrDate!== '' && this.formData.caseData.pcrResult!== '')))
-              {this.pageDone[page] = true; this.errorLab = false;}
-            else {this.pageDone[page] = false;this.errorLab = true;}
-          }
-          else {this.pageDone[page] = false; this.errorLab = true;}
-          break;
-        case 7:
-          if (this.formData.cases.caseLevel !=='' &&
-              this.formData.cases.caseLevel !== null &&
-              this.formData.cases.caseLevel !== undefined)
-            this.pageDone[page] = true;
-          else this.pageDone[page] = false;
-          break;
-        case 8:
-          if(this.pageColor[1] && this.pageColor[2] && this.pageColor[3] && this.pageColor[4]
-             && this.pageColor[5] && this.pageColor[6] && this.pageColor[7]) {
-               this.pageColor[8] = true;
-               this.pageDone[8] = true;
-             }
-          break;
-      }
-      this.pageColor[page] = this.pageDone[page];
-    },
-    isRequired() {
-      if (!this.pageDone[this.pageNum]) return "input-required";
+    move(i) {
+      this.pageNum = i
     },
     inputEdit() {
-      if (this.pageNum === Object.keys(this.disease.formNames).length) {
-        // const elems = document.getElementsByTagName('input')
-        // for (let i = 0; i < elems.length; i++) {
-        //   elems[i].disabled = true;
-        //   console.log(elems);
-        // }
-        return true;
+      // this.$auth.user.userID === this.formData.cases.investigatorLab
+      if (this.pageNum === 6 && this.editLab) return false;
+      else if (this.pageNum === 5 && this.editOutcome) return false;
+      else return true;
+    },
+    isRequired() {
+      if (!this.editLabValidate) return "input-required"
+      else if (!this.editOutcomeValidate) return "input-required"
+    },
+    statusInputEdit(value) {
+      if (this.editStatus & value!==this.formData.cases.caseLevel ) return false
+      else return true
+    },
+    popup() {
+      this.editStatus = !this.editStatus
+    },
+    validateOutcome() {
+      this.editOutcomeValidate = false;
+      if (this.newOutcome.outcome!=='' && this.newOutcome.finalDiagnosis!=='' && this.newOutcome.finalDiagnosis!==null) {
+        if (this.newOutcome.outcome==='Alive' ||
+            (this.newOutcome.outcome==='Dead' &&
+            this.newOutcome.dateDied!=='' && this.newOutcome.dateDied!==undefined))
+          this.editOutcomeValidate = true;
+        else this.editOutcomeValidate = false;
       }
-      else if (this.pageNum===1 && this.patientExist) return true;
-      else return false;
+      else this.editOutcomeValidate = false;
     },
-    clearPatientInfo() {
-      this.formData.patient.patientID = '';
-      this.formData.patient.lastName = '';
-      this.formData.patient.firstName = '';
-      this.formData.patient.midName = '';
-      this.formData.patient.birthDate = '';
-      this.formData.patient.ageNo = '';
-      this.formData.patient.sex = '';
-      this.formData.patient.civilStatus = '';
-      this.formData.patient.pregWeeks = '';
-      this.formData.patient.currHouseStreet = '';
-      this.formData.patient.currBrgy = '';
-      this.formData.patient.currCity = '';
-      this.formData.patient.permHouseStreet = '';
-      this.formData.patient.permBrgy = '';
-      this.formData.patient.permCity = '';
-      this.formData.patient.guardianName = '';
-      this.formData.patient.guardianContact = '';
+    async editPatientOutcome(change) {
+      if (change==='save') {
+        this.validateOutcome();
+        if (this.editOutcomeValidate) {
+          this.formData.caseData.outcome = this.newOutcome.outcome;
+          this.formData.caseData.dateDied = this.newOutcome.dateDied;
+          this.formData.caseData.finalDiagnosis = this.newOutcome.finalDiagnosis;
+          
+          const serve = await axios.post("http://localhost:8080/api/editPatientOutcome", {
+            caseID: this.formData.cases.caseID,
+            newOutcome: this.newOutcome,
+            submitted: this.$auth.user.userID
+          });
 
-      this.patientExist = false;
-    },
-    autoFillPatient(patient) {
-      // console.log(patient);
-      this.formData.patient.patientID = patient.patientID;
-      this.formData.patient.lastName = patient.lastName;
-      this.formData.patient.firstName = patient.firstName;
-      this.formData.patient.midName = patient.midName;
-      this.formData.patient.birthDate = patient.birthDate.substr(0, 10);
-      this.formData.patient.ageNo = patient.ageNo;
-      this.formData.patient.sex = patient.sex;
-      this.formData.patient.civilStatus = patient.civilStatus;
-      this.formData.patient.pregWeeks = patient.pregWeeks;
-      this.formData.patient.currHouseStreet = patient.currHouseStreet;
-      this.formData.patient.currBrgy = patient.currBrgy;
-      this.formData.patient.currCity = patient.currCity;
-      this.formData.patient.permHouseStreet = patient.permHouseStreet;
-      this.formData.patient.permBrgy = patient.permBrgy;
-      this.formData.patient.permCity = patient.permCity;
-      this.formData.patient.guardianName = patient.guardianName;
-      this.formData.patient.guardianContact = patient.guardianContact;
-      this.pageNum++;
-
-      this.patientExist = true;
-    },
-    searchPatient(event) {
-      this.patientResult = [];
-      if (event.target.value !== '') {
-        let ctr = 0;
-        for (let i = 0; i < this.patients.length && ctr < 5; i++) {
-          // eslint-disable-next-line no-useless-escape
-          const reg = new RegExp('^' + event.target.value + 'w*', 'i');
-          if ((this.patients[i].firstName + ' ' + this.patients[i].midName + ' ' + this.patients[i].lastName).match(reg)) {
-            this.patientResult.push(this.patients[i]);
-            ctr++;
+          if (serve.status === 200) {
+            this.$toast.success('Case updated!', {duration: 4000, icon: 'check_circle'});
+          } else {
+            // eslint-disable-next-line no-console
+            console.log(serve);
+            this.$toast.error('Something went wrong!', {duration: 4000, icon: 'error'});
           }
+          this.editOutcome = false;
+        }
+        else {
+          alert('Please fill up the required fields');
+          this.$forceUpdate();
         }
       }
-    },
-    getAddress() {
-      if (this.sameAddress) {
-        this.formData.patient.permHouseStreet = this.formData.patient.currHouseStreet;
-        this.formData.patient.permCity = this.formData.patient.currCity;
-        this.getBrgy();
-        // this.getLocBrgyList(this.formData.patient.permCity,'permBarangay');
-        // this.formData.patient.permBrgy = this.formData.patient.currBrgy;
-        // console.log(this.formData.patient.permBrgy,this.formData.patient.currBrgy)
-      }
-      else {
-        this.formData.patient.permHouseStreet = '';
-        this.formData.patient.permCity = '';
-        this.formData.patient.permBrgy = '';
+      if (change==='cancel') {
+        this.newOutcome.outcome = this.formData.caseData.outcome;
+        this.newOutcome.dateDied = this.formData.caseData.dateDied;
+        this.newOutcome.finalDiagnosis = this.formData.caseData.finalDiagnosis;
+        
+        this.editOutcome = false;
       }
     },
-    getLocBrgyList(city, element) {
-      if (city) {
-        // eslint-disable-next-line no-console
-        console.log(city);
-        const dropdown1 = document.getElementById(element);
-        while (dropdown1.firstChild) dropdown1.removeChild(dropdown1.firstChild);
+    validateLab() {
+      this.editLabValidate = false;
+      if (this.newLabData.labTestStatus!=='') {
+        if (this.newLabData.labTestStatus==='Processing')
+            this.editLabValidate = true;
+        else if (this.newLabData.labTestStatus==='No' && 
+                this.formData.cases.investigatorLab!=='' && 
+                this.formData.cases.investigatorLab!==undefined)
+            this.editLabValidate = true;
+        else if(this.newLabData.labTestStatus==='Yes' &&
+                this.newLabData.labTestType!== '' && 
+                this.newLabData.labTestResult!== '' && 
+                this.newLabData.labTestCollectDate!== '' && 
+                this.newLabData.labTestType!== undefined && 
+                this.newLabData.labTestResult!== undefined && 
+                this.newLabData.labTestCollectDate!== undefined)
+            this.editLabValidate = true;
+        else this.editLabValidate = false;
+        }
+      else this.editLabValidate = false;
+    },
+    async editLabResult(change) {
+      if (change==='save') {
+        this.validateLab();
+        if (this.editLabValidate) {
+          this.hasLabTest = this.newLabData.hasLabTest;
 
-        const defaultOption = document.createElement('option');
-        defaultOption.text = 'Choose Barangay';
+          this.formData.caseData.labTestStatus = this.newLabData.labTestStatus
+          this.formData.cases.investigatorLab = this.newLabData.investigatorLab
+          this.formData.caseData.labTestType = this.newLabData.labTestType
+          this.formData.caseData.labTestCollectDate = this.newLabData.labTestCollectDate
+          this.formData.caseData.labTestResult = this.newLabData.labTestResult
+          
+          const serve = (await axios.post("http://localhost:8080/api/editCIFLab", {
+            caseID: this.formData.cases.caseID,
+            newLabData: this.newLabData,
+            submitted: this.$auth.user.userID
+          }));
+          
+          if (serve.status === 200) {
+            this.$toast.success('Case updated!', {duration: 4000, icon: 'check_circle'});
+          } else {
+            // eslint-disable-next-line no-console
+            console.log(serve);
+            this.$toast.error('Something went wrong!', {duration: 4000, icon: 'error'});
+          }
+          this.editLab = false;
+        }
+        else {
+          alert('Please fill up the required fields');
+          this.$forceUpdate();
+        }
+      }
+      if (change==='cancel') {
 
-        dropdown1.add(defaultOption);
-        dropdown1.selectedIndex = 0;
-
-        axios.get('barangays.json').then(res => {
-            let option;
-
-            this.locBrgyList = res.data[city].barangay_list;
-
-            for (let i = 0; i < this.locBrgyList.length; i++) {
-              option = document.createElement('option');
-              option.text = this.locBrgyList[i];
-              option.value = this.locBrgyList[i];
-              dropdown1.add(option);
-            }
-          })
+        this.newLabData.hasLabTest = this.hasLabTest
+        this.newLabData.labTestStatus = this.formData.caseData.labTestStatus
+        this.newLabData.investigatorLab = this.formData.cases.investigatorLab
+        this.newLabData.labTestType = this.formData.caseData.labTestType
+        this.newLabData.labTestCollectDate = this.formData.caseData.labTestCollectDate
+        this.newLabData.labTestResult = this.formData.caseData.labTestResult
+        
+        this.editLab = false;
+      }
+    },
+    async status(change) {
+      if (change==='save') {
+        this.formData.caseData.finalClassification = this.newStatus;
+        this.formData.cases.caseLevel = this.newStatus;
+        const result = await axios.post('http://localhost:8080/api/updateCaseStatus', {
+          caseId: this.formData.cases.caseID,
+          newStatus: this.newStatus
+        });
+        console.log(result);
+        if (result.status === 200) {
+          // alert('CRF case status updated!');
+          if(result.data.outbreakID){
+            if(result.data.type === 'Alert'){
+              window.open('http://localhost:3000/alertOutbreak?outbreakID='+ result.data.outbreakID)
+            } else
+              window.open('http://localhost:3000/epiOutbreak?outbreakID='+ result.data.outbreakID);
+          }
+          location.reload();
+          this.$toast.success('Case Status updated!', {duration: 4000, icon: 'check_circle'});
+        } else {
           // eslint-disable-next-line no-console
-          .catch(err => console.log(err))
+          console.log(result);
+          this.$toast.error('Something went wrong!', {duration: 4000, icon: 'error'});
+        }
       }
+      if (change==='cancel') {
+        this.newStatus = this.formData.cases.caseLevel;
+      }
+      this.popup()
     },
-    getBrgy() {
-      const perm = document.getElementById('permBarangay');
-      const defaultOption = document.createElement('option');
-      defaultOption.text = this.formData.patient.currBrgy;
-      perm.add(defaultOption);
-      perm.selectedIndex = 0;
+    downloadPDF() {
+      this.isPrint = !this.isPrint
 
-      this.formData.patient.permBrgy = this.formData.patient.currBrgy;
+      let pWidth = 595.28 // 595.28 is the width of a4
+      let srcWidth = this.$refs.content.scrollWidth
+      let margin = 12 // narrow margin - 1.27 cm (36);
+      let scale = (pWidth - margin * 2) / srcWidth
 
-      // eslint-disable-next-line no-console
-      console.log(this.formData.patient.permBrgy)
-      // eslint-disable-next-line no-console
-      console.log(this.formData.patient.currBrgy)
+      var doc = new jsPDF('p', 'pt', 'A4')
+      window.html2canvas = html2canvas
+
+      doc.html(this.$refs.content, {
+        x: margin,
+        y: margin,
+        html2canvas: {
+          scale: scale,
+        },
+        callback: function () {
+          window.open(doc.output('bloburl'))
+        },
+      })
+
+      // doc.save('test.pdf')
+      console.log(this.$refs.content)
+      setTimeout(() => (this.isPrint = !this.isPrint), 5000)
     },
   },
 }
@@ -2244,7 +1903,7 @@ export default {
 
 <style>
 
-.input-required:invalid, textarea:invalid { 
+.input-required:invalid { 
     box-shadow: 0 0 5px #d45252;
     border-color: hsl(0, 76%, 50%);
     /* background-color: #ff6961; */
@@ -2254,7 +1913,7 @@ export default {
   border-color: hsl(0, 76%, 50%);
 }
 
-.addCRFD-body {
+.viewCRFDCbody {
   font-family: 'Work Sans', sans-serif;
   font-weight: 300;
   padding: 0px;
@@ -2262,150 +1921,260 @@ export default {
   background-image: none;
 }
 
-.addCRFD-caseContainer {
-  margin: 70px 20px 5px 20px;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  width: max-content;
+.viewCRFDCh3 {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.viewCRF-container {
+  padding: 80px 20px 5px 20px;
+  width: 100%;
 }
 
 @media only screen and (max-width: 800px) {
-  .addCRFD-caseContainer {
+  .viewCRF-ontainer {
     width: 100%;
-    flex-direction: column;
     align-items: center;
     margin: 0px;
-    margin-top: 85px;
   }
 }
 
-.addCRFD-formSummary {
-  width: fit-content;
-  height: fit-content;
-  left: 23px;
-  top: 97px;
-  padding: 20px;
-  z-index: -1;
-
-  background: #f2f2f2;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
-  border-radius: 10px;
-}
-@media only screen and (max-width: 800px) {
-  .addCRFD-formSummary {
-    width: 100%;
-    position: unset;
-    height: fit-content;
-    z-index: 3;
-  }
-}
-
-.addCRFD-formSummary-container {
-  position: fixed;
-  width: fit-content;
-  margin: 5px;
-  padding: 5px;
-}
-
-@media only screen and (max-width: 800px) {
-  .addCRFD-formSummary-container {
-    width: 95%;
-    position: sticky;
-    margin: 0px;
-  }
-}
-
-.formnum {
-  width: 200px;
-  height: fit-content;
-  margin: 5px;
-  background: #ffffff;
-  border: 1px solid #c4c4c4;
-  box-sizing: border-box;
-  border-radius: 10px;
-  line-height: 30px;
-  color: rgba(49, 49, 49, 0.5);
-  padding: 2px;
-  padding-left: 15px;
-  font-family: 'Roboto', 'Open Sans', 'Helvetica Neue', sans-serif;
-  font-style: normal;
-  font-weight: 400;
-  font-size: 16px;
-  display: flex;
-}
-
-@media only screen and (max-width: 800px) {
-  .formnum {
-    width: 98%;
-    min-width: 200px;
-  }
-}
-
-.formnumdone {
-  background-color: #346083;
-  color: white;
-}
-
-.formnumcurr {
-  background-color: #53a262;
-  color: white;
-}
-
-.faddCRFD-formSectionContainer {
-  left: 275px;
-  position: relative;
-  width: calc(100vw - 320px);
+.viewCRF-section-container {
+  /* left: 275px; */
+  /* position: relative; */
+  /* width: calc(100vw - 320px); */
   /* margin: 5px; */
+  width: 100%;
   padding: 5px;
+  margin: 10px;
 }
 
 @media only screen and (max-width: 800px) {
-  .faddCRFD-formSectionContainer {
-    left: 0px;
+  .viewCRF-section-container {
     width: 95%;
   }
 }
 
-.addCRFD-diseaseName {
-  position: relative;
-  top: -3px;
-  z-index: 2;
-}
-@media only screen and (max-width: 800px) {
-  .addCRFD-diseaseName {
-    position: relative;
-    top: 0px;
-  }
+.CRF-SummaryContainer {
+  display: flex;
+  flex-direction: row;
+  overflow-x: auto;
+  overflow-y: hidden;
+  z-index: 1;
 }
 
-.addCRFD-formComponent {
-  position: relative;
+.formSummaryItems {
+  background: white;
+  border: 1px #f2f2f2 solid;
+  border-radius: 10px 10px 0 0;
+  margin: 0 -1px -1px 0;
+  padding: 5px 7px;
+  cursor: pointer;
+}
+
+.formSummaryItems:hover {
+  background: #f2f2f2;
+}
+
+.formSummaryItems.selected {
+  background: #f2f2f2;
+  font-weight: 400;
+  pointer-events: none;
+}
+
+.viewCRFform-component {
+  /* position: relative;
+  display: inline-flex;
+  flex-direction: row; */
   height: fit-content;
   width: 100%;
-  top: -3px;
 
   filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.25));
   background-color: #f2f2f2;
-  border-radius: 15px;
+  border-radius: 0 10px 10px 10px;
   padding: 15px;
-  z-index: 2;
-  min-height: calc(100vh - 220px);
+  padding-bottom: 20px;
+  margin-bottom: 20px;
 }
-@media only screen and (max-width: 800px) {
-  .addCRFD-formComponent {
+@media only screen and (max-width: 1400px) {
+  .viewCRFform-component {
     position: relative;
     top: 0px;
     min-height: fit-content;
+    border-radius: 0 0 10px 10px;
   }
 }
+.viewCRF-details {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 10px;
+  justify-content: space-between;
+}
+@media only screen and (max-width: 900px) {
+  .viewCRF-details {
+    flex-direction: column;
+  }
+}
+.CRFnumbers,
+.CRFstatus {
+  display: inline-flex;
+  flex-direction: column;
+}
 
-.case-report-form {
+.viewCRFDCh1 {
+  color: #008d41;
+  font-size: 40px;
+  font-weight: 800;
+}
+
+.viewCRFDCh2 {
+  color: #346083;
+  font-size: 25px;
+  font-weight: 600;
+}
+
+.viewCRFDCb {
+  /* color: #346083; */
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.CRFreports {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 7.5px;
+}
+
+.CRFActionButtons {
+  display: inline-flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  cursor: pointer;
+}
+
+.CRFActionButton {
+  width: 50px;
+  height: 50px;
+  padding: 10px;
+  border-radius: 30px;
+  cursor: pointer;
+}
+
+/* .CRFActionButton:hover {
+  background: #a3a3a3;
+} */
+
+.printCaseButton {
+  width: 30px;
+  height: 30px;
+  margin-top: 10px;
+  margin-bottom: -10px;
+}
+
+.CRFEdit {
+  width: 30px;
+  height: 30px;
+  padding: 5px;
+}
+
+/* #saveIcon:hover {
+  background: url("~/assets/img/saved.png");
+
+} */
+
+.CRF-statusHistory {
+  margin-top:10px;
+  margin-bottom:30px;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th, td {
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(odd) {background-color: #f2f2f2;}
+
+/* COLLAPSE EME BELOW */
+
+.collpaseWrapper {
+  margin: 15px 0;
+  padding: 15px auto;
+  width: 99%;
+  /* background-color: lightgrey; */
+  /* border: lightgray solid 1px; */
+}
+
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.collapseLabel {
+  display: block;
+  cursor: pointer;
+  padding: 10px;
+  /* border: 1px solid #fff; */
+  border-bottom: none;
+  font-weight: 400;
+}
+
+.collapseLabel:hover {
+  background: #346083;
+  opacity: 0.85;
+  color: white;
+  font-weight: 600;
+}
+
+.collapseLabel.last {
+  border-bottom: 1px solid #fff;
+}
+
+ul ul li {
+  padding: 10px;
+  background: white;
+}
+
+.collapseInput[type='checkbox'] {
+  position: absolute;
+  left: -9999px;
+}
+
+.collapseInput[type='checkbox'] ~ ul {
+  height: 0;
+  transform: scaleY(0);
+}
+
+.collapseInput[type='checkbox']:checked ~ ul {
+  height: 100%;
+  transform-origin: top;
+  transition: transform 0.2s ease-out;
+  transform: scaleY(1);
+}
+
+.collapseInput[type='checkbox']:checked + label {
+  background: #346083;
+  opacity: 0.85;
+  color: white;
+  font-weight: 500;
+  border-bottom: 1px solid #fff;
+}
+
+/* ALL FROM CIF */
+
+.case-investigation-form {
   margin-top: 5px;
   width: 100%;
 }
 
-#addCRFD-formHeader {
+#form-header {
   text-align: left;
   padding-left: 5px;
   margin-bottom: 5px;
@@ -2420,7 +2189,7 @@ export default {
 }
 
 @media only screen and (max-width: 950px) {
-  #addCRFD-formHeader {
+  #form-header {
     text-align: center;
   }
 }
@@ -2470,6 +2239,7 @@ export default {
   display: flex;
   flex-direction: column;
   padding-bottom: 5px;
+  align-items: baseline;
 }
 
 .halffield {
@@ -2583,37 +2353,37 @@ select {
   }
 }
 
-.thirtyDesk {
-  width: 30%;
+.sixtyDesk {
+  width: 60%;
 }
 
-.patientConsulted-field {
+.patientAdmitted-field {
   /* width: 25%; */
   width: 41.67%;
 }
 
-.patientConsultDate-field {
+.dateAdmitted-field {
   /* width: 35%; */
   width: 58.33%;
 }
 
-.indigenousGroup-field .patientConsultPlace-field {
+.indigenousGroup-field {
   width: 40%;
 }
 
 @media only screen and (max-width: 950px) {
-  .thirtyDesk {
+  .sixtyDesk {
     width: 100%;
   }
-  .patientConsulted-field {
+  .patientAdmitted-field {
     width: 39%;
   }
 
-  .patientConsultDate-field {
+  .dateAdmitted-field {
     width: 59%;
   }
 
-  .indigenousGroup-field .patientConsultPlace-field {
+  .indigenousGroup-field {
     width: 98%;
   }
 }
@@ -2641,28 +2411,6 @@ select {
   }
 }
 
-.vaccine-label {
-  display: inline-flex;
-  flex-direction: row;
-  align-items: center;
-}
-
-@media only screen and (max-width: 950px) {
-  .vaccine-label {
-    display: block;
-  }
-}
-
-.patient-click {
-  color: gray;
-  cursor:pointer;
-}
-
-.patient-click:hover {
-  color:#346083;
-  text-decoration: underline;
-}
-
 .risk-factors {
   margin: 0 3px;
 }
@@ -2681,202 +2429,97 @@ select {
   border-radius: 9px;
 }
 
-/* TOOLTIP */
+.vaccine-label {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+}
 
-.tooltip-icon-img {
+@media only screen and (max-width: 950px) {
+  .vaccine-label {
+    display: block;
+  }
+}
+
+.info-icon-img {
   width: 10px;
   height: 10px;
   margin: 0 5px;
   z-index: 1;
 }
 
-[data-tooltip] {
-    position: relative;
-    z-index: 10;
-  }
+.tooltip {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 40px;
+  cursor: pointer;
+}
 
-  /* Positioning and visibility settings of the tooltip */
-  [data-tooltip]:before,
-  [data-tooltip]:after {
-    position: absolute;
-    visibility: hidden;
-    opacity: 0;
-    left: 50%;
-    bottom: calc(100% + 5px); /* 5px is the size of the arrow */
-    pointer-events: none;
-    transition: 0.2s;
-    will-change: transform;
-    font-family: 'Work Sans', sans-serif;
-  }
+.tooltipText {
+  background-color: #fff;
+  position: absolute;
+  margin-left: 40px;
+  bottom: 130%;
+  padding: 10px 15px;
+  border-radius: 5px;
+  font-size: 14px;
+  opacity: 0;
+  transition: all 0.5s;
+  z-index: -2;
+}
 
-  /* The actual tooltip with a dynamic width */
-  [data-tooltip]:before {
-    content: attr(data-tooltip);
-    padding: 9px 10px;
-    min-width: 50px;
-    max-width: 300px;
-    width: max-content;
-    width: -moz-max-content;
-    border-radius: 6px;
-    font-size: 10px;
-    background-color: rgba(59, 72, 80, 0.9);
-    background-image: linear-gradient(30deg,
-      rgba(59, 72, 80, 0.44),
-      rgba(59, 68, 75, 0.44),
-      rgba(60, 82, 88, 0.44));
-    box-shadow: 0px 0px 24px rgba(0, 0, 0, 0.2);
-    color: #fff;
-    text-align: center;
-    white-space: pre-wrap;
-    transform: translate(-50%, -5px) scale(0.5);
-  }
+.shorttooltip:hover .shorttooltipText {
+  opacity: 1;
+  transform: translateY(-10px);
+  margin: 0;
+}
 
-  /* Tooltip arrow */
-  [data-tooltip]:after {
-    content: '';
-    border-style: solid;
-    border-width: 5px 5px 0px 5px; /* CSS triangle */
-    border-color: rgba(55, 64, 70, 0.9) transparent transparent transparent;
-    transition-duration: 0s; /* If the mouse leaves the element, 
-                                the transition effects for the 
-                                tooltip arrow are "turned off" */
-    transform-origin: top;   /* Orientation setting for the
-                                slide-down effect */
-    transform: translateX(-50%) scaleY(0);
-  }
+#infofever:hover ~ .tooltipText {
+  opacity: 1;
+  transform: translateY(-10px);
+  z-index: 3;
+  margin-left: 300px;
+}
 
-  /* Tooltip becomes visible at hover */
-  [data-tooltip]:hover:before,
-  [data-tooltip]:hover:after {
-    visibility: visible;
-    opacity: 1;
-  }
-  /* Scales from 0.5 to 1 -> grow effect */
-  [data-tooltip]:hover:before {
-    transition-delay: 0.3s;
-    transform: translate(-50%, -5px) scale(1);
-  }
-  /* 
-    Arrow slide down effect only on mouseenter (NOT on mouseleave)
-  */
-  [data-tooltip]:hover:after {
-    transition-delay: 0.5s; /* Starting after the grow effect */
-    transition-duration: 0.2s;
-    transform: translateX(-50%) scaleY(1);
-  }
-  /*
-    That's it for the basic tooltip.
+.tooltipText::after {
+  content: '';
+  border-width: 5px;
+  border-style: solid;
+  border-color: #fff transparent transparent transparent;
+  position: absolute;
+  top: 100%;
+  left: 40%;
+  margin-left: -21%;
+}
 
-    If you want some adjustability
-    here are some orientation settings you can use:
-  */
+img:hover + .info-desc {
+  display: block;
+}
 
-  /* LEFT */
-  /* Tooltip + arrow */
-  [data-tooltip-location="left"]:before,
-  [data-tooltip-location="left"]:after {
-    left: auto;
-    right: calc(100% + 5px);
-    bottom: 50%;
-  }
+.info-desc {
+  display: none;
+  background-color: #fff;
+  position: absolute;
+  bottom: 130%;
+  padding: 10px 15px;
+  border-radius: 5px;
+  font-size: 14px;
+  opacity: 0;
+  transition: all 0.5s;
+}
 
-  /* Tooltip */
-  [data-tooltip-location="left"]:before {
-    transform: translate(-5px, 50%) scale(0.5);
-  }
-  [data-tooltip-location="left"]:hover:before {
-    transform: translate(-5px, 50%) scale(1);
-  }
-
-  /* Arrow */
-  [data-tooltip-location="left"]:after {
-    border-width: 5px 0px 5px 5px;
-    border-color: transparent transparent transparent rgba(55, 64, 70, 0.9);
-    transform-origin: left;
-    transform: translateY(50%) scaleX(0);
-  }
-  [data-tooltip-location="left"]:hover:after {
-    transform: translateY(50%) scaleX(1);
-  }
-
-
-
-  /* RIGHT */
-  [data-tooltip-location="right"]:before,
-  [data-tooltip-location="right"]:after {
-    left: calc(100% + 5px);
-    bottom: 50%;
-  }
-
-  [data-tooltip-location="right"]:before {
-    transform: translate(5px, 50%) scale(0.5);
-  }
-  [data-tooltip-location="right"]:hover:before {
-    transform: translate(5px, 50%) scale(1);
-  }
-
-  [data-tooltip-location="right"]:after {
-    border-width: 5px 5px 5px 0px;
-    border-color: transparent rgba(55, 64, 70, 0.9) transparent transparent;
-    transform-origin: right;
-    transform: translateY(50%) scaleX(0);
-  }
-  [data-tooltip-location="right"]:hover:after {
-    transform: translateY(50%) scaleX(1);
-  }
-
-  /* BOTTOM */
-  [data-tooltip-location="bottom"]:before,
-  [data-tooltip-location="bottom"]:after {
-    top: calc(100% + 5px);
-    bottom: auto;
-  }
-
-  [data-tooltip-location="bottom"]:before {
-    transform: translate(-50%, 5px) scale(0.5);
-  }
-  [data-tooltip-location="bottom"]:hover:before {
-    transform: translate(-50%, 5px) scale(1);
-  }
-
-  [data-tooltip-location="bottom"]:after {
-    border-width: 0px 5px 5px 5px;
-    border-color: transparent transparent rgba(55, 64, 70, 0.9) transparent;
-    transform-origin: bottom;
-  }
-
-  .tooltip {
-    cursor: pointer;
-    text-align: center;
-    border: none;
-    border-radius: 4px;
-    outline: inherit;
-    text-decoration: none;
-    font-family: Roboto, sans-serif;
-    font-size: 0.7em;
-    /* background-color: rgba(174, 184, 192, 0.55); */
-    background-color: transparent;
-    color: white;
-
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    transition: background 350ms ease-in-out, 
-                transform 150ms ease;
-  }
-  .tooltip:hover {
-    /* background-color: #484f56; */
-    background-color: transparent;
-  }
-  .tooltip:active {
-    transform: scale(0.98);
-  }
-  .tooltip:focus {
-    box-shadow: 0 0 2px 2px #298bcf;
-  }
-  .tooltip::-moz-focus-inner {
-    border: 0;
-  }
-
+.infodesc-outside {
+  position: relative;
+  background: #adadad;
+  color: white;
+  border-radius: 10px;
+  font-size: 11px;
+  padding: 2px 7px;
+  top: -20px;
+  left: -20px;
+}
 
 label {
   display: inline-flex;
@@ -2890,7 +2533,7 @@ label {
   color: red;
 }
 
-.addCRFDh3 {
+h3 {
   font-size: 15px;
   font-weight: 600;
 }
@@ -2933,7 +2576,7 @@ select:disabled {
   background: #dddddd;
 }
 
-.addCRF-hr {
+hr {
   margin: 20px 0;
 }
 
@@ -2951,172 +2594,37 @@ select:disabled {
   display: none;
 }
 
-/* COLLAPSE EME BELOW */
 
-.listBullet::before {
-  content: "•"
-}
-
-.collpaseWrapper {
-  margin: 15px 0;
-  padding: 15px auto;
-  width: 100%;
-}
-
-ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.collapseLabel {
+.overlay {
   display: block;
-  cursor: pointer;
-  padding: 10px;
-  /* border: 1px solid #fff; */
-  border-bottom: none;
-  font-weight: 400;
-}
-
-.collapseLabel:hover {
-  background: #346083;
-  opacity: 0.85;
-  color: white;
-  font-weight: 600;
-}
-
-.collapseLabel.last {
-  border-bottom: 1px solid #fff;
-}
-
-ul ul li {
-  padding: 10px;
-  background: white;
-}
-
-.collapseInput[type='checkbox'] {
+  z-index: 11;
+  margin: 0px;
+  padding: 10% 30% 20%;
+  width: -webkit-fill-available;
+  height: -webkit-fill-available;
+  /* background: gray; */
+  /* opacity: 55%; */
   position: absolute;
-  left: -9999px;
+  top: 0;
+  left: 0;
+  background: rgba(100, 100, 100, 0.4);
+  /* border: 100px solid rgba(100, 100, 100, 0.4); */
 }
 
-.collapseInput[type='checkbox'] ~ ul {
-  height: 0;
-  transform: scaleY(0);
+@media only screen and (max-width:1000px) {
+  .overlay  {
+    padding: 20% 15%;
+  }
 }
 
-.collapseInput[type='checkbox']:checked ~ ul {
-  height: 100%;
-  transform-origin: top;
-  transition: transform 0.2s ease-out;
-  transform: scaleY(1);
-}
-
-.collapseInput[type='checkbox']:checked + label {
-  background: #346083;
-  opacity: 0.85;
-  color: white;
-  font-weight: 500;
-  border-bottom: 1px solid #fff;
-}
-
-/* SEARCH BAR ALL BELOW */
-
-.searchbar {
-  background: #ffffff;
-  border: 1px solid #a3a3a3;
-  box-sizing: border-box;
+.overlay-form {
+  padding: 30px;
   border-radius: 40px;
-  width: 100%;
-  height: 40px;
-  padding: 10px 20px 10px 40px;
-
-  height: 45px;
-  border: none;
-  font-size: 16px;
-  outline: none;
-  margin-top: -1px;
-
-  /* background-image: url(../assets/img/search.svg); */
-  background-image: url(https://cdn1.iconfinder.com/data/icons/hawcons/32/698956-icon-111-search-512.png);
-  background-size: 20px;
-  background-repeat: no-repeat;
-  background-position: 15px 12.5px;
-}
-
-.bar {
-  margin: 0 auto;
-  width: 100%;
-  height: 45px;
-  border-radius: 40px;
-  /* border: 1px solid #dcdcdc; */
-
-  position: relative;
-}
-.bar:hover {
-  box-shadow: 1px 1px 8px 1px #dcdcdc;
-}
-.bar:focus-within {
-  box-shadow: 1px 1px 8px 1px #dcdcdc;
-  outline: none;
-}
-
-.container {
   background: white;
-  border-radius: 40px;
-  width: 60%;
-  margin: 0 auto;
+  /* width: -webkit-fill-available;
+  height: -webkit-fill-available; */
+  overflow-y: auto;
+  box-shadow: 1px 4px 8px rgb(0 0 0 / 40%);
 }
 
-#input_img {
-  position: absolute;
-  bottom: 8px;
-  left: 10px;
-  width: 30px;
-  height: 30px;
-}
-
-.searchPatientValues {
-  background: white;
-  height: fit-content;
-  border-radius: 0 0 25px 25px;
-  margin-top: -15px;
-  padding: 10px;
-  display: grid;
-  width: 100%;
-  position: absolute;
-}
-
-.searchResult {
-  padding: 5px 10px;
-  border-top: 1px solid lightgray;
-  display: inline-flex;
-  flex-direction: row;
-}
-
-.searchResult:hover {
-  background: #eeeeee;
-}
-
-.searchResultInfo {
-  display: inline-flex;
-  flex-direction: column;
-}
-
-.searchPerson {
-  font-size: 16px;
-  margin-bottom: -5px;
-  font-weight: 400;
-}
-
-.searchAddress {
-  font-size: 12px;
-  font-weight: 200;
-}
-
-.searchPersonIcon {
-  content: url('~/assets/img/personIcon.png');
-  height: 25px;
-  width: 25px;
-  margin: auto 5px auto 0;
-}
 </style>

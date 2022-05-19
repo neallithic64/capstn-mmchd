@@ -1,7 +1,18 @@
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
+const cron = require('node-cron');
 const db = require("../models/db");
+let task;
+(async () => {
+	try {
+		return (await db.exec(`SELECT * FROM mmchddb.SYSTEM_SETTINGS;`))[0];
+	} catch (e) {
+		console.log(e);
+	}
+})().then(sysSet => {
+	task = cron.schedule(sysSet.reportingMinute + " " + sysSet.reportingHour + " * * " + sysSet.reportingDay, indexFunctions.cronCRFPushData);
+});
 
 Date.prototype.getWeek = function() {
 	let d = new Date(Date.UTC(this.getFullYear(), this.getMonth(), this.getDate()));
@@ -663,8 +674,11 @@ const indexFunctions = {
 	
 	getPatients: async function(req, res) {
 		let match = [];
+		// checking type of userOnly (must be boolean)
+		console.log(req.query);
 		try {
-			if (req.query.userID) {
+			if (req.query.userOnly) {
+				// filtered by user only
 				match = await db.exec(`SELECT p.*, a1.houseStreet AS currHouseStreet,
 						a1.brgy AS currBrgy, a1.city AS currCity, a2.houseStreet AS permHouseStreet,
 						a2.brgy AS permBrgy, a2.city AS permCity, MAX(c.reportDate) AS updatedDate
@@ -675,6 +689,7 @@ const indexFunctions = {
 						WHERE c.reportedBy = '${req.query.userID}'
 						GROUP BY p.patientID;`);
 			} else {
+				// must be fitered by logged in user's city
 				match = await db.exec(`SELECT p.*, a1.houseStreet AS currHouseStreet,
 						a1.brgy AS currBrgy, a1.city AS currCity, a2.houseStreet AS permHouseStreet,
 						a2.brgy AS permBrgy, a2.city AS permCity, MAX(c.reportDate) AS updatedDate
@@ -682,6 +697,11 @@ const indexFunctions = {
 						INNER JOIN mmchddb.ADDRESSES a1 ON p.caddressID = a1.addressID
 						INNER JOIN mmchddb.ADDRESSES a2 ON p.paddressID = a2.addressID
 						LEFT JOIN mmchddb.CASES c ON p.patientID = c.patientID
+						WHERE a1.city IN (SELECT a.city
+							FROM mmchddb.USERS u
+							JOIN mmchddb.ADDRESSES a
+							ON a.addressID = u.addressID
+							WHERE u.userID = '${req.query.userID}')
 						GROUP BY p.patientID;`);
 			}
 			res.status(200).send(match);
@@ -1386,6 +1406,20 @@ const indexFunctions = {
 			res.status(500).send("Server error");
 		}
 	},
+	
+	getSettings: async function(req, res) {
+		let settingsObj = {};
+		try {
+			let sysSet = (await db.exec(`SELECT * FROM mmchddb.SYSTEM_SETTINGS;`))[0];
+			let userSet = (await db.exec(`SELECT * FROM mmchddb.USER_SETTINGS WHERE userID = '${req.query.userID}';`))[0];
+			settingsObj.systemSettings = sysSet;
+			settingsObj.userSettings = userSet;
+			res.status(200).send(settingsObj);
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error.");
+		}
+	},
 
 	/*
 	 * POST METHODS
@@ -2068,6 +2102,33 @@ const indexFunctions = {
 			};
 			await db.insertOne("mmchddb.OUTBREAK_AUDIT", audit);
 			res.status(200).send("Updated outbreak status.");
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error.");
+		}
+	},
+	
+	postUpdateSettings: async function(req, res) {
+		try {
+			let { day, time, userID, consent } = req.body.cronDetails, settingUpdate;
+			timeArr = time.split(":");
+			let userType = await db.exec(`SELECT u.userType FROM mmchddb.USERS u WHERE u.userID = '${userID}'`);
+			
+			/* two updates: (1) consent and (2) cron time */
+			if (["pidsrStaff", "techStaff", "lhsdChief", "resuHead", "chdDirector", "fhsisStaff"].includes(userType[0].userType)) {
+				settingUpdate = await db.exec(`UPDATE mmchddb.SYSTEM_SETTINGS ss
+						SET ss.reportingDay = '${day}', ss.reportingHour = ${timeArr[0]},
+						ss.reportingMinute = ${timeArr[1]}
+						WHERE ss.settingID = 0;`);
+				task.stop();
+				task = cron.schedule(timeArr[1] + " " + timeArr[0] + " * * " + day, indexFunctions.cronCRFPushData);
+			} else {
+				settingUpdate = await db.exec(`UPDATE mmchddb.USER_SETTINGS us
+						SET us.pushDataAccept = ${consent}
+						WHERE us.userID = '${userID}';`);
+			}
+			if (settingUpdate) res.status(200).send("Settings saved.");
+			else res.status(200).send("Settings not saved properly.");
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error.");

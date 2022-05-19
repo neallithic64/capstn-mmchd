@@ -67,7 +67,7 @@
         <form v-if="pageNum == 1 || isPrint" id="measles1" type="submit">
           <div id="case-investigation-form" class="center">
             <h2 class="viewCIFh2" id="form-header">
-              {{ Object.values(disease.formNames)[1] }}
+              {{ Object.values(disease.formNames)[pageNum] }}
             </h2>
 
             <div class="field-row-straight">
@@ -430,7 +430,7 @@
         <form v-if="pageNum == 2 || isPrint" id="measles1" type="submit">
           <div id="case-investigation-form" class="center">
             <h2 id="form-header" class="viewCIFh2">
-              {{ Object.values(disease.formNames)[2] }}
+              {{ Object.values(disease.formNames)[pageNum] }}
             </h2>
 
             <div class="field-row">
@@ -919,7 +919,7 @@
         <form v-if="pageNum == 3 || isPrint" id="measles3" type="submit">
           <div id="case-investigation-form" class="center">
             <h2 id="form-header" class="viewCIFh2">
-              {{ Object.values(disease.formNames)[3] }}
+              {{ Object.values(disease.formNames)[pageNum] }}
             </h2>
 
             <div
@@ -1118,7 +1118,7 @@
         <form v-if="pageNum == 4 || isPrint" id="measles4" type="submit">
           <div id="case-investigation-form" class="center">
             <h2 id="form-header" class="viewCIFh2">
-              {{ Object.values(disease.formNames)[4] }}
+              {{ Object.values(disease.formNames)[pageNum] }}
             </h2>
           </div>
           <div>
@@ -1432,7 +1432,7 @@
         <form v-if="pageNum == 5 || isPrint" id="measles5" type="submit">
           <div id="case-investigation-form" class="center">
             <h2 id="form-header" class="viewCIFh2">
-              {{ Object.values(disease.formNames)[5] }}
+              {{ Object.values(disease.formNames)[pageNum] }}
             </h2>
 
             <div>
@@ -1829,59 +1829,7 @@
         <form v-if="pageNum == 6 || isPrint" id="measles6" type="submit">
           <div id="case-investigation-form" class="center">
             <h2 id="form-header" class="viewCIFh2">
-              {{ Object.values(disease.formNames)[6] }}
-            </h2>
-
-            <div
-              class="field-row"
-              style="display: inline-flex; margin-bottom: -1 px"
-            >
-              <div class="field">
-                <label class="required">
-                  Please select the final classification
-                </label>
-                <div>
-                  <div style="display: inline-flex; flex-direction: column">
-                    <div
-                      v-for="(value, name, i) in classification"
-                      :key="i"
-                      class="checkbox-options"
-                    >
-                      <input
-                        :id="i"
-                        v-model="formData.caseData.finalClassification"
-                        :value="name"
-                        class="input-checkbox"
-                        name="finalClassification"
-                        type="radio"
-                        :disabled="inputEdit()"
-                      />
-                      <label :for="i">
-                        {{ name }}
-                      </label>
-                      <!-- <div class="tooltip">
-                        <img
-                          id="infofever"
-                          class="info-icon-img"
-                          src="~/assets/img/infoicon.png"
-                        />
-                        <span class="tooltipText" style="width: 650px">{{
-                          value
-                        }}</span>
-                      </div> -->
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </form>
-        <hr v-if="isPrint" class="viewCIFhr"/>
-
-        <form v-if="pageNum == 7 || isPrint" id="measles7" type="submit">
-          <div id="case-investigation-form" class="center">
-            <h2 id="form-header" class="viewCIFh2">
-              {{ Object.values(disease.formNames)[7] }}
+              {{ Object.values(disease.formNames)[pageNum] }}
             </h2>
 
             <div
@@ -1914,10 +1862,10 @@
         </form>
         <hr v-if="isPrint" class="viewCIFhr"/>
 
-        <form v-if="pageNum == 8 || isPrint" id="measles8" type="submit">
+        <form v-if="pageNum == 7 || isPrint" id="measles7" type="submit">
           <div id="case-investigation-form" class="center">
             <h2 id="form-header" class="viewCIFh2" style="display: inline-flex;">
-              {{ Object.values(disease.formNames)[8] }}
+              {{ Object.values(disease.formNames)[pageNum] }}
               <ul
                 v-show="!isPrint && !editLab && !editOutcome"
                 class="CIFEdit"
@@ -2028,10 +1976,10 @@
           </div>
         </form>
 
-        <form v-if="pageNum == 9 || isPrint" id="measles9" type="submit">
+        <form v-if="pageNum == 8 || isPrint" id="measles8" type="submit">
           <div id="case-investigation-form" class="center">
             <h2 id="form-header" class="viewCIFh2" style="display: inline-flex;">
-              {{ Object.values(disease.formNames)[9] }}
+              {{ Object.values(disease.formNames)[pageNum] }}
               <!-- ADD this in ul v-show below: 
                 && $auth.user.userID === formData.cases.investigatorLab -->
               <ul
@@ -2294,6 +2242,58 @@
           </div>
         </form>
         <hr v-if="isPrint" class="viewCIFhr"/>
+
+        <form v-if="pageNum == 9 || isPrint" id="measles9" type="submit">
+          <div id="case-investigation-form" class="center">
+            <h2 id="form-header" class="viewCIFh2">
+              {{ Object.values(disease.formNames)[pageNum] }}
+            </h2>
+
+            <div
+              class="field-row"
+              style="display: inline-flex; margin-bottom: -1 px"
+            >
+              <div class="field">
+                <label class="required">
+                  Please select the final classification
+                </label>
+                <div>
+                  <div style="display: inline-flex; flex-direction: column">
+                    <div
+                      v-for="(value, name, i) in classification"
+                      :key="i"
+                      class="checkbox-options"
+                    >
+                      <input
+                        :id="i"
+                        v-model="formData.caseData.finalClassification"
+                        :value="name"
+                        class="input-checkbox"
+                        name="finalClassification"
+                        type="radio"
+                        :disabled="inputEdit()"
+                      />
+                      <label :for="i">
+                        {{ name }}
+                      </label>
+                      <!-- <div class="tooltip">
+                        <img
+                          id="infofever"
+                          class="info-icon-img"
+                          src="~/assets/img/infoicon.png"
+                        />
+                        <span class="tooltipText" style="width: 650px">{{
+                          value
+                        }}</span>
+                      </div> -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+        
       </div>
       <div class="CIF-statusHistory">
         <div class="CIF-statusHistory">
@@ -2641,10 +2641,10 @@ export default {
           form3: 'Clinical Data',
           form4: 'Vaccination History',
           form5: 'Exposure History',
-          form6: 'Final Classification',
-          form7: 'Source of Information',
-          form8: 'Outcome',
-          form9: 'Laboratory Tests',
+          form6: 'Source of Information',
+          form7: 'Outcome',
+          form8: 'Laboratory Tests',
+          form9: 'Final Classification',
         },
       },
       rowData: {
