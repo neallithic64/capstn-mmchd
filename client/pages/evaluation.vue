@@ -7,7 +7,7 @@
       <div class="EvalExport">
         <div class="allCases-summaryContainer">
           <ul :class="formListClass('dru')" @click="clickTab('dru')">
-            DRU Ealuation
+            DRU Evaluation
           </ul>
           <ul :class="formListClass('healthprog')" @click="clickTab('healthprog')">
             Health Program Evaluation
@@ -50,7 +50,7 @@
                       <!-- <img class="searchPersonIcon" /> -->
                       <div class="searchResultInfo" @click="selectDRU(DRU)">
                         <div class="searchPerson">
-                          {{ DRU.midName }}
+                          {{ DRU.druName }}
                         </div>
                       </div>
                     </div>
@@ -156,20 +156,20 @@ export default {
       },
       DRUEvalDataSets: [
           {
-              weekNo: 'a',
+              weekNo: 'Week 1',
               caseCount: '1',
               CIFSubmission: 'yes',
               CRFSubmission: 'zero report submitted',
           },
           {
               weekNo: 'Week 2',
-              caseCount: '12',
+              caseCount: '2',
               CIFSubmission: 'no',
               CRFSubmission: 'late cases submitted',
           },
           {
-              weekNo: 'Week 53',
-              caseCount: '11',
+              weekNo: 'Week 3',
+              caseCount: '3',
               CIFSubmission: 'yes',
               CRFSubmission: 'cases submitted',
           },
@@ -314,12 +314,7 @@ export default {
     }
   },
   async fetch() {
-    let rows = (await axios.get('http://localhost:8080/api/getCaseDefs?diseaseID=' + this.diseaseID)).data;
-    for (let i = 0; i < rows.length; i++) {
-      this.classification[rows[i].class] = rows[i].definition;
-    }
-    // below has wrong URL. don't forget to change the link. needs to retrieve all DRUs instead
-    rows = (await axios.get('http://localhost:8080/api/getPatients')).data;
+    let rows = (await axios.get('http://localhost:8080/api/getAllDRUs')).data;
     this.DRUs = rows;
     rows = (await axios.get('http://localhost:8080/api/getLabUsers')).data;
     this.labList = rows;
@@ -383,17 +378,18 @@ export default {
         for (let i = 0; i < this.DRUs.length && ctr < 5; i++) {
           // eslint-disable-next-line no-useless-escape
           const reg = new RegExp('^' + event.target.value + 'w*', 'i');
-          if ((this.DRUs[i].firstName + ' ' + this.DRUs[i].midName + ' ' + this.DRUs[i].lastName).match(reg)) {
+          if ((this.DRUs[i].druName).match(reg)) {
             this.DRUResult.push(this.DRUs[i]);
             ctr++;
           }
         }
       }
     },
-    selectDRU(dru) {
+    async selectDRU(dru) {
       this.showDRUchoices = false;
       this.DRUselected = true;
       // code to retrieve numberz
+      let rows = (await axios.get('http://localhost:8080/api/getEvals')).data;
     }
   },
 }
