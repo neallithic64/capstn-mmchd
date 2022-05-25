@@ -134,7 +134,7 @@ export default {
         sortKey: 'weekNo',
         columns: [
           {
-            title: 'Week No',
+            title: 'Year-Week No',
             key: 'weekNo',
             sortable: true,
           },
@@ -155,24 +155,24 @@ export default {
         search: true,
       },
       DRUEvalDataSets: [
-          {
-              weekNo: 'Week 1',
-              caseCount: '1',
-              CIFSubmission: 'yes',
-              CRFSubmission: 'zero report submitted',
-          },
-          {
-              weekNo: 'Week 2',
-              caseCount: '2',
-              CIFSubmission: 'no',
-              CRFSubmission: 'late cases submitted',
-          },
-          {
-              weekNo: 'Week 3',
-              caseCount: '3',
-              CIFSubmission: 'yes',
-              CRFSubmission: 'cases submitted',
-          },
+        {
+          weekNo: '2022 01',
+          caseCount: '1',
+          CIFSubmission: 'yes',
+          CRFSubmission: 'zero report submitted',
+        },
+        {
+          weekNo: '2022 02',
+          caseCount: '2',
+          CIFSubmission: 'no',
+          CRFSubmission: 'late cases submitted',
+        },
+        {
+          weekNo: '2022 03',
+          caseCount: '3',
+          CIFSubmission: 'yes',
+          CRFSubmission: 'cases submitted',
+        },
       ],
       SurveillanceEvalTableOptions: {
         tableName: 'SurveillanceEval',
@@ -193,28 +193,16 @@ export default {
             key: 'completeness',
             sortable: true,
           },
-          {
-            title: 'Sensitivity',
-            key: 'sensitivity',
-            sortable: true,
-          },
-          {
-            title: 'Specificity',
-            key: 'specificity',
-            sortable: true,
-          },
         ],
         search: true,
       },
       SurveillanceEvalDataSets: [
-          {
-              DRU: 'a',
-              totalCases: 'a',
-              timeliness: 'a',
-              completeness: 'a',
-              sensitivity: 'a',
-              specificity: 'a',
-          },
+        {
+          DRU: 'a',
+          totalCases: 'a',
+          timeliness: 'a',
+          completeness: 'a',
+        },
       ],
       HealthProgEvalTableOptions: {
         tableName: 'HealthProgEval',

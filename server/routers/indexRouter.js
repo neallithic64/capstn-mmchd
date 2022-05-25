@@ -57,7 +57,7 @@ router.get("/getTCL", m4Cont.getTCL);
 router.get("/getAllTCLs", m4Cont.getAllTCLs);
 
 router.get("/getAllDRUs", m5Cont.getAllDRUs);
-router.get("/getEvals", m5Cont.getEvals);
+router.get("/getDRUEvals", m5Cont.getDRUEvals);
 
 
 // POST Routes

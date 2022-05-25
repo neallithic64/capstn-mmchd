@@ -119,11 +119,17 @@ const indexFunctions = {
 		}
 	},
 	
-	getEvals: async function(req, res) {
+	getDRUEvals: async function(req, res) {
 		try {
-			let match = await db.exec(`SELECT * FROM mmchddb.SURVEILLANCE_EVAL;`);
-			match = await db.exec(`SELECT * FROM mmchddb.TCL_EVAL;`);
-			res.status(200).send(match);
+			let seMatch = await db.exec(`SELECT se.*, u.druName
+					FROM mmchddb.SURVEILLANCE_EVAL se
+					LEFT JOIN mmchddb.USERS u ON se.userID = u.userID
+					WHERE u.druName = "${druName}";`);
+			let teMatch = await db.exec(`SELECT te.*, u.druName
+					FROM mmchddb.TCL_EVAL te
+					LEFT JOIN mmchddb.USERS u ON te.userID = u.userID
+					WHERE u.druName = "${druName}";`);
+			res.status(200).send({seMatch, teMatch});
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
