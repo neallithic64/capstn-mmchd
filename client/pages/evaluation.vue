@@ -31,7 +31,7 @@
       </div>
       <div class="allCases-viewcasesComponent">
         <div v-show="caseTab==='dru'" v-if="!isPrint" style="margin:20px 0;">
-            <div class="container">
+            <div class="EvalContainer">
                 <div class="searchDRUword"> Search DRU: </div>
                 <div class="bar">
                   <input
@@ -68,7 +68,23 @@
 
             <hr style="margin:30px 0 20px;"/>
 
-            <h3 class="EvalTableTitle"> Surveillance Evaluation </h3>
+            <div class="flexRow justifySpace width100">
+              <h3 class="EvalTableTitle"> Surveillance Evaluation </h3>
+              <div class="flexRow">
+                  <select
+                    v-model="DRUsurveillanceMonth"
+                    class="marginLeft10"
+                  >
+                    <option v-for="(month, i) in monthsList" :key=i :value="i">{{month}}</option>
+                  </select>
+                  <select
+                    v-model="DRUsurveillanceYear"
+                    class="marginLeft10"
+                  >
+                    <option v-for="(year, i) in yearList" :key=i :value="year">{{year}}</option>
+                  </select>
+              </div>
+            </div>
             <dataTable
             :options="SurveillanceEvalTableOptions"
             :datavalues="SurveillanceEvalDataSets"
@@ -76,6 +92,22 @@
             />
         </div>
         <div v-show="caseTab === 'healthprog'" >
+
+          <div class="flexRow width100 justifyRight">
+            <select
+              v-model="HealthProgEvalMonth"
+              class="marginLeft10"
+            >
+              <option v-for="(month, i) in monthsList" :key=i :value="i">{{month}}</option>
+            </select>
+            <select
+              v-model="HealthProgEvalYear"
+              class="marginLeft10"
+            >
+              <option v-for="(year, i) in yearList" :key=i :value="year">{{year}}</option>
+            </select>
+          </div>
+
             <h3 class="EvalTableTitle"> Health Program Evaluation </h3>
             <dataTable
             :options="HealthProgEvalTableOptions"
@@ -124,11 +156,16 @@ export default {
     return {
       caseTab: 'dru',
       isPrint: false,
+      DRUsurveillanceMonth: 0,
+      DRUsurveillanceYear: '2022',
+      HealthProgEvalMonth: 0,
+      HealthProgEvalYear: '2022',
       DRUs: [],
       DRUResult: [],
       DRUselected: false,
       showDRUchoices: true,
-      monthsList: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+      monthsList: ['-', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+      yearList: ['2018', '2019', '2020', '2021', '2022'],
       DRUEvalTableOptions: {
         tableName: 'SurveillanceEval',
         sortKey: 'weekNo',
@@ -417,15 +454,27 @@ export default {
 .margin0 {margin: 0px;}
 .margin10 {margin: 10px;}
 .margin15 {margin: 15px;}
+.marginLeft10 { margin-left: 10px;}
 .padding5 {padding: 5px;}
 .padding15 {padding: 15px;}
 
 .borderRadius1 {border-radius: 10px;}
 
 .alignCenter {align-items: center;}
+.alignRight {align-items: flex-end;}
+.justifyRight {justify-content: right;}
 
 .colorBlue {color: #346083;}
 .bgColorWhite {background-color: #f2f2f2;}
+
+.flexRow {
+    display: inline-flex;
+    flex-direction: row;
+}
+
+.justifySpace {
+  justify-content: space-between;
+}
 
 .evalView {
   padding: 80px 20px 5px 20px;
@@ -613,7 +662,7 @@ select {
   outline: none;
 }
 
-.container {
+.EvalContainer {
   /* background: white; */
   border-radius: 40px;
   width: 60%;
