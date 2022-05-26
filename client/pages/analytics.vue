@@ -67,6 +67,18 @@
           <iframe id="analytics-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiZjJjZDVhZDAtYjljZi00NzQzLWI4ZGMtN2Q0OTRhYWUxMGU3IiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D">
           </iframe>
         </div>
+
+        <!-- Comparative -->
+        <div v-if="pageNum == 8">
+          <iframe id="analytics-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiZjJjZDVhZDAtYjljZi00NzQzLWI4ZGMtN2Q0OTRhYWUxMGU3IiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D">
+          </iframe>
+        </div>
+
+        <!-- Correlation -->
+        <div v-if="pageNum == 9">
+          <iframe id="analytics-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiZjJjZDVhZDAtYjljZi00NzQzLWI4ZGMtN2Q0OTRhYWUxMGU3IiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D">
+          </iframe>
+        </div>
       </div>
     </div>
   </div>
@@ -87,7 +99,9 @@ export default {
         'A5': 'Place',
         'A6': 'Risks',
         'A7': 'Accomplishments',
-        'A8': 'Health Events'
+        'A8': 'Health Events',
+        'A9': 'Comparative',
+        'A10': 'Correlation'
       } 
     }
   },
