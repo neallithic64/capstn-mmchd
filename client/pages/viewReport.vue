@@ -17,7 +17,7 @@
           </h3>
           <h3 class="weight500 size18"> {{report.diseaseName}} </h3>
         </div>
-        <hr class="marginTopBot10" id="2"/>
+        <hr id="2" class="marginTopBot10"/>
       </div>
 
       <!-- PDF -->
@@ -26,7 +26,7 @@
       </div>
 
       <div class="addReportInnerContainter">
-        <hr class="marginTopBot10" id="3"/>
+        <hr id="3" class="marginTopBot10"/>
         <!-- BOTTOM : prepare + submit buttons -->
         <div class="marginTopBot5 padding5 alignTop">
           <!-- name -->
@@ -42,26 +42,29 @@
             </div>
             <div class="grid">
               <div class="inlineFlex alignCenter marginTopBot2">  <span class="width155"> Noted By: </span>
-                <img v-if="report.notedByDate" class="width20" src="~/assets/img/check.png">
+                <img v-if="report.notedByDate && report.notedByDate !== 'N/A'" class="width20" src="~/assets/img/check.png">
                 <img v-else class="width20" src="~/assets/img/arrow.png" style="opacity: 0.75;">
-                  <span class="approval-people"> <b> &nbsp;{{report.notedBy}} </b> </span> <span v-if="report.notedByDate"> &nbsp;({{report.notedByDate}}) </span>
+                  <span class="approval-people"> <b> &nbsp;{{report.notedByFN}} {{report.notedByLN}}</b> </span>
+                  <span v-if="report.notedByDate"> &nbsp;({{report.notedByDate}}) </span>
               </div>
               <div class="inlineFlex alignCenter marginTopBot2">  <span class="width155"> Recommended By: </span>
-                <img v-if="report.recommendedByDate" class="width20" src="~/assets/img/check.png">
-                <img v-else-if="report.notedByDate" class="width20" src="~/assets/img/arrow.png" style="opacity: 0.75;">
+                <img v-if="report.recommByDate && report.recommByDate !== 'N/A'" class="width20" src="~/assets/img/check.png">
+                <img v-else-if="report.notedByDate && report.notedByDate !== 'N/A'" class="width20" src="~/assets/img/arrow.png" style="opacity: 0.75;">
                 <img v-else class="width20" src="~/assets/img/circle.png" style="opacity: 0.3;">
-                  <span class="approval-people"> <b> &nbsp;{{report.recommendedBy}} </b> </span> <span v-if="report.recommendedByDate"> &nbsp;({{report.recommendedByDate}}) </span>
+                  <span class="approval-people"> <b> &nbsp;{{report.recommByFN}} {{report.recommByLN}}</b> </span>
+                  <span v-if="report.recommByDate"> &nbsp;({{report.recommByDate}}) </span>
               </div>
               <div class="inlineFlex alignCenter marginTopBot2">  <span class="width155"> Approved By: </span>
-                <img v-if="report.approvedByDate" class="width20" src="~/assets/img/check.png" >
-                <img v-else-if="report.recommendedByDate" class="width20" src="~/assets/img/arrow.png" style="opacity: 0.75;">
+                <img v-if="report.approvedByDate && report.approvedByDate !== 'N/A'" class="width20" src="~/assets/img/check.png" >
+                <img v-else-if="report.recommByDate && report.recommByDate !== 'N/A'" class="width20" src="~/assets/img/arrow.png" style="opacity: 0.75;">
                 <img v-else class="width20" src="~/assets/img/circle.png" style="opacity: 0.3;">
-                  <span class="approval-people"> <b> &nbsp;{{report.approvedBy}} </b></span> <span v-if="report.approvedByDate"> &nbsp;({{report.approvedByDate}}) </span>
+                  <span class="approval-people"> <b> &nbsp;{{report.approvedByFN}} {{report.approvedByLN}}</b></span>
+                  <span v-if="report.approvedByDate"> &nbsp;({{report.approvedByDate}}) </span>
               </div>
             </div>
           </div>
 
-        <hr class="marginTopBot5" id="5"/>
+        <hr id="5" class="marginTopBot5"/>
         </div>
 
         <!-- APPROVAL / REMARKS -->
@@ -72,7 +75,7 @@
          class="marginTopBot20 padding5">
           <div>
             <div class="inlineFlex marginTopBot2">
-              <legend for="inputStatus" class="inputLegend required"> Status (from person name): </legend>
+              <legend for="inputStatus" class="inputLegend required"> Status ({{$auth.user.firstName}} {{$auth.user.lastName}}): </legend>
               <select id="inputStatus" v-model="inputStatus" type="text" class="input-form-field marginLeft5"
                 :class="isRequired()" required>
                 <option value="Approve"> Approve </option>
@@ -96,13 +99,13 @@
         <hr class="marginTop30" />
         </div>
 
-        <!-- Historry -->
-        <div v-show="!isPrint" id="case-investigation-form" class="center">
+        <!-- History -->
+        <div v-if="dataSet.length > 0" v-show="!isPrint" id="case-investigation-form" class="center">
           <h3 class="caps viewRep-chartTitle marginBottom5 viewRep-formHeader"> Report History </h3>
           <dataTable
-          :options="tableOptions"
-          :datavalues="dataSet"
-          :casetype="'feedbackReport'"
+            :options="tableOptions"
+            :datavalues="dataSet"
+            :casetype="'feedbackReport'"
           />
         </div>
 
@@ -132,7 +135,7 @@ export default {
       today:'',
       timeUnit:'',
       report: {
-	    reportID: '',
+        reportID: '',
         status: '',
         title: '',
         reportType: '',
@@ -146,8 +149,8 @@ export default {
 
         notedBy: '',
         notedByDate: '',
-        recommendedBy: '',
-        recommendedByDate: '',
+        recommBy: '',
+        recommByDate: '',
         approvedBy: '',
         approvedByDate: '',
       },
@@ -165,8 +168,8 @@ export default {
             // sortable: true,
           },
           {
-            title: 'Action', // approve, Reject, edit, comment, etc.
-            key: 'action',
+            title: 'Action',
+            key: 'updateAction',
           },
           {
             title: 'By',
@@ -180,14 +183,7 @@ export default {
         // source: 'http://demo.datatable/api/users',
         search: false,
       },
-      dataSet: [
-        {
-          dateModified: 'today',
-          action: 'approve',
-          modifiedBy: 'me',
-          remarks: 'nice report ...',
-        },
-      ]
+      dataSet: []
     }
   },
   head() {
@@ -206,42 +202,61 @@ export default {
     for (let i=0; i<this.report.chartRemarks.length; i++) this.inputChartRemarks[i] = this.report.chartRemarks[i];
 
     const pdfFile = await axios.get("http://localhost:8080/api/getFileBlob", {
-	  params: {reportID: this.$route.query.reportID}
-	});
-	// console.log(pdfFile.data);
-	const pdfPreview = document.querySelector('iframe');
-	pdfPreview.src = pdfFile.data;
-	pdfPreview.classList.add("width100");
-	pdfPreview.style = "height: 70vh;"
-	
-	// report data
+      params: {reportID: this.$route.query.reportID}
+    });
+    // console.log(pdfFile.data);
+    const pdfPreview = document.querySelector('iframe');
+    pdfPreview.src = pdfFile.data;
+    pdfPreview.classList.add("width100");
+    pdfPreview.style = "height: 70vh;"
+    
+    // report data
     const reportData = (await axios.get("http://localhost:8080/api/getReport", {
-	  params: { reportID: this.$route.query.reportID }
-	})).data;
-	console.log(reportData);
-	for (let i = 0; i < reportData.dataSet.length; i++) {
-	  reportData.dataSet[i].dateModified = reportData.dataSet[i].dateModified
-	    ? this.convDatePHT(new Date(reportData.dataSet[i].dateModified))
-		: "N/A";
-	}
-	this.dataSet = reportData.dataSet;
-	
-	reportData.report.dateCreated = reportData.report.dateCreated
-	  ? this.convDatePHT(new Date(reportData.report.dateCreated))
-	  : "N/A";
-	reportData.report.approvedByDate = reportData.report.approvedByDate
-	  ? this.convDatePHT(new Date(reportData.report.approvedByDate))
-	  : "N/A";
-	reportData.report.reportsIncluded = JSON.parse(reportData.report.reportsIncluded);
-	reportData.report.chartRemarks = JSON.parse(reportData.report.chartRemarks);
-	this.report = reportData.report;
-    if (this.report.status === 'For Approval') this.isAssess = true;
+      params: { reportID: this.$route.query.reportID }
+    })).data;
+    
+    reportData.report.dateCreated = reportData.report.dateCreated
+      ? this.convDatePHT(new Date(reportData.report.dateCreated))
+      : "N/A";
+    reportData.report.notedByDate = reportData.report.notedByDate
+      ? this.convDatePHT(new Date(reportData.report.notedByDate))
+      : "N/A";
+    reportData.report.recommByDate = reportData.report.recommByDate
+      ? this.convDatePHT(new Date(reportData.report.recommByDate))
+      : "N/A";
+    reportData.report.approvedByDate = reportData.report.approvedByDate
+      ? this.convDatePHT(new Date(reportData.report.approvedByDate))
+      : "N/A";
+    reportData.report.reportsIncluded = JSON.parse(reportData.report.reportsIncluded);
+    reportData.report.chartRemarks = JSON.parse(reportData.report.chartRemarks);
+    this.report = reportData.report;
+    
+    for (let i = 0; i < reportData.dataSet.length; i++) {
+      reportData.dataSet[i].dateModified = reportData.dataSet[i].dateModified
+        ? this.convDatePHT(new Date(reportData.dataSet[i].dateModified))
+        : "N/A";
+    }
+    this.dataSet = reportData.dataSet;
+    // console.log(reportData);
+    
+    /* conditions to hide approval form:
+        1. status is approved or rejected
+        2. status is noted and logged in user is LHSD
+        3. status is recommended and logged in user is resuHead
+    */
+    if (this.report.status === "Approved" || this.report.status === "Rejected" ||
+        (this.report.status === "Noted" && this.$auth.user.userType === "lhsdChief") ||
+        (this.report.status === "Recommended" && this.$auth.user.userType === "resuHead")) {
+      this.isAssess = false;
+    } else this.isAssess = true;
   },
   methods: {
     getColor(status) {
       switch (status) {
+        case 'For Approval':
+        case 'Noted':
+        case 'Recommended': return 'darkGrayB';
         case 'Approved': return 'greenB';
-        case 'For Approval': return 'darkGrayB';
         case 'Rejected': return 'redB';
       }
     },
@@ -267,8 +282,7 @@ export default {
         this.isAssess = false;
         this.inputStatus = '';
         this.inputRemarks = '';
-      }
-      else {
+      } else {
         // SUBMIT ASSESSMENT (drop down)
         this.validate();
         if (!this.isValidated) this.$toast.error('Please select a status!', {duration: 4000, icon: 'error'});
@@ -281,15 +295,16 @@ export default {
           // QUESTION: what happens pag nareject, does the 3 people sa lower part have to change (if so, use x.png)
           this.isAssess = false;
 
-          // TO DO: SAVE SAVE in db
-		  const approvedData = (await axios.post("http://localhost:8080/api/editApproveReport", {
-		    reportID: this.report.reportID,
-			userID: this.$auth.user.userID,
-			remarks: this.inputRemarks
-		  })).data;
-		  if (approvedData.status === 200) {
+          const approvedData = await axios.post("http://localhost:8080/api/editApproveReport", {
+            reportID: this.report.reportID,
+            userID: this.$auth.user.userID,
+            userType: this.$auth.user.userType,
+            remarks: this.inputRemarks
+          });
+          if (approvedData.status === 200) {
             this.$toast.success('Status saved!', {duration: 4000, icon: 'check_circle'});
-		  }
+            location.reload();
+          }
         }
       }
     },
@@ -307,10 +322,10 @@ export default {
         }
       // })
     },
-	convDatePHT(d) { // only accepts Date object; includes checking
+    convDatePHT(d) { // only accepts Date object; includes checking
       return !isNaN(Date.parse(d))
-	      ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10).split("-").join("/")
-		  : "N/A";
+          ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10).split("-").join("/")
+          : "N/A";
     },
   }
 }

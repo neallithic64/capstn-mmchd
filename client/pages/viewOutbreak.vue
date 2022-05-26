@@ -446,7 +446,7 @@ export default {
       else this.obSummary[i].risk = "Low";
     }
 	
-	this.resDeadline = (new Date((new Date(this.outbreak.startDate)).getTime() + 115200000)).toString();
+	this.resDeadline = data.outbreak.timer;
   }, 
   head() {
     return {
@@ -480,7 +480,7 @@ export default {
           userID: this.$auth.user.userID
         });
         if (updateCase.status === 200) {
-          alert('Outbreak status updated!');
+          // alert('Outbreak status updated!');
           location.reload();
         } else {
           // eslint-disable-next-line no-console
@@ -488,7 +488,7 @@ export default {
         }
       }
       if (change==='cancel') {
-        this.newStatus = this.formData.cases.caseLevel;
+        this.auditLog.newStatus = this.outbreak.outbreakStatus;
       }
       this.popup()
     },

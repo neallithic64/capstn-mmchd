@@ -281,17 +281,20 @@ const indexFunctions = {
 					LEFT JOIN mmchddb.ADDRESSES a ON a.addressID = u.addressID
 					WHERE u.userID = '${ req.query.userID }';`);
 			if (!!req.query.TCLID) { // getting for view page
-				let match = await db.exec(`SELECT t.*, td.*, p.*, a1.city AS patientCity,
+				let match = await db.exec(`SELECT td.*, t.*, p.*, a1.city AS patientCity,
 						u.druName, a2.city AS druCity, a2.brgy AS druBrgy
-						FROM mmchddb.TCLS t
-						LEFT JOIN mmchddb.TCL_DATA td ON td.TCLID = t.TCLID
+						FROM mmchddb.TCL_DATA td
+						LEFT JOIN mmchddb.TCLS t ON t.TCLID = td.TCLID
 						LEFT JOIN mmchddb.PATIENTS p ON p.patientID = td.patientID
 						LEFT JOIN mmchddb.ADDRESSES a1 ON a1.addressID = p.caddressID
 						LEFT JOIN mmchddb.USERS u ON u.userID = t.userID
 						LEFT JOIN mmchddb.ADDRESSES a2 ON a2.addressID = u.addressID
 						WHERE t.TCLID = '${ req.query.TCLID }';`);
+				let TCL = await db.exec(`SELECT t.*
+						FROM mmchddb.TCLS t
+						WHERE t.TCLID = '${ req.query.TCLID }';`);
 				res.status(200).send({
-					TCL: match.length ? match[match.length - 1] : [],
+					TCL: match.length ? match[match.length - 1] : TCL[0],
 					tclData: match,
 					pushDataAccept: userSettings[0].pushDataAccept,
 					userData: userData[0]
@@ -389,6 +392,77 @@ const indexFunctions = {
 			await db.updateRows("mmchddb.PROGRAM_ACCOMPS", {
 				progAccompID: progAccompID
 			}, { dateUpdated: new Date() });
+			res.status(200).send("Update targets successful!");
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
+	
+	postSubmitProgAccomp: async function(req, res) {
+		let { progAccompID, userID, diseaseID } = req.body;
+		try {
+			// get all data rows
+			let progData = await db.exec(`SELECT pa.year, pad.*
+					FROM mmchddb.PROGRAM_ACCOMPS pa
+					JOIN PROGRAM_ACCOMP_DATA pad
+					ON pad.progAccompID = pa.progAccompID
+					WHERE pa.progAccompID = '${progAccompID}'`);
+			let newProgObj;
+			if (progData.length < 12) {
+				// make new month
+				newProgObj = {
+					progAccompID: progAccompID,
+					month: progData.length,
+					populationTotal: progData.length > 0 ? progData[progData.length - 1].populationTotal : 0,
+					populationRisk: 0,
+					confCasesTotal: "0, 0",
+					confCases5above: "0, 0",
+					confCases5below: "0, 0",
+					confCasesPreg: "0, 0",
+					malariaLabConf: "0, 0",
+					malariaLabConfFalci: "0, 0",
+					malariaLabConfVivax: "0, 0",
+					malariaLabConfOvale: "0, 0",
+					malariaLabConfMalar: "0, 0",
+					confCasesMethod: "0, 0",
+					confCasesMethodSlide: "0, 0",
+					confCasesMethodRDT: "0, 0",
+					totalLLIN: "0, 0",
+					totalMalariaDeaths: "0, 0"
+				};
+			} else {
+				// make new prog accomp
+				let newAccomp = await generateID("mmchddb.PROGRAM_ACCOMPS");
+				await db.insertOne("mmchddb.PROGRAM_ACCOMPS", {
+					progAccompID: newAccomp.id,
+					diseaseID: diseaseID,
+					userID: userID,
+					year: progData[0].year + 1,
+					dateUpdated: new Date()
+				});
+				newProgObj = {
+					progAccompID: newAccomp.id,
+					month: 0,
+					populationTotal: 0,
+					populationRisk: 0,
+					confCasesTotal: "0, 0",
+					confCases5above: "0, 0",
+					confCases5below: "0, 0",
+					confCasesPreg: "0, 0",
+					malariaLabConf: "0, 0",
+					malariaLabConfFalci: "0, 0",
+					malariaLabConfVivax: "0, 0",
+					malariaLabConfOvale: "0, 0",
+					malariaLabConfMalar: "0, 0",
+					confCasesMethod: "0, 0",
+					confCasesMethodSlide: "0, 0",
+					confCasesMethodRDT: "0, 0",
+					totalLLIN: "0, 0",
+					totalMalariaDeaths: "0, 0"
+				};
+			}
+			await db.insertOne("mmchddb.PROGRAM_ACCOMP_DATA", newProgObj);
 			res.status(200).send("Update targets successful!");
 		} catch (e) {
 			console.log(e);

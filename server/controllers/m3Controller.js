@@ -29,18 +29,19 @@ function convDatePHT (d) {
  */
 function sendReportEmail(email, reportID, status) {
 	// sending email
-	var smtpTransport = nodemailer.createTransport({
+	let smtpTransport = nodemailer.createTransport({
 		service: "Gmail",
 		auth: {
 			user: process.env.EMAIL_ADDR,
 			pass: process.env.EMAIL_PASS
 		}
 	});
-	var mailOpts = {
-		from: "MM CHD",
+	let mailOpts = {
+		from: "MM-CHD",
 		to: email,
-		subject: "MMCHD: New Report For Approval",
-		text: `Good day! New report ${reportID} has been created with status "${status}". Review it here: http://localhost:3000/viewReport?reportID=${reportID}. Thank you very much!`
+		subject: "MMCHD: Report Status Update",
+		text: `Good day! Report ${reportID} has been created/updated with status "${status}". Review it
+				here: http://localhost:3000/viewReport?reportID=${reportID}. Thank you very much!`
 	};
 	smtpTransport.sendMail(mailOpts, function(err) {
 		if (err) console.log(err);
@@ -165,13 +166,20 @@ const indexFunctions = {
 	
 	getReport: async function(req, res) {
 		try {
-			let report = await db.exec(`SELECT r.*, d.diseaseName, u1.*, u2.*
+			let report = await db.exec(`SELECT r.*, d.diseaseName,
+					u1.firstName AS "preparedByFN", u1.lastName AS "preparedByLN",
+					u2.firstName AS "notedByFN", u2.lastName AS "notedByLN",
+					u3.firstName AS "recommByFN", u3.lastName AS "recommByLN",
+					u4.firstName AS "approvedByFN", u4.lastName AS "approvedByLN"
 					FROM mmchddb.REPORTS r
 					LEFT JOIN mmchddb.USERS u1 ON u1.userID = r.preparedBy
-					LEFT JOIN mmchddb.USERS u2 ON u2.userID = r.approvedBy
+					LEFT JOIN mmchddb.USERS u2 ON u2.userID = r.notedBy
+					LEFT JOIN mmchddb.USERS u3 ON u3.userID = r.recommBy
+					LEFT JOIN mmchddb.USERS u4 ON u4.userID = r.approvedBy
 					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = r.diseaseID
 					WHERE r.reportID = '${req.query.reportID}';`);
-			let auditLog = await db.exec(`SELECT r.*, ra.*
+			let auditLog = await db.exec(`SELECT r.*, ra.remarks, ra.modifiedBy,
+					ra.dateModified, ra.action AS updateAction
 					FROM mmchddb.REPORTS r
 					LEFT JOIN mmchddb.REPORT_AUDIT ra ON ra.reportID = r.reportID
 					WHERE r.reportID = '${req.query.reportID}';`);
@@ -250,7 +258,6 @@ const indexFunctions = {
 			});
 			
 			sendReportEmail("matthewneal2006@yahoo.com", reportID, "For Approval");
-			
 			res.status(200).send(reportID);
 		} catch (e) {
 			console.log(e);
@@ -259,24 +266,48 @@ const indexFunctions = {
 	},
 	
 	postEditApproveReport: async function(req, res) {
-		let { reportID, userID, remarks } = req.body;
-		let newDate = new Date();
+		let { reportID, userID, userType, remarks } = req.body;
+		let newDate = new Date(), newStatus = "Approved", updateObj = {};
 		try {
-			// let rows = await db.findRows("mmchddb.REPORTS", {});
-			let updateObj = {
-				status: "Approved",
-				approvedBy: userID,
-				approvedByDate: newDate.toISOString()
-			}, audit = {
-				reportID: reportID,
-				dateModified: newDate.toISOString(),
-				modifiedBy: userID,
-				action: "Approved",
-				remarks: remarks
-			};
-			await db.updateRows("mmchddb.REPORTS", { reportID: reportID }, updateObj);
-			await db.insertOne("mmchddb.REPORT_AUDIT", audit);
-			res.status(200).send("Report approved!");
+			// checking of userType; different columns will be updated per case
+			switch (userType) {
+				case "lhsdChief": {
+					newStatus = "Noted";
+					updateObj.status = newStatus;
+					updateObj.notedBy = userID;
+					updateObj.notedByDate = newDate.toISOString();
+					break;
+				}
+				case "resuHead": {
+					newStatus = "Recommended";
+					updateObj.status = newStatus;
+					updateObj.recommBy = userID;
+					updateObj.recommByDate = newDate.toISOString();
+					break;
+				}
+				case "chdDirector": {
+					newStatus = "Approved";
+					updateObj.status = newStatus;
+					updateObj.approvedBy = userID;
+					updateObj.approvedByDate = newDate.toISOString();
+					break;
+				}
+			}
+			if (updateObj.status) {
+				let audit = {
+					reportID: reportID,
+					dateModified: newDate.toISOString(),
+					modifiedBy: userID,
+					action: "Report is now " + newStatus + ".",
+					remarks: remarks
+				};
+				await db.updateRows("mmchddb.REPORTS", { reportID: reportID }, updateObj);
+				await db.insertOne("mmchddb.REPORT_AUDIT", audit);
+				sendReportEmail("matthewneal2006@yahoo.com", reportID, newStatus);
+				res.status(200).send("Report approved!");
+			} else {
+				res.status(200).send("Invalid user type!");
+			}
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
