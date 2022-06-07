@@ -105,6 +105,31 @@ function dateToString(date) {
 }
 
 const indexFunctions = {
+	mkData: async function(req, res) {
+		let arr = [];
+		let rows = await db.exec(`SELECT * FROM mmchddb.RISK_FACTORS;`);
+		// console.log("row count: " + rows.length);
+		
+		rows.forEach(async function(e1, i) {
+			// if (i <= 0) {}
+			let caseID = e1.caseID, index = i + 1;
+			arr = [];
+			Object.entries(e1).forEach(async function (e2) {
+				if (["L", "C", "H", "O"].includes(e2[0].charAt(0)) && typeof e2[1] === "number") {
+					arr.push({
+						caseIndex: index,
+						caseID: caseID,
+						riskName: e2[0],
+						riskValue: e2[1]
+					});
+				}
+			});
+			// console.log(arr.map(Object.values));
+			await db.insertRows("mmchddb.RISK_FACTORS_E", Object.keys(arr[0]), arr.map(Object.values));
+		});
+		res.status(200).send("done");
+	},
+	
 	/*
 	 * GET METHODS
 	 */
