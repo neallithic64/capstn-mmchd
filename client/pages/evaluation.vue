@@ -7,7 +7,7 @@
       <div class="EvalExport">
         <div class="allCases-summaryContainer">
           <ul :class="formListClass('dru')" @click="clickTab('dru')">
-            DRU Ealuation
+            DRU Evaluation
           </ul>
           <ul :class="formListClass('healthprog')" @click="clickTab('healthprog')">
             Health Program Evaluation
@@ -31,7 +31,7 @@
       </div>
       <div class="allCases-viewcasesComponent">
         <div v-show="caseTab==='dru'" v-if="!isPrint" style="margin:20px 0;">
-            <div class="container">
+            <div class="EvalContainer">
                 <div class="searchDRUword"> Search DRU: </div>
                 <div class="bar">
                   <input
@@ -50,7 +50,7 @@
                       <!-- <img class="searchPersonIcon" /> -->
                       <div class="searchResultInfo" @click="selectDRU(DRU)">
                         <div class="searchPerson">
-                          {{ DRU.midName }}
+                          {{ DRU.druName }}
                         </div>
                       </div>
                     </div>
@@ -68,7 +68,23 @@
 
             <hr style="margin:30px 0 20px;"/>
 
-            <h3 class="EvalTableTitle"> Surveillance Evaluation </h3>
+            <div class="flexRow justifySpace width100">
+              <h3 class="EvalTableTitle"> Surveillance Evaluation </h3>
+              <div class="flexRow">
+                  <select
+                    v-model="DRUsurveillanceMonth"
+                    class="marginLeft10"
+                  >
+                    <option v-for="(month, i) in monthsList" :key=i :value="i">{{month}}</option>
+                  </select>
+                  <select
+                    v-model="DRUsurveillanceYear"
+                    class="marginLeft10"
+                  >
+                    <option v-for="(year, i) in yearList" :key=i :value="year">{{year}}</option>
+                  </select>
+              </div>
+            </div>
             <dataTable
             :options="SurveillanceEvalTableOptions"
             :datavalues="SurveillanceEvalDataSets"
@@ -76,6 +92,22 @@
             />
         </div>
         <div v-show="caseTab === 'healthprog'" >
+
+          <div class="flexRow width100 justifyRight">
+            <select
+              v-model="HealthProgEvalMonth"
+              class="marginLeft10"
+            >
+              <option v-for="(month, i) in monthsList" :key=i :value="i">{{month}}</option>
+            </select>
+            <select
+              v-model="HealthProgEvalYear"
+              class="marginLeft10"
+            >
+              <option v-for="(year, i) in yearList" :key=i :value="year">{{year}}</option>
+            </select>
+          </div>
+
             <h3 class="EvalTableTitle"> Health Program Evaluation </h3>
             <dataTable
             :options="HealthProgEvalTableOptions"
@@ -124,17 +156,22 @@ export default {
     return {
       caseTab: 'dru',
       isPrint: false,
+      DRUsurveillanceMonth: 0,
+      DRUsurveillanceYear: '2022',
+      HealthProgEvalMonth: 0,
+      HealthProgEvalYear: '2022',
       DRUs: [],
       DRUResult: [],
       DRUselected: false,
       showDRUchoices: true,
-      monthsList: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+      monthsList: ['-', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+      yearList: ['2018', '2019', '2020', '2021', '2022'],
       DRUEvalTableOptions: {
         tableName: 'SurveillanceEval',
         sortKey: 'weekNo',
         columns: [
           {
-            title: 'Week No',
+            title: 'Year-Week No',
             key: 'weekNo',
             sortable: true,
           },
@@ -155,24 +192,24 @@ export default {
         search: true,
       },
       DRUEvalDataSets: [
-          {
-              weekNo: 'a',
-              caseCount: '1',
-              CIFSubmission: 'yes',
-              CRFSubmission: 'zero report submitted',
-          },
-          {
-              weekNo: 'Week 2',
-              caseCount: '12',
-              CIFSubmission: 'no',
-              CRFSubmission: 'late cases submitted',
-          },
-          {
-              weekNo: 'Week 53',
-              caseCount: '11',
-              CIFSubmission: 'yes',
-              CRFSubmission: 'cases submitted',
-          },
+        {
+          weekNo: '2022 01',
+          caseCount: '1',
+          CIFSubmission: 'yes',
+          CRFSubmission: 'zero report submitted',
+        },
+        {
+          weekNo: '2022 02',
+          caseCount: '2',
+          CIFSubmission: 'no',
+          CRFSubmission: 'late cases submitted',
+        },
+        {
+          weekNo: '2022 03',
+          caseCount: '3',
+          CIFSubmission: 'yes',
+          CRFSubmission: 'cases submitted',
+        },
       ],
       SurveillanceEvalTableOptions: {
         tableName: 'SurveillanceEval',
@@ -193,28 +230,16 @@ export default {
             key: 'completeness',
             sortable: true,
           },
-          {
-            title: 'Sensitivity',
-            key: 'sensitivity',
-            sortable: true,
-          },
-          {
-            title: 'Specificity',
-            key: 'specificity',
-            sortable: true,
-          },
         ],
         search: true,
       },
       SurveillanceEvalDataSets: [
-          {
-              DRU: 'a',
-              totalCases: 'a',
-              timeliness: 'a',
-              completeness: 'a',
-              sensitivity: 'a',
-              specificity: 'a',
-          },
+        {
+          DRU: 'a',
+          totalCases: 'a',
+          timeliness: 'a',
+          completeness: 'a',
+        },
       ],
       HealthProgEvalTableOptions: {
         tableName: 'HealthProgEval',
@@ -314,12 +339,7 @@ export default {
     }
   },
   async fetch() {
-    let rows = (await axios.get('http://localhost:8080/api/getCaseDefs?diseaseID=' + this.diseaseID)).data;
-    for (let i = 0; i < rows.length; i++) {
-      this.classification[rows[i].class] = rows[i].definition;
-    }
-    // below has wrong URL. don't forget to change the link. needs to retrieve all DRUs instead
-    rows = (await axios.get('http://localhost:8080/api/getPatients')).data;
+    let rows = (await axios.get('http://localhost:8080/api/getAllDRUs')).data;
     this.DRUs = rows;
     rows = (await axios.get('http://localhost:8080/api/getLabUsers')).data;
     this.labList = rows;
@@ -383,17 +403,18 @@ export default {
         for (let i = 0; i < this.DRUs.length && ctr < 5; i++) {
           // eslint-disable-next-line no-useless-escape
           const reg = new RegExp('^' + event.target.value + 'w*', 'i');
-          if ((this.DRUs[i].firstName + ' ' + this.DRUs[i].midName + ' ' + this.DRUs[i].lastName).match(reg)) {
+          if ((this.DRUs[i].druName).match(reg)) {
             this.DRUResult.push(this.DRUs[i]);
             ctr++;
           }
         }
       }
     },
-    selectDRU(dru) {
+    async selectDRU(dru) {
       this.showDRUchoices = false;
       this.DRUselected = true;
       // code to retrieve numberz
+      let rows = (await axios.get('http://localhost:8080/api/getEvals')).data;
     }
   },
 }
@@ -433,15 +454,27 @@ export default {
 .margin0 {margin: 0px;}
 .margin10 {margin: 10px;}
 .margin15 {margin: 15px;}
+.marginLeft10 { margin-left: 10px;}
 .padding5 {padding: 5px;}
 .padding15 {padding: 15px;}
 
 .borderRadius1 {border-radius: 10px;}
 
 .alignCenter {align-items: center;}
+.alignRight {align-items: flex-end;}
+.justifyRight {justify-content: right;}
 
 .colorBlue {color: #346083;}
 .bgColorWhite {background-color: #f2f2f2;}
+
+.flexRow {
+    display: inline-flex;
+    flex-direction: row;
+}
+
+.justifySpace {
+  justify-content: space-between;
+}
 
 .evalView {
   padding: 80px 20px 5px 20px;
@@ -629,7 +662,7 @@ select {
   outline: none;
 }
 
-.container {
+.EvalContainer {
   /* background: white; */
   border-radius: 40px;
   width: 60%;

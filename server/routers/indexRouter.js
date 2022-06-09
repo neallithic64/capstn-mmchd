@@ -6,12 +6,13 @@ const m1Cont = require("../controllers/m1Controller");
 const m2Cont = require("../controllers/m2Controller");
 const m3Cont = require("../controllers/m3Controller");
 const m4Cont = require("../controllers/m4Controller");
+const m5Cont = require("../controllers/m5Controller");
 // const middleware = require("../middlewares/indexMiddleware");
 
 
 // Testing Routes
 router.get("/", m1Cont.testConn);
-router.get("/mkdata", m1Cont.mkData);
+router.get("/mkdata", m5Cont.mkData);
 
 
 // GET Routes
@@ -54,6 +55,9 @@ router.get("/getViewProgAccomp", m4Cont.getProgAccomps);
 router.get("/getTCLEntry", m4Cont.getTCLEntry);
 router.get("/getTCL", m4Cont.getTCL);
 router.get("/getAllTCLs", m4Cont.getAllTCLs);
+
+router.get("/getAllDRUs", m5Cont.getAllDRUs);
+router.get("/getDRUEvals", m5Cont.getDRUEvals);
 
 
 // POST Routes
