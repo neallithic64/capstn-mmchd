@@ -341,8 +341,6 @@ export default {
   async fetch() {
     let rows = (await axios.get('http://localhost:8080/api/getAllDRUs')).data;
     this.DRUs = rows;
-    rows = (await axios.get('http://localhost:8080/api/getLabUsers')).data;
-    this.labList = rows;
   },
   methods: {
     clickTab(caseTab) {
@@ -414,7 +412,10 @@ export default {
       this.showDRUchoices = false;
       this.DRUselected = true;
       // code to retrieve numberz
-      let rows = (await axios.get('http://localhost:8080/api/getEvals')).data;
+      let rows = (await axios.get('http://localhost:8080/api/getDRUEvals', { params: {
+	    druName: dru.druName
+	  }})).data;
+	  console.log(rows);
     }
   },
 }

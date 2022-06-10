@@ -146,15 +146,59 @@ const indexFunctions = {
 	
 	getDRUEvals: async function(req, res) {
 		try {
+			let cases = [], queryTemp;
+			for (let i = 0; i < 52; i++) {
+				cases.push({ weekNo: i + 202201, caseCount: 0, CIFSubmission: "", CRFSubmission: "" });
+			}
+			
+			
+			// DRU eval
+			let casesQuery = await db.exec(`SELECT YEARWEEK(c.reportDate, 2) AS weekNo,
+					COUNT(c.caseID) AS caseCount, 1 AS CIFSubmission, u.druName
+					FROM mmchddb.CASES c
+					LEFT JOIN mmchddb.USERS u ON c.reportedBy = u.userID
+					GROUP BY weekNo
+					HAVING u.druName = "${req.query.druName}";`);
+			let CRFQuery = await db.exec(`SELECT c.CRFID, c.isPushed,
+					CONCAT(c.year, LPAD(c.week, 2, 0)) AS weekNo, COUNT(ca.caseID) AS CRFCount,
+					YEARWEEK(MAX(ca.reportDate)) AS lastCaseWeek, u.druName
+					FROM mmchddb.CRFS c
+					LEFT JOIN mmchddb.USERS u ON c.userID = u.userID
+					LEFT JOIN mmchddb.CASES ca ON c.CRFID = ca.CRFID
+					GROUP BY c.CRFID
+					HAVING u.druName = "${req.query.druName}";`);
+			for (let i = 0; i < cases.length; i++) {
+				queryTemp = casesQuery.find(e => e.weekNo === cases[i].weekNo);
+				if (queryTemp) {
+					cases[i].caseCount = queryTemp.caseCount;
+				}
+				cases[i].CIFSubmission = cases[i].caseCount > 0 ? "YES" : "NO";
+				
+				// cannot use strict comparison here, one is a formatted string and one is an int
+				queryTemp = CRFQuery.find(e => e.weekNo == cases[i].weekNo);
+				if (queryTemp) {
+					if (queryTemp.isPushed > 0) {
+						if (queryTemp.CRFCount > 0) {
+							if (queryTemp.weekNo > cases[i].weekNo) {
+								cases[i].CRFSubmission = "Late Cases";
+							} else cases[i].CRFSubmission = "Cases Submitted";
+						} else cases[i].CRFSubmission = "Zero Report";
+					} else cases[i].CRFSubmission = "Ongoing";
+				} else cases[i].CRFSubmission = "No Data";
+			}
+			
+			// surveillance eval
 			let seMatch = await db.exec(`SELECT se.*, u.druName
 					FROM mmchddb.SURVEILLANCE_EVAL se
 					LEFT JOIN mmchddb.USERS u ON se.userID = u.userID
-					WHERE u.druName = "${druName}";`);
+					WHERE u.druName = "${req.query.druName}";`);
+			// health program eval
 			let teMatch = await db.exec(`SELECT te.*, u.druName
 					FROM mmchddb.TCL_EVAL te
 					LEFT JOIN mmchddb.USERS u ON te.userID = u.userID
-					WHERE u.druName = "${druName}";`);
-			res.status(200).send({seMatch, teMatch});
+					WHERE u.druName = "${req.query.druName}";`);
+			
+			res.status(200).send({ cases, seMatch, teMatch });
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
