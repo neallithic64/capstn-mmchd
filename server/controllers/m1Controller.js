@@ -677,7 +677,7 @@ const indexFunctions = {
 		// checking type of userOnly (must be boolean)
 		console.log(req.query);
 		try {
-			if (req.query.userOnly) {
+			if (req.query.userOnly === "true") {
 				// filtered by user only
 				match = await db.exec(`SELECT p.*, a1.houseStreet AS currHouseStreet,
 						a1.brgy AS currBrgy, a1.city AS currCity, a2.houseStreet AS permHouseStreet,
