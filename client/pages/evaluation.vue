@@ -413,9 +413,9 @@ export default {
       this.DRUselected = true;
       // code to retrieve numberz
       let rows = (await axios.get('http://localhost:8080/api/getDRUEvals', { params: {
-	    druName: dru.druName
-	  }})).data;
-	  console.log(rows);
+        druName: dru.druName
+      }})).data;
+      console.log(rows);
     }
   },
 }

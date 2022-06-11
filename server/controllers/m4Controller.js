@@ -539,10 +539,17 @@ const indexFunctions = {
 			delete loadedData.dateAdded;
 			delete loadedData.immunizationStatus;
 			delete loadedData.TCLID;
+			delete loadedData.patientID;
+			
+			if (Object.values(loadedData).every(e => e !== "")) {
+				loadedData.immunizationStatus = "Complete";
+			} else {
+				loadedData = Object.fromEntries(Object.entries(loadedData).filter(([_, v]) => v !== ""));
+			}
 			
 			// getting patient's TCL data
 			let tclData = await db.findRows("mmchddb.TCL_DATA", {patientID: patientID});
-			await db.updateRows("mmchddb.TCL_DATA", {patientID: patientID}, {...loadedData, status: "Complete"});
+			await db.updateRows("mmchddb.TCL_DATA", {patientID: patientID}, {...loadedData});
 			res.status(200).send("Update targets successful!");
 		} catch (e) {
 			console.log(e);
