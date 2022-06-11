@@ -34,7 +34,7 @@
       </div>
 
       <div class="VIPcomponent">
-        <div v-if="dataSets.length > 0" id="vue-root">
+        <div id="vue-root">
           <dataTable
             :options="tableOptions"
             :datavalues="dataSets"
