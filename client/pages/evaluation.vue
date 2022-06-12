@@ -488,7 +488,8 @@ export default {
     background-color: #008d41;
     color: transparent;
     text-shadow: 1px 1px, -1px -1px rgb(0 0 0 / 25%);
-    -webkit-background-clip: text;}
+    /* -webkit-background-clip: text; */
+    }
 
 .flexRow {
     display: inline-flex;
