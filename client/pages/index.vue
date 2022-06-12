@@ -6,14 +6,14 @@
           <iframe v-if="$auth.user.userType === 'pidsrStaff' || $auth.user.userType === 'techStaff' || $auth.user.userType === 'lhsdChief' 
                   || $auth.user.userType === 'resuHead' || $auth.user.userType === 'chdDirector' || $auth.user.userType === 'idpcStaff'" 
             id="dashboard-powerbi-iframe"
-            src="https://app.powerbi.com/view?r=eyJrIjoiYTQ0YjRkY2YtMTk2MS00NTljLWFhOTUtYWI0ODUzZDlmNDEyIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D">
+            src="https://app.powerbi.com/view?r=eyJrIjoiZDY2MTc5NDYtY2Q3Yi00ZDA4LWI0MDUtMzEyZTA1ZDA1MDVjIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D">
           </iframe>
-          <iframe v-if="$auth.user.userType === 'fhsisStaff'" id="dashboard-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiYTdlYWJmYzEtMDliOC00NzBiLTlkYjEtNjViN2E1MjkxMjFlIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D">
+          <iframe v-if="$auth.user.userType === 'fhsisStaff'" id="dashboard-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiNmM4MDZkMzEtZDM2Ny00ODhmLTlmYjItNzkyMzc3Mzk0ZmUxIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D">
           </iframe>
           <iframe v-if="$auth.user.userType === 'BHS' || $auth.user.userType === 'privHosp' || $auth.user.userType === 'privLab' 
                   || $auth.user.userType === 'govtLab' || $auth.user.userType === 'govtHosp' || $auth.user.userType === 'CHO'" 
             id="dashboard-powerbi-iframe" 
-            src="https://app.powerbi.com/view?r=eyJrIjoiNWFhOWE0NTAtYWIwMy00MjRmLTk2YmYtNGY2OTFmNGQzYTliIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D&pageName=ReportSectionaeb3cc4ecb8e7e8b1d66">
+            src="https://app.powerbi.com/view?r=eyJrIjoiNzk0NTk3NzMtMGEwNS00NGY1LWI1YTktMDZmNzE3NzdmZDk1IiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D">
           </iframe>
         <div id="dashboard-right">
 
