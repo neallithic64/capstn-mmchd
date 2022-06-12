@@ -4,7 +4,7 @@
     <TopNav />
     <div ref="content" class="evalView width100 margin0 alignCenter">
       <h1 class="allCasesHeader">Evaluation</h1>
-      <div class="EvalExport">
+      <div v-show="!isPrint" class="EvalExport">
         <div class="allCases-summaryContainer">
           <ul :class="formListClass('dru')" @click="clickTab('dru')">
             DRU Evaluation
@@ -13,7 +13,7 @@
             Health Program Evaluation
           </ul>
         </div>
-        <div v-show="!isPrint" class="EvalActionButtons" style="margin-top: -15px;">
+        <div class="EvalActionButtons" style="margin-top: -15px;">
           <ul class="EvalActionButton">
           <img
             src="~/assets/img/pdf.png"
@@ -29,7 +29,7 @@
           </ul> -->
         </div>
       </div>
-      <div class="allCases-viewcasesComponent">
+      <div :class="containerPrintClass()">
         <div v-show="caseTab==='dru'" v-if="!isPrint" style="margin:20px 0;">
             <div class="EvalContainer">
                 <div class="searchDRUword"> Search DRU: </div>
@@ -58,18 +58,20 @@
                 </div>
             </div>
         </div>
-        <div v-show="caseTab==='dru' && DRUselected"> <!--class= "evalViewComponent bgColorWhite width100 borderRadius1 padding15"-->
-            <h3 class="EvalTableTitle"> DRU Evaluation </h3>
+        <div v-show="(caseTab==='dru' || isPrint) && DRUselected"> <!--class= "evalViewComponent bgColorWhite width100 borderRadius1 padding15"-->
+            <div v-show="isPrint" style="margin-top: 10px"></div>
+            <h3 class="EvalTableTitle" :class="h3PrintClass()"> DRU Evaluation {{selectedDRU}} </h3>
             <dataTable
             :options="DRUEvalTableOptions"
             :datavalues="DRUEvalDataSets"
             :casetype="'eval'"
             />
 
-            <hr style="margin:30px 0 20px;"/>
+            <div v-show="isPrint" style="margin-top: 10px; min-height: 10px;"></div>
+            <hr v-show="!isPrint" style="margin:30px 0 20px;"/>
 
             <div class="flexRow justifySpace width100">
-              <h3 class="EvalTableTitle"> Surveillance Evaluation </h3>
+              <h3 class="EvalTableTitle" :class="h3PrintClass()"> Surveillance Evaluation {{selectedDRU}} </h3>
               <div class="flexRow">
                   <select
                     v-model="DRUsurveillanceMonth"
@@ -91,8 +93,11 @@
             :casetype="'eval'"
             />
         </div>
-        <div v-show="caseTab === 'healthprog'" >
 
+        <div v-show="isPrint && DRUselected" style="margin-top: 40px"></div>
+        <hr v-show="isPrint && DRUselected" style="border-top: 2px solid black; margin: 20px 0"/>
+
+        <div v-show="caseTab === 'healthprog' || isPrint" >
           <div class="flexRow width100 justifyRight">
             <select
               v-model="HealthProgEvalMonth"
@@ -108,16 +113,17 @@
             </select>
           </div>
 
-            <h3 class="EvalTableTitle"> Health Program Evaluation </h3>
+            <div v-show="isPrint" style="margin-top: 10px"></div>
+            <h3 class="EvalTableTitle" :class="h3PrintClass()"> Health Program Evaluation </h3>
             <dataTable
             :options="HealthProgEvalTableOptions"
             :datavalues="HealthProgEvalDataSets"
             :casetype="'eval'"
             />
 
-            <hr style="margin:30px 0 20px;"/>
-
-            <h3 class="EvalTableTitle"> Risk Factor (Risk Ratio) </h3>
+            <hr v-show="!isPrint" style="margin:30px 0 20px;"/>
+            <div v-show="isPrint" style="margin-top: 10px"></div>
+            <h3 class="EvalTableTitle" :class="h3PrintClass()"> Risk Factor </h3>
             <dataTable
             :options="OddsRatioTableOptions"
             :datavalues="OddsRatioDataSets"
@@ -162,6 +168,7 @@ export default {
       HealthProgEvalYear: '2022',
       DRUs: [],
       DRUResult: [],
+      selectedDRU: '(dont forget to add () ehhe)',
       DRUselected: false,
       showDRUchoices: true,
       monthsList: ['-', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
@@ -350,31 +357,40 @@ export default {
       if (caseTab === this.caseTab) return 'formSummaryItems selected';
       else return 'formSummaryItems';
     },
+    containerPrintClass() {
+      if (!this.isPrint) return 'allCases-viewcasesComponent';
+    },
+    h3PrintClass() {
+      if (this.isPrint) return 'colorGreen';
+      else return 'greenbg';
+    },
     downloadPDF() {
-      this.isPrint = !this.isPrint
+      this.isPrint = !this.isPrint;
+      setTimeout(() => (window.print()), 200);
+      setTimeout(() => (this.isPrint = !this.isPrint), 200);
 
-      let pWidth = 595.28 // 595.28 is the width of a4
-      let srcWidth = this.$refs.content.scrollWidth
-      let margin = 12 // narrow margin - 1.27 cm (36);
-      let scale = (pWidth - margin * 2) / srcWidth
+      // let pWidth = 595.28 // 595.28 is the width of a4
+      // let srcWidth = this.$refs.content.scrollWidth
+      // let margin = 12 // narrow margin - 1.27 cm (36);
+      // let scale = (pWidth - margin * 2) / srcWidth
 
-      var doc = new jsPDF('p', 'pt', 'A4')
-      window.html2canvas = html2canvas
+      // var doc = new jsPDF('p', 'pt', 'A4')
+      // window.html2canvas = html2canvas
 
-      doc.html(this.$refs.content, {
-        x: margin,
-        y: margin,
-        html2canvas: {
-          scale: scale,
-        },
-        callback: function () {
-          window.open(doc.output('bloburl'))
-        },
-      })
+      // doc.html(this.$refs.content, {
+      //   x: margin,
+      //   y: margin,
+      //   html2canvas: {
+      //     scale: scale,
+      //   },
+      //   callback: function () {
+      //     window.open(doc.output('bloburl'))
+      //   },
+      // })
 
-      // doc.save('test.pdf')
-      console.log(this.$refs.content)
-      setTimeout(() => (this.isPrint = !this.isPrint), 3000)
+      // // doc.save('test.pdf')
+      // console.log(this.$refs.content)
+      // setTimeout(() => (this.isPrint = !this.isPrint), 3000)
     },
     csvExport(arrData) {
       let csvContent = "data:text/csv;charset=utf-8,";
@@ -467,6 +483,13 @@ export default {
 
 .colorBlue {color: #346083;}
 .bgColorWhite {background-color: #f2f2f2;}
+.colorGreen {color: #008d41}
+.greenbg {
+    background-color: #008d41;
+    color: transparent;
+    text-shadow: 1px 1px, -1px -1px rgb(0 0 0 / 25%);
+    /* -webkit-background-clip: text; */
+    }
 
 .flexRow {
     display: inline-flex;
@@ -537,10 +560,6 @@ select {
 .EvalTableTitle {
     font-weight: 600;
     font-size: 22px;
-    background-color: #008d41;
-    color: transparent;
-    text-shadow: 1px 1px, -1px -1px rgb(0 0 0 / 25%);
-    -webkit-background-clip: text;
 }
 
 /* tabs */
