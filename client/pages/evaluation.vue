@@ -58,7 +58,7 @@
                 </div>
             </div>
         </div>
-        <div v-if="caseTab==='dru' && DRUselected"> <!--class= "evalViewComponent bgColorWhite width100 borderRadius1 padding15"-->
+        <div v-if="(caseTab==='dru' || isPrint) && DRUselected"> <!--class= "evalViewComponent bgColorWhite width100 borderRadius1 padding15"-->
             <div v-show="isPrint" style="margin-top: 10px"></div>
             <h3 class="EvalTableTitle" :class="h3PrintClass()"> DRU Evaluation: {{selectedDRU}} </h3>
             <dataTable
