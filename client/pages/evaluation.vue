@@ -113,22 +113,26 @@
             </select>
           </div>
 
-            <div v-show="isPrint" style="margin-top: 10px"></div>
-            <h3 class="EvalTableTitle" :class="h3PrintClass()"> Health Program Evaluation </h3>
-            <dataTable
+          <div v-show="isPrint" style="margin-top: 10px"></div>
+          <h3 class="EvalTableTitle" :class="h3PrintClass()"> Health Program Evaluation </h3>
+          <div v-if="HealthProgEvalDataSets.length > 0">
+		    <dataTable
               :options="HealthProgEvalTableOptions"
               :datavalues="HealthProgEvalDataSets"
               :casetype="'eval'"
             />
+		  </div>
 
-            <hr v-show="!isPrint" style="margin:30px 0 20px;"/>
-            <div v-show="isPrint" style="margin-top: 10px"></div>
-            <h3 class="EvalTableTitle" :class="h3PrintClass()"> Risk Factor </h3>
+          <hr v-show="!isPrint" style="margin:30px 0 20px;"/>
+          <div v-show="isPrint" style="margin-top: 10px"></div>
+          <h3 class="EvalTableTitle" :class="h3PrintClass()"> Risk Factor </h3>
+          <div v-if="OddsRatioDataSets.length > 0">
             <dataTable
               :options="OddsRatioTableOptions"
               :datavalues="OddsRatioDataSets"
               :casetype="'eval'"
             />
+		  </div>
         </div>
       </div>
     </div>
@@ -168,7 +172,7 @@ export default {
       HealthProgEvalYear: '2022',
       DRUs: [],
       DRUResult: [],
-      selectedDRU: '(dont forget to add () ehhe)',
+      selectedDRU: '',
       DRUselected: false,
       showDRUchoices: true,
       monthsList: ['-', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
@@ -234,7 +238,7 @@ export default {
           },
           {
             title: 'Health Program',
-            key: 'healthProg',
+            key: 'TCLID',
           },
           {
             title: 'Number of Cases',
@@ -254,22 +258,7 @@ export default {
         ],
         search: false,
       },
-      HealthProgEvalDataSets: [
-          {
-              disease: 'a',
-              healthProg: 'a',
-              cases: 'a',
-              treated: 'a',
-              oddsRatio: 'a',
-          },
-          {
-              disease: 'a',
-              healthProg: 'a',
-              cases: 'a',
-              treated: 'a',
-              oddsRatio: 'a',
-          }
-      ],
+      HealthProgEvalDataSets: [],
       OddsRatioTableOptions: {
         tableName: 'OddsRatio',
         sortKey: 'disease',
@@ -323,6 +312,9 @@ export default {
   async fetch() {
     let rows = (await axios.get('http://localhost:8080/api/getAllDRUs')).data;
     this.DRUs = rows;
+    rows = (await axios.get('http://localhost:8080/api/getAllHealthProgEvals')).data;
+    this.HealthProgEvalDataSets = rows.teMatch;
+	// this.OddsRatioDataSets = rows.riskFactMatch;
   },
   methods: {
     clickTab(caseTab) {
@@ -406,7 +398,7 @@ export default {
       // console.log(rows);
       this.DRUEvalDataSets = rows.cases;
       this.SurveillanceEvalDataSets = rows.seMatch;
-      // rows.teMatch;
+      this.selectedDRU = dru.druName;
       
       this.showDRUchoices = false;
       this.DRUselected = true;

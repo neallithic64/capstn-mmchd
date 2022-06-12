@@ -144,13 +144,30 @@ const indexFunctions = {
 		}
 	},
 	
+	getAllHealthProgEvals: async function(req, res) {
+		try {
+			// health program eval
+			let teMatch = await db.exec(`SELECT te.*, d.diseaseName AS disease, COUNT(td.patientID) AS cases,
+					SUM(CASE WHEN td.immunizationStatus = "Complete" THEN 1 ELSE 0 END) AS treated
+					FROM mmchddb.TCL_EVAL te
+					LEFT JOIN mmchddb.TCLS t ON te.TCLID = t.TCLID
+					LEFT JOIN mmchddb.TCL_DATA td ON te.TCLID = td.TCLID
+					LEFT JOIN mmchddb.DISEASES d ON t.diseaseID = d.diseaseID
+					GROUP BY te.TCLID;`);
+			let riskFactMatch = ""; // await db.exec(``);
+			res.status(200).send({ teMatch, riskFactMatch });
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
+	
 	getDRUEvals: async function(req, res) {
 		try {
 			let cases = [], queryTemp;
 			for (let i = 0; i < 52; i++) {
 				cases.push({ weekNo: i + 202201, caseCount: 0, CIFSubmission: "", CRFSubmission: "" });
 			}
-			
 			
 			// DRU eval
 			let casesQuery = await db.exec(`SELECT YEARWEEK(c.reportDate, 2) AS weekNo,
@@ -194,14 +211,8 @@ const indexFunctions = {
 					LEFT JOIN mmchddb.CASES c ON se.userID = c.reportedBy
 					GROUP BY se.evalID
 					HAVING u.druName = "${req.query.druName}";`);
-			
-			// health program eval
-			let teMatch = await db.exec(`SELECT te.*, u.druName
-					FROM mmchddb.TCL_EVAL te
-					LEFT JOIN mmchddb.USERS u ON te.userID = u.userID
-					WHERE u.druName = "${req.query.druName}";`);
-			
-			res.status(200).send({ cases, seMatch, teMatch });
+						
+			res.status(200).send({ cases, seMatch });
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
