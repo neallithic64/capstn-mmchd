@@ -4,7 +4,7 @@
     <TopNav />
     <div ref="content" class="evalView width100 margin0 alignCenter">
       <h1 class="allCasesHeader">Evaluation</h1>
-      <div class="EvalExport">
+      <div v-show="!isPrint" class="EvalExport">
         <div class="allCases-summaryContainer">
           <ul :class="formListClass('dru')" @click="clickTab('dru')">
             DRU Evaluation
@@ -13,7 +13,7 @@
             Health Program Evaluation
           </ul>
         </div>
-        <div v-show="!isPrint" class="EvalActionButtons" style="margin-top: -15px;">
+        <div class="EvalActionButtons" style="margin-top: -15px;">
           <ul class="EvalActionButton">
           <img
             src="~/assets/img/pdf.png"
@@ -29,7 +29,7 @@
           </ul> -->
         </div>
       </div>
-      <div class="allCases-viewcasesComponent">
+      <div :class="containerPrintClass()">
         <div v-show="caseTab==='dru'" v-if="!isPrint" style="margin:20px 0;">
             <div class="EvalContainer">
                 <div class="searchDRUword"> Search DRU: </div>
@@ -58,18 +58,20 @@
                 </div>
             </div>
         </div>
-        <div v-show="caseTab==='dru' && DRUselected"> <!--class= "evalViewComponent bgColorWhite width100 borderRadius1 padding15"-->
-            <h3 class="EvalTableTitle"> DRU Evaluation </h3>
+        <div v-if="(caseTab==='dru' || isPrint) && DRUselected"> <!--class= "evalViewComponent bgColorWhite width100 borderRadius1 padding15"-->
+            <div v-show="isPrint" style="margin-top: 10px"></div>
+            <h3 class="EvalTableTitle" :class="h3PrintClass()"> DRU Evaluation: {{selectedDRU}} </h3>
             <dataTable
-            :options="DRUEvalTableOptions"
-            :datavalues="DRUEvalDataSets"
-            :casetype="'eval'"
+              :options="DRUEvalTableOptions"
+              :datavalues="DRUEvalDataSets"
+              :casetype="'eval'"
             />
 
-            <hr style="margin:30px 0 20px;"/>
+            <div v-show="isPrint" style="margin-top: 10px; min-height: 10px;"></div>
+            <hr v-show="!isPrint" style="margin:30px 0 20px;"/>
 
             <div class="flexRow justifySpace width100">
-              <h3 class="EvalTableTitle"> Surveillance Evaluation </h3>
+              <h3 class="EvalTableTitle" :class="h3PrintClass()"> Surveillance Evaluation {{selectedDRU}} </h3>
               <div class="flexRow">
                   <select
                     v-model="DRUsurveillanceMonth"
@@ -86,13 +88,16 @@
               </div>
             </div>
             <dataTable
-            :options="SurveillanceEvalTableOptions"
-            :datavalues="SurveillanceEvalDataSets"
-            :casetype="'eval'"
+              :options="SurveillanceEvalTableOptions"
+              :datavalues="SurveillanceEvalDataSets"
+              :casetype="'eval'"
             />
         </div>
-        <div v-show="caseTab === 'healthprog'" >
 
+        <div v-show="isPrint && DRUselected" style="margin-top: 40px"></div>
+        <hr v-show="isPrint && DRUselected" style="border-top: 2px solid black; margin: 20px 0"/>
+
+        <div v-show="caseTab === 'healthprog' || isPrint" >
           <div class="flexRow width100 justifyRight">
             <select
               v-model="HealthProgEvalMonth"
@@ -108,21 +113,26 @@
             </select>
           </div>
 
-            <h3 class="EvalTableTitle"> Health Program Evaluation </h3>
+          <div v-show="isPrint" style="margin-top: 10px"></div>
+          <h3 class="EvalTableTitle" :class="h3PrintClass()"> Health Program Evaluation </h3>
+          <div v-if="HealthProgEvalDataSets.length > 0">
             <dataTable
-            :options="HealthProgEvalTableOptions"
-            :datavalues="HealthProgEvalDataSets"
-            :casetype="'eval'"
+              :options="HealthProgEvalTableOptions"
+              :datavalues="HealthProgEvalDataSets"
+              :casetype="'eval'"
             />
+          </div>
 
-            <hr style="margin:30px 0 20px;"/>
-
-            <h3 class="EvalTableTitle"> Risk Factor (Risk Ratio) </h3>
+          <hr v-show="!isPrint" style="margin:30px 0 20px;"/>
+          <div v-show="isPrint" style="margin-top: 10px"></div>
+          <h3 class="EvalTableTitle" :class="h3PrintClass()"> Risk Factor </h3>
+          <div v-if="OddsRatioDataSets.length > 0">
             <dataTable
-            :options="OddsRatioTableOptions"
-            :datavalues="OddsRatioDataSets"
-            :casetype="'eval'"
+              :options="OddsRatioTableOptions"
+              :datavalues="OddsRatioDataSets"
+              :casetype="'eval'"
             />
+          </div>
         </div>
       </div>
     </div>
@@ -162,6 +172,7 @@ export default {
       HealthProgEvalYear: '2022',
       DRUs: [],
       DRUResult: [],
+      selectedDRU: '',
       DRUselected: false,
       showDRUchoices: true,
       monthsList: ['-', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
@@ -174,6 +185,7 @@ export default {
             title: 'Year-Week No',
             key: 'weekNo',
             sortable: true,
+            sortedType: 'asc',
           },
           {
             title: 'Num of Cases',
@@ -191,26 +203,7 @@ export default {
         ],
         search: true,
       },
-      DRUEvalDataSets: [
-        {
-          weekNo: '2022 01',
-          caseCount: '1',
-          CIFSubmission: 'yes',
-          CRFSubmission: 'zero report submitted',
-        },
-        {
-          weekNo: '2022 02',
-          caseCount: '2',
-          CIFSubmission: 'no',
-          CRFSubmission: 'late cases submitted',
-        },
-        {
-          weekNo: '2022 03',
-          caseCount: '3',
-          CIFSubmission: 'yes',
-          CRFSubmission: 'cases submitted',
-        },
-      ],
+      DRUEvalDataSets: [],
       SurveillanceEvalTableOptions: {
         tableName: 'SurveillanceEval',
         sortKey: 'DRU',
@@ -233,14 +226,7 @@ export default {
         ],
         search: true,
       },
-      SurveillanceEvalDataSets: [
-        {
-          DRU: 'a',
-          totalCases: 'a',
-          timeliness: 'a',
-          completeness: 'a',
-        },
-      ],
+      SurveillanceEvalDataSets: [],
       HealthProgEvalTableOptions: {
         tableName: 'HealthProgEval',
         sortKey: 'disease',
@@ -252,7 +238,7 @@ export default {
           },
           {
             title: 'Health Program',
-            key: 'healthProg',
+            key: 'TCLID',
           },
           {
             title: 'Number of Cases',
@@ -272,29 +258,14 @@ export default {
         ],
         search: false,
       },
-      HealthProgEvalDataSets: [
-          {
-              disease: 'a',
-              healthProg: 'a',
-              cases: 'a',
-              treated: 'a',
-              oddsRatio: 'a',
-          },
-          {
-              disease: 'a',
-              healthProg: 'a',
-              cases: 'a',
-              treated: 'a',
-              oddsRatio: 'a',
-          }
-      ],
+      HealthProgEvalDataSets: [],
       OddsRatioTableOptions: {
         tableName: 'OddsRatio',
         sortKey: 'disease',
         columns: [
           {
             title: 'Disease',
-            key: 'disease',
+            key: 'diseaseName',
             sortable: true,
           },
           {
@@ -320,29 +291,15 @@ export default {
         ],
         search: false,
       },
-      OddsRatioDataSets: [
-          {
-              disease: 'a',
-              risk1: 'a',
-              risk2: 'a',
-              risk3: 'a',
-              risk4: 'a',
-          },
-          {
-              disease: 'a',
-              risk1: 'a',
-              risk2: 'a',
-              risk3: 'a',
-              risk4: 'a',
-          }
-      ],
+      OddsRatioDataSets: [],
     }
   },
   async fetch() {
     let rows = (await axios.get('http://localhost:8080/api/getAllDRUs')).data;
     this.DRUs = rows;
-    rows = (await axios.get('http://localhost:8080/api/getLabUsers')).data;
-    this.labList = rows;
+    rows = (await axios.get('http://localhost:8080/api/getAllHealthProgEvals')).data;
+    this.HealthProgEvalDataSets = rows.teMatch;
+    this.OddsRatioDataSets = rows.riskPivots;
   },
   methods: {
     clickTab(caseTab) {
@@ -352,31 +309,40 @@ export default {
       if (caseTab === this.caseTab) return 'formSummaryItems selected';
       else return 'formSummaryItems';
     },
+    containerPrintClass() {
+      if (!this.isPrint) return 'allCases-viewcasesComponent';
+    },
+    h3PrintClass() {
+      if (this.isPrint) return 'colorGreen';
+      else return 'greenbg';
+    },
     downloadPDF() {
-      this.isPrint = !this.isPrint
+      this.isPrint = !this.isPrint;
+      setTimeout(() => (window.print()), 200);
+      setTimeout(() => (this.isPrint = !this.isPrint), 200);
 
-      let pWidth = 595.28 // 595.28 is the width of a4
-      let srcWidth = this.$refs.content.scrollWidth
-      let margin = 12 // narrow margin - 1.27 cm (36);
-      let scale = (pWidth - margin * 2) / srcWidth
+      // let pWidth = 595.28 // 595.28 is the width of a4
+      // let srcWidth = this.$refs.content.scrollWidth
+      // let margin = 12 // narrow margin - 1.27 cm (36);
+      // let scale = (pWidth - margin * 2) / srcWidth
 
-      var doc = new jsPDF('p', 'pt', 'A4')
-      window.html2canvas = html2canvas
+      // var doc = new jsPDF('p', 'pt', 'A4')
+      // window.html2canvas = html2canvas
 
-      doc.html(this.$refs.content, {
-        x: margin,
-        y: margin,
-        html2canvas: {
-          scale: scale,
-        },
-        callback: function () {
-          window.open(doc.output('bloburl'))
-        },
-      })
+      // doc.html(this.$refs.content, {
+      //   x: margin,
+      //   y: margin,
+      //   html2canvas: {
+      //     scale: scale,
+      //   },
+      //   callback: function () {
+      //     window.open(doc.output('bloburl'))
+      //   },
+      // })
 
-      // doc.save('test.pdf')
-      console.log(this.$refs.content)
-      setTimeout(() => (this.isPrint = !this.isPrint), 3000)
+      // // doc.save('test.pdf')
+      // console.log(this.$refs.content)
+      // setTimeout(() => (this.isPrint = !this.isPrint), 3000)
     },
     csvExport(arrData) {
       let csvContent = "data:text/csv;charset=utf-8,";
@@ -411,10 +377,16 @@ export default {
       }
     },
     async selectDRU(dru) {
+      let rows = (await axios.get('http://localhost:8080/api/getDRUEvals', { params: {
+        druName: dru.druName
+      }})).data;
+      // console.log(rows);
+      this.DRUEvalDataSets = rows.cases;
+      this.SurveillanceEvalDataSets = rows.seMatch;
+      this.selectedDRU = dru.druName;
+      
       this.showDRUchoices = false;
       this.DRUselected = true;
-      // code to retrieve numberz
-      let rows = (await axios.get('http://localhost:8080/api/getEvals')).data;
     }
   },
 }
@@ -466,6 +438,13 @@ export default {
 
 .colorBlue {color: #346083;}
 .bgColorWhite {background-color: #f2f2f2;}
+.colorGreen {color: #008d41}
+.greenbg {
+    background-color: #008d41;
+    color: transparent;
+    text-shadow: 1px 1px, -1px -1px rgb(0 0 0 / 25%);
+    -webkit-background-clip: text;
+    }
 
 .flexRow {
     display: inline-flex;
@@ -536,10 +515,6 @@ select {
 .EvalTableTitle {
     font-weight: 600;
     font-size: 22px;
-    background-color: #008d41;
-    color: transparent;
-    text-shadow: 1px 1px, -1px -1px rgb(0 0 0 / 25%);
-    -webkit-background-clip: text;
 }
 
 /* tabs */

@@ -57,6 +57,7 @@ router.get("/getTCL", m4Cont.getTCL);
 router.get("/getAllTCLs", m4Cont.getAllTCLs);
 
 router.get("/getAllDRUs", m5Cont.getAllDRUs);
+router.get("/getAllHealthProgEvals", m5Cont.getAllHealthProgEvals);
 router.get("/getDRUEvals", m5Cont.getDRUEvals);
 
 

@@ -1228,18 +1228,18 @@ export default {
     }
   },
   async fetch() {
-	const patientData = (await axios.get('http://localhost:8080/api/getPatientData', {
+    const patientData = (await axios.get('http://localhost:8080/api/getPatientData', {
       params: { patientID: this.$route.query.patientID }
     })).data;
-	console.log(patientData);
-	Object.keys(patientData.tclData).forEach((e, i) => {
-	  patientData.tclData[e] = this.convDatePHT(new Date(patientData.tclData[e]));
-	  if ((new Date(patientData.tclData[e])).getTime() < 0) patientData.tclData[e] = "";
-	});
-	if (patientData.tclData) {
-	  this.formData.immunization = patientData.tclData;
-	  this.loadedData = [this.formData.immunization];
-	}
+    console.log(patientData);
+    Object.keys(patientData.tclData).forEach((e, i) => {
+      patientData.tclData[e] = this.convDatePHT(new Date(patientData.tclData[e]));
+      if ((new Date(patientData.tclData[e])).getTime() < 0) patientData.tclData[e] = "";
+    });
+    if (patientData.tclData) {
+      this.formData.immunization = patientData.tclData;
+      this.loadedData = [this.formData.immunization];
+    }
   },
   head() {
     return {
@@ -1249,7 +1249,7 @@ export default {
   computed: {},
   mounted() {
     this.today = this.convDatePHT(new Date());
-	
+    
     this.dataSets[0].BCGdate = this.dateToString(this.loadedData[0].BCGdate);
     this.dataSets[0].HEPAwithdate = this.dateToString(this.loadedData[0].HEPAwithdate);
     this.dataSets[0].HEPAmoredate = this.dateToString(this.loadedData[0].HEPAmoredate);
@@ -1300,20 +1300,19 @@ export default {
     },
     async save() {
       this.saveData();
-	  // required to finish all immunisations by then
-      if (this.validate()) {
+      // required to finish all immunisations by then
+      // if (this.validate()) {
         await this.submit();
         // IF SUBMIT SUCCESSFUL
         console.log('VALIDATED dates');
         this.status = 'Complete';
         this.action = 'view';
-      }
+      // }
     },
     async submit() {
-      // TODO: this submit is the "save" type, the cases should only be visible to the DRU, not yet submitted to MMCHD
       const result = await axios.post('http://localhost:8080/api/editPatientTCL', {
-	    loadedData: this.loadedData,
-		patientID: this.$route.query.patientID
+        loadedData: this.loadedData[0],
+        patientID: this.$route.query.patientID
       });
       if (result.status === 200) {
         // alert('CRF case submitted!');
@@ -1358,25 +1357,24 @@ export default {
       })
     },
     validate() {
-      if ((this.loadedData[0].BCGdate !=='' && this.loadedData[0].BCGdate !== null) &&
-          (this.loadedData[0].HEPAwithdate !=='' &&  this.loadedData[0].HEPAwithdate !== null) && 
-          (this.loadedData[0].HEPAmoredate !=='' &&  this.loadedData[0].HEPAmoredate !== null) && 
-          (this.loadedData[0].OPV1date !=='' &&  this.loadedData[0].OPV1date !== null) && 
-          (this.loadedData[0].OPV2date !=='' &&  this.loadedData[0].OPV2date !== null) && 
-          (this.loadedData[0].OPV3date !=='' &&  this.loadedData[0].OPV3date !== null) && 
-          (this.loadedData[0].PENTA1date !=='' &&  this.loadedData[0].PENTA1date !== null) && 
-          (this.loadedData[0].PENTA2date !=='' &&  this.loadedData[0].PENTA2date !== null) && 
-          (this.loadedData[0].PENTA3date !=='' &&  this.loadedData[0].PENTA3date !== null) && 
-          (this.loadedData[0].PCV1date !=='' &&  this.loadedData[0].PCV1date !== null) && 
-          (this.loadedData[0].PCV2date !=='' &&  this.loadedData[0].PCV2date !== null) && 
-          (this.loadedData[0].PCV3date !=='' &&  this.loadedData[0].PCV3date !== null) && 
-          (this.loadedData[0].MCV1date !=='' &&  this.loadedData[0].MCV1date !== null) && 
-          (this.loadedData[0].MCV2date !=='' && this.loadedData[0].MCV2date !== null) &&
-          (this.loadedData[0].Dengue1date !=='' &&  this.loadedData[0].Dengue1date !== null) && 
-          (this.loadedData[0].Dengue2date !=='' &&  this.loadedData[0].Dengue2date !== null) && 
-          (this.loadedData[0].Dengue3date !=='' &&  this.loadedData[0].Dengue3date !== null)
-        )
-      return true;
+      if ((this.loadedData[0].BCGdate !== '' && this.loadedData[0].BCGdate !== null) &&
+          (this.loadedData[0].HEPAwithdate !== '' &&  this.loadedData[0].HEPAwithdate !== null) && 
+          (this.loadedData[0].HEPAmoredate !== '' &&  this.loadedData[0].HEPAmoredate !== null) && 
+          (this.loadedData[0].OPV1date !== '' &&  this.loadedData[0].OPV1date !== null) && 
+          (this.loadedData[0].OPV2date !== '' &&  this.loadedData[0].OPV2date !== null) && 
+          (this.loadedData[0].OPV3date !== '' &&  this.loadedData[0].OPV3date !== null) && 
+          (this.loadedData[0].PENTA1date !== '' &&  this.loadedData[0].PENTA1date !== null) && 
+          (this.loadedData[0].PENTA2date !== '' &&  this.loadedData[0].PENTA2date !== null) && 
+          (this.loadedData[0].PENTA3date !== '' &&  this.loadedData[0].PENTA3date !== null) && 
+          (this.loadedData[0].PCV1date !== '' &&  this.loadedData[0].PCV1date !== null) && 
+          (this.loadedData[0].PCV2date !== '' &&  this.loadedData[0].PCV2date !== null) && 
+          (this.loadedData[0].PCV3date !== '' &&  this.loadedData[0].PCV3date !== null) && 
+          (this.loadedData[0].MCV1date !== '' &&  this.loadedData[0].MCV1date !== null) && 
+          (this.loadedData[0].MCV2date !== '' && this.loadedData[0].MCV2date !== null) &&
+          (this.loadedData[0].Dengue1date !== '' &&  this.loadedData[0].Dengue1date !== null) && 
+          (this.loadedData[0].Dengue2date !== '' &&  this.loadedData[0].Dengue2date !== null) && 
+          (this.loadedData[0].Dengue3date !== '' &&  this.loadedData[0].Dengue3date !== null)
+        ) return true;
       else return false;
     },
     saveData() {
@@ -1433,7 +1431,7 @@ export default {
 
       this.patientExist = false;
     },
-	getAddress() {
+    getAddress() {
       if (this.sameAddress) {
         this.formData.patient.permHouseStreet = this.formData.patient.currHouseStreet;
         this.formData.patient.permCity = this.formData.patient.currCity;
@@ -1491,15 +1489,18 @@ export default {
       // eslint-disable-next-line no-console
       console.log(this.formData.patient.currBrgy)
     },
-  	convDatePHT(d) { // only accepts Date object; includes checking
+      convDatePHT(d) { // only accepts Date object; includes checking
       return !isNaN(Date.parse(d))
-	      ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10).split("-").join("/")
-		  : "N/A";
+          ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10).split("-").join("/")
+          : "N/A";
     },
     dateToString(date) {
-      const dateString = new Date(date);
-      const month = dateString.getMonth() + 1;
-      return dateString.getFullYear()+'-'+ month.toString().padStart(2,'0') +'-'+dateString.getDate().toString().padStart(2,'0');
+      if (date === "") return "";
+      else {
+        const dateString = new Date(date);
+        const month = dateString.getMonth() + 1;
+        return dateString.getFullYear()+'-'+ month.toString().padStart(2,'0') +'-'+dateString.getDate().toString().padStart(2,'0');
+      }
     },
   },
 }
