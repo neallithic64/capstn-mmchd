@@ -188,10 +188,13 @@ const indexFunctions = {
 			}
 			
 			// surveillance eval
-			let seMatch = await db.exec(`SELECT se.*, u.druName
+			let seMatch = await db.exec(`SELECT se.*, u.druName, COUNT(c.caseID) AS totalCases
 					FROM mmchddb.SURVEILLANCE_EVAL se
 					LEFT JOIN mmchddb.USERS u ON se.userID = u.userID
-					WHERE u.druName = "${req.query.druName}";`);
+					LEFT JOIN mmchddb.CASES c ON se.userID = c.reportedBy
+					GROUP BY se.evalID
+					HAVING u.druName = "${req.query.druName}";`);
+			
 			// health program eval
 			let teMatch = await db.exec(`SELECT te.*, u.druName
 					FROM mmchddb.TCL_EVAL te

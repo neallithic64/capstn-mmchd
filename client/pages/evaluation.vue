@@ -58,12 +58,12 @@
                 </div>
             </div>
         </div>
-        <div v-show="caseTab==='dru' && DRUselected"> <!--class= "evalViewComponent bgColorWhite width100 borderRadius1 padding15"-->
+        <div v-if="caseTab==='dru' && DRUselected"> <!--class= "evalViewComponent bgColorWhite width100 borderRadius1 padding15"-->
             <h3 class="EvalTableTitle"> DRU Evaluation </h3>
             <dataTable
-            :options="DRUEvalTableOptions"
-            :datavalues="DRUEvalDataSets"
-            :casetype="'eval'"
+              :options="DRUEvalTableOptions"
+              :datavalues="DRUEvalDataSets"
+              :casetype="'eval'"
             />
 
             <hr style="margin:30px 0 20px;"/>
@@ -86,9 +86,9 @@
               </div>
             </div>
             <dataTable
-            :options="SurveillanceEvalTableOptions"
-            :datavalues="SurveillanceEvalDataSets"
-            :casetype="'eval'"
+              :options="SurveillanceEvalTableOptions"
+              :datavalues="SurveillanceEvalDataSets"
+              :casetype="'eval'"
             />
         </div>
         <div v-show="caseTab === 'healthprog'" >
@@ -110,18 +110,18 @@
 
             <h3 class="EvalTableTitle"> Health Program Evaluation </h3>
             <dataTable
-            :options="HealthProgEvalTableOptions"
-            :datavalues="HealthProgEvalDataSets"
-            :casetype="'eval'"
+              :options="HealthProgEvalTableOptions"
+              :datavalues="HealthProgEvalDataSets"
+              :casetype="'eval'"
             />
 
             <hr style="margin:30px 0 20px;"/>
 
             <h3 class="EvalTableTitle"> Risk Factor (Risk Ratio) </h3>
             <dataTable
-            :options="OddsRatioTableOptions"
-            :datavalues="OddsRatioDataSets"
-            :casetype="'eval'"
+              :options="OddsRatioTableOptions"
+              :datavalues="OddsRatioDataSets"
+              :casetype="'eval'"
             />
         </div>
       </div>
@@ -174,6 +174,7 @@ export default {
             title: 'Year-Week No',
             key: 'weekNo',
             sortable: true,
+            sortedType: 'asc',
           },
           {
             title: 'Num of Cases',
@@ -191,26 +192,7 @@ export default {
         ],
         search: true,
       },
-      DRUEvalDataSets: [
-        {
-          weekNo: '2022 01',
-          caseCount: '1',
-          CIFSubmission: 'yes',
-          CRFSubmission: 'zero report submitted',
-        },
-        {
-          weekNo: '2022 02',
-          caseCount: '2',
-          CIFSubmission: 'no',
-          CRFSubmission: 'late cases submitted',
-        },
-        {
-          weekNo: '2022 03',
-          caseCount: '3',
-          CIFSubmission: 'yes',
-          CRFSubmission: 'cases submitted',
-        },
-      ],
+      DRUEvalDataSets: [],
       SurveillanceEvalTableOptions: {
         tableName: 'SurveillanceEval',
         sortKey: 'DRU',
@@ -233,14 +215,7 @@ export default {
         ],
         search: true,
       },
-      SurveillanceEvalDataSets: [
-        {
-          DRU: 'a',
-          totalCases: 'a',
-          timeliness: 'a',
-          completeness: 'a',
-        },
-      ],
+      SurveillanceEvalDataSets: [],
       HealthProgEvalTableOptions: {
         tableName: 'HealthProgEval',
         sortKey: 'disease',
@@ -409,13 +384,16 @@ export default {
       }
     },
     async selectDRU(dru) {
-      this.showDRUchoices = false;
-      this.DRUselected = true;
-      // code to retrieve numberz
       let rows = (await axios.get('http://localhost:8080/api/getDRUEvals', { params: {
         druName: dru.druName
       }})).data;
-      console.log(rows);
+      // console.log(rows);
+      this.DRUEvalDataSets = rows.cases;
+      this.SurveillanceEvalDataSets = rows.seMatch;
+      // rows.teMatch;
+      
+      this.showDRUchoices = false;
+      this.DRUselected = true;
     }
   },
 }
