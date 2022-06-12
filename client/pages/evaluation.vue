@@ -116,12 +116,12 @@
           <div v-show="isPrint" style="margin-top: 10px"></div>
           <h3 class="EvalTableTitle" :class="h3PrintClass()"> Health Program Evaluation </h3>
           <div v-if="HealthProgEvalDataSets.length > 0">
-		    <dataTable
+            <dataTable
               :options="HealthProgEvalTableOptions"
               :datavalues="HealthProgEvalDataSets"
               :casetype="'eval'"
             />
-		  </div>
+          </div>
 
           <hr v-show="!isPrint" style="margin:30px 0 20px;"/>
           <div v-show="isPrint" style="margin-top: 10px"></div>
@@ -132,7 +132,7 @@
               :datavalues="OddsRatioDataSets"
               :casetype="'eval'"
             />
-		  </div>
+          </div>
         </div>
       </div>
     </div>
@@ -265,7 +265,7 @@ export default {
         columns: [
           {
             title: 'Disease',
-            key: 'disease',
+            key: 'diseaseName',
             sortable: true,
           },
           {
@@ -291,22 +291,7 @@ export default {
         ],
         search: false,
       },
-      OddsRatioDataSets: [
-          {
-              disease: 'a',
-              risk1: 'a',
-              risk2: 'a',
-              risk3: 'a',
-              risk4: 'a',
-          },
-          {
-              disease: 'a',
-              risk1: 'a',
-              risk2: 'a',
-              risk3: 'a',
-              risk4: 'a',
-          }
-      ],
+      OddsRatioDataSets: [],
     }
   },
   async fetch() {
@@ -314,7 +299,7 @@ export default {
     this.DRUs = rows;
     rows = (await axios.get('http://localhost:8080/api/getAllHealthProgEvals')).data;
     this.HealthProgEvalDataSets = rows.teMatch;
-	// this.OddsRatioDataSets = rows.riskFactMatch;
+    this.OddsRatioDataSets = rows.riskPivots;
   },
   methods: {
     clickTab(caseTab) {

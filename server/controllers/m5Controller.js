@@ -145,6 +145,7 @@ const indexFunctions = {
 	},
 	
 	getAllHealthProgEvals: async function(req, res) {
+		let riskCateg = ["L", "H", "C", "O"];
 		try {
 			// health program eval
 			let teMatch = await db.exec(`SELECT te.*, d.diseaseName AS disease, COUNT(td.patientID) AS cases,
@@ -154,8 +155,37 @@ const indexFunctions = {
 					LEFT JOIN mmchddb.TCL_DATA td ON te.TCLID = td.TCLID
 					LEFT JOIN mmchddb.DISEASES d ON t.diseaseID = d.diseaseID
 					GROUP BY te.TCLID;`);
-			let riskFactMatch = ""; // await db.exec(``);
-			res.status(200).send({ teMatch, riskFactMatch });
+			
+			let riskFactMatch = await db.exec(`SELECT rfd.riskName, rfd.diseaseName,
+					(rfd.exposedDisease / rfd.totalExposed) /
+					(rfd.unexposedDisease / rfd.totalUnexposed) AS risk
+					FROM mmchddb.RISK_FACTORS_D rfd;`);
+			let riskPivots = riskFactMatch.reduce(function(prev, riskFact) {
+				let findElem = prev.find(e => e.diseaseName === riskFact.diseaseName);
+				if (findElem && findElem["risk" + (riskCateg.indexOf(riskFact.riskName.charAt(0)) + 1)][1] < riskFact.risk) {
+					findElem["risk" + (riskCateg.indexOf(riskFact.riskName.charAt(0)) + 1)] = [riskFact.riskName, riskFact.risk];
+					return prev;
+				} else if (findElem) {
+					return prev;
+				} else {
+					let tempElem = {
+						diseaseName: riskFact.diseaseName,
+						risk1: ["", 0],
+						risk2: ["", 0],
+						risk3: ["", 0],
+						risk4: ["", 0]
+					};
+					tempElem["risk" + (riskCateg.indexOf(riskFact.riskName.charAt(0)) + 1)] = [riskFact.riskName, riskFact.risk];
+					prev.push(tempElem);
+					return prev;
+				}
+			}, []);
+			riskPivots.forEach(e => {
+				for (let prop in e) {
+					e[prop] = Array.isArray(e[prop]) ? e[prop].join(" - ").substring(1) : e[prop];
+				}
+			});
+			res.status(200).send({ teMatch, riskPivots });
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
