@@ -2696,8 +2696,8 @@ export default {
       this.pageNum = i
     },
     inputEdit() {
-      if (this.pageNum === 9 && this.editLab) return false;
-      else if (this.pageNum === 8 && this.editOutcome) return false;
+      if (this.pageNum === 8 && this.editLab) return false;
+      else if (this.pageNum === 9 && this.editOutcome) return false;
       else return true;
     },
     isRequired() {

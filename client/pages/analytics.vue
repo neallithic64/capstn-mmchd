@@ -70,14 +70,12 @@
 
         <!-- Comparative -->
         <div v-if="pageNum == 8">
-          <iframe id="analytics-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiZjJjZDVhZDAtYjljZi00NzQzLWI4ZGMtN2Q0OTRhYWUxMGU3IiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D">
-          </iframe>
+          <iframe id="analytics-powerbi-iframe" title="Comparative" width="600" height="373.5" src="https://app.powerbi.com/view?r=eyJrIjoiMGU0NjAyYzctMDBlNS00ZWIxLWFkYjUtYmVlYzIyZDBhYWIxIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D&pageName=ReportSection69394e97e405328dc90e" frameborder="0" allowFullScreen="true"></iframe>
         </div>
 
         <!-- Correlation -->
         <div v-if="pageNum == 9">
-          <iframe id="analytics-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiZjJjZDVhZDAtYjljZi00NzQzLWI4ZGMtN2Q0OTRhYWUxMGU3IiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D">
-          </iframe>
+          <iframe id="analytics-powerbi-iframe" title="TIME - TIME ANALYSIS" width="600" height="373.5" src="https://app.powerbi.com/view?r=eyJrIjoiMDVjMDBkYjMtZmI4Yy00MzE4LWE0MjgtM2NmNjEyMDZjY2Q1IiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D" frameborder="0" allowFullScreen="true"></iframe>
         </div>
       </div>
     </div>
