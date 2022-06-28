@@ -287,7 +287,7 @@ export default {
         "https://app.powerbi.com/view?r=eyJrIjoiYTdlYWJmYzEtMDliOC00NzBiLTlkYjEtNjViN2E1MjkxMjFlIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D",
         "https://app.powerbi.com/view?r=eyJrIjoiZjJjZDVhZDAtYjljZi00NzQzLWI4ZGMtN2Q0OTRhYWUxMGU3IiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D",
         "https://app.powerbi.com/view?r=eyJrIjoiMGU0NjAyYzctMDBlNS00ZWIxLWFkYjUtYmVlYzIyZDBhYWIxIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D",
-        "https://app.powerbi.com/view?r=eyJrIjoiMDVjMDBkYjMtZmI4Yy00MzE4LWE0MjgtM2NmNjEyMDZjY2Q1IiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D",
+        "https://app.powerbi.com/view?r=eyJrIjoiNTI2NDY3NzUtNTNkOC00NmZkLTk4MTEtNmU0MWRmODFkYmVhIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D",
       ]
 
     }
