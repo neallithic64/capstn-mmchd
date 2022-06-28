@@ -76,7 +76,7 @@
 
         <!-- Correlation -->
         <div v-if="pageNum == 9">
-          <iframe id="analytics-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiMDVjMDBkYjMtZmI4Yy00MzE4LWE0MjgtM2NmNjEyMDZjY2Q1IiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D">
+          <iframe id="analytics-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiNTI2NDY3NzUtNTNkOC00NmZkLTk4MTEtNmU0MWRmODFkYmVhIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D">
           </iframe>
         </div>
       </div>
