@@ -1,4 +1,6 @@
 const nodemailer = require("nodemailer");
+const { google } = require("googleapis");
+const OAuth2 = google.auth.OAuth2;
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
@@ -28,23 +30,36 @@ function convDatePHT (d) {
  * 3. appro by: CHD director
  */
 function sendReportEmail(email, reportID, status) {
-	// sending email
+	// setting up oauth and refresh token
+	let oauth2Client = new OAuth2(process.env.CLIENT_ID,
+			process.env.CLIENT_SECRET,
+			"https://developers.google.com/oauthplayground");
+	oauth2Client.setCredentials({ refresh_token: process.env.REFRESH_TOKEN });
+	let accessToken = oauth2Client.getAccessToken();
 	let smtpTransport = nodemailer.createTransport({
-		service: "Gmail",
+		service: "gmail",
 		auth: {
-			user: process.env.EMAIL_ADDR,
-			pass: process.env.EMAIL_PASS
+			type: "OAuth2",
+			user: process.env.EMAIL_ADDR, 
+			clientId: process.env.CLIENT_ID,
+			clientSecret: process.env.CLIENT_SECRET,
+			refreshToken: process.env.REFRESH_TOKEN,
+			accessToken: accessToken
 		}
 	});
-	let mailOpts = {
-		from: "MM-CHD",
+	
+	// email options
+	let mailOptions = {
+		from: `MM-CHD <${process.env.EMAIL_ADDR}>`,
 		to: email,
 		subject: "MMCHD: Report Status Update",
-		text: `Good day! Report ${reportID} has been created/updated with status "${status}". Review it
-				here: http://localhost:3000/viewReport?reportID=${reportID}. Thank you very much!`
+		generateTextFromHTML: true,
+		html: `<table><tr><td><p style="text-align:center;margin-bottom:0pt;"><span style="font-size:11pt;font-family:Arial;color:rgb(0,0,0);background-color:transparent;font-weight:400;white-space:pre-wrap;"><img src="https://lh3.googleusercontent.com/TYYtawsNKSdENy0Lj69LkLY8a0Ud6XY-ZjEHvOZYG1PT9UKcGIzARXPEazUF7IWPSRnL6z0IKeXHa-FCOSi_ivPnu90AYHSKMLv4JSvkMD2tQwxtYfxdhAqFeXTRVzotbWqypZy_X08Qk3HX4w=s0" width="457" height="110"></span></p><p style="line-height:1.8;margin:0pt 36pt;"><span style="font-size:11pt;font-family:Arial;font-weight:400;white-space:pre-wrap;">Greetings!</span></p><p style="font-size:11pt;font-family:Arial;line-height:1.8;margin:0pt 36pt;text-align:justify;"><span style="font-weight:400;white-space:pre-wrap;">Report </span><span style="font-weight:700;white-space:pre-wrap;">${reportID}</span><span style="font-weight:400;white-space:pre-wrap;"> has been created/updated with status "${status}". Review it here:</span></p><p style="margin:0pt 36pt;text-align:center;"><a href="http://localhost:3000/viewReport?reportID=${reportID}" style="text-decoration:none;"><span style="white-space:pre-wrap;"><span style="display:inline-block;width:180px;"><img src="https://lh6.googleusercontent.com/DVzZw6L3BD1BFBheGI-BtQvKtGIFdsuFuGsDw6x10Ud6pWRdOlZ6L9c3TBlWbv_aNdIIB3QvPsDrylzZN-c3aAfSU1ESD7Iu1gJ4iFTRJhznKOMmWSY1Xq3zHJzk40RD3ViHuLwi8_zo7SbmiA=s0" width="180" height="54"></span></span></a></p><p style="line-height:1.8;margin:0pt 36pt;"><span style="font-size:11pt;font-family:Arial;">Thank you for your service!</span></p><p style="margin-top:0pt;margin-bottom:0pt;"><span style="white-space:pre-wrap;"><span style="display:inline-block;width:631px;"><img src="https://lh5.googleusercontent.com/eUK7pp6YgayfcGtmWdwaq3ht12zfBC2yz98bjn3aYAgFfygnvD8BCYf1iVKnYlbRgRqPc6039G-C935Xcx7HzOH-gkpQcXoijsIvuhhnXdV9sWlyqP0OvXc2USBvYV10J2s7OJUaOYJfEI3DVg=s0" width="631" height="122"></span></span></p></td></tr></table>`
 	};
-	smtpTransport.sendMail(mailOpts, function(err) {
-		if (err) console.log(err);
+	
+	// sending email
+	smtpTransport.sendMail(mailOptions, (e, result) => {
+		e ? console.log(e) : console.log(result);
 		smtpTransport.close();
 	});
 }
@@ -144,9 +159,8 @@ const indexFunctions = {
 	},
 	
 	mkData: async function(req, res) {
-		let r = await db.exec("SELECT * FROM mmchddb.USER_SETTINGS;");
-		if (r) res.status(200).send(r);
-		else res.status(500).send("problems");
+		sendReportEmail("matthewneal2006@yahoo.com", "RE-0000000000003", "For Approval");
+		res.status(200).send("email sending done!");
 	},
 	
 	getFileBlob: async function(req, res) {
