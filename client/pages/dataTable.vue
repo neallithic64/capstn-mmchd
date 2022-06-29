@@ -289,19 +289,9 @@
                 </div>
               </span>
               <span v-else-if="column.type === 'clickable'">
-                <a v-if="data['diseaseID'] === 'DI-0000000000000'"
-                  style="color: #346083; text-decoration-line: underline"
-                  :href="'/view' + 'CIFMeasles?caseID=' + data[column.key] ">
-                  {{ data[column.key] }}
-                </a>
-                <a v-else-if="(pageType === 'patients' || column.key === 'patientID')"
+                <a v-if="(pageType === 'patients' || column.key === 'patientID')"
                   style="color: #346083; text-decoration-line: underline"
                   :href="'/viewPatient?patientID=' + data[column.key]">
-                  {{ data[column.key] }}
-                </a>
-                <a v-else-if="(pageType === 'all' || pageType === 'patient') && data['type'] === 'CIF'"
-                  style="color: #346083; text-decoration-line: underline"
-                  :href="'/view' + data['type'] + data['disease']">
                   {{ data[column.key] }}
                 </a>
                 <a v-else-if="((pageType === 'all' || pageType === 'patient') && data['type'] !== 'CIF') || pageType === 'crfCase'"
@@ -337,11 +327,6 @@
                 <a v-else-if="column.key === 'outbreakID' && !($auth.user.userType === 'pidsrStaff')">
                   {{ data[column.key] }}
                 </a>
-                <a v-else-if="column.key === 'caseID'"
-                  style="color: #346083; text-decoration-line: underline"
-                  :href="'/view' + data['type'] + data['disease'] + '?caseID=' + data[column.key]">
-                  {{ data[column.key] }}
-                </a>
                 <a v-else-if="column.key === 'eventID'"
                   style="color: #346083; text-decoration-line: underline"
                   :href="'/viewHealthEvent' + '?eventID=' + data[column.key]">
@@ -357,16 +342,33 @@
                   :href="'/viewProgAccomplishMalaria?paID=' + data[column.key]">
                   {{ data[column.key] }}
                 </a>
-                <!-- <a
-                  style="text-decoration: none"
-                  v-bind:href="column.source + '/' + data[column.key]"
-                  >{{ data[column.key] }}
-                </a> -->
                 <a v-else-if="column.key === 'reportID'"
                   style="color: #346083; text-decoration-line: underline"
                   :href="'/viewReport?reportID=' + data[column.key]">
                   {{ data[column.key] }}
                 </a>
+                <a v-else-if="data['diseaseID'] === 'DI-0000000000000'"
+                  style="color: #346083; text-decoration-line: underline"
+                  :href="'/view' + 'CIFMeasles?caseID=' + data[column.key] ">
+                  {{ data[column.key] }}
+                </a>
+                <!--
+                <a v-else-if="column.key === 'caseID'"
+                  style="color: #346083; text-decoration-line: underline"
+                  :href="'/view' + data['type'] + data['disease'] + '?caseID=' + data[column.key]">
+                  {{ data[column.key] }}
+                </a>
+                <a v-else-if="(pageType === 'all' || pageType === 'patient') && data['type'] === 'CIF'"
+                  style="color: #346083; text-decoration-line: underline"
+                  :href="'/view' + data['type'] + data['disease']">
+                  {{ data[column.key] }}
+                </a>
+				<a
+                  style="text-decoration: none"
+                  v-bind:href="column.source + '/' + data[column.key]"
+                  >{{ data[column.key] }}
+                </a>
+				-->
               </span>
               <span v-else-if="column.title==='Case Status' || column.title==='Status' || column.title==='Risk Classification' || column.title==='Submit Status' || column.title==='Report Status' || column.title==='Immunization Status' || column.title==='Assessment'" :class="caseStatusClass(data[column.key])">
                 {{ data[column.key] }}
