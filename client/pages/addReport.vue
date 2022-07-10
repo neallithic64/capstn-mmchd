@@ -4,12 +4,12 @@
     <!-- Rest of the screen -->
     <div ref="content" :class="[{ addReportOuterContainer: !isPrint }, { padding20 : isPrint, }, { paddingTop75 : isPrint, },]">
       <!-- HEADER -->
-      <div v-show="isPrint" class="centerSide paddingSide25">
-        <div class="marginTop40 marginBottom-40 centerText"></div>
-        <img src="~/assets/img/logo.png" style="height: 100px; marginBottom15"/>
+      <div v-show="isPrint" class=" paddingSide25">
+        <div class="centerSide marginTop40 marginBottom-40 centerText"></div>
+        <div class="centerSide"> <img src="~/assets/img/logo.png" style="height: 100px; marginBottom15"/> </div>
         <hr class="marginTopBot10" id="1"/>
         
-        <div class="space-inline marginTop5">
+        <div class="centerSide space-inline marginTop5">
           <h3 class="weight500 size18"> {{report.title}} </h3>
           <h3 class="weight500 size18">
               {{report.reportType}} Report - {{report.year}}
@@ -17,6 +17,8 @@
           </h3>
           <h3 class="weight500 size18"> {{report.diseaseID}} </h3>
         </div>
+
+        <div class="marginTop20 width100" style="padding: 5px 10px;"> {{report.summary}} </div>
         <hr class="marginTop20" id="2"/>
       </div>
 
@@ -90,6 +92,13 @@
                   <label :for="analysis"> {{analysis}} </label>
             </div> </div> </div>
           </div>
+
+            <div>
+              <legend for="summary" class="required"> Summary of Feedback Report </legend>
+              <textarea v-model="report.summary" id="summary" class="input-form-field marginTop10" :class="isRequired()" 
+                style="resize: vertical;width:100%; height: 100px; padding: 5px; 10px;" required/>
+            </div>
+
           <hr class="marginTop30 marginBottom10" id="2"/>
         </div>
       </div>
@@ -194,7 +203,7 @@
               <button class="addRep-backButton" type="button" @click="downloadPDF">
                 Print
               </button>
-              <button v-if="readySubmit" class="addRep-nextButton" type="button" @click="submit()">
+              <button v-if="readySubmit" class="addRep-nextButton" type="button" @click="popupOpen=true">
                 Submit
               </button>
             </div>
@@ -214,6 +223,23 @@
 
       </div>
     </div>
+
+    <div v-show="popupOpen" class="FeedbackReportOverlay">
+      <div class="FR-overlayForm">
+        <h2 style="color:red; text-align:center;font-weight: 500;"> Are you sure you want to submit this Feedback Report? </h2>
+        <div style="padding:10px; text-align:justify;">
+          <div class="RFpopupButtons">
+            <button class="no-button" type="button" @click="popupOpen=false">
+              No
+            </button>
+            <button class="yes-button" type="button" @click="submit()">
+              Yes
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -226,6 +252,7 @@ export default {
   middleware: 'is-auth',
   data() {
     return {
+      popupOpen: false,
       isPrint: false,
       isValidated: true,
       readyPrint: false,
@@ -240,6 +267,7 @@ export default {
         year: '',
         duration: '',
         diseaseID: '',
+        summary: '',
         reportsIncluded: [],
         chartRemarks: [],
 		preparedBy: '',
@@ -354,7 +382,7 @@ export default {
     },
     validate() {
       if (this.report.title!=='' && this.report.reportType!== '' && this.report.year!== '' &&
-          this.report.diseaseID!== '' && this.report.preparedBy!== '' &&
+          this.report.diseaseID!== '' && this.report.preparedBy!== '' && this.report.summary !=='' &&
           this.report.reportsIncluded.length > 0 && this.report.chartRemarks.length > 0 &&
           this.report.reportsIncluded.length === this.report.chartRemarks.length) {
         this.isValidated = true;
@@ -725,5 +753,64 @@ select {
 .darkerlightgrayC {color: lightgray;}
 .darkGrayC {color:gray}
 .whiteC {color: white;}
+
+.FeedbackReportOverlay {
+  display: block;
+  z-index: 11;
+  margin: 0px;
+  padding: 15% 30% 20%;
+  width: -webkit-fill-available;
+  height: -webkit-fill-available;
+  /* background: gray; */
+  /* opacity: 55%; */
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: rgba(100, 100, 100, 0.4);
+  /* border: 100px solid rgba(100, 100, 100, 0.4); */
+}
+
+@media only screen and (max-width:1000px) {
+  .FeedbackReportOverlay  {
+    padding: 20% 15%;
+  }
+}
+
+.FR-overlayForm {
+  padding: 40px;
+  border-radius: 40px;
+  background: white;
+  /* width: -webkit-fill-available;
+  height: -webkit-fill-available; */
+  overflow-y: auto;
+  box-shadow: 1px 4px 8px rgb(0 0 0 / 40%);
+}
+
+.RFpopupButtons {
+  /* margin: -10px 0 5px; */
+  margin: 10px auto;
+  text-align: center;
+}
+
+.yes-button, .no-button {
+  width: 150px;
+  height: 38px;
+  max-width: 100%;
+  font-size: 16px;
+  margin-top: 15px;
+  font-family: 'Work Sans', sans-serif;
+  font-weight: 600;
+  color: #346083;
+}
+
+.yes-button {
+  background-color: #346083;
+  color: white;
+}
+
+.yes-button:hover, .no-button:hover {
+  border: #346083 solid 1px;
+}
+
 
 </style>

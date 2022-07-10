@@ -24,7 +24,7 @@
                 {{ outbreak.outbreakStatus }}
               </h1>
               <ul
-                v-show="!isPrint"
+                v-show="!isPrint && outbreak.outbreakStatus!=='Closed'"
                 class="OBEdit"
                 @click="popup()"
               >
@@ -461,19 +461,28 @@ export default {
     move(i) {
       this.pageNum = i
     },
-    inputEdit() {
-      if (this.pageNum === 6) return false;
-      else return true;
-    },
     statusInputEdit(value) {
       if (this.editStatus & value!==this.outbreak.outbreakStatus ) return false
       else return true
     },
     popup() {
-      this.editStatus = !this.editStatus
+      this.editStatus = !this.editStatus;
+      this.auditLog.remarks = '';
+    },
+    validate() {
+      if (this.auditLog.newStatus==='' || this.auditLog.newStatus === this.outbreak.outbreakStatus) {
+        this.$toast.error('Status unchanged', {duration: 4000, icon: 'error'});
+        return false;
+      }
+      else if (this.auditLog.remarks === '') {
+        this.$toast.error('Please fill up the remarks.', {duration: 4000, icon: 'error'});
+        return false;
+      }
+      else return true;
     },
     async statusAction(change) {
-      if (change==='save') {
+      var valid = this.validate();
+      if (change==='save' && valid) {
         const updateCase = await axios.post('http://localhost:8080/api/updateOutbreakStatus', {
           outbreakID: this.outbreak.outbreakID,
           newStatus: this.auditLog,
@@ -482,15 +491,17 @@ export default {
         if (updateCase.status === 200) {
           // alert('Outbreak status updated!');
           location.reload();
+          this.popup()
         } else {
           // eslint-disable-next-line no-console
           console.log(result);
+          this.popup()
         }
       }
       if (change==='cancel') {
         this.auditLog.newStatus = this.outbreak.outbreakStatus;
+        this.popup()
       }
-      this.popup()
     },
     downloadPDF() {
       this.isPrint = !this.isPrint
@@ -728,7 +739,7 @@ tr:nth-child(odd) {background-color: #f2f2f2;}
   height: -webkit-fill-available;
   /* background: gray; */
   /* opacity: 55%; */
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   background: rgba(100, 100, 100, 0.4);
