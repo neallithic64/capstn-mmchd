@@ -4,12 +4,12 @@
     <!-- Rest of the screen -->
     <div ref="content" :class="[{ addReportOuterContainer: !isPrint }, { padding20 : isPrint, }, { paddingTop75 : isPrint, },]">
       <!-- HEADER -->
-      <div class="centerSide paddingSide25">
-        <div class="space-inline">
+      <div class="paddingSide25">
+        <div class="space-inline centerSide">
           <h1 class="textAlighRight greenC weight800 size32 marginTop2 marginBottom-3"> Feedback Report {{report.reportID}} </h1>
           <div class="viewRep-mainStatus marginLeft10 marginTop10" :class="getColor(report.status)"> {{report.status}} </div>
         </div>
-        <div class="space-inline marginTop5">
+        <div class="space-inline marginTop5 centerSide">
           <h3 class="weight500 size18"> {{report.title}} </h3>
           <h3 class="weight500 size18">
               {{report.reportType}} Report - {{report.year}}
@@ -17,6 +17,8 @@
           </h3>
           <h3 class="weight500 size18"> {{report.diseaseName}} </h3>
         </div>
+
+        <div class="marginTop10 width100" style="padding: 5px 10px;"> {{report.summary}} </div>
         <hr id="2" class="marginTopBot10"/>
       </div>
 
@@ -142,6 +144,7 @@ export default {
         year: '',
         duration: '',
         diseaseName: '',
+        summary: 'This is considered the summary of a summarized summary',
         reportsIncluded: [],
         chartRemarks: [],
         dateCreated: '',
