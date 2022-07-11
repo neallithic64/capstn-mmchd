@@ -1744,21 +1744,35 @@ const indexFunctions = {
 	},
 
 	postEditDiseaseDef: async function(req, res) {
-		let { diseaseDefs, diseaseID } = req.body;
+		let { diseaseDefs, diseaseID, userID } = req.body;
 		let arrDefs = Object.keys(diseaseDefs), result = true, query = {
 			diseaseID: diseaseID,
 			class: null
-		};
+		}, auditObj = {};
 
 		try {
 			for (let i = 0; result && i < arrDefs.length; i++) {
 				query.class = arrDefs[i];
+				let prevRecord = await db.findRows("mmchddb.CASE_DEFINITIONS", query);
+				auditObj = {
+					diseaseID: diseaseID,
+					class: prevRecord[0].class,
+					dateModified: new Date(),
+					modifiedBy: userID,
+					prevValue: prevRecord[0].definition
+				};
+				
 				let result = await db.updateRows("mmchddb.CASE_DEFINITIONS", query, {
 					definition: Object.values(diseaseDefs)[i]
 				});
+				
+				// record audit, comparing if the prev and new definitions are different
+				if (auditObj.prevValue !== Object.values(diseaseDefs)[i]) {
+					db.insertOne("mmchddb.CASE_DEF_AUDIT", auditObj);
+				}
 			}
 			if (result) {
-				let disease = await db.findRows("mmchddb.DISEASES",{"diseaseID" : diseaseID});
+				let disease = await db.findRows("mmchddb.DISEASES", {"diseaseID" : diseaseID});
 				result = await sendBulkNotifs(DRUUserTypes, 'updateNotif', 'The case definitions of ' +
 								disease[0].diseaseName + ' have been updated', null);
 				if (result) res.status(200).send("Update disease Successful");
