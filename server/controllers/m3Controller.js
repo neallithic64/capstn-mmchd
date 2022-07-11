@@ -159,8 +159,12 @@ const indexFunctions = {
 	},
 	
 	mkData: async function(req, res) {
-		sendReportEmail("matthewneal2006@yahoo.com", "RE-0000000000003", "For Approval");
-		res.status(200).send("email sending done!");
+		try {
+			sendReportEmail("matthewneal2006@yahoo.com", "RE-0000000000003", "For Approval");
+			res.status(200).send("email sending done!");
+		} catch (e) {
+			res.status(500).send(e);
+		}
 	},
 	
 	getFileBlob: async function(req, res) {
@@ -268,7 +272,8 @@ const indexFunctions = {
 				year: report.year,
 				duration: report.duration,
 				reportsIncluded: JSON.stringify(report.reportsIncluded),
-				chartRemarks: JSON.stringify(report.chartRemarks)
+				chartRemarks: JSON.stringify(report.chartRemarks),
+				summary: report.summary
 			});
 			
 			sendReportEmail("matthewneal2006@yahoo.com", reportID, "For Approval");
