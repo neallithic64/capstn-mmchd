@@ -116,9 +116,26 @@ const indexFunctions = {
 	},
 	
 	mkData: async function(req, res) {
-		let r = await db.exec("SELECT * FROM mmchddb.USER_SETTINGS;");
-		if (r) res.status(200).send(r);
-		else res.status(500).send("problems");
+		let r = await db.exec(`SELECT * FROM mmchddb.TCL_DATA t
+				WHERE t.OPV3date IS NULL AND
+				t.HEPAmoredate IS NULL;`);
+		if (r.length > 0) {
+			let opvDate, hepaDate, ctr = 0, editRes;
+			for (let i = 0; i < 800; i++) {
+				opvDate = new Date(r[i].OPV2date);
+				hepaDate = new Date(r[i].HEPAwithdate);
+				opvDate.setUTCDate(opvDate.getUTCDate() + 49);
+				hepaDate.setUTCDate(hepaDate.getUTCDate() + 49);
+				
+				editRes = await db.updateRows("mmchddb.TCL_DATA", {
+					TCLID: r[i].TCLID, patientID: r[i].patientID
+				}, {
+					OPV3date: opvDate, HEPAmoredate: hepaDate
+				});
+				if (editRes) ctr++;
+			}
+			res.status(200).send("length: " + r.length + "; rows edited total: " + ctr);
+		} else res.status(500).send("problems");
 	},
 	
 	getAllProgTargets: async function(req, res) {

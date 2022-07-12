@@ -1019,7 +1019,7 @@
                           <th rowspan="3"> PCV </th>
                           <th> 1 </th>
                           <td> <input v-if="loadedData[0].PCV1date != '' || action!='view'" v-model="dataSets[0].PCV1date" type="date" max="today" :disabled="loadedData[0].PCV1date != '' || inputEdit()"/> </td>
-                          <td rowspan="3"> <span v-if="loadedData[0].PCV1date != '' && loadedData[0].PCV2date != '' && loadedData[0].PCV3date != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="IPentryComplete"/> </span> </td>
+                          <td rowspan="3"> <span v-if="loadedData[0].PCV1date != '' && loadedData[0].PCV2date != '' && loadedData[0].PCV3date != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="IPentryComplete"/> COMPLETE </span> </td>
                         </tr>
                         <tr>
                           <th> 2 </th>
