@@ -251,10 +251,10 @@
                     :class="isRequired()"
                     required
                   >
-                    <option value="Single">Single</option>
-                    <option value="Married">Married</option>
-                    <option value="Separated">Separated</option>
-                    <option value="Widowed">Widowed</option>
+                    <option value="SINGLE">SINGLE</option>
+                    <option value="MARRIED">MARRIED</option>
+                    <option value="SEPARATED">SEPARATED</option>
+                    <option value="WIDOWED">WIDOWED</option>
                   </select>
                 </div>
                 <div class="field">
@@ -2673,22 +2673,22 @@ export default {
       classification: {},
       labList: [],
       cityList: [
-        'Caloocan City',
-        'Las Piñas City',
-        'Makati City',
-        'Malabon City',
-        'Mandaluyong City',
-        'Manila City',
-        'Marikina City',
-        'Muntinlupa City',
-        'Navotas City',
-        'Parañaque City',
-        'Pasay City',
-        'Pasig City',
-        'Quezon City',
-        'San Juan City',
-        'Taguig City',
-        'Valenzuela City',
+        'CALOOCAN CITY',
+        'LAS PIÑAS CITY',
+        'MAKATI CITY',
+        'MALABON CITY',
+        'MANDALUYONG CITY',
+        'MANILA CITY',
+        'MARIKINA CITY',
+        'MUNTINLUPA CITY',
+        'NAVOTAS CITY',
+        'PARAÑAQUE CITY',
+        'PASAY CITY',
+        'PASIG CITY',
+        'QUEZON CITY',
+        'SAN JUAN CITY',
+        'TAGUIG CITY',
+        'VALENZUELA CITY',
       ],
     }
   },
@@ -3081,7 +3081,7 @@ export default {
       this.patientExist = false;
     },
     autoFillPatient(patient) {
-      // console.log(patient);
+      console.log(patient);
       this.formData.patient.patientID = patient.patientID;
       this.formData.patient.lastName = patient.lastName;
       this.formData.patient.firstName = patient.firstName;
@@ -3104,6 +3104,7 @@ export default {
       // this.getLocBrgyList(this.formData.patient.currCity,'currBarangay');
       // this.getLocBrgyList(this.formData.patient.permCity,'permBarangay');
       this.patientExist = true;
+      console.log(this.formData.patient);
     },
     searchPatient(event) {
       this.patientResult = [];
