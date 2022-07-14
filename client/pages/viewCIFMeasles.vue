@@ -212,10 +212,10 @@
                   :disabled="inputEdit()"
                   class="input-form-field"
                 >
-                  <option value="Single">Single</option>
-                  <option value="Married">Married</option>
-                  <option value="Separated">Separated</option>
-                  <option value="Widowed">Widowed</option>
+                  <option value="SINGLE">SINGLE</option>
+                    <option value="MARRIED">MARRIED</option>
+                    <option value="SEPARATED">SEPARATED</option>
+                    <option value="WIDOWED">WIDOWED</option>
                 </select>
               </div>
               <div class="field">
