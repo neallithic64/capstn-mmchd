@@ -931,7 +931,6 @@ const indexFunctions = {
 
 	getPatientData: async function(req, res) {
 		let riskFactorsData = [], DRUData = [];
-		console.log(req.query);
 		try {
 			// collect relevant data
 			let rows = await db.exec(`SELECT c.caseID, c.reportDate, c.caseLevel,
@@ -946,14 +945,6 @@ const indexFunctions = {
 					WHERE c.patientID = '${req.query.patientID}' AND c.reportedBy = '${req.query.userID}'
 					GROUP BY c.caseID
 					ORDER BY IFNULL(MAX(al.dateModified), c.reportDate) DESC;`);
-			let patientData = await db.exec(`SELECT p.*, a1.houseStreet AS currHouseStreet,
-					a1.brgy AS currBrgy, a1.city AS currCity, a2.houseStreet AS permHouseStreet,
-					a2.brgy AS permBrgy, a2.city AS permCity
-					FROM mmchddb.PATIENTS p
-					INNER JOIN mmchddb.ADDRESSES a1 ON p.caddressID = a1.addressID
-					INNER JOIN mmchddb.ADDRESSES a2 ON p.paddressID = a2.addressID
-					WHERE p.patientID = '${req.query.patientID}';`);
-			let tclData = await db.exec(`SELECT * FROM mmchddb.TCL_DATA WHERE patientID = '${req.query.patientID}';`);
 			if (rows.length > 0) {
 				riskFactorsData = await db.findRows("mmchddb.RISK_FACTORS", {caseID: rows[rows.length - 1].caseID});
 				DRUData = await db.exec(`SELECT u.druName, userType AS 'druType', a.city AS 'druCity',
@@ -990,12 +981,31 @@ const indexFunctions = {
 				}];
 			}
 			
+			let patientData = await db.exec(`SELECT p.*, a1.houseStreet AS currHouseStreet,
+					a1.brgy AS currBrgy, a1.city AS currCity, a2.houseStreet AS permHouseStreet,
+					a2.brgy AS permBrgy, a2.city AS permCity
+					FROM mmchddb.PATIENTS p
+					INNER JOIN mmchddb.ADDRESSES a1 ON p.caddressID = a1.addressID
+					INNER JOIN mmchddb.ADDRESSES a2 ON p.paddressID = a2.addressID
+					WHERE p.patientID = '${req.query.patientID}';`);
+			
+			let tclData = await db.exec(`SELECT immunizationStatus, BCGdate,
+					HEPAwithdate, HEPAmoredate, OPV1date, OPV2date, OPV3date,
+					PENTA1date, PENTA2date, PENTA3date, PCV1date, PCV2date, PCV3date,
+					MCV1date, MCV2date, Dengue1date, Dengue2date, Dengue3date
+					FROM mmchddb.TCL_DATA WHERE patientID = '${req.query.patientID}';`);
+			tclData = tclData.length ? tclData[0] : {};
+			let immunization = Object.entries(tclData).reduce(function (prev, e) {
+				if (e[0] !== "immunizationStatus") prev[e[0].substr(0, 3)] = !!e[1];
+				return prev;
+			}, { immunizationStatus: tclData.immunizationStatus });
+			
 			let data = {
 				rowData: rows,
 				patient: patientData[0],
 				riskFactors: riskFactorsData[0],
 				DRUData: DRUData.length ? DRUData[0] : [],
-				tclData: tclData.length ? tclData[0] : []
+				immunization: immunization
 			};
 			
 			// fixing dates

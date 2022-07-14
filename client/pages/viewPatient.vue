@@ -877,13 +877,13 @@
         </form>
         <hr class="viewPatienthr"/>
 
-        <form v-if="immunization.status!=='N/A'" id="patient3" type="submit">
+        <form v-if="immunization.immunizationStatus!=='N/A'" id="patient3" type="submit">
           <div id="case-investigation-form" class="center">
             <div style="display: flex; flex-direction: width; justify-content: space-between;">
               <h2 id="form-header" class="viewPatienth2">
                 Immunization Program Status
               </h2>
-              <a v-if="immunization.status!=''" href="/viewImmunizationProgEntry" class="immunLink">
+              <a v-if="immunization.immunizationStatus!=''" href="/viewImmunizationProgEntry" class="immunLink">
                 View Immunization Program Record >
               </a>
             </div>
@@ -901,36 +901,36 @@
                 </thead>
                 <tr>
                   <td>
-                    <img v-if="immunization.bcg" src="~/assets/img/check.png" style="width:30px"/>
+                    <img v-if="immunization.BCG" src="~/assets/img/check.png" style="width:30px"/>
                     <img v-else src="~/assets/img/x.png" style="width:30px"/>
                   </td>
                   <td>
-                    <img v-if="immunization.hepa2" src="~/assets/img/check.png" style="width:30px"/>
+                    <img v-if="immunization.HEP" src="~/assets/img/check.png" style="width:30px"/>
                     <img v-else src="~/assets/img/x.png" style="width:30px"/>
                   </td>
                   <td>
-                    <img v-if="immunization.opv3" src="~/assets/img/check.png" style="width:30px"/>
+                    <img v-if="immunization.OPV" src="~/assets/img/check.png" style="width:30px"/>
                     <img v-else src="~/assets/img/x.png" style="width:30px"/>
                   </td>
                   <td>
-                    <img v-if="immunization.penta3" src="~/assets/img/check.png" style="width:30px"/>
+                    <img v-if="immunization.PEN" src="~/assets/img/check.png" style="width:30px"/>
                     <img v-else src="~/assets/img/x.png" style="width:30px"/>
                   </td>
                   <td>
-                    <img v-if="immunization.pcv3" src="~/assets/img/check.png" style="width:30px"/>
+                    <img v-if="immunization.PCV" src="~/assets/img/check.png" style="width:30px"/>
                     <img v-else src="~/assets/img/x.png" style="width:30px"/>
                   </td>
                   <td>
-                    <img v-if="immunization.mcv2" src="~/assets/img/check.png" style="width:30px"/>
+                    <img v-if="immunization.MCV" src="~/assets/img/check.png" style="width:30px"/>
                     <img v-else src="~/assets/img/x.png" style="width:30px"/>
                   </td>
                   <td>
-                    <img v-if="immunization.dengue3" src="~/assets/img/check.png" style="width:30px"/>
+                    <img v-if="immunization.Den" src="~/assets/img/check.png" style="width:30px"/>
                     <img v-else src="~/assets/img/x.png" style="width:30px"/>
                   </td>
                   
                   <td>
-                    <span v-if="immunization.status==='Complete'" class="immunStatus" style="background-color:#008d41"> COMPLETE </span>
+                    <span v-if="immunization.immunizationStatus==='Complete'" class="immunStatus" style="background-color:#008d41"> COMPLETE </span>
                     <span v-else class="immunStatus" style="background-color:#346083"> ONGOING </span>
                   </td>
                 </tr>
@@ -1192,14 +1192,14 @@ export default {
         'Valenzuela City',
       ],
       immunization: {
-        status: 'Complete', // n/a ongoing complete
-        bcg: true,
-        hepa2: false,
-        opv3: true,
-        penta3: true,
-        pcv3: false,
-        mcv2: false,
-        dengue3: true,
+        immunizationStatus: 'Complete', // n/a ongoing complete
+        BCG: true,
+        HEP: false,
+        OPV: true,
+        PEN: true,
+        PCV: false,
+        MCV: false,
+        Den: true,
       },
     }
   },
@@ -1229,6 +1229,7 @@ export default {
     this.formData.riskFactors = data.riskFactors; // working already
     this.DRUData = data.DRUData;
     this.allData = data.rowData;
+	this.immunization = data.immunization;
 	if ((!['Chief', 'Staff', 'resuHead', 'chdDirector'].some(e => this.$auth.user.userType.includes(e)) && !this.DRUData.pushDataAccept) ||
 	    (this.$auth.user.druName !== this.DRUData.druName)) {
 	  this.formData.patient.firstName = "";
