@@ -1428,7 +1428,6 @@ export default {
       this.formData.patient.permCity = '';
       this.formData.patient.guardianName = '';
       this.formData.patient.guardianContact = '';
-
       this.patientExist = false;
     },
     getAddress() {
@@ -1485,9 +1484,9 @@ export default {
       this.formData.patient.permBrgy = this.formData.patient.currBrgy;
 
       // eslint-disable-next-line no-console
-      console.log(this.formData.patient.permBrgy)
+      console.log(this.formData.patient.permBrgy);
       // eslint-disable-next-line no-console
-      console.log(this.formData.patient.currBrgy)
+      console.log(this.formData.patient.currBrgy);
     },
       convDatePHT(d) { // only accepts Date object; includes checking
       return !isNaN(Date.parse(d))

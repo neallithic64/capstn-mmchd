@@ -1575,7 +1575,6 @@ export default {
       this.patientExist = false;
     },
     autoFillPatient(patient) {
-      // console.log(patient);
       this.formData.patient.patientID = patient.patientID;
       this.formData.patient.lastName = patient.lastName;
       this.formData.patient.firstName = patient.firstName;
@@ -1593,7 +1592,6 @@ export default {
       this.formData.patient.permCity = patient.permCity;
       this.formData.patient.guardianName = patient.guardianName;
       this.formData.patient.guardianContact = patient.guardianContact;
-
       this.patientExist = true;
       this.pageNum = 3;
     },
@@ -1665,9 +1663,9 @@ export default {
       this.formData.patient.permBrgy = this.formData.patient.currBrgy;
 
       // eslint-disable-next-line no-console
-      console.log(this.formData.patient.permBrgy)
+      console.log(this.formData.patient.permBrgy);
       // eslint-disable-next-line no-console
-      console.log(this.formData.patient.currBrgy)
+      console.log(this.formData.patient.currBrgy);
     },
     convDatePHT(d) { // only accepts Date object; includes checking
       return !isNaN(Date.parse(d)) ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10) : "N/A";

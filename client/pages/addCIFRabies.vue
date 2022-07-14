@@ -2627,10 +2627,6 @@ export default {
       this.formData.patient.currBrgy = patient.currBrgy;
       this.formData.patient.permBrgy = patient.permBrgy;
       this.pageNum++;
-
-      // this.getLocBrgyList(this.formData.patient.occuCity,'occuBarangay');
-      // this.getLocBrgyList(this.formData.patient.currCity,'currBarangay');
-      // this.getLocBrgyList(this.formData.patient.permCity,'permBarangay');
       this.patientExist = true;
     },
     searchPatient(event) {
@@ -2686,9 +2682,9 @@ export default {
       this.formData.patient.permBrgy = this.formData.patient.currBrgy;
 
       // eslint-disable-next-line no-console
-      console.log(this.formData.patient.permBrgy)
+      console.log(this.formData.patient.permBrgy);
       // eslint-disable-next-line no-console
-      console.log(this.formData.patient.currBrgy)
+      console.log(this.formData.patient.currBrgy);
     }
   },
 }
