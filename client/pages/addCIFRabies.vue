@@ -329,7 +329,16 @@
                 </div>
                 <div class="field">
                   <label for="occuBarangay" class="required"> Barangay </label>
-                  <select
+                  <input v-if="patientExist"
+                    id="permBarangay"
+                    v-model="formData.patient.permBrgy"
+                    class="input-form-field"
+                    :class="isRequired()"
+                    type="text"
+                    :disabled="inputEdit()"
+                    required
+                  />
+                  <select v-else
                     id="occuBarangay"
                     v-model="formData.patient.occuBrgy"
                     class="input-form-field"
@@ -374,7 +383,16 @@
                 </div>
                 <div class="field">
                   <label for="currBarangay" class="required"> Barangay </label>
-                  <select
+                  <input v-if="patientExist"
+                    id="currBarangay"
+                    v-model="formData.patient.currBrgy"
+                    class="input-form-field"
+                    :class="isRequired()"
+                    type="text"
+                    :disabled="inputEdit()"
+                    required
+                  />
+                  <select v-else
                     id="currBarangay"
                     v-model="formData.patient.currBrgy"
                     class="input-form-field"
@@ -425,14 +443,23 @@
                     class="input-form-field"
                     name="permCity"
                     :disabled="inputEdit()"
-					@change="getLocBrgyList(formData.patient.permCity, 'permBarangay')"
+					          @change="getLocBrgyList(formData.patient.permCity, 'permBarangay')"
                   >
                   <option v-for="(city, i) in cityList" :key=i>{{city}}</option>
                   </select>
                 </div>
                 <div class="field">
                   <label for="permBarangay"> Barangay </label>
-                  <select
+                  <input v-if="patientExist"
+                    id="permBarangay"
+                    v-model="formData.patient.permBrgy"
+                    class="input-form-field"
+                    :class="isRequired()"
+                    type="text"
+                    :disabled="inputEdit()"
+                    required
+                  />
+                  <select v-else
                     id="permBarangay"
                     v-model="formData.patient.permBrgy"
                     class="input-form-field"

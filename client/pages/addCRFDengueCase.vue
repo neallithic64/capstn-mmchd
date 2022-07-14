@@ -331,7 +331,16 @@
                 </div>
                 <div class="field">
                   <label for="occuBrgy" class="required"> Barangay </label>
-                  <select
+                  <input v-if="patientExist"
+                    id="occuBrgy"
+                    v-model="formData.patient.occuBrgy"
+                    class="input-form-field"
+                    :class="isRequired()"
+                    type="text"
+                    :disabled="inputEdit()"
+                    required
+                  />
+                  <select v-else
                     id="occuBrgy"
                     v-model="formData.patient.occuBrgy"
                     class="input-form-field "
@@ -376,7 +385,16 @@
                 </div>
                 <div class="field">
                   <label for="currBarangay" class="required"> Barangay </label>
-                  <select
+                  <input v-if="patientExist"
+                    id="currBarangay"
+                    v-model="formData.patient.currBrgy"
+                    class="input-form-field"
+                    :class="isRequired()"
+                    type="text"
+                    :disabled="inputEdit()"
+                    required
+                  />
+                  <select v-else
                     id="currBarangay"
                     v-model="formData.patient.currBrgy"
                     class="input-form-field "
@@ -433,7 +451,16 @@
                 </div>
                 <div class="field">
                   <label for="permBarangay"> Barangay </label>
-                  <select
+                  <input v-if="patientExist"
+                    id="permBarangay"
+                    v-model="formData.patient.permBrgy"
+                    class="input-form-field"
+                    :class="isRequired()"
+                    type="text"
+                    :disabled="inputEdit()"
+                    required
+                  />
+                  <select v-else
                     id="permBarangay"
                     v-model="formData.patient.permBrgy"
                     class="input-form-field "
