@@ -35,8 +35,8 @@ function convDatePHT(d) {
 const math = require('mathjs');
 const { fractionDependencies } = require("mathjs");
 const DRUUserTypes = ['BHS','RHU','CHO', 'govtHosp', 'privHosp', 'clinic', 'privLab', 'airseaPort'];
-const monthName= ["January","February","March","April","May","June","July",
-            "August","September","October","November","December"];
+const monthName = ["January", "February", "March", "April", "May", "June", "July",
+				"August", "September", "October", "November", "December"];
 /** OBJECT CONSTRUCTORS
 */
 
@@ -309,12 +309,12 @@ async function createOutbreak(diseaseID, type) {
 	try {
 		let match = await db.exec("SELECT * FROM mmchddb.OUTBREAKS WHERE diseaseID='" + diseaseID +
 								"' AND NOT outbreakStatus='Closed';");
-		if(match.length > 0) {
-			if(match[0].type == type)
+		if (match.length > 0) {
+			if (match[0].type == type)
 				return match[0];
-			else if(type == 'Epidemic') {
+			else if (type == 'Epidemic') {
 				let result = await db.updateRows("mmchddb.OUTBREAKS", {outbreakID:match[0].outbreakID}, {type:type});
-				if(result)
+				if (result)
 					return match[0];
 				else
 					return false;
@@ -335,8 +335,8 @@ async function createOutbreak(diseaseID, type) {
 async function checkIfOutbreak(diseaseID, caseObj) {
 	try {
 		// check if disease case is measles (suspected case for alert, confirmed case for epidemic)
-		if(diseaseID == "DI-0000000000000") {
-			if(caseObj.caseLevel == "Suspected Case") {
+		if (diseaseID == "DI-0000000000000") {
+			if (caseObj.caseLevel == "Suspected Case") {
 				return await createOutbreak("DI-0000000000000", "Alert");
 			}
 			else if (caseObj.caseLevel == "Non-Measles/Rubella Discarded Case")
@@ -348,9 +348,9 @@ async function checkIfOutbreak(diseaseID, caseObj) {
 			let cases = await db.exec("SELECT * FROM mmchddb.CASES WHERE YEARWEEK(reportDate, 1) = YEARWEEK(CURDATE(), 1)");
 			let disease = await db.findRows("mmchddb.DISEASES", {diseaseID:diseaseID});
 			
-			if(cases.length >= disease[0].alertThreshold) {
+			if (cases.length >= disease[0].alertThreshold) {
 				return await createOutbreak(diseaseID, "Alert");
-			} else if(cases.length >= disease[0].epiThreshold) {
+			} else if (cases.length >= disease[0].epiThreshold) {
 				return await createOutbreak(diseaseID, "Epidemic");
 			} else
 				return false;
@@ -862,7 +862,7 @@ const indexFunctions = {
 				caseDataObj[element.fieldName] = element.value;
 			});
 
-			if(DRUData[0].druName == 'TestDRU' || DRUData[0].druName == '')
+			if (DRUData[0].druName == 'TestDRU' || DRUData[0].druName == '')
 				DRUData[0].druType = 'N/A';
 
 			let dateLastUpdated = new Date(rows[0].reportDate);
@@ -871,7 +871,7 @@ const indexFunctions = {
 			if(caseAudit.length > 0){
 				for(i = 0; i < caseAudit.length; i++){
 					dateLastUpdated = new Date(caseAudit[i].reportDate);
-					if(i + 1 == caseAudit.length)
+					if (i + 1 == caseAudit.length)
 						caseAudit[i].to = rows[0].caseLevel;
 					else
 						caseAudit[i].to = caseAudit[i+1].from;
@@ -912,11 +912,11 @@ const indexFunctions = {
 
 			// fixing dates
 			data.cases.reportDate = dateToString(data.cases.reportDate);
-			if(data.cases.investigationDate)
+			if (data.cases.investigationDate)
 				data.cases.investigationDate = dateToString(data.cases.investigationDate);
-			if(data.cases.dateOnset)
+			if (data.cases.dateOnset)
 				data.cases.dateOnset = dateToString(data.cases.dateOnset);
-			if(data.cases.dateAdmitted)
+			if (data.cases.dateAdmitted)
 				data.cases.dateAdmitted = dateToString(data.cases.dateAdmitted);
 			data.patient.birthDate = dateToString(data.patient.birthDate);
 			data.dateLastUpdated = dateToString(data.dateLastUpdated);
@@ -1093,11 +1093,11 @@ const indexFunctions = {
 
 			// fixing data
 			data.cases.reportDate = dateToString(data.cases.reportDate);
-			if(data.cases.investigationDate)
+			if (data.cases.investigationDate)
 				data.cases.investigationDate = dateToString(data.cases.investigationDate);
-			if(data.cases.dateOnset)
+			if (data.cases.dateOnset)
 				data.cases.dateOnset = dateToString(data.cases.dateOnset);
-			if(data.cases.dateAdmitted)
+			if (data.cases.dateAdmitted)
 				data.cases.dateAdmitted = dateToString(data.cases.dateAdmitted);
 			data.patient.birthDate = dateToString(data.patient.birthDate);
 
@@ -1309,7 +1309,7 @@ const indexFunctions = {
 	getOutbreakAlertDetails: async function(req, res){
 		try {
 			let outbreaks = await db.findRows("mmchddb.OUTBREAKS", {outbreakID:req.query.outbreakID});
-			if(outbreaks.length > 0){
+			if (outbreaks.length > 0) {
 				let disease = await db.findRows("mmchddb.DISEASES", {diseaseID:outbreaks[0].diseaseID});
 				res.status(200).send({outbreak: outbreaks[0], disease:disease[0]});
 			}
@@ -1323,7 +1323,7 @@ const indexFunctions = {
 	getOngoingOutbreaks: async function(req, res){
 		try {
 			let outbreaks = await db.exec("SELECT * FROM mmchddb.OUTBREAKS WHERE NOT outbreakStatus='Closed'");
-			if(outbreaks.length > 0)
+			if (outbreaks.length > 0)
 				res.status(200).send(outbreaks);
 			else res.status(400).send("No outbreaks");
 		} catch (e) {
@@ -1441,12 +1441,12 @@ const indexFunctions = {
 					console.log(result);
 					if (result) {
 						req.session.user = match[0];
-						//  automatically push existing crfs that are not pushed
+						// automatically push existing crfs that are not pushed
 						console.log("SELECT * FROM mmchddb.CRFS WHERE userID = '" + match[0].userID + 
 						"' AND isPushed = 0 AND (week != " + (new Date).getWeek() + " OR year != " + (new Date).getFullYear() + ");");
-						let notPushedCRFS =await  db.exec("SELECT * FROM mmchddb.CRFS WHERE userID = '" + match[0].userID + 
+						let notPushedCRFS = await db.exec("SELECT * FROM mmchddb.CRFS WHERE userID = '" + match[0].userID + 
 						"' AND isPushed = 0 AND (week != " + (new Date).getWeek() + " OR year != " + (new Date).getFullYear() + ");");
-						if(notPushedCRFS.length > 0){
+						if(notPushedCRFS.length > 0) {
 							for(let i = 0; i < notPushedCRFS.length; i++) {
 								updateCRF = await db.updateRows("mmchddb.CRFS",{CRFID:notPushedCRFS[i].CRFID}, {isPushed:1});
 							}
@@ -1744,25 +1744,38 @@ const indexFunctions = {
 	},
 
 	postEditDiseaseDef: async function(req, res) {
-		let { diseaseDefs, diseaseID } = req.body;
+		let { diseaseDefs, diseaseID, userID } = req.body;
 		let arrDefs = Object.keys(diseaseDefs), result = true, query = {
 			diseaseID: diseaseID,
 			class: null
-		};
+		}, auditObj = {};
 
 		try {
 			for (let i = 0; result && i < arrDefs.length; i++) {
 				query.class = arrDefs[i];
+				let prevRecord = await db.findRows("mmchddb.CASE_DEFINITIONS", query);
+				auditObj = {
+					diseaseID: diseaseID,
+					class: prevRecord[0].class,
+					dateModified: new Date(),
+					modifiedBy: userID,
+					prevValue: prevRecord[0].definition
+				};
+				
 				let result = await db.updateRows("mmchddb.CASE_DEFINITIONS", query, {
 					definition: Object.values(diseaseDefs)[i]
 				});
+				
+				// record audit, comparing if the prev and new definitions are different
+				if (auditObj.prevValue !== Object.values(diseaseDefs)[i]) {
+					db.insertOne("mmchddb.CASE_DEF_AUDIT", auditObj);
+				}
 			}
 			if (result) {
-				let disease = await db.findRows("mmchddb.DISEASES",{"diseaseID" : diseaseID});
+				let disease = await db.findRows("mmchddb.DISEASES", {"diseaseID" : diseaseID});
 				result = await sendBulkNotifs(DRUUserTypes, 'updateNotif', 'The case definitions of ' +
 								disease[0].diseaseName + ' have been updated', null);
-				if(result)
-					res.status(200).send("Update disease Successful");
+				if (result) res.status(200).send("Update disease Successful");
 				else res.status(500).send("Add Notifications Failed");
 			} else res.status(500).send("Update Case Definition error!");
 		} catch (e) {
@@ -2146,7 +2159,7 @@ const indexFunctions = {
 			if (result) {
 				result = await sendBulkNotifs(['pidsrStaff', 'fhsisStaff'], 'deadlineNotif',
 						'REMINDER: Please start reminding DRUs to submit their Case Report Forms', null);
-				if(result) {
+				if (result) {
 					console.log("Adding notification success");
 				} else console.log("Adding Notification to Staff Failed");
 			} else console.log("Adding Notification to DRU Failed");

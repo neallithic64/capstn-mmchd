@@ -22,13 +22,10 @@ const pool = mysql.createPool({
 function makeWhereClause(obj) {
 	let entriesArr = [];
 	for (let [key, value] of Object.entries(obj)) {
-		if(typeof(value)=='boolean'){
-			if(value)
-				entriesArr.push(key + " = 1");
-			else
-				entriesArr.push(key + " = 0");
-		}
-		else entriesArr.push(key + " = " + "'" + value + "'");
+		if (typeof(value) == "boolean") {
+			if (value) entriesArr.push(key + " = 1");
+			else entriesArr.push(key + " = 0");
+		} else entriesArr.push(key + " = " + "'" + value + "'");
 	}
 	return entriesArr.join(" AND ") + ";";
 }
@@ -69,14 +66,10 @@ function makeWhereOrClause(obj, field) {
 function makeSetClause(obj) {
 	let entriesArr = [];
 	for (let [key, value] of Object.entries(obj)) {
-		if(typeof(value)=='boolean'){
-			if(value)
-				entriesArr.push(key + " = 1");
-			else
-				entriesArr.push(key + " = 0");
-		}
-		else
-			entriesArr.push(key + " = " + "'" + value + "'");
+		if (typeof(value) == "boolean") {
+			if (value) entriesArr.push(key + " = 1");
+			else entriesArr.push(key + " = 0");
+		} else entriesArr.push(key + " = " + "'" + value + "'");
 	}
 	return entriesArr.join(", ");
 }
@@ -241,7 +234,7 @@ const database = {
 	},
 
 	/** Inserts mutiple rows into CaseData
-	 *  TODO : Convert function into a more generalized function
+	 *  TODO: Convert function into a more generalized function
 	 */
 	insertCaseData: async function(object) {
 		try {
@@ -262,7 +255,7 @@ const database = {
 	 */
 	findPatientAutofill: async function(name) {
 		try {
-			let statement = "SELECT * FROM mmchddb.PATIENTS WHERE CONCAT_WS(' ',firstName, midName, lastName) LIKE '%" + name 
+			let statement = "SELECT * FROM mmchddb.PATIENTS WHERE CONCAT_WS(' ', firstName, midName, lastName) LIKE '%" + name 
 							+"%' OR CONCAT(lastName, ', ', firstName, ' ', midName) LIKE '%" + name + "%';";
 			let [rows, fields] = await pool.execute(statement);
 			return rows;
@@ -275,9 +268,9 @@ const database = {
 	/**
 	 * Returns rows from patients that matches the pattern of the name
 	 */
-	 findUserIDsWithType: async function(userType) {
+	findUserIDsWithType: async function(userType) {
 		try {
-			let statement = "SELECT userID FROM mmchddb.USERS  WHERE " + makeWhereOrClause(userType, 'userType');
+			let statement = "SELECT userID FROM mmchddb.USERS WHERE " + makeWhereOrClause(userType, "userType");
 			let [rows, fields] = await pool.execute(statement);
 			return rows;
 		} catch (e) {
@@ -287,9 +280,9 @@ const database = {
 	},
 
 	/** Inserts mutiple rows into Notification
-	 *  TODO : Convert function into a more generalized function
+	 *  TODO: Convert function into a more generalized function
 	 */
-	 insertNotificationData: async function(object) {
+	insertNotificationData: async function(object) {
 		try {
 			// console.log(object);
 			let statement = "INSERT INTO mmchddb.NOTIFICATIONS (notificationID, receiverID, type, message, caseID, dateCreated, redirectTo, viewed) VALUES ?";
@@ -305,7 +298,7 @@ const database = {
 	/**
 	 * Returns rows from patients that matches the pattern of the name
 	 */
-	 findNewNotifsCount: async function(receiverID) {
+	findNewNotifsCount: async function(receiverID) {
 		try {
 			let statement = "SELECT Count(notificationID) AS 'newNotifCount' from mmchddb.NOTIFICATIONS where viewed = 0 AND receiverID = '" + receiverID + "'";
 			let [rows, fields] = await pool.execute(statement);

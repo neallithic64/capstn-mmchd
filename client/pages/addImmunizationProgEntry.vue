@@ -325,19 +325,19 @@
                     class="input-form-field "
                     :class="isRequired()" 
                     required
-                    @change="getLocBrgyList(formData.patient.occuCity,'occuBrgy')"
+                    @change="getLocBrgyList(formData.patient.occuCity,'occuBarangay')"
                     >
                     <option v-for="(city, i) in cityList" :key=i>{{city}}</option>
                   </select>
                 </div>
                 <div class="field">
-                  <label for="occuBrgy" class="required AIPElabel"> Barangay </label>
+                  <label for="occuBarangay" class="required AIPElabel"> Barangay </label>
                   <select
-                    id="occuBrgy"
+                    id="occuBarangay"
                     v-model="formData.patient.occuBrgy"
                     class="input-form-field "
                     :class="isRequired()"
-                    name="occuBrgy"
+                    name="occuBarangay"
                     :disabled="inputEdit()"
                     required
                   >
@@ -427,6 +427,7 @@
                     name="permCity"
                     class="input-form-field"
                     :disabled="inputEdit()"
+                    @change="getLocBrgyList(formData.patient.permCity,'permBarangay')"
                   >
                   <option v-for="(city, i) in cityList" :key=i>{{city}}</option>
                   </select>
@@ -1018,7 +1019,7 @@
                           <th rowspan="3"> PCV </th>
                           <th> 1 </th>
                           <td> <input v-if="loadedData[0].PCV1date != '' || action!='view'" v-model="dataSets[0].PCV1date" type="date" max="today" :disabled="loadedData[0].PCV1date != '' || inputEdit()"/> </td>
-                          <td rowspan="3"> <span v-if="loadedData[0].PCV1date != '' && loadedData[0].PCV2date != '' && loadedData[0].PCV3date != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="IPentryComplete"/> </span> </td>
+                          <td rowspan="3"> <span v-if="loadedData[0].PCV1date != '' && loadedData[0].PCV2date != '' && loadedData[0].PCV3date != '' " style="display: inline-flex"> <img src="~/assets/img/check.png" class="IPentryComplete"/> COMPLETE </span> </td>
                         </tr>
                         <tr>
                           <th> 2 </th>
@@ -1416,6 +1417,33 @@ export default {
           
           this.pageNum = page;
         }
+
+        this.$nextTick(() => {
+          if ((page === 1 ) && this.formData.patient.occuBrgy != null) {
+            const dropdown = document.getElementById('occuBarangay');
+            const defaultOption = document.createElement('option');
+            defaultOption.text = this.formData.patient.occuBrgy;
+            dropdown.add(defaultOption);
+            dropdown.selectedIndex = 0;
+          }
+
+          if ((page === 1) && this.formData.patient.currBrgy != null) {
+            const dropdown = document.getElementById('currBarangay');
+            const defaultOption = document.createElement('option');
+            defaultOption.text = this.formData.patient.currBrgy;
+            dropdown.add(defaultOption);
+            dropdown.selectedIndex = 0;
+          }
+
+          if ((page === 1) && this.formData.patient.permBrgy != null) {
+            const dropdown = document.getElementById('permBarangay');
+            const defaultOption = document.createElement('option');
+            defaultOption.text = this.formData.patient.permBrgy;
+            dropdown.add(defaultOption);
+            dropdown.selectedIndex = 0;
+          }
+        })
+
       }
 
       else if (page===4) {
@@ -1441,35 +1469,6 @@ export default {
         this.$forceUpdate();
       }
       // console.log(this.pageDone)
-
-      this.$nextTick(() => {
-        if ((this.pageNum === 1 ) && this.formData.patient.occuBrgy != null) {
-          const dropdown = document.getElementById('occuBrgy');
-          while (dropdown.firstChild) dropdown.removeChild(dropdown.firstChild);
-          const defaultOption = document.createElement('option');
-          defaultOption.text = this.formData.patient.occuBrgy;
-          dropdown.add(defaultOption);
-          dropdown.selectedIndex = 0;
-        }
-
-        if ((this.pageNum === 1) && this.formData.patient.currBrgy != null) {
-          const dropdown = document.getElementById('currBarangay');
-          while (dropdown.firstChild) dropdown.removeChild(dropdown.firstChild);
-          const defaultOption = document.createElement('option');
-          defaultOption.text = this.formData.patient.currBrgy;
-          dropdown.add(defaultOption);
-          dropdown.selectedIndex = 0;
-        }
-
-        if ((this.pageNum === 1) && this.formData.patient.permBrgy != null) {
-          const dropdown = document.getElementById('permBarangay');
-          while (dropdown.firstChild) dropdown.removeChild(dropdown.firstChild);
-          const defaultOption = document.createElement('option');
-          defaultOption.text = this.formData.patient.permBrgy;
-          dropdown.add(defaultOption);
-          dropdown.selectedIndex = 0;
-        }
-      })
     },
     validateForm(page) {
       switch (page) {
@@ -2180,6 +2179,7 @@ select {
 input:disabled,
 select:disabled {
   background: none;
+  color: #c4c4c4;
 }
 
 .AIPEhr {

@@ -262,7 +262,7 @@ export default {
   background-color: #f2f2f2;
   border-radius: 10px;
   padding: 15px;
-  padding-bottom: 20px;
+  padding-bottom: 70px;
   margin-bottom: 40px;
 }
 @media only screen and (max-width: 800px) {

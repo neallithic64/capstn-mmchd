@@ -116,9 +116,10 @@ const indexFunctions = {
 	},
 	
 	mkData: async function(req, res) {
-		let r = await db.exec("SELECT * FROM mmchddb.USER_SETTINGS;");
-		if (r) res.status(200).send(r);
-		else res.status(500).send("problems");
+		let r = await db.exec(`SELECT * FROM mmchddb.TCL_DATA t;`);
+		if (r.length > 0) {
+			res.status(200).send("length: " + r.length);
+		} else res.status(500).send("problems");
 	},
 	
 	getAllProgTargets: async function(req, res) {

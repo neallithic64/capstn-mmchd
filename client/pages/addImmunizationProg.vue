@@ -50,7 +50,8 @@
           :casetype="'immunProg'"
         />
         <div v-if="year+'' === (new Date()).getFullYear()+'' && month+'' === (new Date()).getMonth()+''" class="addIPaddButton">
-          <button class="addIPaddText"><a :href="'/addImmunizationProgEntry?TCLID=' + TCLID">+ add an entry</a></button></div>
+          <button class="addIPaddText"><a :href="'/addImmunizationProgEntry?TCLID=' + TCLID">+ add an entry</a></button>
+		</div>
       </div>
         <div v-if="year+'' === (new Date()).getFullYear()+'' && month+'' === (new Date()).getMonth()+''" class="addIPendButt">
           <!--button class="back-button" type="button" @click="save()">
@@ -482,7 +483,7 @@ select {
   height: -webkit-fill-available;
   /* background: gray; */
   /* opacity: 55%; */
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   background: rgba(100, 100, 100, 0.4);

@@ -250,11 +250,12 @@ export default {
 
       const result = await axios.post('http://localhost:8080/api/editDiseaseDef', {
           diseaseDefs: this.diseaseDefs,
-          diseaseID: this.formSection.diseaseIDs[this.pageNum]
+          diseaseID: this.formSection.diseaseIDs[this.pageNum],
+		  userID: this.$auth.user.userID
       });
       
-        // eslint-disable-next-line no-console
-        console.log(result);
+      // eslint-disable-next-line no-console
+      console.log(result);
 
       if (result.status === 200) {
         // alert('Health event submitted!');
