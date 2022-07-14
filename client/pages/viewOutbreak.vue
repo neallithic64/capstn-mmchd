@@ -230,7 +230,7 @@ export default {
       arMod2Risk: 7,
       arHighRisk: 7,
       editStatus: false,
-	  resDeadline: '',
+      resDeadline: '',
       auditLog: {
         newStatus: '',
         remarks: '',
@@ -410,24 +410,24 @@ export default {
     this.outbreak.startDate = this.convDatePHT(new Date(this.outbreak.startDate));
     this.outbreak.endDate = this.outbreak.endDate ? this.convDatePHT(new Date(this.outbreak.endDate)) : "N/A";
     this.outbreak.responseTime = this.outbreak.responseTime ? this.outbreak.responseTime : "N/A";
-	
+    
     this.eventHistory = data.outbreakAudit;
     for (let i = 0; i < this.eventHistory.length; i++) {
-	  this.eventHistory[i].dateModified = this.eventHistory[i].dateModified
-	    ? this.convDatePHT(new Date(this.eventHistory[i].dateModified))
-		: "N/A";
-	}
-	
+      this.eventHistory[i].dateModified = this.eventHistory[i].dateModified
+        ? this.convDatePHT(new Date(this.eventHistory[i].dateModified))
+        : "N/A";
+    }
+    
     this.obCases = data.outbreakCases;
-	for (let i = 0; i < this.obCases.length; i++) {
-	  this.obCases[i].reportDate = this.obCases[i].reportDate
-	    ? this.convDatePHT(new Date(this.obCases[i].reportDate))
-		: "N/A";
-	  this.obCases[i].updatedDate = this.obCases[i].updatedDate
-	    ? this.convDatePHT(new Date(this.obCases[i].updatedDate))
-		: "N/A";
-	}
-	
+    for (let i = 0; i < this.obCases.length; i++) {
+      this.obCases[i].reportDate = this.obCases[i].reportDate
+        ? this.convDatePHT(new Date(this.obCases[i].reportDate))
+        : "N/A";
+      this.obCases[i].updatedDate = this.obCases[i].updatedDate
+        ? this.convDatePHT(new Date(this.obCases[i].updatedDate))
+        : "N/A";
+    }
+    
     this.obSummary = data.outbreakSumm;
     for (let i = 0; i < this.obSummary.length; i++) {
       this.obSummary[i].numCases = this.obSummary[i].numCases ? this.obSummary[i].numCases : 0;
@@ -445,8 +445,8 @@ export default {
         this.obSummary[i].risk = "Moderate";
       else this.obSummary[i].risk = "Low";
     }
-	
-	this.resDeadline = data.outbreak.timer;
+    
+    this.resDeadline = data.outbreak.timer;
   }, 
   head() {
     return {

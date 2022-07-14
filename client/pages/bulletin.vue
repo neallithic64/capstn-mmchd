@@ -35,11 +35,11 @@
               <div class="bulletin-body">
                 <div class="bulletin-caption">
                   <span> The <b class="content-bold"> {{ report.reportType }} Feedback Report </b> for <b class="content-bold"> {{ report.reportDisease }} </b> for
-				    <b class="content-bold"> {{ report.reportDate }} </b> is now available for viewing.
-					<span v-if="report.dateApproved !== 'N/A'">The report was approved on <b class="content-bold">{{ report.dateApproved }}</b>.</span>
-				    <br>
-				    Click the link below to view the report.
-				  </span>
+                    <b class="content-bold"> {{ report.reportDate }} </b> is now available for viewing.
+                    <span v-if="report.dateApproved !== 'N/A'">The report was approved on <b class="content-bold">{{ report.dateApproved }}</b>.</span>
+                    <br>
+                    Click the link below to view the report.
+                  </span>
                 </div>
 
                 <a :href="'/viewReport?reportID=' + report.reportID">
@@ -76,8 +76,8 @@ export default {
       allFeedReports: [],
       diseases: ['Disease', 'Malaria', 'Measles/Rubella', 'Tetanus', 'Pertussis', 'Meningococcal', 'Dengue', 'Cholera', 'Leptospirosis', 'Chikungunya', 'Typhoid'],
       reportTypes: ['Report Type', 'Weekly', 'Monthly', 'Annual', 'Adhoc', 'Outbreak'],
-	  diseaseFilter: 'Disease',
-	  typeFilter: 'Report Type',
+      diseaseFilter: 'Disease',
+      typeFilter: 'Report Type',
     }
   },
   head() {
@@ -87,7 +87,7 @@ export default {
   },
   async mounted() {
     const feedreports = (await axios.get('http://localhost:8080/api/getReportBulletin')).data;
-	this.allFeedReports = feedreports;
+    this.allFeedReports = feedreports;
   },
   methods: {
     reportTypeClass(type) {
@@ -99,8 +99,8 @@ export default {
         else if (type.toString().includes('Outbreak')) return 'report-status red';
       }
     },
-	filter(type) {
-	},
+    filter(type) {
+    },
   }
 }
 </script>

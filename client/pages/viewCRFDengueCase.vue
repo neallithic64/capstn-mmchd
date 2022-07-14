@@ -1763,14 +1763,14 @@ export default {
     this.CRFData = data.crfData;
     this.dateLastUpdated = data.dateLastUpdated;
     this.caseHistory = data.caseHistory;
-	if ((!['Chief', 'Staff', 'resuHead', 'chdDirector'].some(e => this.$auth.user.userType.includes(e)) && !this.DRUData.pushDataAccept) ||
-	    (this.$auth.user.druName !== this.DRUData.druName)) {
-	  this.formData.patient.firstName = "";
-	  this.formData.patient.midName = "";
-	  this.formData.patient.lastName = "";
-	  this.formData.patient.currHouseStreet = "";
-	  this.formData.patient.permHouseStreet = "";
-	}
+    if ((!['Chief', 'Staff', 'resuHead', 'chdDirector'].some(e => this.$auth.user.userType.includes(e)) && !this.DRUData.pushDataAccept) ||
+        (this.$auth.user.druName !== this.DRUData.druName)) {
+      this.formData.patient.firstName = "";
+      this.formData.patient.midName = "";
+      this.formData.patient.lastName = "";
+      this.formData.patient.currHouseStreet = "";
+      this.formData.patient.permHouseStreet = "";
+    }
     this.editLabResult('cancel')
     this.editPatientOutcome('cancel')
     

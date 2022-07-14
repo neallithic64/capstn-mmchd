@@ -444,7 +444,7 @@
                     name="permCity"
                     class="input-form-field"
                     :disabled="inputEdit()"
-					          @change="getLocBrgyList(formData.patient.permCity,'permBarangay')"
+                              @change="getLocBrgyList(formData.patient.permCity,'permBarangay')"
                   >
                   <option v-for="(city, i) in cityList" :key=i>{{city}}</option>
                   </select>

@@ -363,12 +363,12 @@
                   :href="'/view' + data['type'] + data['disease']">
                   {{ data[column.key] }}
                 </a>
-				<a
+                <a
                   style="text-decoration: none"
                   v-bind:href="column.source + '/' + data[column.key]"
                   >{{ data[column.key] }}
                 </a>
-				-->
+                -->
               </span>
               <span v-else-if="column.title==='Case Status' || column.title==='Status' || column.title==='Risk Classification' || column.title==='Submit Status' || column.title==='Report Status' || column.title==='Immunization Status' || column.title==='Assessment'" :class="caseStatusClass(data[column.key])">
                 {{ data[column.key] }}

@@ -126,7 +126,7 @@ export default {
             sortable: true,
           },
           /*
-		  {
+          {
             title: 'Last updated',
             key: 'updatedDate',
             type: 'text',
@@ -136,7 +136,7 @@ export default {
             sortable: true,
           },
           */
-		  {
+          {
             title: 'Immunization Status',
             key: 'immunizationStatus',
             type: 'text',
@@ -167,17 +167,17 @@ export default {
       }
     })).data;
     console.log(rows);
-	for (let i = 0; i < rows.tclData.length; i++) {
+    for (let i = 0; i < rows.tclData.length; i++) {
       rows.tclData[i].dateAdded = this.convDatePHT(new Date(rows.tclData[i].dateAdded));
-	  rows.tclData[i].action = rows.tclData[i].immunizationStatus === "Complete" ? "view" : "update";
+      rows.tclData[i].action = rows.tclData[i].immunizationStatus === "Complete" ? "view" : "update";
       // rows.tclData[i].updatedDate = rows.tclData[i].updatedDate ? this.convDatePHT(new Date(rows.tclData[i].updatedDate)) : "N/A";
       // rows.tclData[i].reportDate = this.convDatePHT(new Date(rows.tclData[i].reportDate));
     }
-	this.dataSets = rows.tclData;
+    this.dataSets = rows.tclData;
     this.month = this.monthsList[rows.TCL.month];
-	this.year = rows.TCL.year;
+    this.year = rows.TCL.year;
     this.TCLID = this.$route.query.TCLID;
-	this.city = rows.userData.city;
+    this.city = rows.userData.city;
     this.brgy = rows.userData.brgy;
     this.submittedBy = rows.userData.druName;
   },

@@ -270,7 +270,7 @@ export default {
         summary: '',
         reportsIncluded: [],
         chartRemarks: [],
-		preparedBy: '',
+        preparedBy: '',
         dateCreated: '',
         notedBy: '',
         notedByDate: '',
@@ -306,7 +306,7 @@ export default {
         'Correlation',
       ],
       biLinks: [
-	      "https://app.powerbi.com/view?r=eyJrIjoiNTAwZDAxNDktM2E2Zi00ZWQxLWEyYzQtYzkwNDY1OTljZDg1IiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D",
+          "https://app.powerbi.com/view?r=eyJrIjoiNTAwZDAxNDktM2E2Zi00ZWQxLWEyYzQtYzkwNDY1OTljZDg1IiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D",
         "https://app.powerbi.com/view?r=eyJrIjoiNTRhNTRmN2MtMjU2NC00YmRhLWE0ZmYtYjFhZGU0MmYwOTlkIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D",
         "https://app.powerbi.com/view?r=eyJrIjoiZTdiYWY5NWMtY2I3MS00M2ZlLWE4NGQtMjE0ZTEyMjMxMGZhIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D",
         "https://app.powerbi.com/view?r=eyJrIjoiMDVjMDBkYjMtZmI4Yy00MzE4LWE0MjgtM2NmNjEyMDZjY2Q1IiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D",
@@ -332,29 +332,29 @@ export default {
       'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     for (let i=0; i<53; i++) this.weekOption[i] = 'Week ' + (i+1);
     setInterval(() => { this.getDate() }, 10000)
-	this.report.preparedBy = this.$auth.user.userID;
+    this.report.preparedBy = this.$auth.user.userID;
   },
   methods: {
     call() {
-	  console.log(this.report.reportsIncluded);
-	  console.log(this.chartRemarks);
-	},
+      console.log(this.report.reportsIncluded);
+      console.log(this.chartRemarks);
+    },
     getLink(i) {
-	  return this.biLinks[i];
-	},
+      return this.biLinks[i];
+    },
     isRequired() {
-	  if (!this.isValidated) return 'input-required';
+      if (!this.isValidated) return 'input-required';
     },
     isOptionRequired() {
-	  if (!this.isValidated && this.report.reportsIncluded.length < 1) return 'input-required';
-	},
+      if (!this.isValidated && this.report.reportsIncluded.length < 1) return 'input-required';
+    },
     inputEdit() {
-	  if (this.isPrint) return false;
-	  else return true;
-	},
+      if (this.isPrint) return false;
+      else return true;
+    },
     biSize() {
-	  if (!this.isPrint) return 'min-height: 70vh; min-width: 70vh;';
-	},
+      if (!this.isPrint) return 'min-height: 70vh; min-width: 70vh;';
+    },
     getDate() {
       const today = new Date();
       const hour = today.getHours()>9 ? today.getHours() : '0'+today.getHours()
@@ -438,9 +438,9 @@ export default {
         fileReader.onload = async function(fileLoadedEvent) {
           base64 = fileLoadedEvent.target.result;
           const result = (await axios.post('http://localhost:8080/api/postFileBlob', {
-		    file: base64,
-			reportID: newReportID
-	      }));
+            file: base64,
+            reportID: newReportID
+          }));
           console.log(result);
         };
     },
@@ -448,13 +448,13 @@ export default {
       if (!this.readySubmit) this.$toast.error('Please upload the file.', {duration: 4000, icon: 'error'});
       else {
         const response = (await axios.post('http://localhost:8080/api/postAddReport', {
-		  report: this.report
-		}));
+          report: this.report
+        }));
         console.log(response);
-		if (response.status === 200) {
+        if (response.status === 200) {
           this.convertPDFToBase64(this.file, response.data);
           this.$toast.success('Feedback Report Submitted!', {duration: 4000, icon: 'check_circle'});
-		}
+        }
       }
     },
   }
