@@ -1445,31 +1445,33 @@ export default {
           this.pageNum = page;
         }
 
-        this.$nextTick(() => {
-          if ((page === 1 ) && this.formData.patient.occuBrgy != null) {
-            const dropdown = document.getElementById('occuBarangay');
-            const defaultOption = document.createElement('option');
-            defaultOption.text = this.formData.patient.occuBrgy;
-            dropdown.add(defaultOption);
-            dropdown.selectedIndex = 0;
-          }
+        if (!this.patientExist) {
+            this.$nextTick(() => {
+            if ((page === 1 ) && this.formData.patient.occuBrgy != null) {
+              const dropdown = document.getElementById('occuBarangay');
+              const defaultOption = document.createElement('option');
+              defaultOption.text = this.formData.patient.occuBrgy;
+              dropdown.add(defaultOption);
+              dropdown.selectedIndex = 0;
+            }
 
-          if ((page === 1) && this.formData.patient.currBrgy != null) {
-            const dropdown = document.getElementById('currBarangay');
-            const defaultOption = document.createElement('option');
-            defaultOption.text = this.formData.patient.currBrgy;
-            dropdown.add(defaultOption);
-            dropdown.selectedIndex = 0;
-          }
+            if ((page === 1) && this.formData.patient.currBrgy != null) {
+              const dropdown = document.getElementById('currBarangay');
+              const defaultOption = document.createElement('option');
+              defaultOption.text = this.formData.patient.currBrgy;
+              dropdown.add(defaultOption);
+              dropdown.selectedIndex = 0;
+            }
 
-          if ((page === 1) && this.formData.patient.permBrgy != null) {
-            const dropdown = document.getElementById('permBarangay');
-            const defaultOption = document.createElement('option');
-            defaultOption.text = this.formData.patient.permBrgy;
-            dropdown.add(defaultOption);
-            dropdown.selectedIndex = 0;
-          }
-        })
+            if ((page === 1) && this.formData.patient.permBrgy != null) {
+              const dropdown = document.getElementById('permBarangay');
+              const defaultOption = document.createElement('option');
+              defaultOption.text = this.formData.patient.permBrgy;
+              dropdown.add(defaultOption);
+              dropdown.selectedIndex = 0;
+            }
+          })
+        }
 
       }
 
