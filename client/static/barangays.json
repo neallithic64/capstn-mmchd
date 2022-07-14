@@ -1,5 +1,5 @@
 {
-  "Caloocan City": {
+  "CALOOCAN CITY": {
     "barangay_list": [
       "BARANGAY 1",
       "BARANGAY 2",
@@ -191,7 +191,7 @@
       "BARANGAY 188"
     ]
   },
-  "Las Piñas City": {
+  "LAS PIÑAS CITY": {
     "barangay_list": [
       "ALMANZA DOS",
       "ALMANZA UNO",
@@ -215,7 +215,7 @@
       "ZAPOTE"
     ]
   },
-  "Makati City": {
+  "MAKATI CITY": {
     "barangay_list": [
       "BANGKAL",
       "BEL-AIR",
@@ -252,7 +252,7 @@
       "WEST REMBO"
     ]
   },
-  "Malabon City": {
+  "MALABON CITY": {
     "barangay_list": [
       "ACACIA",
       "BARITAN",
@@ -277,7 +277,7 @@
       "TUGATOG"
     ]
   },
-  "Mandaluyong City": {
+  "MANDALUYONG CITY": {
     "barangay_list": [
       "ADDITION HILLS",
       "BAGONG SILANG",
@@ -308,7 +308,7 @@
       "WACK-WACK GREENHILLS"
     ]
   },
-  "Manila City": {
+  "MANILA CITY": {
     "barangay_list": [
       "BARANGAY 1",
       "BARANGAY 2",
@@ -1222,7 +1222,7 @@
       "BARANGAY 905"
     ]
   },
-  "Marikina City": {
+  "MARIKINA CITY": {
     "barangay_list": [
       "BARANGKA",
       "CALUMPANG",
@@ -1242,7 +1242,7 @@
       "TUMANA"
     ]
   },
-  "Muntinlupa City": {
+  "MUNTINLUPA CITY": {
     "barangay_list": [
       "ALABANG",
       "BAYANAN",
@@ -1255,7 +1255,7 @@
       "TUNASAN"
     ]
   },
-  "Navotas City": {
+  "NAVOTAS CITY": {
     "barangay_list": [
       "BAGUMBAYAN NORTH",
       "BAGUMBAYAN SOUTH",
@@ -1277,7 +1277,7 @@
       "TANZA 2"
     ]
   },
-  "Parañaque City": {
+  "PARAÑAQUE CITY": {
     "barangay_list": [
       "B. F. HOMES",
       "BACLARAN",
@@ -1297,7 +1297,7 @@
       "VITALEZ"
     ]
   },
-  "Pasay City": {
+  "PASAY CITY": {
     "barangay_list": [
       "BARANGAY 1",
       "BARANGAY 2",
@@ -1502,7 +1502,7 @@
       "BARANGAY 201"
     ]
   },
-  "Pasig City": {
+  "PASIG CITY": {
     "barangay_list": [
       "BAGONG ILOG",
       "BAGONG KATIPUNAN",
@@ -1536,7 +1536,7 @@
       "UGONG"
     ]
   },
-  "Quezon City": {
+  "QUEZON CITY": {
     "barangay_list": [
       "ALICIA",
       "AMIHAN",
@@ -1682,7 +1682,7 @@
       "WHITE PLAINS"
     ]
   },
-  "San Juan City": {
+  "SAN JUAN CITY": {
     "barangay_list": [
       "ADDITION HILLS",
       "BALONG-BATO",
@@ -1707,7 +1707,7 @@
       "WEST CRAME"
     ]
   },
-  "Taguig City": {
+  "TAGUIG CITY": {
     "barangay_list": [
       "BAGUMBAYAN",
       "BAMBANG",
@@ -1749,7 +1749,7 @@
       "TABACALERA"
     ]
   },
-  "Valenzuela City": {
+  "VALENZUELA CITY": {
     "barangay_list": [
       "ARKONG BATO",
       "BAGBAGUIN",
