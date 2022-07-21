@@ -18,7 +18,7 @@
         <div class="addcases-component">
           <div id="addCaseCIF" class="center addCaseFormDiv">
             <!-- CASE DEFINITION -->
-            <h2 class="addCase-formTypeH">Case Investigation Form</h2>
+            <h2 class="addCase-formTypeH">Category I</h2>
 
             <div
               v-for="(value, name, i) in diseases.cif"
@@ -44,7 +44,7 @@
 
           <div id="addCaseCRF" class="center addCaseFormDiv">
             <!-- CASE DEFINITION -->
-            <h2 class="addCase-formTypeH">Case Report Form</h2>
+            <h2 class="addCase-formTypeH">Category II</h2>
 
             <div
               v-for="(value, name, i) in diseases.crf"
