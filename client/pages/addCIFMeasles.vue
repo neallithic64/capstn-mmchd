@@ -2753,6 +2753,18 @@ export default {
     this.today = yyyy+'-'+mm+'-'+dd;
     // document.getElementById('birthdate').setAttribute('max', today);
     // console.log(today);
+
+    const inputs = document.getElementsByClassName("input-form-field");
+    console.log(inputs)
+    Object.values(inputs).forEach(e => {
+        e.onkeyup = function() {
+            const s = this.selectionStart
+            const e = this.selectionEnd;
+            this.value = this.value.toUpperCase();
+            this.setSelectionRange(s, e);
+            console.log(this.value)
+        }
+    });
   },
   methods: {
     formpart(disease, pageNum) {
@@ -3451,6 +3463,7 @@ select {
   border: 1px solid #a3a3a3;
   box-sizing: border-box;
   border-radius: 9px;
+  text-transform: uppercase;
 }
 
 .input-radio {
@@ -3465,6 +3478,7 @@ select {
   box-sizing: border-box;
   border-radius: 9px;
   margin: 0 5px;
+  text-transform: uppercase;
 }
 
 .input-checkbox {
@@ -3479,6 +3493,7 @@ select {
   box-sizing: border-box;
   border-radius: 9px;
   margin: 0 5px;
+  text-transform: uppercase;
 }
 
 .half-half {

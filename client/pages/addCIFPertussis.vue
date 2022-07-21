@@ -2142,7 +2142,7 @@ export default {
   },
   head() {
     return {
-      title: 'New pertussis Case'
+      title: 'New Pertussis Case'
     }
   },
   mounted() {
