@@ -4,19 +4,18 @@
     <div class="bulletin-page">
 
       <div class="bulletin-filters">
-        <select class="filter" v-model="diseaseFilter" @change="filter('d')">
+        <select class="filter" v-model="diseaseFilter" @change="filter()">
             <option v-for="(name, i) in diseases" :key="i" :value="name"> {{ name }} </option>
         </select>
-        <select class="filter" v-model="typeFilter" @change="filter('t')">
+        <select class="filter" v-model="typeFilter" @change="filter()">
             <option v-for="(name, i) in reportTypes" :key="i" :value="name"> {{ name }} </option>
         </select>
       </div>
 
       <ul>
-        <li v-for="(report, i) in allFeedReports" :key="i">
+        <li v-for="(report, i) in filteredReports" :key="i">
           <div class="bulletin-container">
             <div class="each-bulletin">
-
               <div class="bulletin-header">
                 <img class="display-pic" src="~/assets/img/doh-logo.png">
                 <div class="bulletin-header-text">
@@ -74,7 +73,8 @@ export default {
   data() {
     return {
       allFeedReports: [],
-      diseases: ['Disease', 'Malaria', 'Measles/Rubella', 'Tetanus', 'Pertussis', 'Meningococcal', 'Dengue', 'Cholera', 'Leptospirosis', 'Chikungunya', 'Typhoid'],
+	  filteredReports: [],
+      diseases: ['Disease', 'MALARIA', 'MEASLES/RUBELLA', 'TETANUS', 'PERTUSSIS', 'MENINGOCOCCAL', 'DENGUE', 'CHOLERA', 'LEPTOSPIROSIS', 'CHIKUNGUNYA', 'TYPHOID'],
       reportTypes: ['Report Type', 'Weekly', 'Monthly', 'Annual', 'Adhoc', 'Outbreak'],
       diseaseFilter: 'Disease',
       typeFilter: 'Report Type',
@@ -88,6 +88,7 @@ export default {
   async mounted() {
     const feedreports = (await axios.get('http://localhost:8080/api/getReportBulletin')).data;
     this.allFeedReports = feedreports;
+	this.filteredReports = feedreports;
   },
   methods: {
     reportTypeClass(type) {
@@ -99,7 +100,17 @@ export default {
         else if (type.toString().includes('Outbreak')) return 'report-status red';
       }
     },
-    filter(type) {
+    filter() {
+      // filter by type & disease
+	  if (this.typeFilter === "Report Type" && this.diseaseFilter === "Disease") {
+	    this.filteredReports = this.allFeedReports;
+	  } else if (this.typeFilter === "Report Type") {
+	    this.filteredReports = this.allFeedReports.filter(e => e.reportDisease === this.diseaseFilter);
+	  } else if (this.diseaseFilter === "Disease") {
+	    this.filteredReports = this.allFeedReports.filter(e => e.reportType === this.typeFilter);
+	  } else {
+	    this.filteredReports = this.allFeedReports.filter(e => e.reportDisease === this.diseaseFilter && e.reportType === this.typeFilter);
+	  }
     },
   }
 }
