@@ -124,7 +124,7 @@
             <!-- v-if w/ latest health event show this -->
             <a :href="'/allHealthEvents'">
               <div class="dboard-right-content" style="border-left-color: #e09922;">
-                <span style="padding-top: 5px; font-weight: 900"> {{ latestEvent.leCity }}, <span :class="caseStatusClass(latestEvent.leStatus)">{{ latestEvent.leStatus }}</span>, <span :class="caseStatusClass(latestEvent.leAssess)"> {{ latestEvent.leAssess }} </span> </span>
+                <span style="padding-top: 5px; font-weight: 900"> {{ latestEvent.leCity }}, <span style="font-weight: 200" :class="caseStatusClass(latestEvent.leStatus)">{{ latestEvent.leStatus }}</span>, <span style="font-weight: 900" :class="caseStatusClass(latestEvent.leAssess)"> {{ latestEvent.leAssess }} </span> </span>
                 <span style="color: red; font-size: 16px; font-weight: 600"> {{ latestEvent.leNoCases }} cases, {{ latestEvent.leNoDeaths }} deaths </span>
               </div>
             </a>
@@ -145,10 +145,63 @@
             <!-- v-if w/ latest disease case show this -->
             <a :href="'/allCases'">
               <div class="dboard-right-content" style="border-left-color: #346083;">
-                <span style="padding-top: 5px; font-weight: 900"> {{ latestCase.lcDisease }}, <span :class="caseStatusClass(latestCase.lcStatus)"> {{ latestCase.lcStatus }} </span> </span>
+                <span style="padding-top: 5px; font-weight: 900"> {{ latestCase.lcDisease }}, <span style="font-weight: 200" :class="caseStatusClass(latestCase.lcStatus)"> {{ latestCase.lcStatus }} </span> </span>
                 <span> {{ latestCase.lcCity }}, {{ latestCase.lcBrgy }} </span>
               </div>
             </a>
+
+            <!-- v-if no latest disease case show this -->
+            <!-- <div class="dboard-right-content" style="border-left-color: #346083;">
+              <span style="padding-top: 5px; font-weight: 900"> No disease cases yet. </span>
+            </div> -->
+          </div>
+
+          <!-- Latest Feedback Report -->
+          <div v-if="!($auth.user.userType === 'fhsisStaff')" id="latest-feedback-container">
+            <div style="padding: 3px 5px 3px 5px; background-image: linear-gradient(to bottom right, #FF4E00, #EC9F05); display: flex; flex-direction: row; justify-content: flex-start;">
+              <span class="dboard-right-titles"> Latest Feedback Report </span>
+            </div>
+
+            <!-- v-if w/ latest feedback report show this -->
+            
+            <div class="dboard-right-content" style="border-left-color: #FF4E00;">
+              <!-- <div class="bulletin-caption-db">
+                <span> The <b class="content-bold-db"> {{ report.reportType }} Feedback Report </b> for <b class="content-bold-db"> {{ report.reportDisease }} </b> for
+                  <b class="content-bold-db"> {{ report.reportDate }} </b> is now available for viewing.
+                  <span v-if="report.dateApproved !== 'N/A'">The report was approved on <b class="content-bold-db">{{ report.dateApproved }}</b>. Click the link below to view the report. </span>
+                </span>
+              </div> -->
+
+              <div class="bulletin-caption-db">
+                <span> The <b class="content-bold-db"> Adhoc Feedback Report </b> for <b class="content-bold-db"> DENGUE </b> for
+                  <b class="content-bold-db"> January 20, 2021 </b> is now available for viewing.
+                  <span> The report was approved on <b class="content-bold-db"> 2022-04-24 19:16:44</b>. Click the link below to view the report. </span>
+                </span>
+              </div>
+
+              <!-- <a :href="'/viewReport?reportID=' + report.reportID">
+                <div class="bulletin-link-db">
+                  <img class="link-pic-db" src="~/assets/img/hyperlink.png">
+                  <div class="bulletin-link-text-db">
+                    <span class="feedback-title-db"> {{ report.reportTitle }} </span>
+                    <span class="feedback-date-db"> {{ report.reportDate }} </span>
+                    <span class="feedback-date-db"> {{ report.reportYear }} </span>
+                  </div>
+                </div>
+              </a> -->
+
+              <!-- <a :href="'/viewReport?reportID=' + report.reportID"> -->
+                <div class="bulletin-link-db">
+                  <img class="link-pic-db" src="~/assets/img/hyperlink.png">
+                  <div class="bulletin-link-text-db">
+                    <span class="feedback-title-db"> Dengue 2020 </span>
+                    <span class="feedback-date-db"> 1 20 </span>
+                    <span class="feedback-date-db"> 2021 </span>
+                  </div>
+                </div>
+              <!-- </a> -->
+            </div>
+            
 
             <!-- v-if no latest disease case show this -->
             <!-- <div class="dboard-right-content" style="border-left-color: #346083;">
@@ -492,9 +545,8 @@ body {
   justify-content: start;
   margin-right: 5px;
   margin-left: 5px;
-  /* margin-top: 5px; */
   font-weight: 500;
-  font-size: 15px;
+  font-size: 14px;
   width: 30%;
   height: 85vh
 }
@@ -507,6 +559,13 @@ body {
 }
 
 #latest-case-container {
+  /* width: 350px; */
+  display: flex;
+  flex-direction: column;
+  padding: 5px 5px 5px 5px;
+}
+
+#latest-feedback-container {
   /* width: 350px; */
   display: flex;
   flex-direction: column;
@@ -577,6 +636,63 @@ body {
 
 .dboard-right-content:hover {
   background:rgba(245, 245, 245, 0.904);
+}
+
+.bulletin-caption-db {
+  width: 350px;
+  overflow-wrap: break-word;
+  margin-top: 10px;
+  margin-left: 5px;
+  font-size: 12px;
+}
+
+.bulletin-link-db {
+  background: #f3f3f3;
+  color: #6d6d6d;
+  height: fit-content;
+  margin-top: 10px;
+  padding-top: 5px;
+  padding-left: 5px;
+  display: flex;
+  flex-direction: row;
+}
+
+.link-pic-db {
+  width: 25px;
+  height: 25px;
+  margin-top: 5px;
+  margin-right: 10px;
+  margin-left: 10px;
+}
+
+.feedback-title-db {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.feedback-date-db {
+  font-size: 11px;
+  font-weight: 400;
+}
+
+.bulletin-link-text-db {
+  display: flex;
+  height: fit-content;
+  flex-direction: column;
+  /* padding-top: 5px; */
+  padding-bottom: 5px;
+  padding-left: 10px;
+  margin-bottom: 5px;
+  border-left-color: #6d6d6d;
+  border-left-width: 2px;
+  border-left-style: solid;
+  width: 480px;
+  overflow-wrap: break-word;
+}
+
+.content-bold-db {
+  font-weight: 400;
+  font-size: 12px;
 }
 
 #outbreak-countdown {

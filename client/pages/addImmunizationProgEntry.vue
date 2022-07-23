@@ -96,36 +96,39 @@
                   <label for="lastname" class="required AIPElabel"> Last Name </label>
                   <input
                     id="lastname"
-                    v-model="formData.patient.lastName"
                     class="input-form-field "
                     :class="isRequired()"
                     type="text"
                     :disabled="inputEdit()"
                     required
+                    :value="formData.patient.lastName.toUpperCase()"
+                    @input="formData.patient.lastName = $event.target.value.toUpperCase()"
                   />
                 </div>
                 <div class="name-field">
                   <label for="firstname" class="required AIPElabel"> First Name </label>
                   <input
                     id="firstname"
-                    v-model="formData.patient.firstName"
                     class="input-form-field "
                     :class="isRequired()"
                     type="text"
                     :disabled="inputEdit()"
                     required
+                    :value="formData.patient.firstName.toUpperCase()"
+                    @input="formData.patient.firstName = $event.target.value.toUpperCase()"
                   />
                 </div>
                 <div class="name-field">
                   <label for="middlename" class="required AIPElabel"> Middle Name </label>
                   <input
                     id="middlename"
-                    v-model="formData.patient.midName"
                     class="input-form-field "
                     :class="isRequired()"
                     type="text"
                     :disabled="inputEdit()"
                     required
+                    :value="formData.patient.midName.toUpperCase()"
+                    @input="formData.patient.midName = $event.target.value.toUpperCase()"
                   />
                 </div>
               </div>
@@ -168,7 +171,7 @@
                       <input
                         id="Female"
                         v-model="formData.patient.sex"
-                        value="Female"
+                        value="FEMALE"
                         class="input-radio"
                         name="sex"
                         type="radio"
@@ -182,7 +185,7 @@
                       <input
                         id="Male"
                         v-model="formData.patient.sex"
-                        value="Male"
+                        value="MALE"
                         class="input-radio"
                         name="sex"
                         type="radio"
@@ -263,10 +266,11 @@
                   <label for="indigenousGroup AIPElabel"> Indigenous Group </label>
                   <input
                     id="indigenousGroup"
-                    v-model="formData.patient.indGroup"
                     class="input-form-field"
                     type="text"
                     :disabled="inputEdit()"
+                    :value="formData.patient.indGroup.toUpperCase()"
+                    @input="formData.patient.indGroup = $event.target.value.toUpperCase()"
                   />
                 </div>
               </div>
@@ -276,24 +280,26 @@
                   <label for="occupation" class="required AIPElabel"> Occupation </label>
                   <input
                     id="occupation"
-                    v-model="formData.patient.occupation"
                     class="input-form-field "
                     :class="isRequired()"
                     type="text"
                     :disabled="inputEdit()"
                     required
+                    :value="formData.patient.occupation.toUpperCase()"
+                    @input="formData.patient.occupation = $event.target.value.toUpperCase()"
                   />
                 </div>
                 <div class="field">
                   <label for="occuLoc" class="required AIPElabel"> Occupation Location (Work/School) </label>
                   <input
                     id="occuLoc"
-                    v-model="formData.patient.occuLoc"
                     class="input-form-field "
                     :class="isRequired()"
                     type="text"
                     :disabled="inputEdit()"
                     required
+                    :value="formData.patient.occuLoc.toUpperCase()"
+                    @input="formData.patient.occuLoc = $event.target.value.toUpperCase()"
                   />
                 </div>
               </div>
@@ -305,12 +311,13 @@
                   <label for="occuStreet" class="required AIPElabel"> Occupation Address: Street / House No. </label>
                   <input
                     id="occuStreet"
-                    v-model="formData.patient.occuStreet"
                     class="input-form-field "
                     :class="isRequired()"
                     type="text"
                     :disabled="inputEdit()"
                     required
+                    :value="formData.patient.occuStreet.toUpperCase()"
+                    @input="formData.patient.occuStreet = $event.target.value.toUpperCase()"
                   />
                 </div>
               </div>
@@ -359,12 +366,13 @@
                   <label for="currentAddress" class="required AIPElabel"> Current Address: Street / House No. </label>
                   <input
                     id="currentAddress"
-                    v-model="formData.patient.currHouseStreet"
                     class="input-form-field "
                     :class="isRequired()"
                     type="text"
                     :disabled="inputEdit()"
                     required
+                    :value="formData.patient.currHouseStreet.toUpperCase()"
+                    @input="formData.patient.currHouseStreet = $event.target.value.toUpperCase()"
                   />
                 </div>
               </div>
@@ -428,10 +436,11 @@
                   <label for="permAddress AIPElabel"> Permanent Address: Street / House No. </label>
                   <input
                     id="permAddress"
-                    v-model="formData.patient.permHouseStreet"
                     class="input-form-field"
                     type="text"
                     :disabled="inputEdit()"
+                    :value="formData.patient.permHouseStreet.toUpperCase()"
+                    @input="formData.patient.permHouseStreet = $event.target.value.toUpperCase()"
                   />
                 </div>
               </div>
@@ -480,12 +489,13 @@
                   <label for="contactperson" class="required AIPElabel"> Parent / Caregiver </label>
                   <input
                     id="contactperson"
-                    v-model="formData.patient.guardianName"
                     class="input-form-field "
                     :class="isRequired()"
                     type="text"
                     :disabled="inputEdit()"
                     required
+                    :value="formData.patient.guardianName.toUpperCase()"
+                    @input="formData.patient.guardianName = $event.target.value.toUpperCase()"
                   />
                 </div>
                 <div class="name-field">

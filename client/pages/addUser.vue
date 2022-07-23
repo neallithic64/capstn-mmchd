@@ -300,10 +300,11 @@
                   </label>
                   <input
                     id="druName"
-                    v-model="user.druName"
                     class="input-form-field"
                     type="text"
                     :disabled="inputEdit()"
+                    :value="user.druName.toUpperCase()"
+                    @input="user.druName = $event.target.value.toUpperCase()"
                   />
                 </div>
 
@@ -315,10 +316,11 @@
                     </label>
                     <input
                       id="userHouseStreet"
-                      v-model="user.userHouseStreet"
                       class="input-form-field"
                       type="text"
                       :disabled="inputEdit()"
+                      :value="user.userHouseStreet.toUpperCase()"
+                      @input="user.userHouseStreet = $event.target.value.toUpperCase()"
                     />
                   </div>
                 </div>
@@ -390,30 +392,33 @@
                   <label for="lastName" class="required"> Last Name </label>
                   <input
                     id="lastName"
-                    v-model="user.lastName"
                     class="input-form-field"
                     type="text"
                     :disabled="inputEdit()"
+                    :value="user.lastName.toUpperCase()"
+                    @input="user.lastName = $event.target.value.toUpperCase()"
                   />
                 </div>
                 <div class="name-field">
                   <label for="firstName" class="required"> First Name </label>
                   <input
                     id="firstName"
-                    v-model="user.firstName"
                     class="input-form-field"
                     type="text"
                     :disabled="inputEdit()"
+                    :value="user.firstName.toUpperCase()"
+                    @input="user.firstName = $event.target.value.toUpperCase()"
                   />
                 </div>
                 <div class="name-field">
                   <label for="midName" class="required"> Middle Name </label>
                   <input
                     id="midName"
-                    v-model="user.midName"
                     class="input-form-field"
                     type="text"
                     :disabled="inputEdit()"
+                    :value="user.midName.toUpperCase()"
+                    @input="user.midName = $event.target.value.toUpperCase()"
                   />
                 </div>
               </div>
