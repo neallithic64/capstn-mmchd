@@ -1636,7 +1636,6 @@ const indexFunctions = {
 				}
 			}
 			
-
 			if (!currAddrID.exists) {
 				let currAddr = new Address(formData.patient.caddressID, formData.patient.currHouseStreet, formData.patient.currBrgy, formData.patient.currCity);
 				result = await db.insertOne("mmchddb.ADDRESSES", currAddr);

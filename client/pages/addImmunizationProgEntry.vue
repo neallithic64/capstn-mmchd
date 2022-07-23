@@ -1394,12 +1394,8 @@ export default {
     getAge() {
       const today = new Date();
       const age = today.getFullYear() - parseInt(this.formData.patient.birthDate.substr(0,4));
-      console.log(today.getMonth()+1)
-      console.log(parseInt(this.formData.patient.birthDate.substr(5,2)))
       if (today.getMonth()+1>parseInt(this.formData.patient.birthDate.substr(5,2))) this.formData.patient.ageNo = age;
       else if (today.getMonth()+1===parseInt(this.formData.patient.birthDate.substr(5,2))) {
-        console.log(today)
-        console.log(parseInt(this.formData.patient.birthDate.substr(8,2)))
         if (today.getDate()>=parseInt(this.formData.patient.birthDate.substr(8,2))) this.formData.patient.ageNo = age;
         else this.formData.patient.ageNo = age-1;
       }
@@ -1489,7 +1485,6 @@ export default {
         if (this.patientExist || (this.pageDone[1] && this.pageDone[2] && this.pageColor[1] && this.Color[2])) {
           this.saveData();
           const res = await this.save();
-          console.log(res);
           // redirect to view page with update action
           window.location.href = "/viewImmunizationProgEntry?action=update&patientID=" + res.patientID;
         }
