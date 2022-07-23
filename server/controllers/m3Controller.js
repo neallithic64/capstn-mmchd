@@ -227,12 +227,13 @@ const indexFunctions = {
 	getReportBulletin: async function(req, res) {
 		try {
 			let reports = await db.exec(`SELECT r.reportID, r.reportType, r.title AS reportTitle,
-					CONCAT(MONTH(r.dateCreated), ' ', DAY(r.dateCreated)) AS reportDate,
+					CONCAT(MONTHNAME(r.dateCreated), ' ', DAY(r.dateCreated)) AS reportDate,
 					r.year AS reportYear, IFNULL(r.approvedByDate, 'N/A') AS dateApproved,
 					d.diseaseName AS reportDisease
 					FROM mmchddb.REPORTS r
 					LEFT JOIN mmchddb.USERS u ON u.userID = r.preparedBy
-					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = r.diseaseID;`);
+					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = r.diseaseID
+					ORDER BY r.dateCreated DESC;`);
 			res.status(200).send(reports);
 		} catch (e) {
 			console.log(e);
