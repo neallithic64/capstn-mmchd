@@ -95,7 +95,7 @@
                   <input
                     id="print"
                     v-model="healthEvent.source"
-                    value="Print"
+                    value="PRINT"
                     class="input-radio"
                     :class="optionsRequired()"
                     name="source"
@@ -109,7 +109,7 @@
                   <input
                     id="internet"
                     v-model="healthEvent.source"
-                    value="Internet"
+                    value="INTERNET"
                     class="input-radio"
                     :class="optionsRequired()"
                     name="source"
@@ -123,7 +123,7 @@
                   <input
                     id="television"
                     v-model="healthEvent.source"
-                    value="Television"
+                    value="TELEVISION"
                     class="input-radio"
                     :class="optionsRequired()"
                     name="source"
@@ -137,7 +137,7 @@
                   <input
                     id="radioSource"
                     v-model="healthEvent.source"
-                    value="Radio"
+                    value="RADIO"
                     class="input-radio"
                     :class="optionsRequired()"
                     name="source"
@@ -165,7 +165,7 @@
                   <input
                     id="public"
                     v-model="healthEvent.source"
-                    value="Public"
+                    value="PUBLIC"
                     class="input-radio"
                     :class="optionsRequired()"
                     name="source"
@@ -240,11 +240,12 @@
                   </div>
                   <input
                     id="locHouseStreet"
-                    v-model="healthEvent.locHouseStreet"
                     :class="isRequired()"
                     type="text"
                     :disabled="inputEdit()"
                     required
+                    :value="healthEvent.locHouseStreet.toUpperCase()"
+                    @input="healthEvent.locHouseStreet = $event.target.value.toUpperCase()"
                   />
                 </div>
               </div>
