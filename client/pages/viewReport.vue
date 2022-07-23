@@ -124,7 +124,7 @@ const axios = require("axios");
 
 export default {
   components: { dataTable, },
-  middleware: 'is-auth',
+  // middleware: 'is-auth',
   data() {
     return {
       isPrint: false,
