@@ -234,7 +234,8 @@ const indexFunctions = {
 					FROM mmchddb.REPORTS r
 					LEFT JOIN mmchddb.USERS u ON u.userID = r.preparedBy
 					LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = r.diseaseID
-					ORDER BY r.dateCreated DESC;`);
+					WHERE r.approvedBy IS NOT NULL
+					ORDER BY r.approvedByDate DESC;`);
 			res.status(200).send(reports);
 		} catch (e) {
 			console.log(e);
