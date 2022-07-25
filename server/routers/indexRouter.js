@@ -21,6 +21,7 @@ router.get("/getDisease", m1Cont.getDisease);
 router.get("/getPatients", m1Cont.getPatients);
 router.get("/getPatientAutofill", m1Cont.getPatientAutofill);
 router.get("/getCaseDefs", m1Cont.getCaseDefinitions);
+router.get("/getCaseDefsAudit", m1Cont.getCaseDefsAudit);
 router.get("/getUser", m1Cont.getUser);
 router.get("/getLabUsers", m1Cont.getLabUsers);
 

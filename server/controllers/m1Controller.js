@@ -727,6 +727,16 @@ const indexFunctions = {
 		}
 	},
 
+	getCaseDefsAudit: async function(req, res) {
+		try {
+			let rows = await db.findAll("mmchddb.CASE_DEF_AUDIT");
+			res.status(200).send(rows);
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
+
 	getUser: async function(req, res) {
 		try {
 			if (!req.session || !req.session.user) {
