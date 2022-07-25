@@ -72,8 +72,8 @@ function Disease(diseaseID, diseaseName, notifiable, caseThreshold) {
 }
 
 function Patient(patientID, epiID, lastName, firstName, midName, caddressID, paddressID, sex,
-					birthDate, ageNo, ageType, admitStatus, civilStatus, occupation, 
-					occuLoc, occuAddrID, guardianName, guardianContact, 
+					birthDate, ageNo, ageType, admitStatus, civilStatus, occupation,
+					occuLoc, occuAddrID, guardianName, guardianContact,
 					indigeneous,
 					pregWeeks, HCPN, ILHZ ) {
 	this.patientID = patientID;
@@ -264,7 +264,7 @@ function dateToString(date) {
 
 function datetimeToString(date) {
 	let dateString = new Date(date);
-	return monthName[dateString.getMonth()] + " " + dateString.getDate() + ", " + dateString.getFullYear() + " " + 
+	return monthName[dateString.getMonth()] + " " + dateString.getDate() + ", " + dateString.getFullYear() + " " +
 			dateString.getHours() + ":" + dateString.getMinutes() + ":" + dateString.getSeconds();
 }
 
@@ -316,11 +316,9 @@ async function createOutbreak(diseaseID, type) {
 				let result = await db.updateRows("mmchddb.OUTBREAKS", {outbreakID:match[0].outbreakID}, {type:type});
 				if (result)
 					return match[0];
-				else
-					return false;
+				else return false;
 			}
-			else 
-				return match[0];
+			else return match[0];
 		} else {
 			let newOutbreak = new Outbreak((await generateID("mmchddb.OUTBREAKS")).id, diseaseID, 'Ongoing', new Date(), null, type, null);
 			let result = await db.insertOne("mmchddb.OUTBREAKS", newOutbreak);
@@ -341,8 +339,7 @@ async function checkIfOutbreak(diseaseID, caseObj) {
 			}
 			else if (caseObj.caseLevel == "Non-Measles/Rubella Discarded Case")
 				return false;
-			else
-				return await createOutbreak("DI-0000000000000", "Epidemic");
+			else return await createOutbreak("DI-0000000000000", "Epidemic");
 		} else {
 			// general formula (1 standard deviation above the norm for alert, 2 standard deviation for epidemic)
 			let cases = await db.exec("SELECT * FROM mmchddb.CASES WHERE YEARWEEK(reportDate, 1) = YEARWEEK(CURDATE(), 1)");
@@ -352,8 +349,7 @@ async function checkIfOutbreak(diseaseID, caseObj) {
 				return await createOutbreak(diseaseID, "Alert");
 			} else if (cases.length >= disease[0].epiThreshold) {
 				return await createOutbreak(diseaseID, "Epidemic");
-			} else
-				return false;
+			} else return false;
 		}
 	} catch (error) {
 		console.log(error);
@@ -664,8 +660,7 @@ const indexFunctions = {
 
 			if (match.length > 0)
 				res.status(200).send(match);
-			else
-				res.status(500).send("No disease found");
+			else res.status(500).send("No disease found");
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
@@ -725,6 +720,16 @@ const indexFunctions = {
 		try {
 			let rows = await db.findRows("mmchddb.CASE_DEFINITIONS", {diseaseID: req.query.diseaseID});
 			// console.log(rows);
+			res.status(200).send(rows);
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
+
+	getCaseDefsAudit: async function(req, res) {
+		try {
+			let rows = await db.findAll("mmchddb.CASE_DEF_AUDIT");
 			res.status(200).send(rows);
 		} catch (e) {
 			console.log(e);
@@ -873,8 +878,7 @@ const indexFunctions = {
 					dateLastUpdated = new Date(caseAudit[i].reportDate);
 					if (i + 1 == caseAudit.length)
 						caseAudit[i].to = rows[0].caseLevel;
-					else
-						caseAudit[i].to = caseAudit[i+1].from;
+					else caseAudit[i].to = caseAudit[i+1].from;
 					caseAudit[i].reportDate = dateToString(caseAudit[i].reportDate);
 				}
 
@@ -1065,8 +1069,7 @@ const indexFunctions = {
 					dateLastUpdated = new Date(caseAudit[i].reportDate);
 					if(i + 1 == caseAudit.length)
 						caseAudit[i].to = rows[0].caseLevel;
-					else
-						caseAudit[i].to = caseAudit[i+1].from;
+					else caseAudit[i].to = caseAudit[i+1].from;
 					caseAudit[i].reportDate = dateToString(caseAudit[i].reportDate);
 				}
 
@@ -1218,8 +1221,7 @@ const indexFunctions = {
 
 			if (match.length > 0)
 				res.status(200).send(match);
-			else
-				res.status(500).send("No notifications found");
+			else res.status(500).send("No notifications found");
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
@@ -1380,8 +1382,7 @@ const indexFunctions = {
 						dateLastUpdated = new Date(eventAudit[i].reportDate);
 						if(i + 1 == eventAudit.length)
 							eventAudit[i].to = match[0].eventStatus;
-						else
-							eventAudit[i].to = eventAudit[i+1].from;
+						else eventAudit[i].to = eventAudit[i+1].from;
 						eventAudit[i].reportDate = dateToString(eventAudit[i].reportDate);
 					}
 					eventAudit = eventAudit.reverse();
@@ -1409,8 +1410,7 @@ const indexFunctions = {
 					eventHistory : eventAudit
 				});
 			}
-			else
-				res.status(500).send("No Event found");
+			else res.status(500).send("No Event found");
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
@@ -1452,9 +1452,9 @@ const indexFunctions = {
 					if (result) {
 						req.session.user = match[0];
 						// automatically push existing crfs that are not pushed
-						console.log("SELECT * FROM mmchddb.CRFS WHERE userID = '" + match[0].userID + 
+						console.log("SELECT * FROM mmchddb.CRFS WHERE userID = '" + match[0].userID +
 						"' AND isPushed = 0 AND (week != " + (new Date).getWeek() + " OR year != " + (new Date).getFullYear() + ");");
-						let notPushedCRFS = await db.exec("SELECT * FROM mmchddb.CRFS WHERE userID = '" + match[0].userID + 
+						let notPushedCRFS = await db.exec("SELECT * FROM mmchddb.CRFS WHERE userID = '" + match[0].userID +
 						"' AND isPushed = 0 AND (week != " + (new Date).getWeek() + " OR year != " + (new Date).getFullYear() + ");");
 						if(notPushedCRFS.length > 0) {
 							for(let i = 0; i < notPushedCRFS.length; i++) {
@@ -1543,8 +1543,7 @@ const indexFunctions = {
 
 			if (result)
 				res.status(200).send("Add disease success");
-			else
-				res.status(500).send("Add disease failed");
+			else res.status(500).send("Add disease failed");
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
@@ -1647,7 +1646,6 @@ const indexFunctions = {
 				}
 			}
 			
-
 			if (!currAddrID.exists) {
 				let currAddr = new Address(formData.patient.caddressID, formData.patient.currHouseStreet, formData.patient.currBrgy, formData.patient.currCity);
 				result = await db.insertOne("mmchddb.ADDRESSES", currAddr);
