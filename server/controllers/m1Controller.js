@@ -729,7 +729,10 @@ const indexFunctions = {
 
 	getCaseDefsAudit: async function(req, res) {
 		try {
-			let rows = await db.findAll("mmchddb.CASE_DEF_AUDIT");
+			let rows = await db.exec(`SELECT cda.*, d.diseaseName, u.druName
+					FROM mmchddb.CASE_DEF_AUDIT cda
+					LEFT JOIN mmchddb.DISEASES d ON cda.diseaseID = d.diseaseID
+					LEFT JOIN mmchddb.USERS u ON cda.modifiedBy = u.userID;`);
 			res.status(200).send(rows);
 		} catch (e) {
 			console.log(e);
