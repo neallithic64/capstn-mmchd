@@ -902,7 +902,7 @@ table {
   /* display: block; */
   display: table;
   overflow-x: auto;
-  white-space: nowrap;
+  /* white-space: nowrap; */
 }
 
 .allDisplay {
