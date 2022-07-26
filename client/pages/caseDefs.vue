@@ -220,10 +220,10 @@ export default {
 
     // getting all case defs history
     const history = (await axios.get('http://localhost:8080/api/getCaseDefsAudit')).data;
-	for (let i = 0; i < history.length; i++) {
-	  history[i].changeDate = this.convDatePHT(new Date(history[i].dateModified));
-	}
-	this.defsHistory = history;
+    for (let i = 0; i < history.length; i++) {
+      history[i].changeDate = this.convDatePHT(new Date(history[i].dateModified));
+    }
+    this.defsHistory = history;
   },
   head() {
     return {
@@ -335,7 +335,7 @@ export default {
     instruct() {
       this.pageNum = -1;
     },
-	convDatePHT(d) { // only accepts Date object; includes checking
+    convDatePHT(d) { // only accepts Date object; includes checking
       return !isNaN(Date.parse(d)) ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10) : "N/A";
     },
   }
