@@ -669,8 +669,8 @@ const indexFunctions = {
 			// generate new IDs then reform the table with the missing data
 			let idArr = await generateIDs("mmchddb.CRFS", missings.length);
 			missings.forEach((e, i) => e.CRFID = idArr[i]);
-			// await db.insertRow("mmchddb.CRFS", missings);
-			res.status(200).send(missings);
+			// await db.insertRows("mmchddb.CRFS", Object.keys(missings[0]), missings.map(Object.values));
+			res.status(200).send([Object.keys(missings[0]), missings.map(Object.values)]);
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
