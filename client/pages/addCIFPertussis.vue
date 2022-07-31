@@ -1988,7 +1988,7 @@ export default {
       isOpen: true,
       openCollapse: '',
       isDisabled: false,
-      diseaseID: 'DI-0000000000000',
+      diseaseID: 'DI-0000000000001',
       patients: [],
       patientResult: [],
       pageNum: 0,

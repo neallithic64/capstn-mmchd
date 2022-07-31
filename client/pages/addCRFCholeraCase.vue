@@ -1451,7 +1451,7 @@ export default {
       isOpen: true,
       openCollapse: '',
       isDisabled: false,
-      diseaseID: 'DI-0000000000003',
+      diseaseID: 'DI-0000000000007',
       patients: [],
       patientResult: [],
       labList:[],
