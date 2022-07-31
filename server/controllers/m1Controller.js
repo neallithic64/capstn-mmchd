@@ -637,7 +637,40 @@ const indexFunctions = {
 				await db.insertRows("mmchddb.RISK_FACTORS_D", Object.keys(rows[0]), rows.map(Object.values));
 			}
 			*/
-			res.status(200).send((new Date()).getWeek() + "");
+			
+			// get all CRFs of 2022
+			let YearCRFs = await db.exec(`SELECT * FROM mmchddb.CRFS c WHERE c.year = 2022 ORDER BY c.userID;`);
+			
+			// get the stopping condition (i.e., the max week available)
+			let maxWeek = YearCRFs.reduce((a, b) => Math.max(a, b.week), -Infinity);
+			
+			// make empty array, dummy obj, and array containing the users present in 2022 CRFs
+			let missings = [], obj, userIDs = [...new Set(YearCRFs.map(e => e.userID))];
+			
+			// for each week until stopping condition...
+			for (let i = 1; i <= maxWeek; i++) {
+				for (let j = 0; j < userIDs.length; j++) {
+					// dummy obj
+					obj = {
+						CRFID: null,
+						diseaseID: "DI-0000000000003",
+						userID: userIDs[j],
+						week: i,
+						year: 2022,
+						isPushed: 1
+					};
+					// check which userIDs don't have that week
+					if (YearCRFs.findIndex(e => e.week === obj.week && e.userID === obj.userID) === -1) {
+						// push the userIDs into missings
+						missings.push(obj);
+					}
+				}
+			}
+			// generate new IDs then reform the table with the missing data
+			let idArr = await generateIDs("mmchddb.CRFS", missings.length);
+			missings.forEach((e, i) => e.CRFID = idArr[i]);
+			// await db.insertRow("mmchddb.CRFS", missings);
+			res.status(200).send(missings);
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
