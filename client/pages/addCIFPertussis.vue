@@ -1326,24 +1326,24 @@
                         <div class="symptoms-half" style="display: inline-flex; flex-direction:row;">
                         <div class="checkbox-options">
                             <input
-                            id="exposureOther"
-                            value="exposureOther"
+                            id="exposureOthers"
+                            value="exposureOthers"
                             class="input-checkbox"
-                            name="exposureOther"
+                            name="exposureOthers"
                             type="checkbox"
                             :class="isRequired()"
                             :disabled="inputEdit()"
                             />
-                            <label for="exposureOther">
+                            <label for="exposureOthers">
                             Others, specify
                                 <input
-                                    id="exposureOther"
+                                    id="exposureOthers"
                                     class="input-form-field"
                                     type="text"
                                     style="width: 175px; height: 19px; margin: 0 2px"
                                     :disabled="inputEdit()"
-                                    :value="formData.caseData.exposureOther.toUpperCase()"
-                                    @input="formData.caseData.exposureOther = $event.target.value.toUpperCase()"
+                                    :value="formData.caseData.exposureOthers.toUpperCase()"
+                                    @input="formData.caseData.exposureOthers = $event.target.value.toUpperCase()"
                                 />
                             </label>
                         </div> </div>
