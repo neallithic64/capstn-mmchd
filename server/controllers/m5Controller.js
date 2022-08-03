@@ -106,7 +106,10 @@ function dateToString(date) {
 
 const indexFunctions = {
 	mkData: async function(req, res) {
+		// need to calculate the evals
 		let arr = [];
+
+
 		res.status(200).send("done");
 	},
 	
@@ -136,18 +139,24 @@ const indexFunctions = {
 					LEFT JOIN mmchddb.DISEASES d ON t.diseaseID = d.diseaseID
 					GROUP BY te.TCLID;`);
 			
+			// retrieving all risk factors while calculating risk ratio
 			let riskFactMatch = await db.exec(`SELECT rfd.riskName, rfd.diseaseName,
 					(rfd.exposedDisease / rfd.totalExposed) /
 					(rfd.unexposedDisease / rfd.totalUnexposed) AS risk
 					FROM mmchddb.RISK_FACTORS_D rfd;`);
+			
+			// transposing the risk factors
 			let riskPivots = riskFactMatch.reduce(function(prev, riskFact) {
 				let findElem = prev.find(e => e.diseaseName === riskFact.diseaseName);
 				if (findElem && findElem["risk" + (riskCateg.indexOf(riskFact.riskName.charAt(0)) + 1)][1] < riskFact.risk) {
+					// case 1, transforming the risk factor to match frontend format + plaintext
 					findElem["risk" + (riskCateg.indexOf(riskFact.riskName.charAt(0)) + 1)] = [riskFact.riskName, riskFact.risk];
 					return prev;
 				} else if (findElem) {
+					// case 2, pass
 					return prev;
 				} else {
+					// case 0, initialising array then pushing
 					let tempElem = {
 						diseaseName: riskFact.diseaseName,
 						risk1: ["", 0],
@@ -160,6 +169,8 @@ const indexFunctions = {
 					return prev;
 				}
 			}, []);
+			
+			// transforming data for displaying
 			riskPivots.forEach(e => {
 				for (let prop in e) {
 					e[prop] = Array.isArray(e[prop]) ? e[prop].join(" - ").substring(1) : e[prop];
@@ -221,7 +232,6 @@ const indexFunctions = {
 					LEFT JOIN mmchddb.CASES c ON se.userID = c.reportedBy
 					GROUP BY se.evalID
 					HAVING u.druName = "${req.query.druName}";`);
-						
 			res.status(200).send({ cases, seMatch });
 		} catch (e) {
 			console.log(e);
@@ -244,17 +254,6 @@ const indexFunctions = {
 			let tclData = await db.findRows("mmchddb.TCL_DATA", {patientID: patientID});
 			await db.updateRows("mmchddb.TCL_DATA", {patientID: patientID}, {...loadedData, status: "Complete"});
 			res.status(200).send("Update targets successful!");
-		} catch (e) {
-			console.log(e);
-			res.status(500).send("Server error");
-		}
-	},
-	
-	postSubmitTCL: async function(req, res) {
-		let {TCLID} = req.body;
-		try {
-			let tclRow = await db.exec(`SELECT * FROM mmchddb.TCLS WHERE TCLID = '${TCLID}' AND isPushed = 0;`);
-			res.status(200).send("TCL has been submitted successfully!");
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
