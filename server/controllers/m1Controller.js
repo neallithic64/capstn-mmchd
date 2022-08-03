@@ -602,75 +602,8 @@ const indexFunctions = {
 	
 	mkData: async function(req, res) {
 		try {
-			/*
-			let rows = await db.exec(`SELECT userID FROM mmchddb.USERS ORDER BY userID;`);
-			if (rows) rows = rows.map(e => e.userID);
 			let arr = [];
-			let rows = await db.exec(`SELECT SUM(rf.LSmoking), SUM(rf.LAlcoholism), SUM(rf.LDrugUse),
-					SUM(rf.LPhysicalInactivity), SUM(rf.CHereditary), SUM(rf.CAsthma), SUM(rf.HHeartDisease),
-					SUM(rf.HHypertension), SUM(rf.HObesity), SUM(rf.HDiabetes), SUM(rf.OCleanWater),
-					SUM(rf.OAirPollution), SUM(rf.OHealthFacility), SUM(rf.OWasteMgmt), SUM(rf.OVacCoverage),
-					SUM(rf.OHealthEdu), SUM(rf.OShelter), SUM(rf.OFlooding), SUM(rf.OPoverty)
-					FROM mmchddb.RISK_FACTORS rf
-					LEFT JOIN mmchddb.CASES c ON c.caseID = rf.caseID
-					WHERE c.diseaseID = 'DI-0000000000003';`);
-			for (let [key, val] of Object.entries(rows[0])) {
-				arr.push({key: /SUM\(rf\.(\w+)\)/.exec(key)[1], value: val});
-			}
-			arr.forEach(async (e) => await db.insertOne("mmchddb.RISK_FACTORS_C", e));
-			let risks = ["rf.LSmoking", "rf.LAlcoholism", "rf.LDrugUse", "rf.LPhysicalInactivity",
-					"rf.CHereditary", "rf.CAsthma", "rf.HHeartDisease", "rf.HHypertension", "rf.HObesity",
-					"rf.HDiabetes", "rf.OCleanWater", "rf.OAirPollution", "rf.OHealthFacility",
-					"rf.OWasteMgmt", "rf.OVacCoverage", "rf.OHealthEdu", "rf.OShelter", "rf.OFlooding",
-					"rf.OPoverty"], risk, rows;
-			for (let i = 0; i < risks.length; i++) {
-				risk = risks[i];
-				rows = await db.exec(`SELECT SUM(CASE WHEN ${risk} = 1 AND c.caseLevel LIKE '%Confirm%' THEN 1 ELSE 0 END) AS exposedDisease,
-						SUM(${risk}) AS totalExposed,
-						SUM(CASE WHEN ${risk} = 0 AND c.caseLevel LIKE '%Confirm%' THEN 1 ELSE 0 END) AS unexposedDisease,
-						SUM(CASE WHEN ${risk} = 0 THEN 1 ELSE 0 END) totalUnexposed, d.diseaseName, '${risk.substr(3)}' AS riskName
-						FROM mmchddb.RISK_FACTORS rf
-						LEFT JOIN mmchddb.CASES c ON c.caseID = rf.caseID
-						LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = c.diseaseID
-						GROUP BY d.diseaseName`);
-				console.log(rows);
-				await db.insertRows("mmchddb.RISK_FACTORS_D", Object.keys(rows[0]), rows.map(Object.values));
-			}
-			*/
-			
-			// get all CRFs of 2022
-			let YearCRFs = await db.exec(`SELECT * FROM mmchddb.CRFS c WHERE c.year = 2022 ORDER BY c.userID;`);
-			
-			// get the stopping condition (i.e., the max week available)
-			let maxWeek = YearCRFs.reduce((a, b) => Math.max(a, b.week), -Infinity);
-			
-			// make empty array, dummy obj, and array containing the users present in 2022 CRFs
-			let missings = [], obj, userIDs = [...new Set(YearCRFs.map(e => e.userID))];
-			
-			// for each week until stopping condition...
-			for (let i = 1; i <= maxWeek; i++) {
-				for (let j = 0; j < userIDs.length; j++) {
-					// dummy obj
-					obj = {
-						CRFID: null,
-						diseaseID: "DI-0000000000003",
-						userID: userIDs[j],
-						week: i,
-						year: 2022,
-						isPushed: 1
-					};
-					// check which userIDs don't have that week
-					if (YearCRFs.findIndex(e => e.week === obj.week && e.userID === obj.userID) === -1) {
-						// push the userIDs into missings
-						missings.push(obj);
-					}
-				}
-			}
-			// generate new IDs then reform the table with the missing data
-			let idArr = await generateIDs("mmchddb.CRFS", missings.length);
-			missings.forEach((e, i) => e.CRFID = idArr[i]);
-			// await db.insertRows("mmchddb.CRFS", Object.keys(missings[0]), missings.map(Object.values));
-			res.status(200).send([Object.keys(missings[0]), missings.map(Object.values)]);
+			res.status(200).send(arr);
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
