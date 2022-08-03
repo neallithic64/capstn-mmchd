@@ -767,6 +767,7 @@ const indexFunctions = {
 				havingClause = `HAVING cr.isPushed = 1 OR cr.userID = '${req.query.userID}'`;
 			} else havingClause = `HAVING cr.userID = '${req.query.userID}'`;
 			
+			// collect all CRFs with other joined data: diseases, user, DRU location
 			let match = await db.exec(`SELECT cr.*, d.diseaseName, a.city, COUNT(c.caseID) AS caseCount,
 					n.dateCreated AS submittedOn, MAX(c.reportDate) AS lastCase
 					FROM mmchddb.CRFS cr
@@ -778,12 +779,20 @@ const indexFunctions = {
 					GROUP BY cr.CRFID ${ havingClause }
 					ORDER BY cr.year DESC, cr.week DESC;`);
 			for (let i = 0; i < match.length; i++) {
+				// interpreting isPushed
 				match[i].submitStatus = match[i].isPushed > 0 ? "Pushed" : "Ongoing";
+				// transforming submitted date
 				match[i].submittedOn = match[i].submittedOn ? convDatePHT(new Date(match[i].submittedOn)) : "N/A";
+				// transforming last case date
 				match[i].lastCase = match[i].lastCase ? convDatePHT(new Date(match[i].lastCase)) : "N/A";
-				if (match[i].isPushed > 0) {
-					if (match[i].caseCount > 0) {
+				
+				// creating CRF status code
+				// current issue: missing visibility of submitted-but-late
+				// "no 'late cases submitted' report status"
+				if (match[i].isPushed > 0) { // pushed or not?
+					if (match[i].caseCount > 0) { // zero report or not?
 						if (match[i].lastCase >= new Date(match[i].year, 0, 1 + match[i].week * 7)) {
+							// late cases?
 							match[i].reportStatus = "Late Cases";
 						} else match[i].reportStatus = "Cases Submitted";
 					} else match[i].reportStatus = "Zero Report";
