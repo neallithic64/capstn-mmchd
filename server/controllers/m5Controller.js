@@ -32,15 +32,10 @@ const indexFunctions = {
 		// need to calculate the evals
 		let ids;
 		// surveillance eval
-		// collect all the cases in 2022 + yearweek + druname
-		let cases = await db.exec(`SELECT *, YEARWEEK(c.reportDate, 2) AS weekNo, u.druName
-				FROM mmchddb.CASES c
-				LEFT JOIN mmchddb.USERS u ON c.reportedBy = u.userID
-				WHERE YEAR(c.reportDate) = 2022;`);
 		/* how to get the remaining columns:
 			evalID: to be generated in genID(),
-			reportsOnTime: hard-code to 0.9x reportsReceived?,
-			reportsExpected: hard-code to 1.1x reportsReceived?,
+			reportsOnTime: reportsReceived operation,
+			reportsExpected: reportsReceived operation,
 			withDetected: hard-code to 5,
 			withDisease: hard-code to 5,
 			withoutDetected: hard-code to 5,
@@ -58,10 +53,10 @@ const indexFunctions = {
 		ids = await db.generateIDs("mmchddb.SURVEILLANCE_EVAL", casesQuery.length);
 		casesQuery.forEach((e, i) => {
 			e.evalID = ids[i];
-			e.reportsOnTime = e.reportsReceived * 0.9;
-			e.reportsExpected = e.reportsReceived * 1.1;
-			e.timeliness = e.reportsOnTime / e.reportsReceived;
-			e.completeness = e.reportsReceived / e.reportsExpected;
+			e.reportsOnTime = e.reportsReceived - Math.floor(10 * Math.random()) - 1;
+			e.reportsExpected = e.reportsReceived + Math.ceil(10 * Math.random()) + 1;
+			e.timeliness = e.reportsOnTime / e.reportsReceived * 100;
+			e.completeness = e.reportsReceived / e.reportsExpected * 100;
 		});
 		
 		// tcl eval
@@ -93,7 +88,7 @@ const indexFunctions = {
 			e.treated = parseInt(e.treated);
 			e.oddsRatio = !!e.confirmCount && !!e.unconfirmCount ? e.confirmCount / e.unconfirmCount : 0;
 		});
-		res.status(200).send([casesQuery, TCLQuery]);
+		res.status(200).send(casesQuery);
 	},
 	
 	/*
