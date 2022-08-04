@@ -107,10 +107,63 @@ function dateToString(date) {
 const indexFunctions = {
 	mkData: async function(req, res) {
 		// need to calculate the evals
-		let arr = [];
-
-
-		res.status(200).send("done");
+		let a;
+		// surveillance eval
+		// collect all the cases in 2022 + yearweek + druname
+		let cases = await db.exec(`SELECT *, YEARWEEK(c.reportDate, 2) AS weekNo, u.druName
+				FROM mmchddb.CASES c
+				LEFT JOIN mmchddb.USERS u ON c.reportedBy = u.userID
+				WHERE YEAR(c.reportDate) = 2022;`);
+		/* how to get the remaining columns:
+			evalID: to be generated in generateID(),
+			reportsOnTime: hard-code to 0.9x reportsReceived?,
+			reportsExpected: hard-code to 1.1x reportsReceived?,
+			withDetected: hard-code to 5,
+			withDisease: hard-code to 5,
+			withoutDetected: hard-code to 5,
+			withoutDisease: hard-code to 5,
+			timeliness: reportsOnTime / reportsReceived,
+			completeness: reportsReceived / reportsExpected
+		 */
+		let casesQuery = await db.exec(`SELECT YEARWEEK(c.reportDate, 2) AS weekNo, c.reportedBy,
+				COUNT(c.caseID) AS reportsReceived, c.diseaseID, a.city, 5 AS withDetected,
+				5 AS withDisease, 5 AS withoutDetected, 5 AS withoutDisease
+				FROM mmchddb.CASES c
+				LEFT JOIN mmchddb.USERS u ON c.reportedBy = u.userID
+				LEFT JOIN mmchddb.ADDRESSES a ON u.addressID = a.addressID
+				GROUP BY weekNo;`);
+		casesQuery.forEach(async function(e) {
+			e.evalID = (await generateID("SURVEILLANCE_EVAL")).id;
+			e.reportsOnTime = e.reportsReceived * 0.9;
+			e.reportsExpected = e.reportsReceived * 1.1;
+			e.timeliness = e.reportsOnTime / e.reportsReceived;
+			e.completeness = e.reportsReceived / e.reportsExpected;
+		});
+		// let CRFQuery = await db.exec(`SELECT c.CRFID, c.isPushed,
+		// 		CONCAT(c.year, LPAD(c.week, 2, 0)) AS weekNo, COUNT(ca.caseID) AS CRFCount,
+		// 		YEARWEEK(MAX(ca.reportDate)) AS lastCaseWeek, u.druName
+		// 		FROM mmchddb.CRFS c
+		// 		LEFT JOIN mmchddb.USERS u ON c.userID = u.userID
+		// 		LEFT JOIN mmchddb.CASES ca ON c.CRFID = ca.CRFID
+		// 		GROUP BY c.CRFID;`);
+		
+		// tcl eval
+		/* columns:
+			pevalID: to be generated in generateID("TCL_EVAL"),
+			dateEvaluated: 2022-01-01 02:00:00,
+			timeliness: reportsOnTime / reportsReceived,
+			completeness: reportsReceived / reportsExpected,
+			oddsRatio
+			TE-0000000000000	US-0000000000004	TC-0000000000000	2022-01-01 02:00:00	1	1	0.5
+		 */
+		let TCLQuery = await db.exec(`SELECT YEARWEEK(c.reportDate, 2) AS weekNo, c.reportedBy,
+			COUNT(c.caseID) AS reportsReceived, c.diseaseID, a.city, 5 AS withDetected,
+			5 AS withDisease, 5 AS withoutDetected, 5 AS withoutDisease
+			FROM mmchddb.TCLS t
+			LEFT JOIN mmchddb.USERS u ON c.reportedBy = u.userID
+			LEFT JOIN mmchddb.ADDRESSES a ON u.addressID = a.addressID
+			GROUP BY weekNo;`);
+		res.status(200).send(casesQuery);
 	},
 	
 	/*
