@@ -21,105 +21,6 @@ function convDatePHT (d) {
 	return !isNaN(Date.parse(d)) ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10) : "N/A";
 }
 
-/** ON ID CREATION
-*/
-function getPrefix(table) {
-	switch(table) {
-		case "mmchddb.USERS":
-			return "US-";
-		case "mmchddb.DISEASES":
-			return "DI-";
-		case "mmchddb.EVENTS":
-			return "EV-";
-		case "mmchddb.PATIENTS":
-			return "PA-";
-		case "mmchddb.CASES":
-			return "CA-";
-		case "mmchddb.CRFS":
-			return "CR-";
-		case "mmchddb.NOTIFICATIONS":
-			return "NO-";
-		case "mmchddb.REPORTS":
-			return "RE-";
-		case "mmchddb.TARGETS":
-			return "TA-";
-		case "mmchddb.TCLS":
-			return "TC-";
-		case "mmchddb.AGE_RANGE_REF":
-			return "AR-";
-		case "mmchddb.ADDRESSES":
-			return "AD-";
-		case "mmchddb.OUTBREAKS":
-			return "OU-";
-		case "mmchddb.SURVEILLANCE_EVAL":
-			return "SE-";
-		case "mmchddb.TCL_EVAL":
-			return "TE-";
-		case "mmchddb.PROGRAM_EVAL":
-			return "PE-";
-		case "mmchddb.PROGRAM_ACCOMPS":
-			return "PC-";
-	}
-	return undefined;
-}
-
-async function generateID(table, checkObj) {
-	let retObj = { exists: false, id: "" };
-	
-	try {
-		// checking for existence
-		if (table === "mmchddb.ADDRESSES") {
-			let rows = await db.findRows(table, checkObj);
-			if (rows.length > 0) {
-				retObj.exists = true;
-				retObj.id = rows[0].addressID;
-			}
-		} else if (table === "mmchddb.PATIENTS") {
-			// JOIN to addresses? well...
-			let rows = await db.findRows(table, checkObj);
-			if (rows.length > 0) {
-				retObj.exists = true;
-				retObj.id = rows[0].patientID;
-			}
-		}
-		
-		// generating for new object/row
-		if (!retObj.exists) {
-			let rowcount = await db.findRowCount(table);
-			let id = getPrefix(table);
-			for (let i = 0; i < 13 - rowcount.toString().length; i++)
-				id += '0';
-			id += rowcount.toString();
-			retObj.id = id;
-		}
-		console.log(retObj);
-		return retObj;
-	} catch (e) {
-		console.log(e);
-		return false;
-	}
-}
-
-async function generateIDs(table, numRows) {
-	try {
-		let rowcount = await db.findRowCount(table);
-		let ids = [];
-		if (numRows > 0) {
-			for (i = 0; i < numRows; i++) {
-				let tempID = getPrefix(table);
-				let suffix = rowcount + i;
-				for (let j = 0; j < 13 - suffix.toString().length; j++)
-					tempID += '0';
-				tempID += suffix.toString();
-				ids.push(tempID);
-			} return ids;
-		} else return false;
-	} catch(e) {
-		console.log(e);
-		return false;
-	}
-}
-
 function dateToString(date) {
 	let dateString = new Date(date);
 	let month = dateString.getMonth() + 1;
@@ -137,7 +38,7 @@ const indexFunctions = {
 				LEFT JOIN mmchddb.USERS u ON c.reportedBy = u.userID
 				WHERE YEAR(c.reportDate) = 2022;`);
 		/* how to get the remaining columns:
-			evalID: to be generated in generateID(),
+			evalID: to be generated in genID(),
 			reportsOnTime: hard-code to 0.9x reportsReceived?,
 			reportsExpected: hard-code to 1.1x reportsReceived?,
 			withDetected: hard-code to 5,
@@ -154,7 +55,7 @@ const indexFunctions = {
 				LEFT JOIN mmchddb.USERS u ON c.reportedBy = u.userID
 				LEFT JOIN mmchddb.ADDRESSES a ON u.addressID = a.addressID
 				GROUP BY weekNo;`);
-		ids = await generateIDs("mmchddb.SURVEILLANCE_EVAL", casesQuery.length);
+		ids = await db.generateIDs("mmchddb.SURVEILLANCE_EVAL", casesQuery.length);
 		casesQuery.forEach((e, i) => {
 			e.evalID = ids[i];
 			e.reportsOnTime = e.reportsReceived * 0.9;
@@ -165,7 +66,7 @@ const indexFunctions = {
 		
 		// tcl eval
 		/* columns:
-			pevalID: to be generated in generateID("TCL_EVAL"),
+			pevalID: to be generated in genID("TCL_EVAL"),
 			dateEvaluated: 2022-01-01 02:00:00,
 			timeliness: hard-code to 1,
 			completeness: hard-code to 1,
@@ -181,7 +82,7 @@ const indexFunctions = {
 				LEFT JOIN mmchddb.CASES c ON c.patientID = td.patientID
 				LEFT JOIN mmchddb.DISEASES d ON t.diseaseID = d.diseaseID
 				GROUP BY t.TCLID;`);
-		ids = await generateIDs("mmchddb.TCL_EVAL", casesQuery.length);
+		ids = await db.generateIDs("mmchddb.TCL_EVAL", casesQuery.length);
 		TCLQuery.forEach((e, i) => {
 			e.pevalID = ids[i];
 			e.dateEvaluated = new Date("2022-01-01 02:00:00");

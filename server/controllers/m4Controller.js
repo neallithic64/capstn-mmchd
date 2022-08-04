@@ -21,83 +21,6 @@ function convDatePHT (d) {
 	return !isNaN(Date.parse(d)) ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10) : "N/A";
 }
 
-/** ON ID CREATION
-*/
-function getPrefix(table) {
-	switch(table) {
-		case "mmchddb.USERS":
-			return "US-";
-		case "mmchddb.DISEASES":
-			return "DI-";
-		case "mmchddb.EVENTS":
-			return "EV-";
-		case "mmchddb.PATIENTS":
-			return "PA-";
-		case "mmchddb.CASES":
-			return "CA-";
-		case "mmchddb.CRFS":
-			return "CR-";
-		case "mmchddb.NOTIFICATIONS":
-			return "NO-";
-		case "mmchddb.REPORTS":
-			return "RE-";
-		case "mmchddb.TARGETS":
-			return "TA-";
-		case "mmchddb.TCLS":
-			return "TC-";
-		case "mmchddb.AGE_RANGE_REF":
-			return "AR-";
-		case "mmchddb.ADDRESSES":
-			return "AD-";
-		case "mmchddb.OUTBREAKS":
-			return "OU-";
-		case "mmchddb.SURVEILLANCE_EVAL":
-			return "SE-";
-		case "mmchddb.PROGRAM_EVAL":
-			return "PE-";
-		case "mmchddb.PROGRAM_ACCOMPS":
-			return "PC-";
-	}
-	return undefined;
-}
-
-async function generateID(table, checkObj) {
-	let retObj = { exists: false, id: "" };
-	
-	try {
-		// checking for existence
-		if (table === "mmchddb.ADDRESSES") {
-			let rows = await db.findRows(table, checkObj);
-			if (rows.length > 0) {
-				retObj.exists = true;
-				retObj.id = rows[0].addressID;
-			}
-		} else if (table === "mmchddb.PATIENTS") {
-			// JOIN to addresses? well...
-			let rows = await db.findRows(table, checkObj);
-			if (rows.length > 0) {
-				retObj.exists = true;
-				retObj.id = rows[0].patientID;
-			}
-		}
-		
-		// generating for new object/row
-		if (!retObj.exists) {
-			let rowcount = await db.findRowCount(table);
-			let id = getPrefix(table);
-			for (let i = 0; i < 13 - rowcount.toString().length; i++)
-				id += '0';
-			id += rowcount.toString();
-			retObj.id = id;
-		}
-		console.log(retObj);
-		return retObj;
-	} catch (e) {
-		console.log(e);
-		return false;
-	}
-}
-
 function dateToString(date) {
 	let dateString = new Date(date);
 	let month = dateString.getMonth() + 1;
@@ -157,7 +80,7 @@ const indexFunctions = {
 			});
 			if (existCheck.length === 0) {
 				// generate prog accomp
-				existProgAccoID = (await generateID("mmchddb.PROGRAM_ACCOMPS")).id
+				existProgAccoID = (await db.generateID("mmchddb.PROGRAM_ACCOMPS")).id
 				await db.insertOne("mmchddb.PROGRAM_ACCOMPS", {
 					progAccompID: existProgAccoID,
 					diseaseID: req.query.diseaseID,
@@ -330,7 +253,7 @@ const indexFunctions = {
 					} else {
 						// TCLs are out of date, make a new TCL for the current month-year
 						let firstTCL = {
-							TCLID: (await generateID("mmchddb.TCLS")).id,
+							TCLID: (await db.generateID("mmchddb.TCLS")).id,
 							diseaseID: req.query.diseaseID,
 							userID: req.query.userID,
 							month: thisDate.getMonth(),
@@ -347,7 +270,7 @@ const indexFunctions = {
 				} else {
 					// no TCLs under the user, generate the first TCL
 					let firstTCL = {
-						TCLID: (await generateID("mmchddb.TCLS")).id,
+						TCLID: (await db.generateID("mmchddb.TCLS")).id,
 						diseaseID: req.query.diseaseID,
 						userID: req.query.userID,
 						month: thisDate.getMonth(),
@@ -460,7 +383,7 @@ const indexFunctions = {
 				};
 			} else {
 				// make new prog accomp
-				let newAccomp = await generateID("mmchddb.PROGRAM_ACCOMPS");
+				let newAccomp = await db.generateID("mmchddb.PROGRAM_ACCOMPS");
 				await db.insertOne("mmchddb.PROGRAM_ACCOMPS", {
 					progAccompID: newAccomp.id,
 					diseaseID: diseaseID,
@@ -503,7 +426,7 @@ const indexFunctions = {
 			console.log(formData);
 			
 			// inserting current address
-			let currAddrID = await generateID("mmchddb.ADDRESSES", {
+			let currAddrID = await db.generateID("mmchddb.ADDRESSES", {
 				houseStreet: formData.patient.currHouseStreet,
 				brgy: formData.patient.currBrgy,
 				city: formData.patient.currCity
@@ -515,7 +438,7 @@ const indexFunctions = {
 			}
 			
 			// inserting permanent address
-			let permAddrID = await generateID("mmchddb.ADDRESSES", {
+			let permAddrID = await db.generateID("mmchddb.ADDRESSES", {
 				houseStreet: formData.patient.permHouseStreet,
 				brgy: formData.patient.permBrgy,
 				city: formData.patient.permCity
@@ -535,7 +458,7 @@ const indexFunctions = {
 			delete formData.patient.permCity;
 			
 			// adding patient's data
-			let genPatientID = await generateID("mmchddb.PATIENTS", {
+			let genPatientID = await db.generateID("mmchddb.PATIENTS", {
 				lastName: formData.patient.lastName,
 				firstName: formData.patient.firstName,
 				midName: formData.patient.midName
@@ -599,7 +522,7 @@ const indexFunctions = {
 				});
 				
 				// generating new TCL
-				let newTCL = (await generateID("mmchddb.TCLS")).id;
+				let newTCL = (await db.generateID("mmchddb.TCLS")).id;
 				currMonth = new Date(tclRow[i].year, tclRow[i].month, 0);
 				nextMonth = new Date(currMonth.getFullYear(), currMonth.getMonth() + 1, currMonth.getDate());
 				await db.insertOne("mmchddb.TCLS", {
@@ -638,7 +561,7 @@ const indexFunctions = {
 				});
 				
 				// generating new TCL
-				let newTCL = (await generateID("mmchddb.TCLS")).id;
+				let newTCL = (await db.generateID("mmchddb.TCLS")).id;
 				currMonth = new Date(tcls[i].year, tcls[i].month, 0);
 				nextMonth = new Date(currMonth.getFullYear(), currMonth.getMonth() + 1, currMonth.getDate());
 				await db.insertOne("mmchddb.TCLS", {
