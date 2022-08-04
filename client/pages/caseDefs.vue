@@ -13,7 +13,7 @@
           <div v-if="isOpen" class="form-contents">
             <div v-for="(value, name, i) in formSection.diseaseNames" :key="i">
               <!-- <div v-if="i > 1" :id="name" :class="formColor(i - 1)"> -->
-              <button :id="name" :class="formColor(i)" @click="move(i, value)">
+              <button :id="name" style="text-align: left" :class="formColor(i)" @click="move(i, value)">
                 {{ i+1 }}. {{ value }}
               </button>
             </div>
@@ -108,16 +108,31 @@
               </div>
             </div>
           </form>
+
         </div>
       </div>
     </div>
+
+    <div class="caseDefs-statusHistory" style="margin-left:10px; margin-right:10px;">
+      <h2 style="border-bottom:gray solid; width:fit-content; padding:0 7px 0 5px;">Case Definition History</h2>
+      <dataTable
+        :options="tableOptions"
+        :datavalues="defsHistory"
+        :casetype="'patient'"
+      />
+    </div>
+
   </div>
 </template>
 
 <script>
+import dataTable from './dataTable.vue'
 const axios = require('axios');
 
 export default {
+  components: {
+    dataTable,
+  },
   middleware: 'is-auth',
   data() {
     return {
@@ -137,7 +152,44 @@ export default {
         'Step 3': 'Click on a case definition to start editing it.',
         'Step 4': 'Lastly, click "Save" to save your changes.',
         'Step 5': 'In case there are issues, please contact the IT Staff.'
-      }
+      },
+      tableOptions: {
+        tableName: 'defs',
+        columns: [
+          {
+            title: 'Date',
+            key: 'changeDate',
+            type: 'text',
+            dateFormat: true,
+            currentFormat: 'YYYY-MM-DD',
+            expectFormat: 'DD MMM YYYY',
+            // sortable: true,
+          },
+          {
+            title: 'Disease',
+            key: 'diseaseName',
+            type: 'text',
+          },
+          {
+            title: 'Class',
+            key: 'class',
+            type: 'text',
+          },
+          {
+            title: 'Previous Value',
+            key: 'prevValue',
+            type: 'text',
+          },
+          {
+            title: 'Modified By',
+            key: 'druName',
+            type: 'text',
+          },
+        ],
+        // source: 'http://demo.datatable/api/users',
+        search: true,
+      },
+      defsHistory: [],
     }
   },
   async fetch() {
@@ -146,7 +198,7 @@ export default {
     
     // setting diseaseNames
     const tempA = {};
-      const tempB = {};
+    const tempB = {};
     for (let i = 0; i < diseases.length; i++) {
       tempA[i] = diseases[i].diseaseName;
       tempB[i] = diseases[i].diseaseID;
@@ -166,6 +218,12 @@ export default {
       this.diseaseDefs[this.allCaseDefs[this.formSection.diseaseNames[0]][i].class] = this.allCaseDefs[this.formSection.diseaseNames[0]][i].definition;
     }
 
+    // getting all case defs history
+    const history = (await axios.get('http://localhost:8080/api/getCaseDefsAudit')).data;
+    for (let i = 0; i < history.length; i++) {
+      history[i].changeDate = this.convDatePHT(new Date(history[i].dateModified));
+    }
+    this.defsHistory = history;
   },
   head() {
     return {
@@ -251,7 +309,7 @@ export default {
       const result = await axios.post('http://localhost:8080/api/editDiseaseDef', {
           diseaseDefs: this.diseaseDefs,
           diseaseID: this.formSection.diseaseIDs[this.pageNum],
-		  userID: this.$auth.user.userID
+          userID: this.$auth.user.userID
       });
       
       // eslint-disable-next-line no-console
@@ -276,25 +334,36 @@ export default {
     },
     instruct() {
       this.pageNum = -1;
-    }
+    },
+    convDatePHT(d) { // only accepts Date object; includes checking
+      return !isNaN(Date.parse(d)) ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10) : "N/A";
+    },
   }
 }
 </script>
 
 <style>
+  h2 {
+    color: #346083;
+    font-size: 25px;
+    font-weight: 600;
+  }
+
   .caseDefsBody {
     font-family: 'Work Sans', sans-serif;
     font-weight: 300;
     padding: 0px;
     margin: 0px;
     background-image: none;
+    display: flex;
+    flex-direction: column;
   }
 
   .caseDefs-caseContainer {
     margin: 70px 20px 5px 20px;
     display: flex;
     flex-direction: row;
-    flex-wrap: nowrap;
+    /* flex-wrap: nowrap; */
     width: max-content;
   }
 
@@ -330,7 +399,7 @@ export default {
   }
 
   .caseDefs-formSummary-container {
-    position: fixed;
+    position: sticky;
     width: fit-content;
     margin: 5px;
     padding: 5px;
@@ -364,7 +433,8 @@ export default {
     font-style: normal;
     font-weight: 400;
     font-size: 16px;
-    display: flex;
+    margin-bottom: 6px;
+    /* display: flex; */
   }
 
   /* .formnum:hover {
@@ -391,7 +461,7 @@ export default {
 
   .caseDefs-sectionContainer {
     left: 275px;
-    position: relative;
+    /* position: relative; */
     width: calc(100vw - 320px);
     /* margin: 5px; */
     padding: 5px;
@@ -458,6 +528,11 @@ export default {
   .required:after {
     content: '*';
     color: red;
+  }
+
+  .caseDefs-statusHistory {
+    margin-top:10px;
+    margin-bottom:30px;
   }
 
   .defsButton {

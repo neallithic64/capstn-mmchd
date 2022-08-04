@@ -128,12 +128,12 @@ export default {
     // if (DRUUserTypes.includes(this.$auth.user.userType)) {
     //   this.allEvents = rows.filter(e => e.userID === this.$auth.user.userID);
     // } else this.allEvents = rows;
-	
-	for (let i = 0; i < rows.length; i++) {
+    
+    for (let i = 0; i < rows.length; i++) {
       rows[i].dateCreated = rows[i].dateCreated ? this.convDatePHT(new Date(rows[i].dateCreated)) : "N/A";
       rows[i].approvedByDate = rows[i].approvedByDate ? this.convDatePHT(new Date(rows[i].approvedByDate)) : "N/A";
-	}
-	this.allReports = rows;
+    }
+    this.allReports = rows;
     
     if (this.allReports.length > 0) {
       this.$toast.clear();

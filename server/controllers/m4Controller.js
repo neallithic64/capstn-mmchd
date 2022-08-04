@@ -275,13 +275,16 @@ const indexFunctions = {
 	},
 	
 	getTCL: async function(req, res) {
+		let thisDate = new Date();
 		try {
 			let userSettings = await db.findRows("mmchddb.USER_SETTINGS", {userID: req.query.userID});
 			let userData = await db.exec(`SELECT u.userType AS druType, u.druName, a.*
 					FROM mmchddb.USERS u
 					LEFT JOIN mmchddb.ADDRESSES a ON a.addressID = u.addressID
 					WHERE u.userID = '${ req.query.userID }';`);
-			if (!!req.query.TCLID) { // getting for view page
+			
+			if (!!req.query.TCLID) {
+				// view immunisation prog page, TCLID was specified
 				let match = await db.exec(`SELECT td.*, t.*, p.*, a1.city AS patientCity,
 						u.druName, a2.city AS druCity, a2.brgy AS druBrgy
 						FROM mmchddb.TCL_DATA td
@@ -300,27 +303,50 @@ const indexFunctions = {
 					pushDataAccept: userSettings[0].pushDataAccept,
 					userData: userData[0]
 				});
-			} else { // getting for add page
+			} else {
+				// add immunisation prog page, no TCLID was specified
 				let r = await db.findRows("mmchddb.TCLS", {
 					diseaseID: req.query.diseaseID,
 					userID: req.query.userID
 				});
+				
+				// does the user have a TCL?
 				if (r.length > 0) {
-					// collect the patients and TCL data with that TCLID
-					let data = await db.exec(`SELECT t.*, p.*, a.city, td.dateAdded
-							FROM mmchddb.TCL_DATA td
-							LEFT JOIN mmchddb.TCLS t ON t.TCLID = td.TCLID
-							LEFT JOIN mmchddb.PATIENTS p ON p.patientID = td.patientID
-							LEFT JOIN mmchddb.ADDRESSES a ON a.addressID = p.caddressID
-							WHERE td.TCLID = '${r[r.length - 1].TCLID}';`);
-					res.status(200).send({
-						TCL: r[r.length - 1],
-						tclData: data,
-						pushDataAccept: userSettings[0].pushDataAccept,
-						userData: userData[0]
-					});
+					// is the latest TCL updated?
+					if (thisDate.getMonth() === r[r.length - 1].month && thisDate.getFullYear() === r[r.length - 1].year) {
+						// collect the patients and TCL data with that TCLID
+						let data = await db.exec(`SELECT t.*, p.*, a.city, td.dateAdded
+								FROM mmchddb.TCL_DATA td
+								LEFT JOIN mmchddb.TCLS t ON t.TCLID = td.TCLID
+								LEFT JOIN mmchddb.PATIENTS p ON p.patientID = td.patientID
+								LEFT JOIN mmchddb.ADDRESSES a ON a.addressID = p.caddressID
+								WHERE td.TCLID = '${r[r.length - 1].TCLID}';`);
+						res.status(200).send({
+							TCL: r[r.length - 1],
+							tclData: data,
+							pushDataAccept: userSettings[0].pushDataAccept,
+							userData: userData[0]
+						});
+					} else {
+						// TCLs are out of date, make a new TCL for the current month-year
+						let firstTCL = {
+							TCLID: (await generateID("mmchddb.TCLS")).id,
+							diseaseID: req.query.diseaseID,
+							userID: req.query.userID,
+							month: thisDate.getMonth(),
+							year: thisDate.getFullYear()
+						};
+						let firstR = await db.insertOne("mmchddb.TCLS", firstTCL);
+						res.status(200).send({
+							TCL: firstTCL,
+							tclData: [],
+							pushDataAccept: userSettings[0].pushDataAccept,
+							userData: userData[0]
+						});
+					}
 				} else {
-					let thisDate = new Date(), firstTCL = {
+					// no TCLs under the user, generate the first TCL
+					let firstTCL = {
 						TCLID: (await generateID("mmchddb.TCLS")).id,
 						diseaseID: req.query.diseaseID,
 						userID: req.query.userID,

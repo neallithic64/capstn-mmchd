@@ -95,11 +95,11 @@ export default {
   },
   async fetch() {
     const rows = (await axios.get('http://localhost:8080/api/getSettings?userID=' + this.$auth.user.userID)).data;
-	let strTemp;
-	
-	// setting form fields
-	this.cronDetails.day = rows.systemSettings.reportingDay;
-	switch (this.cronDetails.day) {
+    let strTemp;
+    
+    // setting form fields
+    this.cronDetails.day = rows.systemSettings.reportingDay;
+    switch (this.cronDetails.day) {
       case 0: this.dayText = "Sunday"; break;
       case 1: this.dayText = "Monday"; break;
       case 2: this.dayText = "Tuesday"; break;
@@ -108,12 +108,12 @@ export default {
       case 5: this.dayText = "Friday"; break;
       case 6: this.dayText = "Saturday"; break;
     }
-	strTemp = rows.systemSettings.reportingHour + "";
-	this.cronDetails.time = strTemp.padStart(2, "0") + ":";
-	strTemp = rows.systemSettings.reportingMinute + "";
-	this.cronDetails.time += strTemp.padStart(2, "0");
-	this.cronDetails.consent = rows.userSettings.pushDataAccept;
-	this.cronDetails.userID = this.$auth.user.userID;
+    strTemp = rows.systemSettings.reportingHour + "";
+    this.cronDetails.time = strTemp.padStart(2, "0") + ":";
+    strTemp = rows.systemSettings.reportingMinute + "";
+    this.cronDetails.time += strTemp.padStart(2, "0");
+    this.cronDetails.consent = rows.userSettings.pushDataAccept;
+    this.cronDetails.userID = this.$auth.user.userID;
   },
   head() {
     return {
@@ -142,13 +142,13 @@ export default {
       this.dayChange = false;
       this.timeChange = false;
       this.consentChange = false;
-	  const settingsData = await axios.post("http://localhost:8080/api/updateSettings", {
-		cronDetails: this.cronDetails
-	  });
-	  if (settingsData.status === 200) {
-	    this.$toast.success(settingsData.data, {duration: 4000, icon: 'check_circle'});
-	  } else this.$toast.error("Error saving settings.", {duration: 4000, icon: 'error'});
-	  console.log(settingsData);
+      const settingsData = await axios.post("http://localhost:8080/api/updateSettings", {
+        cronDetails: this.cronDetails
+      });
+      if (settingsData.status === 200) {
+        this.$toast.success(settingsData.data, {duration: 4000, icon: 'check_circle'});
+      } else this.$toast.error("Error saving settings.", {duration: 4000, icon: 'error'});
+      console.log(settingsData);
     }
   }
 }

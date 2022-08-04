@@ -101,7 +101,7 @@
         <div v-show="!isEdit" style="margin: 20px 10px 40px; text-align: -webkit-right;">
           <button class="save-button" type="button" @click="save()">
             Submit
-		  </button>
+          </button>
         </div>
       </div>
     </div>
@@ -235,7 +235,7 @@ export default {
           diseaseID: 'DI-0000000000002'
         }
       })).data;
-	  console.log(data);
+      console.log(data);
     } else {
       data = (await axios.get('http://localhost:8080/api/getViewProgAccomp', {
         params: {
@@ -258,7 +258,7 @@ export default {
   methods: {
     countMonth() {
       this.month = this.year == 2022 ? (new Date()).getMonth() : 11;
-	  console.log(this.month);
+      console.log(this.month);
       this.yearData = this.dataSets['y' + this.year];
     },
     borderSide(val) {

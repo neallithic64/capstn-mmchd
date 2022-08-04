@@ -95,36 +95,39 @@
                   <label for="lastname" class="required"> Last Name </label>
                   <input
                     id="lastname"
-                    v-model="formData.patient.lastName"
                     class="input-form-field"
                     :class="isRequired()"
                     type="text"
                     :disabled="inputEdit()"
                     required
+                    :value="formData.patient.lastName.toUpperCase()"
+                    @input="formData.patient.lastName = $event.target.value.toUpperCase()"
                   />
                 </div>
                 <div class="name-field">
                   <label for="firstname" class="required"> First Name </label>
                   <input
                     id="firstname"
-                    v-model="formData.patient.firstName"
                     class="input-form-field"
                     :class="isRequired()"
                     type="text"
                     :disabled="inputEdit()"
                     required
+                    :value="formData.patient.firstName.toUpperCase()"
+                    @input="formData.patient.firstName = $event.target.value.toUpperCase()"
                   />
                 </div>
                 <div class="name-field">
                   <label for="middlename" class="required"> Middle Name </label>
                   <input
                     id="middlename"
-                    v-model="formData.patient.midName"
                     class="input-form-field"
                     :class="isRequired()"
                     type="text"
                     :disabled="inputEdit()"
                     required
+                    :value="formData.patient.midName.toUpperCase()"
+                    @input="formData.patient.midName = $event.target.value.toUpperCase()"
                   />
                 </div>
               </div>
@@ -167,7 +170,7 @@
                       <input
                         id="Female"
                         v-model="formData.patient.sex"
-                        value="Female"
+                        value="FEMALE"
                         class="input-radio"
                         name="sex"
                         type="radio"
@@ -181,7 +184,7 @@
                       <input
                         id="Male"
                         v-model="formData.patient.sex"
-                        value="Male"
+                        value="MALE"
                         class="input-radio"
                         name="sex"
                         type="radio"
@@ -251,20 +254,21 @@
                     :class="isRequired()"
                     required
                   >
-                    <option value="Single">Single</option>
-                    <option value="Married">Married</option>
-                    <option value="Separated">Separated</option>
-                    <option value="Widowed">Widowed</option>
+                    <option value="SINGLE">SINGLE</option>
+                    <option value="MARRIED">MARRIED</option>
+                    <option value="SEPARATED">SEPARATED</option>
+                    <option value="WIDOWED">WIDOWED</option>
                   </select>
                 </div>
                 <div class="field">
                   <label for="indigenousGroup"> Indigenous Group </label>
                   <input
                     id="indigenousGroup"
-                    v-model="formData.patient.indGroup"
                     class="input-form-field"
                     type="text"
                     :disabled="inputEdit()"
+                    :value="formData.patient.indGroup.toUpperCase()"
+                    @input="formData.patient.indGroup = $event.target.value.toUpperCase()"
                   />
                 </div>
               </div>
@@ -274,24 +278,26 @@
                   <label for="occupation" class="required"> Occupation </label>
                   <input
                     id="occupation"
-                    v-model="formData.patient.occupation"
                     class="input-form-field"
                     :class="isRequired()"
                     type="text"
                     :disabled="inputEdit()"
                     required
+                    :value="formData.patient.occupation.toUpperCase()"
+                    @input="formData.patient.occupation = $event.target.value.toUpperCase()"
                   />
                 </div>
                 <div class="field">
                   <label for="occuLoc" class="required"> Occupation Location (Work/School) </label>
                   <input
                     id="occuLoc"
-                    v-model="formData.patient.occuLoc"
                     class="input-form-field"
                     :class="isRequired()"
                     type="text"
                     :disabled="inputEdit()"
                     required
+                    :value="formData.patient.occuLoc.toUpperCase()"
+                    @input="formData.patient.occuLoc = $event.target.value.toUpperCase()"
                   />
                 </div>
               </div>
@@ -303,12 +309,13 @@
                   <label for="occuStreet" class="required"> Occupation Address: Street / House No. </label>
                   <input
                     id="occuStreet"
-                    v-model="formData.patient.occuStreet"
                     class="input-form-field"
                     :class="isRequired()"
                     type="text"
                     :disabled="inputEdit()"
                     required
+                    :value="formData.patient.occuStreet.toUpperCase()"
+                    @input="formData.patient.occuStreet = $event.target.value.toUpperCase()"
                   />
                 </div>
               </div>
@@ -329,7 +336,16 @@
                 </div>
                 <div class="field">
                   <label for="occuBarangay" class="required"> Barangay </label>
-                  <select
+                  <input v-if="patientExist"
+                    id="permBarangay"
+                    v-model="formData.patient.permBrgy"
+                    class="input-form-field"
+                    :class="isRequired()"
+                    type="text"
+                    :disabled="inputEdit()"
+                    required
+                  />
+                  <select v-else
                     id="occuBarangay"
                     v-model="formData.patient.occuBrgy"
                     class="input-form-field"
@@ -347,12 +363,13 @@
                   <label for="currentAddress" class="required"> Current Address: Street / House No. </label>
                   <input
                     id="currentAddress"
-                    v-model="formData.patient.currHouseStreet"
                     class="input-form-field"
                     :class="isRequired()"
                     type="text"
                     :disabled="inputEdit()"
                     required
+                    :value="formData.patient.currHouseStreet.toUpperCase()"
+                    @input="formData.patient.currHouseStreet= $event.target.value.toUpperCase()"
                   />
                 </div>
               </div>
@@ -374,7 +391,16 @@
                 </div>
                 <div class="field">
                   <label for="currBarangay" class="required"> Barangay </label>
-                  <select
+                  <input v-if="patientExist"
+                    id="currBarangay"
+                    v-model="formData.patient.currBrgy"
+                    class="input-form-field"
+                    :class="isRequired()"
+                    type="text"
+                    :disabled="inputEdit()"
+                    required
+                  />
+                  <select v-else
                     id="currBarangay"
                     v-model="formData.patient.currBrgy"
                     class="input-form-field"
@@ -408,10 +434,11 @@
                   <label for="permAddress"> Permanent Address: Street / House No. </label>
                   <input
                     id="permAddress"
-                    v-model="formData.patient.permHouseStreet"
                     class="input-form-field"
                     type="text"
                     :disabled="inputEdit()"
+                    :value="formData.patient.permHouseStreet.toUpperCase()"
+                    @input="formData.patient.permHouseStreet= $event.target.value.toUpperCase()"
                   />
                 </div>
               </div>
@@ -425,14 +452,23 @@
                     class="input-form-field"
                     name="permCity"
                     :disabled="inputEdit()"
-					@change="getLocBrgyList(formData.patient.permCity, 'permBarangay')"
+                              @change="getLocBrgyList(formData.patient.permCity, 'permBarangay')"
                   >
                   <option v-for="(city, i) in cityList" :key=i>{{city}}</option>
                   </select>
                 </div>
                 <div class="field">
                   <label for="permBarangay"> Barangay </label>
-                  <select
+                  <input v-if="patientExist"
+                    id="permBarangay"
+                    v-model="formData.patient.permBrgy"
+                    class="input-form-field"
+                    :class="isRequired()"
+                    type="text"
+                    :disabled="inputEdit()"
+                    required
+                  />
+                  <select v-else
                     id="permBarangay"
                     v-model="formData.patient.permBrgy"
                     class="input-form-field"
@@ -450,12 +486,13 @@
                   <label for="district" class="required"> District </label>
                   <input
                     id="district"
-                    v-model="formData.patient.district"
                     class="input-form-field"
                     :class="isRequired()"
                     type="text"
                     :disabled="inputEdit()"
                     required
+                    :value="formData.patient.district.toUpperCase()"
+                    @input="formData.patient.district = $event.target.value.toUpperCase()"
                   />
                 </div>
                 <div class="field">
@@ -477,12 +514,13 @@
                   <label for="contactperson" class="required"> Parent / Caregiver </label>
                   <input
                     id="contactperson"
-                    v-model="formData.patient.guardianName"
                     class="input-form-field"
                     :class="isRequired()"
                     type="text"
                     :disabled="inputEdit()"
                     required
+                    :value="formData.patient.guardianName.toUpperCase()"
+                    @input="formData.patient.guardianName = $event.target.value.toUpperCase()"
                   />
                 </div>
                 <div class="name-field">
@@ -592,12 +630,13 @@
                   <label for="reporter" class="required"> Name of Reporter </label>
                   <input
                     id="reporter"
-                    v-model="formData.cases.reporterName"
                     class="input-form-field"
                     :class="isRequired()"
                     type="text"
                     :disabled="inputEdit()"
                     required
+                    :value="formData.cases.reporterName.toUpperCase()"
+                    @input="formData.cases.reporterName = $event.target.value.toUpperCase()"
                   />
                 </div>
                 <div class="field">
@@ -636,12 +675,13 @@
                   <label for="investigatorName" class="required"> Name of Investigator </label>
                   <input
                     id="investigatorName"
-                    v-model="formData.cases.investigatorName"
                     class="input-form-field"
                     :class="isRequired()"
                     type="text"
                     :disabled="inputEdit()"
                     required
+                    :value="formData.cases.investigatorName.toUpperCase()"
+                    @input="formData.cases.investigatorName = $event.target.value.toUpperCase()"
                   />
                 </div>
                 <div class="field">
@@ -1279,13 +1319,14 @@
                             Place of Exposure:
                             <input
                                 id="exposePlace"
-                                v-model="formData.caseData.exposePlace"
                                 class="input-form-field"
                                 type="text"
                                 style="width: 175px; height: 19px; margin: 0 2px"
                                 :class="isRequired()"
                                 :disabled="inputEdit()"
                                 required
+                                :value="formData.caseData.exposePlace.toUpperCase()"
+                                @input="formData.caseData.exposePlace = $event.target.value.toUpperCase()"
                             />
                         </label>
                       </div>
@@ -1380,11 +1421,12 @@
                           Others, specify
                             <input
                                 id="exposeAnimalOthers"
-                                v-model="formData.caseData.exposeAnimalOthers"
                                 class="input-form-field"
                                 type="text"
                                 style="width: 175px; height: 19px; margin: 0 2px"
                                 :disabled="inputEdit()"
+                                :value="formData.caseData.exposeAnimalOthers.toUpperCase()"
+                                @input="formData.caseData.exposeAnimalOthers = $event.target.value.toUpperCase()"
                             />
                         </label>
                       </div>
@@ -1453,11 +1495,12 @@
                           Others, specify
                             <input
                                 id="exposeAnimalStatusOthers"
-                                v-model="formData.caseData.exposeAnimalStatusOther"
                                 class="input-form-field"
                                 type="text"
                                 style="width: 175px; height: 19px; margin: 0 2px"
                                 :disabled="inputEdit()"
+                                :value="formData.caseData.exposeAnimalStatusOther.toUpperCase()"
+                                @input="formData.caseData.exposeAnimalStatusOther = $event.target.value.toUpperCase()"
                             />
                         </label>
                       </div>
@@ -1548,13 +1591,14 @@
                         </label>
                         <input
                             id="vaccineBrand"
-                            v-model="formData.caseData.vaccineBrand"
                             class="input-form-field"
                             :class="isRequired()"
                             type="text"
                             style="width: 175px; height: 25px"
                             :disabled="inputEdit()"
                             required
+                            :value="formData.caseData.vaccineBrand.toUpperCase()"
+                            @input="formData.caseData.vaccineBrand = $event.target.value.toUpperCase()"
                         />
                     </div>
                     <div class="vaccine-field field vaccine-label" style="flex-direction: row;">
@@ -1855,13 +1899,14 @@
                   </label>
                   <input
                     id="finalDiagnosis"
-                    v-model="formData.caseData.finalDiagnosis"
                     class="input-form-field"
                     :class="isRequired()"
                     style="width: 50%"
                     type="text"
                     :disabled="inputEdit()"
                     required
+                    :value="formData.caseData.finalDiagnosis.toUpperCase()"
+                    @input="formData.caseData.finalDiagnosis = $event.target.value.toUpperCase()"
                   />
                 </div>
               </div>
@@ -1995,12 +2040,13 @@
                     </label>
                     <input
                       id="labTestResult"
-                      v-model="formData.caseData.labTestResult"
                       class="input-form-field"
                       type="text"
                       :disabled="inputEdit()"
                       :class="isRequired()"
                       required
+                      :value="formData.caseData.labTestResult.toUpperCase()"
+                      @input="formData.caseData.labTestResult = $event.target.value.toUpperCase()"
                     />
                   </div>
                 </div>
@@ -2255,22 +2301,22 @@ export default {
       classification: {},
       labList: [],
       cityList: [
-        'Caloocan City',
-        'Las Piñas City',
-        'Makati City',
-        'Malabon City',
-        'Mandaluyong City',
-        'Manila City',
-        'Marikina City',
-        'Muntinlupa City',
-        'Navotas City',
-        'Parañaque City',
-        'Pasay City',
-        'Pasig City',
-        'Quezon City',
-        'San Juan City',
-        'Taguig City',
-        'Valenzuela City',
+        'CALOOCAN CITY',
+        'LAS PIÑAS CITY',
+        'MAKATI CITY',
+        'MALABON CITY',
+        'MANDALUYONG CITY',
+        'MANILA CITY',
+        'MARIKINA CITY',
+        'MUNTINLUPA CITY',
+        'NAVOTAS CITY',
+        'PARAÑAQUE CITY',
+        'PASAY CITY',
+        'PASIG CITY',
+        'QUEZON CITY',
+        'SAN JUAN CITY',
+        'TAGUIG CITY',
+        'VALENZUELA CITY',
       ],
     }
   },
@@ -2627,10 +2673,6 @@ export default {
       this.formData.patient.currBrgy = patient.currBrgy;
       this.formData.patient.permBrgy = patient.permBrgy;
       this.pageNum++;
-
-      // this.getLocBrgyList(this.formData.patient.occuCity,'occuBarangay');
-      // this.getLocBrgyList(this.formData.patient.currCity,'currBarangay');
-      // this.getLocBrgyList(this.formData.patient.permCity,'permBarangay');
       this.patientExist = true;
     },
     searchPatient(event) {
@@ -2686,9 +2728,9 @@ export default {
       this.formData.patient.permBrgy = this.formData.patient.currBrgy;
 
       // eslint-disable-next-line no-console
-      console.log(this.formData.patient.permBrgy)
+      console.log(this.formData.patient.permBrgy);
       // eslint-disable-next-line no-console
-      console.log(this.formData.patient.currBrgy)
+      console.log(this.formData.patient.currBrgy);
     }
   },
 }

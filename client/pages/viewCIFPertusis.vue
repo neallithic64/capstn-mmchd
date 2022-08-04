@@ -233,10 +233,10 @@
                     :class="isRequired()"
                     required
                   >
-                    <option value="Single">Single</option>
-                    <option value="Married">Married</option>
-                    <option value="Separated">Separated</option>
-                    <option value="Widowed">Widowed</option>
+                    <option value="SINGLE">SINGLE</option>
+                    <option value="MARRIED">MARRIED</option>
+                    <option value="SEPARATED">SEPARATED</option>
+                    <option value="WIDOWED">WIDOWED</option>
                   </select>
                 </div>
                 <div class="field">
@@ -391,7 +391,7 @@
                     class="input-form-field"
                     name="permCity"
                     :disabled="inputEdit()"
-					@change="getLocBrgyList(formData.patient.permCity, 'permBarangay')"
+                    @change="getLocBrgyList(formData.patient.permCity, 'permBarangay')"
                   >
                   <option v-for="(city, i) in cityList" :key=i>{{city}}</option>
                   </select>

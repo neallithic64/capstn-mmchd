@@ -129,12 +129,12 @@ export default {
       this.$toast.show('Loading...', {className: 'blink', icon: 'hourglass_top'});
     }
     this.dayTime = (new Date()).toString().split(":").slice(0, 2).join(":");
-	const data = (await axios.get('http://localhost:8080/api/getAllTCLs')).data;
-	for (let i = 0; i < data.length; i++) {
-	  data[i].month = this.monthsList[data[i].month];
-	  data[i].submitStatus = data[i].isPushed ? "Submitted" : "Ongoing";
-	}
-	this.dataSets = data;
+    const data = (await axios.get('http://localhost:8080/api/getAllTCLs')).data;
+    for (let i = 0; i < data.length; i++) {
+      data[i].month = this.monthsList[data[i].month];
+      data[i].submitStatus = data[i].isPushed ? "Submitted" : "Ongoing";
+    }
+    this.dataSets = data;
     if (this.dataSets.length > 0) {
       this.$toast.clear();
       this.$toast.success('All TCLs loaded!', {duration: 4000, icon: 'check_circle'});

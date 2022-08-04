@@ -235,10 +235,10 @@
                     :class="isRequired()"
                     required
                   >
-                    <option value="Single">Single</option>
-                    <option value="Married">Married</option>
-                    <option value="Separated">Separated</option>
-                    <option value="Widowed">Widowed</option>
+                    <option value="SINGLE">SINGLE</option>
+                    <option value="MARRIED">MARRIED</option>
+                    <option value="SEPARATED">SEPARATED</option>
+                    <option value="WIDOWED">WIDOWED</option>
                   </select>
                 </div>
                 <div class="field">
@@ -394,7 +394,7 @@
                     name="permCity"
                     class="input-form-field"
                     :disabled="inputEdit()"
-					@change="getLocBrgyList(formData.patient.permCity,'permBarangay')"
+                    @change="getLocBrgyList(formData.patient.permCity,'permBarangay')"
                   >
                   <option v-for="(city, i) in cityList" :key=i>{{city}}</option>
                   </select>
@@ -1654,6 +1654,24 @@ export default {
         updatedDate: '2020-10-10',
         status: 'IDK',
       },
+      cityList: [
+        'CALOOCAN CITY',
+        'LAS PIÑAS CITY',
+        'MAKATI CITY',
+        'MALABON CITY',
+        'MANDALUYONG CITY',
+        'MANILA CITY',
+        'MARIKINA CITY',
+        'MUNTINLUPA CITY',
+        'NAVOTAS CITY',
+        'PARAÑAQUE CITY',
+        'PASAY CITY',
+        'PASIG CITY',
+        'QUEZON CITY',
+        'SAN JUAN CITY',
+        'TAGUIG CITY',
+        'VALENZUELA CITY',
+      ],
     }
   },
   async fetch() {
@@ -1666,14 +1684,14 @@ export default {
     this.CRFData = data.crfData;
     this.dateLastUpdated = data.dateLastUpdated;
     this.caseHistory = data.caseHistory;
-	if ((!['Chief', 'Staff', 'resuHead', 'chdDirector'].some(e => this.$auth.user.userType.includes(e)) && !this.DRUData.pushDataAccept) ||
-	    (this.$auth.user.druName !== this.DRUData.druName)) {
-	  this.formData.patient.firstName = "";
-	  this.formData.patient.midName = "";
-	  this.formData.patient.lastName = "";
-	  this.formData.patient.currHouseStreet = "";
-	  this.formData.patient.permHouseStreet = "";
-	}
+    if ((!['Chief', 'Staff', 'resuHead', 'chdDirector'].some(e => this.$auth.user.userType.includes(e)) && !this.DRUData.pushDataAccept) ||
+        (this.$auth.user.druName !== this.DRUData.druName)) {
+      this.formData.patient.firstName = "";
+      this.formData.patient.midName = "";
+      this.formData.patient.lastName = "";
+      this.formData.patient.currHouseStreet = "";
+      this.formData.patient.permHouseStreet = "";
+    }
     this.editLabResult('cancel')
     this.editPatientOutcome('cancel')
     

@@ -26,7 +26,7 @@
             </ul>
           </div>
           <div style="display:inline-flex">
-		    {{ monthsList[month] + " " + year }}
+            {{ monthsList[month] + " " + year }}
             <!--select v-model="month" class="input-year" style="float: right;margin-right: 10px;">
               <option v-for="index in (0,maxMonth)" :key="index" :value="index-1">
                 {{monthsList[index-1]}}
@@ -51,7 +51,7 @@
         />
         <div v-if="year+'' === (new Date()).getFullYear()+'' && month+'' === (new Date()).getMonth()+''" class="addIPaddButton">
           <button class="addIPaddText"><a :href="'/addImmunizationProgEntry?TCLID=' + TCLID">+ add an entry</a></button>
-		</div>
+        </div>
       </div>
         <div v-if="year+'' === (new Date()).getFullYear()+'' && month+'' === (new Date()).getMonth()+''" class="addIPendButt">
           <!--button class="back-button" type="button" @click="save()">
@@ -163,7 +163,7 @@ export default {
             expectFormat: 'DD MMM YYYY',
             sortable: true,
           },
-		  /*
+          /*
           {
             title: 'Last updated',
             key: 'updatedDate',
@@ -173,7 +173,7 @@ export default {
             expectFormat: 'DD MMM YYYY',
             sortable: true,
           },
-		  */
+          */
           {
             title: 'Immunization Status',
             key: 'status',
@@ -196,26 +196,26 @@ export default {
     }
   },
   async mounted() {
-	const rows = (await axios.get('http://localhost:8080/api/getTCL', {
-	  params: {
-	    TCLID: this.$route.query.TCLID,
-		diseaseID: "DI-0000000000003",
-		userID: this.$auth.user.userID
-	  }
-	})).data;
-	console.log(rows);
-	for (let i = 0; i < rows.tclData.length; i++) {
-	  rows.tclData[i].dateAdded = this.convDatePHT(new Date(rows.tclData[i].dateAdded));
-	  rows.tclData[i].action = rows.tclData[i].immunizationStatus === "Complete" ? "view" : "update";
-	}
-	this.dataSets = rows.tclData;
-	this.city = rows.userData.city;
-	this.barangay = rows.userData.brgy;
+    const rows = (await axios.get('http://localhost:8080/api/getTCL', {
+      params: {
+        TCLID: this.$route.query.TCLID,
+        diseaseID: "DI-0000000000003",
+        userID: this.$auth.user.userID
+      }
+    })).data;
+    console.log(rows);
+    for (let i = 0; i < rows.tclData.length; i++) {
+      rows.tclData[i].dateAdded = this.convDatePHT(new Date(rows.tclData[i].dateAdded));
+      rows.tclData[i].action = rows.tclData[i].immunizationStatus === "Complete" ? "view" : "update";
+    }
+    this.dataSets = rows.tclData;
+    this.city = rows.userData.city;
+    this.barangay = rows.userData.brgy;
     this.year = rows.TCL.year;
     this.month = rows.TCL.month;
     this.countMonth();
-	this.TCLID = this.$route.query.TCLID ? this.$route.query.TCLID : rows.TCL.TCLID;
-	if (!rows.pushDataAccept) this.popupOpen = true;
+    this.TCLID = this.$route.query.TCLID ? this.$route.query.TCLID : rows.TCL.TCLID;
+    if (!rows.pushDataAccept) this.popupOpen = true;
     else this.popupOpen = false;
   },
   methods: {
@@ -223,9 +223,9 @@ export default {
       try {
         this.popupOpen = !this.popupOpen;
         const result = await axios.post('http://localhost:8080/api/updatePushData', {
-		  userID: this.$auth.user.userID,
-		  pushDataAccept: change
-		});
+          userID: this.$auth.user.userID,
+          pushDataAccept: change
+        });
         if (result.status === 200) {
           this.$toast.success('User Settings Updated!', {duration: 4000, icon: 'check_circle'});
         } else {
@@ -240,14 +240,14 @@ export default {
         this.$toast.error('Something went wrong!', {duration: 4000, icon: 'error'});
       }
     },
-	async submit() {
-	  try {
+    async submit() {
+      try {
         const result = await axios.post('http://localhost:8080/api/submitTCL', {
-		  TCLID: this.TCLID
-		});
+          TCLID: this.TCLID
+        });
         if (result.status === 200) {
           this.$toast.success('TCL submitted!', {duration: 4000, icon: 'check_circle'});
-		  window.location = '/allImmunizationProg';
+          window.location = '/allImmunizationProg';
         } else {
           // eslint-disable-next-line no-console
           console.log(result);
@@ -259,7 +259,7 @@ export default {
         console.log(e);
         this.$toast.error('Something went wrong!', {duration: 4000, icon: 'error'});
       }
-	},
+    },
     countMonth() {
       this.maxMonth = this.year == 2022 ? (new Date()).getMonth() : 11;
     },
@@ -307,7 +307,7 @@ export default {
       link.setAttribute("download", "ImmunizationProgram.csv");
       link.click();
     },
-	convDatePHT(d) { // only accepts Date object; includes checking
+    convDatePHT(d) { // only accepts Date object; includes checking
       return !isNaN(Date.parse(d)) ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10) : "N/A";
     },
   },

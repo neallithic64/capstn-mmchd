@@ -187,10 +187,10 @@
                     :class="isRequired()"
                     required
                   >
-                    <option value="Single">Single</option>
-                    <option value="Married">Married</option>
-                    <option value="Separated">Separated</option>
-                    <option value="Widowed">Widowed</option>
+                    <option value="SINGLE">SINGLE</option>
+                    <option value="MARRIED">MARRIED</option>
+                    <option value="SEPARATED">SEPARATED</option>
+                    <option value="WIDOWED">WIDOWED</option>
                   </select>
                 </div>
                 <div class="field">
@@ -877,13 +877,13 @@
         </form>
         <hr class="viewPatienthr"/>
 
-        <form v-if="immunization.status!=='N/A'" id="patient3" type="submit">
+        <form v-if="immunization.immunizationStatus!=='N/A'" id="patient3" type="submit">
           <div id="case-investigation-form" class="center">
             <div style="display: flex; flex-direction: width; justify-content: space-between;">
               <h2 id="form-header" class="viewPatienth2">
                 Immunization Program Status
               </h2>
-              <a v-if="immunization.status!=''" href="/viewImmunizationProgEntry" class="immunLink">
+              <a v-if="immunization.immunizationStatus!=''" href="/viewImmunizationProgEntry" class="immunLink">
                 View Immunization Program Record >
               </a>
             </div>
@@ -901,36 +901,36 @@
                 </thead>
                 <tr>
                   <td>
-                    <img v-if="immunization.bcg" src="~/assets/img/check.png" style="width:30px"/>
+                    <img v-if="immunization.BCG" src="~/assets/img/check.png" style="width:30px"/>
                     <img v-else src="~/assets/img/x.png" style="width:30px"/>
                   </td>
                   <td>
-                    <img v-if="immunization.hepa2" src="~/assets/img/check.png" style="width:30px"/>
+                    <img v-if="immunization.HEP" src="~/assets/img/check.png" style="width:30px"/>
                     <img v-else src="~/assets/img/x.png" style="width:30px"/>
                   </td>
                   <td>
-                    <img v-if="immunization.opv3" src="~/assets/img/check.png" style="width:30px"/>
+                    <img v-if="immunization.OPV" src="~/assets/img/check.png" style="width:30px"/>
                     <img v-else src="~/assets/img/x.png" style="width:30px"/>
                   </td>
                   <td>
-                    <img v-if="immunization.penta3" src="~/assets/img/check.png" style="width:30px"/>
+                    <img v-if="immunization.PEN" src="~/assets/img/check.png" style="width:30px"/>
                     <img v-else src="~/assets/img/x.png" style="width:30px"/>
                   </td>
                   <td>
-                    <img v-if="immunization.pcv3" src="~/assets/img/check.png" style="width:30px"/>
+                    <img v-if="immunization.PCV" src="~/assets/img/check.png" style="width:30px"/>
                     <img v-else src="~/assets/img/x.png" style="width:30px"/>
                   </td>
                   <td>
-                    <img v-if="immunization.mcv2" src="~/assets/img/check.png" style="width:30px"/>
+                    <img v-if="immunization.MCV" src="~/assets/img/check.png" style="width:30px"/>
                     <img v-else src="~/assets/img/x.png" style="width:30px"/>
                   </td>
                   <td>
-                    <img v-if="immunization.dengue3" src="~/assets/img/check.png" style="width:30px"/>
+                    <img v-if="immunization.Den" src="~/assets/img/check.png" style="width:30px"/>
                     <img v-else src="~/assets/img/x.png" style="width:30px"/>
                   </td>
                   
                   <td>
-                    <span v-if="immunization.status==='Complete'" class="immunStatus" style="background-color:#008d41"> COMPLETE </span>
+                    <span v-if="immunization.immunizationStatus==='Complete'" class="immunStatus" style="background-color:#008d41"> COMPLETE </span>
                     <span v-else class="immunStatus" style="background-color:#346083"> ONGOING </span>
                   </td>
                 </tr>
@@ -1174,32 +1174,32 @@ export default {
         },
       },
       cityList: [
-        'Caloocan City',
-        'Las Piñas City',
-        'Makati City',
-        'Malabon City',
-        'Mandaluyong City',
-        'Manila City',
-        'Marikina City',
-        'Muntinlupa City',
-        'Navotas City',
-        'Parañaque City',
-        'Pasay City',
-        'Pasig City',
-        'Quezon City',
-        'San Juan City',
-        'Taguig City',
-        'Valenzuela City',
+        'CALOOCAN CITY',
+        'LAS PIÑAS CITY',
+        'MAKATI CITY',
+        'MALABON CITY',
+        'MANDALUYONG CITY',
+        'MANILA CITY',
+        'MARIKINA CITY',
+        'MUNTINLUPA CITY',
+        'NAVOTAS CITY',
+        'PARAÑAQUE CITY',
+        'PASAY CITY',
+        'PASIG CITY',
+        'QUEZON CITY',
+        'SAN JUAN CITY',
+        'TAGUIG CITY',
+        'VALENZUELA CITY',
       ],
       immunization: {
-        status: 'Complete', // n/a ongoing complete
-        bcg: true,
-        hepa2: false,
-        opv3: true,
-        penta3: true,
-        pcv3: false,
-        mcv2: false,
-        dengue3: true,
+        immunizationStatus: 'Complete', // n/a ongoing complete
+        BCG: true,
+        HEP: false,
+        OPV: true,
+        PEN: true,
+        PCV: false,
+        MCV: false,
+        Den: true,
       },
     }
   },
@@ -1229,14 +1229,15 @@ export default {
     this.formData.riskFactors = data.riskFactors; // working already
     this.DRUData = data.DRUData;
     this.allData = data.rowData;
-	if ((!['Chief', 'Staff', 'resuHead', 'chdDirector'].some(e => this.$auth.user.userType.includes(e)) && !this.DRUData.pushDataAccept) ||
-	    (this.$auth.user.druName !== this.DRUData.druName)) {
-	  this.formData.patient.firstName = "";
-	  this.formData.patient.midName = "";
-	  this.formData.patient.lastName = "";
-	  this.formData.patient.currHouseStreet = "";
-	  this.formData.patient.permHouseStreet = "";
-	}
+    this.immunization = data.immunization;
+    if ((!['Chief', 'Staff', 'resuHead', 'chdDirector'].some(e => this.$auth.user.userType.includes(e)) && !this.DRUData.pushDataAccept) ||
+        (this.$auth.user.druName !== this.DRUData.druName)) {
+      this.formData.patient.firstName = "";
+      this.formData.patient.midName = "";
+      this.formData.patient.lastName = "";
+      this.formData.patient.currHouseStreet = "";
+      this.formData.patient.permHouseStreet = "";
+    }
     this.update('cancel');
   }, 
   head() {

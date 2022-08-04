@@ -95,7 +95,7 @@
                   <input
                     id="print"
                     v-model="healthEvent.source"
-                    value="Print"
+                    value="PRINT"
                     class="input-radio"
                     :class="optionsRequired()"
                     name="source"
@@ -109,7 +109,7 @@
                   <input
                     id="internet"
                     v-model="healthEvent.source"
-                    value="Internet"
+                    value="INTERNET"
                     class="input-radio"
                     :class="optionsRequired()"
                     name="source"
@@ -123,7 +123,7 @@
                   <input
                     id="television"
                     v-model="healthEvent.source"
-                    value="Television"
+                    value="TELEVISION"
                     class="input-radio"
                     :class="optionsRequired()"
                     name="source"
@@ -137,7 +137,7 @@
                   <input
                     id="radioSource"
                     v-model="healthEvent.source"
-                    value="Radio"
+                    value="RADIO"
                     class="input-radio"
                     :class="optionsRequired()"
                     name="source"
@@ -165,7 +165,7 @@
                   <input
                     id="public"
                     v-model="healthEvent.source"
-                    value="Public"
+                    value="PUBLIC"
                     class="input-radio"
                     :class="optionsRequired()"
                     name="source"
@@ -240,11 +240,12 @@
                   </div>
                   <input
                     id="locHouseStreet"
-                    v-model="healthEvent.locHouseStreet"
                     :class="isRequired()"
                     type="text"
                     :disabled="inputEdit()"
                     required
+                    :value="healthEvent.locHouseStreet.toUpperCase()"
+                    @input="healthEvent.locHouseStreet = $event.target.value.toUpperCase()"
                   />
                 </div>
               </div>
@@ -258,22 +259,22 @@
                     :disabled="inputEdit()"
                     required
                     @change="getLocBrgyList()">
-                    <option value="Caloocan City">Caloocan</option>
-                    <option value="Las Piñas City">Las Piñas</option>
-                    <option value="Makati City">Makati</option>
-                    <option value="Malabon City">Malabon</option>
-                    <option value="Mandaluyong City">Mandaluyong</option>
-                    <option value="Manila City">Manila</option>
-                    <option value="Marikina City">Marikina</option>
-                    <option value="Muntinlupa City">Muntinlupa</option>
-                    <option value="Navotas City">Navotas</option>
-                    <option value="Parañaque City">Parañaque</option>
-                    <option value="Pasay City">Pasay</option>
-                    <option value="Pasig City">Pasig</option>
-                    <option value="Quezon City">Quezon City</option>
-                    <option value="San Juan City">San Juan</option>
-                    <option value="Taguig City">Taguig</option>
-                    <option value="Valenzuela City">Valenzuela</option>
+                      <option value="CALOOCAN CITY">CALOOCAN CITY</option>
+                      <option value="LAS PIÑAS CITY">LAS PIÑAS CITY</option>
+                      <option value="MAKATI CITY">MAKATI CITY</option>
+                      <option value="MALABON CITY">MALABON CITY</option>
+                      <option value="MANDALUYING CITY">MANDALUYING CITY</option>
+                      <option value="MANILA CITY">MANILA CITY</option>
+                      <option value="MARIKINA CITY">MARIKINA CITY</option>
+                      <option value="MUNTINLUPA CITY">MUNTINLUPA CITY</option>
+                      <option value="NAVOTAS CITY">NAVOTAS CITY</option>
+                      <option value="PARAÑAQUE CITY">PARAÑAQUE CITY</option>
+                      <option value="PASAY CITY">PASAY CITY</option>
+                      <option value="PASIG CITY">PASIG CITY</option>
+                      <option value="QUEZON CITY">QUEZON CITY</option>
+                      <option value="SAN JUAN CITY">SAN JUAN CITY</option>
+                      <option value="TAGUIG CITY">TAGUIG CITY</option>
+                      <option value="VALENZUELA CITY">VALENZUELA CITY</option>
                   </select>
                 </div>
 
