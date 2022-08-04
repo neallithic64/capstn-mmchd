@@ -125,45 +125,49 @@ const indexFunctions = {
 			timeliness: reportsOnTime / reportsReceived,
 			completeness: reportsReceived / reportsExpected
 		 */
-		let casesQuery = await db.exec(`SELECT YEARWEEK(c.reportDate, 2) AS weekNo, c.reportedBy,
+		let casesQuery = await db.exec(`SELECT YEARWEEK(c.reportDate, 2) AS weekNo,
 				COUNT(c.caseID) AS reportsReceived, c.diseaseID, a.city, 5 AS withDetected,
-				5 AS withDisease, 5 AS withoutDetected, 5 AS withoutDisease
+				5 AS withDisease, 5 AS withoutDetected, 5 AS withoutDisease, c.reportedBy
 				FROM mmchddb.CASES c
 				LEFT JOIN mmchddb.USERS u ON c.reportedBy = u.userID
 				LEFT JOIN mmchddb.ADDRESSES a ON u.addressID = a.addressID
 				GROUP BY weekNo;`);
 		casesQuery.forEach(async function(e) {
 			e.evalID = (await generateID("SURVEILLANCE_EVAL")).id;
+			// ^ wrong
 			e.reportsOnTime = e.reportsReceived * 0.9;
 			e.reportsExpected = e.reportsReceived * 1.1;
 			e.timeliness = e.reportsOnTime / e.reportsReceived;
 			e.completeness = e.reportsReceived / e.reportsExpected;
 		});
-		// let CRFQuery = await db.exec(`SELECT c.CRFID, c.isPushed,
-		// 		CONCAT(c.year, LPAD(c.week, 2, 0)) AS weekNo, COUNT(ca.caseID) AS CRFCount,
-		// 		YEARWEEK(MAX(ca.reportDate)) AS lastCaseWeek, u.druName
-		// 		FROM mmchddb.CRFS c
-		// 		LEFT JOIN mmchddb.USERS u ON c.userID = u.userID
-		// 		LEFT JOIN mmchddb.CASES ca ON c.CRFID = ca.CRFID
-		// 		GROUP BY c.CRFID;`);
 		
 		// tcl eval
 		/* columns:
 			pevalID: to be generated in generateID("TCL_EVAL"),
 			dateEvaluated: 2022-01-01 02:00:00,
-			timeliness: reportsOnTime / reportsReceived,
-			completeness: reportsReceived / reportsExpected,
+			timeliness: hard-code to 1,
+			completeness: hard-code to 1,
 			oddsRatio
-			TE-0000000000000	US-0000000000004	TC-0000000000000	2022-01-01 02:00:00	1	1	0.5
 		 */
-		let TCLQuery = await db.exec(`SELECT YEARWEEK(c.reportDate, 2) AS weekNo, c.reportedBy,
-			COUNT(c.caseID) AS reportsReceived, c.diseaseID, a.city, 5 AS withDetected,
-			5 AS withDisease, 5 AS withoutDetected, 5 AS withoutDisease
-			FROM mmchddb.TCLS t
-			LEFT JOIN mmchddb.USERS u ON c.reportedBy = u.userID
-			LEFT JOIN mmchddb.ADDRESSES a ON u.addressID = a.addressID
-			GROUP BY weekNo;`);
-		res.status(200).send(casesQuery);
+		let TCLQuery = await db.exec(`SELECT YEARWEEK(c.reportDate, 2) AS weekNo,
+				c.reportedBy, COUNT(td.patientID) AS cases, d.diseaseName AS disease,
+				SUM(IF(c.caseLevel LIKE "%Confirm%", 1, 0)) AS confirmCount,
+				SUM(IF(c.caseLevel NOT LIKE "%Confirm%", 1, 0)) AS unconfirmCount,
+				SUM(CASE WHEN td.immunizationStatus = "Complete" THEN 1 ELSE 0 END) AS treated
+				FROM mmchddb.TCLS t
+				LEFT JOIN mmchddb.TCL_DATA td ON t.TCLID = td.TCLID
+				LEFT JOIN CASES c ON c.patientID = t.patientID
+				LEFT JOIN mmchddb.DISEASES d ON t.diseaseID = d.diseaseID
+				GROUP BY t.TCLID;`);
+		TCLQuery.forEach(async function(e) {
+			e.pevalID = (await generateID("TCL_EVAL")).id;
+			// ^ wrong
+			e.dateEvaluated = new Date("2022-01-01 02:00:00");
+			e.timeliness = 1;
+			e.completeness = 1;
+			e.oddsRatio = e.confirmCount / e.unconfirmCount;
+		});
+		res.status(200).send([casesQuery, TCLQuery]);
 	},
 	
 	/*
