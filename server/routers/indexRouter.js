@@ -13,6 +13,7 @@ const m5Cont = require("../controllers/m5Controller");
 // Testing Routes
 router.get("/", m1Cont.testConn);
 router.get("/mkdata", m1Cont.mkData);
+router.get("/evalCalc", m5Cont.evalCalc);
 
 
 // GET Routes

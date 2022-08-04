@@ -105,9 +105,8 @@ function dateToString(date) {
 }
 
 const indexFunctions = {
-	mkData: async function(req, res) {
+	evalCalc: async function(req, res) {
 		// need to calculate the evals
-		let a;
 		// surveillance eval
 		// collect all the cases in 2022 + yearweek + druname
 		let cases = await db.exec(`SELECT *, YEARWEEK(c.reportDate, 2) AS weekNo, u.druName
