@@ -53,6 +53,8 @@ function getPrefix(table) {
 			return "OU-";
 		case "mmchddb.SURVEILLANCE_EVAL":
 			return "SE-";
+		case "mmchddb.TCL_EVAL":
+			return "TE-";
 		case "mmchddb.PROGRAM_EVAL":
 			return "PE-";
 		case "mmchddb.PROGRAM_ACCOMPS":
@@ -98,6 +100,26 @@ async function generateID(table, checkObj) {
 	}
 }
 
+async function generateIDs(table, numRows) {
+	try {
+		let rowcount = await db.findRowCount(table);
+		let ids = [];
+		if (numRows > 0) {
+			for (i = 0; i < numRows; i++) {
+				let tempID = getPrefix(table);
+				let suffix = rowcount + i;
+				for (let j = 0; j < 13 - suffix.toString().length; j++)
+					tempID += '0';
+				tempID += suffix.toString();
+				ids.push(tempID);
+			} return ids;
+		} else return false;
+	} catch(e) {
+		console.log(e);
+		return false;
+	}
+}
+
 function dateToString(date) {
 	let dateString = new Date(date);
 	let month = dateString.getMonth() + 1;
@@ -107,6 +129,7 @@ function dateToString(date) {
 const indexFunctions = {
 	evalCalc: async function(req, res) {
 		// need to calculate the evals
+		let ids;
 		// surveillance eval
 		// collect all the cases in 2022 + yearweek + druname
 		let cases = await db.exec(`SELECT *, YEARWEEK(c.reportDate, 2) AS weekNo, u.druName
@@ -131,9 +154,9 @@ const indexFunctions = {
 				LEFT JOIN mmchddb.USERS u ON c.reportedBy = u.userID
 				LEFT JOIN mmchddb.ADDRESSES a ON u.addressID = a.addressID
 				GROUP BY weekNo;`);
-		casesQuery.forEach(async function(e) {
-			e.evalID = (await generateID("SURVEILLANCE_EVAL")).id;
-			// ^ wrong
+		ids = await generateIDs("mmchddb.SURVEILLANCE_EVAL", casesQuery.length);
+		casesQuery.forEach((e, i) => {
+			e.evalID = ids[i];
 			e.reportsOnTime = e.reportsReceived * 0.9;
 			e.reportsExpected = e.reportsReceived * 1.1;
 			e.timeliness = e.reportsOnTime / e.reportsReceived;
@@ -147,24 +170,27 @@ const indexFunctions = {
 			timeliness: hard-code to 1,
 			completeness: hard-code to 1,
 			oddsRatio
-		 */
-		let TCLQuery = await db.exec(`SELECT YEARWEEK(c.reportDate, 2) AS weekNo,
-				c.reportedBy, COUNT(td.patientID) AS cases, d.diseaseName AS disease,
+			*/
+		let TCLQuery = await db.exec(`SELECT t.TCLID,
+				COUNT(td.patientID) AS cases, d.diseaseName AS disease,
 				SUM(IF(c.caseLevel LIKE "%Confirm%", 1, 0)) AS confirmCount,
 				SUM(IF(c.caseLevel NOT LIKE "%Confirm%", 1, 0)) AS unconfirmCount,
 				SUM(CASE WHEN td.immunizationStatus = "Complete" THEN 1 ELSE 0 END) AS treated
 				FROM mmchddb.TCLS t
 				LEFT JOIN mmchddb.TCL_DATA td ON t.TCLID = td.TCLID
-				LEFT JOIN CASES c ON c.patientID = t.patientID
+				LEFT JOIN mmchddb.CASES c ON c.patientID = td.patientID
 				LEFT JOIN mmchddb.DISEASES d ON t.diseaseID = d.diseaseID
 				GROUP BY t.TCLID;`);
-		TCLQuery.forEach(async function(e) {
-			e.pevalID = (await generateID("TCL_EVAL")).id;
-			// ^ wrong
+		ids = await generateIDs("mmchddb.TCL_EVAL", casesQuery.length);
+		TCLQuery.forEach((e, i) => {
+			e.pevalID = ids[i];
 			e.dateEvaluated = new Date("2022-01-01 02:00:00");
 			e.timeliness = 1;
 			e.completeness = 1;
-			e.oddsRatio = e.confirmCount / e.unconfirmCount;
+			e.confirmCount = parseInt(e.confirmCount);
+			e.unconfirmCount = parseInt(e.unconfirmCount);
+			e.treated = parseInt(e.treated);
+			e.oddsRatio = !!e.confirmCount && !!e.unconfirmCount ? e.confirmCount / e.unconfirmCount : 0;
 		});
 		res.status(200).send([casesQuery, TCLQuery]);
 	},
