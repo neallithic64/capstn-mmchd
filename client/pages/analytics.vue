@@ -70,13 +70,13 @@
 
         <!-- Comparative -->
         <div v-if="pageNum == 8">
-          <iframe id="analytics-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiMGU0NjAyYzctMDBlNS00ZWIxLWFkYjUtYmVlYzIyZDBhYWIxIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D">
+          <iframe id="analytics-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiMDBmMGUyNmItMjNmNy00OWM0LTkyNTctZTNhZGIwOGU2MzA5IiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D">
           </iframe>
         </div>
 
         <!-- Correlation -->
         <div v-if="pageNum == 9">
-          <iframe id="analytics-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiNTI2NDY3NzUtNTNkOC00NmZkLTk4MTEtNmU0MWRmODFkYmVhIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D">
+          <iframe id="analytics-powerbi-iframe" src="https://app.powerbi.com/view?r=eyJrIjoiMmY3NjJhZTYtY2UxMS00NGJmLTk4ZDktYWU0MTYwYzdmYTE2IiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D">
           </iframe>
         </div>
       </div>

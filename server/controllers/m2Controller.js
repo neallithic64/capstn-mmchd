@@ -118,6 +118,7 @@ const indexFunctions = {
 			let latestEvent = await db.exec("SELECT * FROM mmchddb.EVENTS e JOIN mmchddb.ADDRESSES a ON a.addressID = e.addressID ORDER BY e.dateReported desc LIMIT 1;");
 			let latestAccomp = await db.exec("SELECT * FROM mmchddb.PROGRAM_ACCOMPS p JOIN mmchddb.DISEASES d ON d.diseaseID = p.diseaseID JOIN mmchddb.USERS u ON u.userID = p.userID JOIN mmchddb.ADDRESSES a ON a.addressID = u.addressID ORDER BY dateUpdated desc LIMIT 1;");
 			let ongoingOutbreak = await db.exec("SELECT * FROM mmchddb.OUTBREAKS o JOIN mmchddb.DISEASES d ON d.diseaseID = o.diseaseID WHERE NOT outbreakStatus='Closed' ORDER BY startDate desc LIMIT 1;");
+			let latestFeedback = await db.exec("SELECT r.reportID, d.diseaseName, r.reportType, r.title, r.dateCreated, r.approvedByDate FROM mmchddb.REPORTS r JOIN mmchddb.DISEASES d ON d.diseaseID = r.diseaseID WHERE status = 'Approved' ORDER BY approvedByDate desc LIMIT 1;")
 			if(ongoingOutbreak.length > 0){	
 				let activeCases = await db.exec("SELECT * FROM mmchddb.CASES WHERE diseaseID='"+ ongoingOutbreak[0].diseaseID + "' AND reportDate >= '" +
 									dateToString(ongoingOutbreak[0].startDate) +"';");
@@ -130,14 +131,16 @@ const indexFunctions = {
 					latestCase : latestCase[0],
 					latestEvent : latestEvent[0],
 					ongoingOutbreak : ongoingOutbreak,
-					activeCases : activeCases.length
+					activeCases : activeCases.length,
+					latestFeedback : latestFeedback[0]
 					});
 			} else 
 				res.status(200).send({
 					latestAccomp: latestAccomp[0],
 					latestCase : latestCase[0],
 					latestEvent : latestEvent[0],
-					ongoingOutbreak : ongoingOutbreak
+					ongoingOutbreak : ongoingOutbreak,
+					latestFeedback : latestFeedback[0]
 				});
 			
 		}catch(e){
