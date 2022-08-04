@@ -157,51 +157,53 @@
           </div>
 
           <!-- Latest Feedback Report -->
-          <div v-if="!($auth.user.userType === 'fhsisStaff')" id="latest-feedback-container">
+          <div id="latest-feedback-container">
             <div style="padding: 3px 5px 3px 5px; background-image: linear-gradient(to bottom right, #FF4E00, #EC9F05); display: flex; flex-direction: row; justify-content: flex-start;">
               <span class="dboard-right-titles"> Latest Feedback Report </span>
             </div>
 
             <!-- v-if w/ latest feedback report show this -->
-            
-            <div class="dboard-right-content" style="border-left-color: #FF4E00;">
-              <!-- <div class="bulletin-caption-db">
-                <span> The <b class="content-bold-db"> {{ report.reportType }} Feedback Report </b> for <b class="content-bold-db"> {{ report.reportDisease }} </b> for
-                  <b class="content-bold-db"> {{ report.reportDate }} </b> is now available for viewing.
-                  <span v-if="report.dateApproved !== 'N/A'">The report was approved on <b class="content-bold-db">{{ report.dateApproved }}</b>. Click the link below to view the report. </span>
-                </span>
-              </div> -->
+            <a :href="'/viewReport?reportID=' + latestReport.lrReportID">
+              <div class="dboard-right-content" style="border-left-color: #FF4E00;">
+                <!-- <div class="bulletin-caption-db">
+                  <span> The <b class="content-bold-db"> {{ report.reportType }} Feedback Report </b> for <b class="content-bold-db"> {{ report.reportDisease }} </b> for
+                    <b class="content-bold-db"> {{ report.reportDate }} </b> is now available for viewing.
+                    <span v-if="report.dateApproved !== 'N/A'">The report was approved on <b class="content-bold-db">{{ report.dateApproved }}</b>. Click the link below to view the report. </span>
+                  </span>
+                </div> -->
 
-              <div class="bulletin-caption-db">
-                <span> The <b class="content-bold-db"> Adhoc Feedback Report </b> for <b class="content-bold-db"> DENGUE </b> for
-                  <b class="content-bold-db"> January 20, 2021 </b> is now available for viewing.
-                  <span> The report was approved on <b class="content-bold-db"> 2022-04-24 19:16:44</b>. Click the link below to view the report. </span>
-                </span>
+                <div class="bulletin-caption-db">
+                  <span> The <b class="content-bold-db"> {{ latestReport.lrType }} Feedback Report </b> for <b class="content-bold-db"> {{ latestReport.lrDisease }} </b> for
+                    <b class="content-bold-db"> {{ monthNames[latestReport.lrDateCreated.getMonth()] }} {{ latestReport.lrDateCreated.getDate() }}, {{ latestReport.lrDateCreated.getFullYear() }}</b> is now available for viewing.
+                    <!-- <b class="content-bold-db"> January 20, 2021 </b> is now available for viewing. -->
+                    <span> The report was approved on <b class="content-bold-db"> {{latestReport.lrDateApproved.getFullYear()}}-{{String(latestReport.lrDateApproved.getMonth() + 1).padStart(2,"0")}}-{{String(latestReport.lrDateApproved.getDate() + 1).padStart(2,"0")}} {{ latestReport.lrDateApproved.toTimeString().substring(0,8)}}</b>. Click the link below to view the report. </span>
+                    <!-- <span> The report was approved on <b class="content-bold-db"> 2022-04-24 19:16:44</b>. Click the link below to view the report. </span> -->
+                  </span>
+                </div>
+
+                <!-- <a :href="'/viewReport?reportID=' + report.reportID">
+                  <div class="bulletin-link-db">
+                    <img class="link-pic-db" src="~/assets/img/hyperlink.png">
+                    <div class="bulletin-link-text-db">
+                      <span class="feedback-title-db"> {{ report.reportTitle }} </span>
+                      <span class="feedback-date-db"> {{ report.reportDate }} </span>
+                      <span class="feedback-date-db"> {{ report.reportYear }} </span>
+                    </div>
+                  </div>
+                </a> -->
+
+                <!-- <a :href="'/viewReport?reportID=' + report.reportID"> -->
+                  <div class="bulletin-link-db">
+                    <img class="link-pic-db" src="~/assets/img/hyperlink.png">
+                    <div class="bulletin-link-text-db">
+                      <span class="feedback-title-db"> {{ latestReport.lrTitle }} </span>
+                      <span class="feedback-date-db"> {{ latestReport.lrDateCreated.getMonth() + 1 }} {{ latestReport.lrDateCreated.getDate() }} </span>
+                      <span class="feedback-date-db"> {{ latestReport.lrDateCreated.getFullYear() }} </span>
+                    </div>
+                  </div>
+                <!-- </a> -->
               </div>
-
-              <!-- <a :href="'/viewReport?reportID=' + report.reportID">
-                <div class="bulletin-link-db">
-                  <img class="link-pic-db" src="~/assets/img/hyperlink.png">
-                  <div class="bulletin-link-text-db">
-                    <span class="feedback-title-db"> {{ report.reportTitle }} </span>
-                    <span class="feedback-date-db"> {{ report.reportDate }} </span>
-                    <span class="feedback-date-db"> {{ report.reportYear }} </span>
-                  </div>
-                </div>
-              </a> -->
-
-              <!-- <a :href="'/viewReport?reportID=' + report.reportID"> -->
-                <div class="bulletin-link-db">
-                  <img class="link-pic-db" src="~/assets/img/hyperlink.png">
-                  <div class="bulletin-link-text-db">
-                    <span class="feedback-title-db"> Dengue 2020 </span>
-                    <span class="feedback-date-db"> 1 20 </span>
-                    <span class="feedback-date-db"> 2021 </span>
-                  </div>
-                </div>
-              <!-- </a> -->
-            </div>
-            
+            </a>
 
             <!-- v-if no latest disease case show this -->
             <!-- <div class="dboard-right-content" style="border-left-color: #346083;">
@@ -351,6 +353,14 @@ export default {
         laDisease: 'Malaria',
         laCity: 'Makati',
         laBrgy: 'WEST REMBO'
+      }, 
+      latestReport: {
+        lrReportID: 'RE-0000000000000',
+        lrDisease: 'Malaria',
+        lrType: 'Adhoc',
+        lrTitle: 'MALARIA REPORT',
+        lrDateCreated: new Date('2022-01-19T21:00:39.000Z'),
+        lrDateApproved: new Date('2022-01-19T21:00:39.000Z')
       },
       weekNo: '3',
       reportStatus: {
@@ -401,7 +411,8 @@ export default {
         'San Juan City': 5,
         'Taguig City': 7,
         'Valenzuela City': 5
-      }
+      },
+      monthNames :["January","February","March","April","May","June","July","August","September","October","November","December"]
     }
   },
   async fetch(){
@@ -421,6 +432,13 @@ export default {
     this.latestAccomplish.laDisease = data.latestAccomp.diseaseName;
     this.latestAccomplish.laCity = data.latestAccomp.city;
     this.latestAccomplish.laBrgy = data.latestAccomp.brgy;
+
+    this.latestReport.lrReportID = data.latestFeedback.reportID;
+    this.latestReport.lrDisease = data.latestFeedback.diseaseName;
+    this.latestReport.lrType = data.latestFeedback.reportType;
+    this.latestReport.lrTitle = data.latestFeedback.title;
+    this.latestReport.lrDateCreated = new Date(data.latestFeedback.dateCreated);
+    this.latestReport.lrDateApproved = new Date(data.latestFeedback.approvedByDate);
 
     if(data.ongoingOutbreak.length === 0)
       this.isOutbreak = false;
