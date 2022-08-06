@@ -113,8 +113,8 @@
       </div>
     </div>
 
-    <div class="caseDefs-statusHistory">
-      <h2 style="border-bottom: gray solid; width: fit-content; padding: 0 7px 0 5px;">Case Definition History</h2>
+    <div class="caseDefs-statusHistory" style="margin-left:10px; margin-right:10px;">
+      <h2 style="border-bottom:gray solid; width:fit-content; padding:0 7px 0 5px;">Case Definition History</h2>
       <dataTable
         :options="tableOptions"
         :datavalues="defsHistory"
@@ -167,61 +167,29 @@ export default {
           },
           {
             title: 'Disease',
-            key: 'disease',
+            key: 'diseaseName',
             type: 'text',
-            source: 'defs',
-            uniqueField: 'id',
           },
           {
-            title: 'Case Level',
-            key: 'caseLevel',
+            title: 'Class',
+            key: 'class',
             type: 'text',
-            source: 'defs',
-            uniqueField: 'id',
           },
           {
-            title: 'From',
-            key: 'from',
+            title: 'Previous Value',
+            key: 'prevValue',
             type: 'text',
-            source: 'defs',
-            uniqueField: 'id',
-          },
-          {
-            title: 'To',
-            key: 'to',
-            type: 'text',
-            source: 'defs',
-            uniqueField: 'id',
           },
           {
             title: 'Modified By',
-            key: 'modifiedBy',
+            key: 'druName',
             type: 'text',
-            source: 'defs',
-            uniqueField: 'id',
           },
         ],
         // source: 'http://demo.datatable/api/users',
         search: true,
       },
-      defsHistory: [
-        {
-          changeDate: '2020-10-10',
-          disease: 'Dengue',
-          caseLevel: 'Suspected',
-          from: 'a',
-          to: 'a',
-          modifiedBy: 'a',
-        },
-        {
-          changeDate: '2020-10-10',
-          disease: 'Measles',
-          caseLevel: 'Clinically Compatible Measles',
-          from: 'a',
-          to: 'a',
-          modifiedBy: 'a',
-        },
-      ],
+      defsHistory: [],
     }
   },
   async fetch() {
@@ -230,7 +198,7 @@ export default {
     
     // setting diseaseNames
     const tempA = {};
-      const tempB = {};
+    const tempB = {};
     for (let i = 0; i < diseases.length; i++) {
       tempA[i] = diseases[i].diseaseName;
       tempB[i] = diseases[i].diseaseID;
@@ -251,8 +219,11 @@ export default {
     }
 
     // getting all case defs history
-    // const history = (await axios.get('http://localhost:8080/api/getAllDiseases')).data;
-
+    const history = (await axios.get('http://localhost:8080/api/getCaseDefsAudit')).data;
+    for (let i = 0; i < history.length; i++) {
+      history[i].changeDate = this.convDatePHT(new Date(history[i].dateModified));
+    }
+    this.defsHistory = history;
   },
   head() {
     return {
@@ -363,7 +334,10 @@ export default {
     },
     instruct() {
       this.pageNum = -1;
-    }
+    },
+    convDatePHT(d) { // only accepts Date object; includes checking
+      return !isNaN(Date.parse(d)) ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10) : "N/A";
+    },
   }
 }
 </script>

@@ -21,83 +21,6 @@ function convDatePHT (d) {
 	return !isNaN(Date.parse(d)) ? (new Date(d.getTime() + 28800000)).toISOString().substr(0, 10) : "N/A";
 }
 
-/** ON ID CREATION
-*/
-function getPrefix(table) {
-	switch(table) {
-		case "mmchddb.USERS":
-			return "US-";
-		case "mmchddb.DISEASES":
-			return "DI-";
-		case "mmchddb.EVENTS":
-			return "EV-";
-		case "mmchddb.PATIENTS":
-			return "PA-";
-		case "mmchddb.CASES":
-			return "CA-";
-		case "mmchddb.CRFS":
-			return "CR-";
-		case "mmchddb.NOTIFICATIONS":
-			return "NO-";
-		case "mmchddb.REPORTS":
-			return "RE-";
-		case "mmchddb.TARGETS":
-			return "TA-";
-		case "mmchddb.TCLS":
-			return "TC-";
-		case "mmchddb.AGE_RANGE_REF":
-			return "AR-";
-		case "mmchddb.ADDRESSES":
-			return "AD-";
-		case "mmchddb.OUTBREAKS":
-			return "OU-";
-		case "mmchddb.SURVEILLANCE_EVAL":
-			return "SE-";
-		case "mmchddb.PROGRAM_EVAL":
-			return "PE-";
-		case "mmchddb.PROGRAM_ACCOMPS":
-			return "PC-";
-	}
-	return undefined;
-}
-
-async function generateID(table, checkObj) {
-	let retObj = { exists: false, id: "" };
-	
-	try {
-		// checking for existence
-		if (table === "mmchddb.ADDRESSES") {
-			let rows = await db.findRows(table, checkObj);
-			if (rows.length > 0) {
-				retObj.exists = true;
-				retObj.id = rows[0].addressID;
-			}
-		} else if (table === "mmchddb.PATIENTS") {
-			// JOIN to addresses? well...
-			let rows = await db.findRows(table, checkObj);
-			if (rows.length > 0) {
-				retObj.exists = true;
-				retObj.id = rows[0].patientID;
-			}
-		}
-		
-		// generating for new object/row
-		if (!retObj.exists) {
-			let rowcount = await db.findRowCount(table);
-			let id = getPrefix(table);
-			for (let i = 0; i < 13 - rowcount.toString().length; i++)
-				id += '0';
-			id += rowcount.toString();
-			retObj.id = id;
-		}
-		console.log(retObj);
-		return retObj;
-	} catch (e) {
-		console.log(e);
-		return false;
-	}
-}
-
 function dateToString(date) {
 	let dateString = new Date(date);
 	let month = dateString.getMonth() + 1;
@@ -105,29 +28,67 @@ function dateToString(date) {
 }
 
 const indexFunctions = {
-	mkData: async function(req, res) {
-		let arr = [];
-		let rows = await db.exec(`SELECT * FROM mmchddb.RISK_FACTORS;`);
-		// console.log("row count: " + rows.length);
-		
-		rows.forEach(async function(e1, i) {
-			// if (i <= 0) {}
-			let caseID = e1.caseID, index = i + 1;
-			arr = [];
-			Object.entries(e1).forEach(async function (e2) {
-				if (["L", "C", "H", "O"].includes(e2[0].charAt(0)) && typeof e2[1] === "number") {
-					arr.push({
-						caseIndex: index,
-						caseID: caseID,
-						riskName: e2[0],
-						riskValue: e2[1]
-					});
-				}
-			});
-			// console.log(arr.map(Object.values));
-			await db.insertRows("mmchddb.RISK_FACTORS_E", Object.keys(arr[0]), arr.map(Object.values));
+	evalCalc: async function(req, res) {
+		// need to calculate the evals
+		let ids;
+		// surveillance eval
+		/* how to get the remaining columns:
+			evalID: to be generated in genID(),
+			reportsOnTime: reportsReceived operation,
+			reportsExpected: reportsReceived operation,
+			withDetected: hard-code to 5,
+			withDisease: hard-code to 5,
+			withoutDetected: hard-code to 5,
+			withoutDisease: hard-code to 5,
+			timeliness: reportsOnTime / reportsReceived,
+			completeness: reportsReceived / reportsExpected
+		 */
+		let casesQuery = await db.exec(`SELECT YEARWEEK(c.reportDate, 2) AS weekNo,
+				COUNT(c.caseID) AS reportsReceived, c.diseaseID, a.city, 5 AS withDetected,
+				5 AS withDisease, 5 AS withoutDetected, 5 AS withoutDisease, c.reportedBy
+				FROM mmchddb.CASES c
+				LEFT JOIN mmchddb.USERS u ON c.reportedBy = u.userID
+				LEFT JOIN mmchddb.ADDRESSES a ON u.addressID = a.addressID
+				GROUP BY weekNo;`);
+		ids = await db.generateIDs("mmchddb.SURVEILLANCE_EVAL", casesQuery.length);
+		casesQuery.forEach((e, i) => {
+			e.evalID = ids[i];
+			e.reportsOnTime = e.reportsReceived - Math.floor(10 * Math.random()) - 1;
+			e.reportsExpected = e.reportsReceived + Math.ceil(10 * Math.random()) + 1;
+			e.timeliness = e.reportsOnTime / e.reportsReceived * 100;
+			e.completeness = e.reportsReceived / e.reportsExpected * 100;
 		});
-		res.status(200).send("done");
+		
+		// tcl eval
+		/* columns:
+			pevalID: to be generated in genID("TCL_EVAL"),
+			dateEvaluated: 2022-01-01 02:00:00,
+			timeliness: hard-code to 1,
+			completeness: hard-code to 1,
+			oddsRatio
+			*/
+		let TCLQuery = await db.exec(`SELECT t.TCLID,
+				COUNT(td.patientID) AS cases, d.diseaseName AS disease,
+				SUM(IF(c.caseLevel LIKE "%Confirm%", 1, 0)) AS confirmCount,
+				SUM(IF(c.caseLevel NOT LIKE "%Confirm%", 1, 0)) AS unconfirmCount,
+				SUM(CASE WHEN td.immunizationStatus = "Complete" THEN 1 ELSE 0 END) AS treated
+				FROM mmchddb.TCLS t
+				LEFT JOIN mmchddb.TCL_DATA td ON t.TCLID = td.TCLID
+				LEFT JOIN mmchddb.CASES c ON c.patientID = td.patientID
+				LEFT JOIN mmchddb.DISEASES d ON t.diseaseID = d.diseaseID
+				GROUP BY t.TCLID;`);
+		ids = await db.generateIDs("mmchddb.TCL_EVAL", casesQuery.length);
+		TCLQuery.forEach((e, i) => {
+			e.pevalID = ids[i];
+			e.dateEvaluated = new Date("2022-01-01 02:00:00");
+			e.timeliness = 1;
+			e.completeness = 1;
+			e.confirmCount = parseInt(e.confirmCount);
+			e.unconfirmCount = parseInt(e.unconfirmCount);
+			e.treated = parseInt(e.treated);
+			e.oddsRatio = !!e.confirmCount && !!e.unconfirmCount ? e.confirmCount / e.unconfirmCount : 0;
+		});
+		res.status(200).send(casesQuery);
 	},
 	
 	/*
@@ -156,18 +117,24 @@ const indexFunctions = {
 					LEFT JOIN mmchddb.DISEASES d ON t.diseaseID = d.diseaseID
 					GROUP BY te.TCLID;`);
 			
+			// retrieving all risk factors while calculating risk ratio
 			let riskFactMatch = await db.exec(`SELECT rfd.riskName, rfd.diseaseName,
 					(rfd.exposedDisease / rfd.totalExposed) /
 					(rfd.unexposedDisease / rfd.totalUnexposed) AS risk
 					FROM mmchddb.RISK_FACTORS_D rfd;`);
+			
+			// transposing the risk factors
 			let riskPivots = riskFactMatch.reduce(function(prev, riskFact) {
 				let findElem = prev.find(e => e.diseaseName === riskFact.diseaseName);
 				if (findElem && findElem["risk" + (riskCateg.indexOf(riskFact.riskName.charAt(0)) + 1)][1] < riskFact.risk) {
+					// case 1, transforming the risk factor to match frontend format + plaintext
 					findElem["risk" + (riskCateg.indexOf(riskFact.riskName.charAt(0)) + 1)] = [riskFact.riskName, riskFact.risk];
 					return prev;
 				} else if (findElem) {
+					// case 2, pass
 					return prev;
 				} else {
+					// case 0, initialising array then pushing
 					let tempElem = {
 						diseaseName: riskFact.diseaseName,
 						risk1: ["", 0],
@@ -180,6 +147,8 @@ const indexFunctions = {
 					return prev;
 				}
 			}, []);
+			
+			// transforming data for displaying
 			riskPivots.forEach(e => {
 				for (let prop in e) {
 					e[prop] = Array.isArray(e[prop]) ? e[prop].join(" - ").substring(1) : e[prop];
@@ -241,7 +210,6 @@ const indexFunctions = {
 					LEFT JOIN mmchddb.CASES c ON se.userID = c.reportedBy
 					GROUP BY se.evalID
 					HAVING u.druName = "${req.query.druName}";`);
-						
 			res.status(200).send({ cases, seMatch });
 		} catch (e) {
 			console.log(e);
@@ -252,176 +220,6 @@ const indexFunctions = {
 	/*
 	 * POST METHODS
 	 */
-	
-	postEditProgTargets: async function(req, res) {
-		let { progAccompID, userID, diseaseID, data } = req.body;
-		try {
-			
-			res.status(200).send("Update targets successful!");
-		} catch (e) {
-			console.log(e);
-			res.status(500).send("Server error");
-		}
-	},
-	
-	postEditProgAccomp: async function(req, res) {
-		let { progAccompID, userID, diseaseID, data } = req.body,
-				cols = ["conf", "LabConf", "total"];
-		try {
-			let month = data.month;
-			delete data.month;
-			Object.keys(data).forEach(e1 => {
-				if (cols.some(e2 => e1.includes(e2))) {
-					data[e1] = data[e1].join(", ");
-				}
-			});
-			await db.updateRows("mmchddb.PROGRAM_ACCOMP_DATA", {
-				progAccompID: progAccompID,
-				month: month
-			}, data);
-			await db.updateRows("mmchddb.PROGRAM_ACCOMPS", {
-				progAccompID: progAccompID
-			}, { dateUpdated: new Date() });
-			res.status(200).send("Update targets successful!");
-		} catch (e) {
-			console.log(e);
-			res.status(500).send("Server error");
-		}
-	},
-	
-	postSubmitProgAccomp: async function(req, res) {
-		let { progAccompID, userID, diseaseID } = req.body;
-		try {
-			// get all data rows
-			let progData = await db.exec(`SELECT pa.year, pad.*
-					FROM mmchddb.PROGRAM_ACCOMPS pa
-					JOIN PROGRAM_ACCOMP_DATA pad
-					ON pad.progAccompID = pa.progAccompID
-					WHERE pa.progAccompID = '${progAccompID}'`);
-			let newProgObj;
-			if (progData.length < 12) {
-				// make new month
-				newProgObj = {
-					progAccompID: progAccompID,
-					month: progData.length,
-					populationTotal: progData.length > 0 ? progData[progData.length - 1].populationTotal : 0,
-					populationRisk: 0,
-					confCasesTotal: "0, 0",
-					confCases5above: "0, 0",
-					confCases5below: "0, 0",
-					confCasesPreg: "0, 0",
-					malariaLabConf: "0, 0",
-					malariaLabConfFalci: "0, 0",
-					malariaLabConfVivax: "0, 0",
-					malariaLabConfOvale: "0, 0",
-					malariaLabConfMalar: "0, 0",
-					confCasesMethod: "0, 0",
-					confCasesMethodSlide: "0, 0",
-					confCasesMethodRDT: "0, 0",
-					totalLLIN: "0, 0",
-					totalMalariaDeaths: "0, 0"
-				};
-			} else {
-				// make new prog accomp
-				let newAccomp = await generateID("mmchddb.PROGRAM_ACCOMPS");
-				await db.insertOne("mmchddb.PROGRAM_ACCOMPS", {
-					progAccompID: newAccomp.id,
-					diseaseID: diseaseID,
-					userID: userID,
-					year: progData[0].year + 1,
-					dateUpdated: new Date()
-				});
-				newProgObj = {
-					progAccompID: newAccomp.id,
-					month: 0,
-					populationTotal: 0,
-					populationRisk: 0,
-					confCasesTotal: "0, 0",
-					confCases5above: "0, 0",
-					confCases5below: "0, 0",
-					confCasesPreg: "0, 0",
-					malariaLabConf: "0, 0",
-					malariaLabConfFalci: "0, 0",
-					malariaLabConfVivax: "0, 0",
-					malariaLabConfOvale: "0, 0",
-					malariaLabConfMalar: "0, 0",
-					confCasesMethod: "0, 0",
-					confCasesMethodSlide: "0, 0",
-					confCasesMethodRDT: "0, 0",
-					totalLLIN: "0, 0",
-					totalMalariaDeaths: "0, 0"
-				};
-			}
-			await db.insertOne("mmchddb.PROGRAM_ACCOMP_DATA", newProgObj);
-			res.status(200).send("Update targets successful!");
-		} catch (e) {
-			console.log(e);
-			res.status(500).send("Server error");
-		}
-	},
-	
-	postNewImmuProgEntry: async function(req, res) {
-		let { formData, immunisationData, TCLID } = req.body;
-		try {
-			console.log(formData);
-			
-			// inserting current address
-			let currAddrID = await generateID("mmchddb.ADDRESSES", {
-				houseStreet: formData.patient.currHouseStreet,
-				brgy: formData.patient.currBrgy,
-				city: formData.patient.currCity
-			});
-			formData.patient.caddressID = currAddrID.id;
-			if (!currAddrID.exists) {
-				let currAddr = new Address(formData.patient.caddressID, formData.patient.currHouseStreet, formData.patient.currBrgy, formData.patient.currCity);
-				await db.insertOne("mmchddb.ADDRESSES", currAddr);
-			}
-			
-			// inserting permanent address
-			let permAddrID = await generateID("mmchddb.ADDRESSES", {
-				houseStreet: formData.patient.permHouseStreet,
-				brgy: formData.patient.permBrgy,
-				city: formData.patient.permCity
-			});
-			formData.patient.paddressID = permAddrID.id;
-			if (!permAddrID.exists) {
-				let permAddr = new Address(formData.patient.paddressID, formData.patient.permHouseStreet, formData.patient.permBrgy, formData.patient.permCity);
-				await db.insertOne("mmchddb.ADDRESSES", permAddr);
-			}
-			
-			// delete fields
-			delete formData.patient.currHouseStreet;
-			delete formData.patient.currBrgy;
-			delete formData.patient.currCity;
-			delete formData.patient.permHouseStreet;
-			delete formData.patient.permBrgy;
-			delete formData.patient.permCity;
-			
-			// adding patient's data
-			let genPatientID = await generateID("mmchddb.PATIENTS", {
-				lastName: formData.patient.lastName,
-				firstName: formData.patient.firstName,
-				midName: formData.patient.midName
-			});
-			formData.patient.patientID = genPatientID.id;
-			if (!genPatientID.exists) {
-				result = await db.insertOne("mmchddb.PATIENTS", formData.patient);
-			}
-			
-			let insertObj = {
-				TCLID: TCLID,
-				patientID: formData.patient.patientID,
-				dateAdded: new Date(),
-				immunizationStatus: "Ongoing",
-				...immunisationData
-			};
-			await db.insertOne("mmchddb.TCL_DATA", insertObj);
-			res.status(200).send(insertObj);
-		} catch (e) {
-			console.log(e);
-			res.status(500).send("Server error");
-		}
-	},
 	
 	postEditPatientTCL: async function(req, res) {
 		let { loadedData, patientID } = req.body;
@@ -437,81 +235,6 @@ const indexFunctions = {
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
-		}
-	},
-	
-	postSubmitTCL: async function(req, res) {
-		let {TCLID} = req.body;
-		try {
-			let tclRow = await db.exec(`SELECT * FROM mmchddb.TCLS WHERE TCLID = '${TCLID}' AND isPushed = 0;`);
-			
-			// generate new CRFs and update past ones
-			for (let i = 0; i < tclRow.length; i++) {
-				// updating TCL
-				await db.updateRows("mmchddb.TCLS", {TCLID: tclRow[i].TCLID}, {
-					isPushed: true,
-					status: "Submitted",
-					dateSubmitted: new Date()
-				});
-				
-				// generating new TCL
-				let newTCL = (await generateID("mmchddb.TCLS")).id;
-				currMonth = new Date(tclRow[i].year, tclRow[i].month, 0);
-				nextMonth = new Date(currMonth.getFullYear(), currMonth.getMonth() + 1, currMonth.getDate());
-				await db.insertOne("mmchddb.TCLS", {
-					TCLID: newTCL,
-					diseaseID: tclRow[i].diseaseID,
-					userID: tclRow[i].userID,
-					dateSubmitted: null,
-					month: nextMonth.getMonth(),
-					year: nextMonth.getFullYear(),
-					isPushed: false,
-					status: "Ongoing"
-				});
-			}
-			res.status(200).send("TCL has been submitted successfully!");
-		} catch (e) {
-			console.log(e);
-			res.status(500).send("Server error");
-		}
-	},
-	
-	/*
-	 * CRON METHODS
-	 */
-	
-	cronTCLPushData: async function() {
-		try {
-			let tcls = await db.exec(`SELECT * FROM mmchddb.TCLS WHERE isPushed = 0 AND status = 'Ongoing';`);
-			
-			// generate new CRFs and update past ones
-			for (let i = 0; i < tcls.length; i++) {
-				// updating TCL
-				await db.updateRows("mmchddb.TCLS", {TCLID: tcls[i].TCLID}, {
-					isPushed: true,
-					status: "Submitted",
-					dateSubmitted: new Date()
-				});
-				
-				// generating new TCL
-				let newTCL = (await generateID("mmchddb.TCLS")).id;
-				currMonth = new Date(tcls[i].year, tcls[i].month, 0);
-				nextMonth = new Date(currMonth.getFullYear(), currMonth.getMonth() + 1, currMonth.getDate());
-				await db.insertOne("mmchddb.TCLS", {
-					TCLID: newTCL,
-					diseaseID: tcls[i].diseaseID,
-					userID: tcls[i].userID,
-					dateSubmitted: null,
-					month: nextMonth.getMonth(),
-					year: nextMonth.getFullYear(),
-					isPushed: false,
-					status: "Ongoing"
-				});
-			}
-			console.log("TCLs have been pushed successfully!");
-		} catch (e) {
-			console.log(e);
-			console.log("Server Error");
 		}
 	},
 };

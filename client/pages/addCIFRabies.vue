@@ -1408,10 +1408,10 @@
                       <div class="checkbox-options">
                         <input
                           id="exposeAnimalOthers"
-                          v-model="formData.caseData.exposeAnimal"
+                          v-model="formData.caseData.exposeAnimalOthers"
                           value="Others"
                           class="input-checkbox"
-                          name="exposeAnimal"
+                          name="exposeAnimalOthers"
                           type="radio"
                           :class="isRequired()"
                           :disabled="inputEdit()"
@@ -1482,7 +1482,7 @@
                       <div class="checkbox-options">
                         <input
                           id="exposeAnimalStatusOthers"
-                          v-model="formData.caseData.exposeAnimalStatus"
+                          v-model="formData.caseData.exposeAnimalStatusOthers"
                           value="Others"
                           class="input-checkbox"
                           name="exposeAnimalStatus"
@@ -1499,8 +1499,8 @@
                                 type="text"
                                 style="width: 175px; height: 19px; margin: 0 2px"
                                 :disabled="inputEdit()"
-                                :value="formData.caseData.exposeAnimalStatusOther.toUpperCase()"
-                                @input="formData.caseData.exposeAnimalStatusOther = $event.target.value.toUpperCase()"
+                                :value="formData.caseData.exposeAnimalStatusOthers.toUpperCase()"
+                                @input="formData.caseData.exposeAnimalStatusOthers = $event.target.value.toUpperCase()"
                             />
                         </label>
                       </div>
@@ -1618,7 +1618,7 @@
                                     :class="isRequired()"
                                     required
                                     />
-                                    <label for="routeAdmin"> IM </label>
+                                    <label for="routeAdminIM"> IM </label>
                                 </div>
                                 <div class="center-center margin-right25">
                                     <input
@@ -2144,7 +2144,7 @@ export default {
       isOpen: true,
       openCollapse: '',
       isDisabled: false,
-      diseaseID: 'DI-0000000000000',
+      diseaseID: 'DI-0000000000006',
       patients: [],
       patientResult: [],
       pageNum: 0,
@@ -2235,9 +2235,9 @@ export default {
           exposePlace: '',
           categoryExposure: [],
           exposeAnimal: '',
-          exposeAnimalOther: '',
+          exposeAnimalOthers: '',
           exposeAnimalStatus: '',
-          exposeAnimalStatusOther: '',
+          exposeAnimalStatusOthers: '',
           // page 4
           vaccinationHistory: '',
           vaccineDateStart: '',

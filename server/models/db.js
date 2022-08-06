@@ -10,6 +10,48 @@ const pool = mysql.createPool({
 	queueLimit: 0
 });
 
+/** ON ID CREATION
+*/
+function getPrefix(table) {
+	switch(table) {
+		case "mmchddb.USERS":
+			return "US-";
+		case "mmchddb.DISEASES":
+			return "DI-";
+		case "mmchddb.EVENTS":
+			return "EV-";
+		case "mmchddb.PATIENTS":
+			return "PA-";
+		case "mmchddb.CASES":
+			return "CA-";
+		case "mmchddb.CRFS":
+			return "CR-";
+		case "mmchddb.NOTIFICATIONS":
+			return "NO-";
+		case "mmchddb.REPORTS":
+			return "RE-";
+		case "mmchddb.TARGETS":
+			return "TA-";
+		case "mmchddb.TCLS":
+			return "TC-";
+		case "mmchddb.AGE_RANGE_REF":
+			return "AR-";
+		case "mmchddb.ADDRESSES":
+			return "AD-";
+		case "mmchddb.OUTBREAKS":
+			return "OU-";
+		case "mmchddb.SURVEILLANCE_EVAL":
+			return "SE-";
+		case "mmchddb.TCL_EVAL":
+			return "TE-";
+		case "mmchddb.PROGRAM_EVAL":
+			return "PE-";
+		case "mmchddb.PROGRAM_ACCOMPS":
+			return "PC-";
+	}
+	return undefined;
+}
+
 /** Expected input:
 	Object {
 		column1: "value1",
@@ -318,6 +360,63 @@ const database = {
 			// if (rows.serverStatus === 2)
 			return true;
 		} catch (e) {
+			console.log(e);
+			return false;
+		}
+	},
+
+	generateID: async function(table, checkObj) {
+		let retObj = { exists: false, id: "" };
+		
+		try {
+			// checking for existence
+			if (table === "mmchddb.ADDRESSES") {
+				let rows = await this.findRows(table, checkObj);
+				if (rows.length > 0) {
+					retObj.exists = true;
+					retObj.id = rows[0].addressID;
+				}
+			} else if (table === "mmchddb.PATIENTS") {
+				// JOIN to addresses? well...
+				let rows = await this.findRows(table, checkObj);
+				if (rows.length > 0) {
+					retObj.exists = true;
+					retObj.id = rows[0].patientID;
+				}
+			}
+			
+			// generating for new object/row
+			if (!retObj.exists) {
+				let rowcount = await this.findRowCount(table);
+				let id = getPrefix(table);
+				for (let i = 0; i < 13 - rowcount.toString().length; i++)
+					id += "0";
+				id += rowcount.toString();
+				retObj.id = id;
+			}
+			console.log(retObj);
+			return retObj;
+		} catch (e) {
+			console.log(e);
+			return false;
+		}
+	},
+	
+	generateIDs: async function (table, numRows) {
+		try {
+			let rowcount = await this.findRowCount(table);
+			let ids = [], tempID, suffix;
+			if (numRows > 0) {
+				for (i = 0; i < numRows; i++) {
+					tempID = getPrefix(table);
+					suffix = rowcount + i;
+					for (let j = 0; j < 13 - suffix.toString().length; j++)
+						tempID += "0";
+					tempID += suffix.toString();
+					ids.push(tempID);
+				} return ids;
+			} else return false;
+		} catch(e) {
 			console.log(e);
 			return false;
 		}

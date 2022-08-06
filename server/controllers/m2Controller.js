@@ -4,79 +4,6 @@ const saltRounds = 10;
 const db = require("../models/db");
 const monthName= ["January","February","March","April","May","June","July",
             "August","September","October","November","December"];
-/** ON ID CREATION
-*/
-function getPrefix(table) {
-	switch(table) {
-		case "mmchddb.USERS":
-			return "US-";
-		case "mmchddb.DISEASES":
-			return "DI-";
-		case "mmchddb.EVENTS":
-			return "EV-";
-		case "mmchddb.PATIENTS":
-			return "PA-";
-		case "mmchddb.CASES":
-			return "CA-";
-		case "mmchddb.CRFS":
-			return "CR-";
-		case "mmchddb.NOTIFICATIONS":
-			return "NO-";
-		case "mmchddb.REPORTS":
-			return "RE-";
-		case "mmchddb.TARGETS":
-			return "TA-";
-		case "mmchddb.PROGRAMS":
-			return "PR-";
-		case "mmchddb.AGE_RANGE_REF":
-			return "AR-";
-		case "mmchddb.ADDRESSES":
-			return "AD-";
-		case "mmchddb.OUTBREAKS":
-			return "OU-";
-		case "mmchddb.SURVEILLANCE_EVAL":
-			return "SE-";
-		case "mmchddb.PROGRAM_EVAL":
-			return "PE-";
-	}
-}
-
-async function generateID(table, checkObj) {
-	let retObj = { exists: false, id: "" };
-	
-	try {
-		// checking for existence
-		if (table === "mmchddb.ADDRESSES") {
-			let rows = await db.findRows(table, checkObj);
-			if (rows.length > 0) {
-				retObj.exists = true;
-				retObj.id = rows[0].addressID;
-			}
-		} else if (table === "mmchddb.PATIENTS") {
-			// JOIN to addresses? well...
-			let rows = await db.findRows(table, checkObj);
-			if (rows.length > 0) {
-				retObj.exists = true;
-				retObj.id = rows[0].patientID;
-			}
-		}
-		
-		// generating for new object/row
-		if (!retObj.exists) {
-			let rowcount = await db.findRowCount(table);
-			let id = getPrefix(table);
-			for (let i = 0; i < 13 - rowcount.toString().length; i++)
-				id += '0';
-			id += rowcount.toString();
-			retObj.id = id;
-		}
-		console.log(retObj);
-		return retObj;
-	} catch (e) {
-		console.log(e);
-		return false;
-	}
-}
 
 function dateToString(date) {
 	let dateString = new Date(date);
@@ -118,6 +45,7 @@ const indexFunctions = {
 			let latestEvent = await db.exec("SELECT * FROM mmchddb.EVENTS e JOIN mmchddb.ADDRESSES a ON a.addressID = e.addressID ORDER BY e.dateReported desc LIMIT 1;");
 			let latestAccomp = await db.exec("SELECT * FROM mmchddb.PROGRAM_ACCOMPS p JOIN mmchddb.DISEASES d ON d.diseaseID = p.diseaseID JOIN mmchddb.USERS u ON u.userID = p.userID JOIN mmchddb.ADDRESSES a ON a.addressID = u.addressID ORDER BY dateUpdated desc LIMIT 1;");
 			let ongoingOutbreak = await db.exec("SELECT * FROM mmchddb.OUTBREAKS o JOIN mmchddb.DISEASES d ON d.diseaseID = o.diseaseID WHERE NOT outbreakStatus='Closed' ORDER BY startDate desc LIMIT 1;");
+			let latestFeedback = await db.exec("SELECT r.reportID, d.diseaseName, r.reportType, r.title, r.dateCreated, r.approvedByDate FROM mmchddb.REPORTS r JOIN mmchddb.DISEASES d ON d.diseaseID = r.diseaseID WHERE status = 'Approved' ORDER BY approvedByDate desc LIMIT 1;")
 			if(ongoingOutbreak.length > 0){	
 				let activeCases = await db.exec("SELECT * FROM mmchddb.CASES WHERE diseaseID='"+ ongoingOutbreak[0].diseaseID + "' AND reportDate >= '" +
 									dateToString(ongoingOutbreak[0].startDate) +"';");
@@ -130,14 +58,16 @@ const indexFunctions = {
 					latestCase : latestCase[0],
 					latestEvent : latestEvent[0],
 					ongoingOutbreak : ongoingOutbreak,
-					activeCases : activeCases.length
+					activeCases : activeCases.length,
+					latestFeedback : latestFeedback[0]
 					});
 			} else 
 				res.status(200).send({
 					latestAccomp: latestAccomp[0],
 					latestCase : latestCase[0],
 					latestEvent : latestEvent[0],
-					ongoingOutbreak : ongoingOutbreak
+					ongoingOutbreak : ongoingOutbreak,
+					latestFeedback : latestFeedback[0]
 				});
 			
 		}catch(e){
