@@ -44,11 +44,13 @@
       </div>
 
       <div class="addIPcomponent" style="margin-top: 20px;">
-        <dataTable
-          :options="tableOptions"
-          :datavalues="dataSets"
-          :casetype="'immunProg'"
-        />
+        <div v-if="dataSets.length">
+          <dataTable
+            :options="tableOptions"
+            :datavalues="dataSets"
+            :casetype="'immunProg'"
+          />
+        </div>
         <div v-if="year+'' === (new Date()).getFullYear()+'' && month+'' === (new Date()).getMonth()+''" class="addIPaddButton">
           <button class="addIPaddText"><a :href="'/addImmunizationProgEntry?TCLID=' + TCLID">+ add an entry</a></button>
         </div>
