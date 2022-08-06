@@ -212,7 +212,7 @@ const indexFunctions = {
 	
 	postEditApproveReport: async function(req, res) {
 		let { reportID, userID, userType, remarks } = req.body;
-		let newDate = new Date(), newStatus = "Approved", updateObj = {};
+		let newDate = new Date(), newStatus = "Approved", updateObj = {}, toEmail;
 		try {
 			// checking of userType; different columns will be updated per case
 			switch (userType) {
@@ -221,6 +221,8 @@ const indexFunctions = {
 					updateObj.status = newStatus;
 					updateObj.notedBy = userID;
 					updateObj.notedByDate = newDate.toISOString();
+					// next step: to RESU head
+					toEmail = "matthew_neal_lim@dlsu.edu.ph";
 					break;
 				}
 				case "resuHead": {
@@ -228,6 +230,8 @@ const indexFunctions = {
 					updateObj.status = newStatus;
 					updateObj.recommBy = userID;
 					updateObj.recommByDate = newDate.toISOString();
+					// next step: to CHD director
+					toEmail = "metropolitanentrepreneur@gmail.com";
 					break;
 				}
 				case "chdDirector": {
@@ -235,7 +239,13 @@ const indexFunctions = {
 					updateObj.status = newStatus;
 					updateObj.approvedBy = userID;
 					updateObj.approvedByDate = newDate.toISOString();
+					// last step: just send it back to chief
+					toEmail = "matthewneal2006@yahoo.com";
 					break;
+				}
+				default: {
+					// fail-catch
+					toEmail = "matthewneal2006@yahoo.com";
 				}
 			}
 			if (updateObj.status) {
@@ -248,7 +258,7 @@ const indexFunctions = {
 				};
 				await db.updateRows("mmchddb.REPORTS", { reportID: reportID }, updateObj);
 				await db.insertOne("mmchddb.REPORT_AUDIT", audit);
-				sendReportEmail("matthewneal2006@yahoo.com", reportID, newStatus);
+				sendReportEmail(toEmail, reportID, newStatus);
 				res.status(200).send("Report approved!");
 			} else {
 				res.status(200).send("Invalid user type!");
