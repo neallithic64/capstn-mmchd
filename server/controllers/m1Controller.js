@@ -1457,7 +1457,7 @@ const indexFunctions = {
 	postAddEvent: async function(req, res) {
 		let { event } = req.body;
 		console.log("event details:");
-		console.log(event);
+		console.log(req.body);
 
 		try {
 			let currAddrID = await db.generateID("mmchddb.ADDRESSES", {
