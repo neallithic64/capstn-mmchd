@@ -158,7 +158,7 @@ export default {
   async fetch() {
     const rows = (await axios.get('http://localhost:8080/api/getCRFPage', {
       params: {
-        diseaseID: "DI-0000000000003",
+        diseaseID: "DI-0000000000007",
         userID: this.$auth.user.userID
       }
     })).data;
@@ -205,7 +205,7 @@ export default {
     async submit() {
       const submitResponse = (await axios.post('http://localhost:8080/api/submitCRF', {
         CRFID: this.CRFID,
-        diseaseID: "DI-0000000000003",
+        diseaseID: "DI-0000000000007",
         userID: this.$auth.user.userID
       }));
       // console.log(submitResponse.data);

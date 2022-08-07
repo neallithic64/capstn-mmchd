@@ -76,22 +76,24 @@
                   <select
                     v-model="DRUsurveillanceMonth"
                     class="marginLeft10"
-                  >
+                    @change="filterYearMonth('surv')">
                     <option v-for="(month, i) in monthsList" :key=i :value="i">{{month}}</option>
                   </select>
                   <select
                     v-model="DRUsurveillanceYear"
                     class="marginLeft10"
-                  >
+                    @change="filterYearMonth('surv')">
                     <option v-for="(year, i) in yearList" :key=i :value="year">{{year}}</option>
                   </select>
               </div>
             </div>
-            <dataTable
-              :options="SurveillanceEvalTableOptions"
-              :datavalues="SurveillanceEvalDataSets"
-              :casetype="'eval'"
-            />
+            <div v-if="SurveillanceEvalDataSets.length > 0">
+              <dataTable
+                :options="SurveillanceEvalTableOptions"
+                :datavalues="SurveillanceEvalDataSets"
+                :casetype="'eval'"
+              />
+            </div>
         </div>
 
         <div v-show="isPrint && DRUselected" style="margin-top: 40px"></div>
@@ -102,13 +104,13 @@
             <select
               v-model="HealthProgEvalMonth"
               class="marginLeft10"
-            >
+              @change="filterYearMonth('hepr')">
               <option v-for="(month, i) in monthsList" :key=i :value="i">{{month}}</option>
             </select>
             <select
               v-model="HealthProgEvalYear"
               class="marginLeft10"
-            >
+              @change="filterYearMonth('hepr')">
               <option v-for="(year, i) in yearList" :key=i :value="year">{{year}}</option>
             </select>
           </div>
@@ -167,16 +169,16 @@ export default {
       caseTab: 'dru',
       isPrint: false,
       DRUsurveillanceMonth: 0,
-      DRUsurveillanceYear: '2022',
+      DRUsurveillanceYear: 2022,
       HealthProgEvalMonth: 0,
-      HealthProgEvalYear: '2022',
+      HealthProgEvalYear: 2022,
       DRUs: [],
       DRUResult: [],
       selectedDRU: '',
       DRUselected: false,
       showDRUchoices: true,
       monthsList: ['-', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-      yearList: ['2018', '2019', '2020', '2021', '2022'],
+      yearList: [2018, 2019, 2020, 2021, 2022],
       DRUEvalTableOptions: {
         tableName: 'SurveillanceEval',
         sortKey: 'weekNo',
@@ -226,6 +228,7 @@ export default {
         ],
         search: true,
       },
+      origSurvEvalSet: [],
       SurveillanceEvalDataSets: [],
       HealthProgEvalTableOptions: {
         tableName: 'HealthProgEval',
@@ -258,6 +261,7 @@ export default {
         ],
         search: false,
       },
+      origHePrEvalSet: [],
       HealthProgEvalDataSets: [],
       OddsRatioTableOptions: {
         tableName: 'OddsRatio',
@@ -299,6 +303,7 @@ export default {
     this.DRUs = rows;
     rows = (await axios.get('http://localhost:8080/api/getAllHealthProgEvals')).data;
     this.HealthProgEvalDataSets = rows.teMatch;
+    this.origHePrEvalSet = rows.teMatch;
     this.OddsRatioDataSets = rows.riskPivots;
   },
   methods: {
@@ -383,11 +388,41 @@ export default {
       // console.log(rows);
       this.DRUEvalDataSets = rows.cases;
       this.SurveillanceEvalDataSets = rows.seMatch;
+      this.origSurvEvalSet = rows.seMatch;
       this.selectedDRU = dru.druName;
       
       this.showDRUchoices = false;
       this.DRUselected = true;
-    }
+    },
+    filterYearMonth(type) {
+      /*
+      SURVEILLANCE_EVAL - has weekyear, can convert that to month
+      TCL_EVAL - no date at all, must reconstruct i think
+      */
+      if (type === "surv") {
+        if (this.DRUsurveillanceYear && this.DRUsurveillanceMonth > 0) {
+          this.SurveillanceEvalDataSets = this.origSurvEvalSet.filter(e => {
+            let year = parseInt(e.weekNo.substr(0, 4)), week = parseInt(e.weekNo.substr(4));
+            let month = (new Date(year, 0, (1 + (week - 1) * 7))).getMonth();
+            return year == this.DRUsurveillanceYear && month == this.DRUsurveillanceMonth - 1;
+          });
+        } else {
+          this.SurveillanceEvalDataSets = this.origSurvEvalSet;
+        }
+      } else {
+        if (this.HealthProgEvalYear && this.HealthProgEvalMonth > 0) {
+          /*
+          this.HealthProgEvalDataSets = this.origHePrEvalSet.filter(e => {
+            let year = parseInt(e.weekNo.substr(0, 4)), week = parseInt(e.weekNo.substr(4));
+            let month = (new Date(year, 0, (1 + (week - 1) * 7))).getMonth();
+            return year == this.HealthProgEvalYear && month == this.HealthProgEvalMonth - 1;
+          });
+          */
+        } else {
+          this.HealthProgEvalDataSets = this.origHePrEvalSet;
+        }
+      }
+    },
   },
 }
 </script>

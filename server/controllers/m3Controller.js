@@ -65,83 +65,6 @@ function sendReportEmail(email, reportID, status) {
 	});
 }
 
-/** ON ID CREATION
-*/
-function getPrefix(table) {
-	switch(table) {
-		case "mmchddb.USERS":
-			return "US-";
-		case "mmchddb.DISEASES":
-			return "DI-";
-		case "mmchddb.EVENTS":
-			return "EV-";
-		case "mmchddb.PATIENTS":
-			return "PA-";
-		case "mmchddb.CASES":
-			return "CA-";
-		case "mmchddb.CRFS":
-			return "CR-";
-		case "mmchddb.NOTIFICATIONS":
-			return "NO-";
-		case "mmchddb.REPORTS":
-			return "RE-";
-		case "mmchddb.TARGETS":
-			return "TA-";
-		case "mmchddb.TCLS":
-			return "TC-";
-		case "mmchddb.AGE_RANGE_REF":
-			return "AR-";
-		case "mmchddb.ADDRESSES":
-			return "AD-";
-		case "mmchddb.OUTBREAKS":
-			return "OU-";
-		case "mmchddb.SURVEILLANCE_EVAL":
-			return "SE-";
-		case "mmchddb.PROGRAM_EVAL":
-			return "PE-";
-		case "mmchddb.PROGRAM_ACCOMPS":
-			return "PC-";
-	}
-	return undefined;
-}
-
-async function generateID(table, checkObj) {
-	let retObj = { exists: false, id: "" };
-	
-	try {
-		// checking for existence
-		if (table === "mmchddb.ADDRESSES") {
-			let rows = await db.findRows(table, checkObj);
-			if (rows.length > 0) {
-				retObj.exists = true;
-				retObj.id = rows[0].addressID;
-			}
-		} else if (table === "mmchddb.PATIENTS") {
-			// JOIN to addresses? well...
-			let rows = await db.findRows(table, checkObj);
-			if (rows.length > 0) {
-				retObj.exists = true;
-				retObj.id = rows[0].patientID;
-			}
-		}
-		
-		// generating for new object/row
-		if (!retObj.exists) {
-			let rowcount = await db.findRowCount(table);
-			let id = getPrefix(table);
-			for (let i = 0; i < 13 - rowcount.toString().length; i++)
-				id += '0';
-			id += rowcount.toString();
-			retObj.id = id;
-		}
-		console.log(retObj);
-		return retObj;
-	} catch (e) {
-		console.log(e);
-		return false;
-	}
-}
-
 function dateToString(date) {
 	let dateString = new Date(date);
 	let month = dateString.getMonth() + 1;
@@ -262,7 +185,7 @@ const indexFunctions = {
 	postAddReport: async function(req, res) {
 		let { report } = req.body;
 		try {
-			let reportID = (await generateID("mmchddb.REPORTS")).id;
+			let reportID = (await db.generateID("mmchddb.REPORTS")).id;
 			let diseaseID = await db.findRows("mmchddb.DISEASES", {diseaseName: report.diseaseID});
 			let rows = await db.insertOne("mmchddb.REPORTS", {
 				reportID: reportID,
@@ -289,7 +212,7 @@ const indexFunctions = {
 	
 	postEditApproveReport: async function(req, res) {
 		let { reportID, userID, userType, remarks } = req.body;
-		let newDate = new Date(), newStatus = "Approved", updateObj = {};
+		let newDate = new Date(), newStatus = "Approved", updateObj = {}, toEmail;
 		try {
 			// checking of userType; different columns will be updated per case
 			switch (userType) {
@@ -298,6 +221,8 @@ const indexFunctions = {
 					updateObj.status = newStatus;
 					updateObj.notedBy = userID;
 					updateObj.notedByDate = newDate.toISOString();
+					// next step: to RESU head
+					toEmail = "matthew_neal_lim@dlsu.edu.ph";
 					break;
 				}
 				case "resuHead": {
@@ -305,6 +230,8 @@ const indexFunctions = {
 					updateObj.status = newStatus;
 					updateObj.recommBy = userID;
 					updateObj.recommByDate = newDate.toISOString();
+					// next step: to CHD director
+					toEmail = "metropolitanentrepreneur@gmail.com";
 					break;
 				}
 				case "chdDirector": {
@@ -312,7 +239,13 @@ const indexFunctions = {
 					updateObj.status = newStatus;
 					updateObj.approvedBy = userID;
 					updateObj.approvedByDate = newDate.toISOString();
+					// last step: just send it back to chief
+					toEmail = "matthewneal2006@yahoo.com";
 					break;
+				}
+				default: {
+					// fail-catch
+					toEmail = "matthewneal2006@yahoo.com";
 				}
 			}
 			if (updateObj.status) {
@@ -325,7 +258,7 @@ const indexFunctions = {
 				};
 				await db.updateRows("mmchddb.REPORTS", { reportID: reportID }, updateObj);
 				await db.insertOne("mmchddb.REPORT_AUDIT", audit);
-				sendReportEmail("matthewneal2006@yahoo.com", reportID, newStatus);
+				sendReportEmail(toEmail, reportID, newStatus);
 				res.status(200).send("Report approved!");
 			} else {
 				res.status(200).send("Invalid user type!");

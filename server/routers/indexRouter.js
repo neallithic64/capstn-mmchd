@@ -7,12 +7,14 @@ const m2Cont = require("../controllers/m2Controller");
 const m3Cont = require("../controllers/m3Controller");
 const m4Cont = require("../controllers/m4Controller");
 const m5Cont = require("../controllers/m5Controller");
+const mobCont = require("../controllers/mobController");
 // const middleware = require("../middlewares/indexMiddleware");
 
 
 // Testing Routes
 router.get("/", m1Cont.testConn);
-router.get("/mkdata", m3Cont.mkData);
+router.get("/mkdata", m1Cont.mkData);
+router.get("/evalCalc", m5Cont.evalCalc);
 
 
 // GET Routes
@@ -60,6 +62,8 @@ router.get("/getAllTCLs", m4Cont.getAllTCLs);
 router.get("/getAllDRUs", m5Cont.getAllDRUs);
 router.get("/getAllHealthProgEvals", m5Cont.getAllHealthProgEvals);
 router.get("/getDRUEvals", m5Cont.getDRUEvals);
+
+router.get("/getMobCRFs", mobCont.getMobCRFs);
 
 
 // POST Routes

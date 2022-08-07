@@ -159,102 +159,6 @@ function Outbreak(outbreakID, diseaseID, outbreakStatus, startDate, endDate, typ
 	this.responseTime = responseTime;
 	this.type = type;
 }
-/** ON ID CREATION
-*/
-function getPrefix(table) {
-	switch(table) {
-		case "mmchddb.USERS":
-			return "US-";
-		case "mmchddb.DISEASES":
-			return "DI-";
-		case "mmchddb.EVENTS":
-			return "EV-";
-		case "mmchddb.PATIENTS":
-			return "PA-";
-		case "mmchddb.CASES":
-			return "CA-";
-		case "mmchddb.CRFS":
-			return "CR-";
-		case "mmchddb.NOTIFICATIONS":
-			return "NO-";
-		case "mmchddb.REPORTS":
-			return "RE-";
-		case "mmchddb.TARGETS":
-			return "TA-";
-		case "mmchddb.TCLS":
-			return "TC-";
-		case "mmchddb.AGE_RANGE_REF":
-			return "AR-";
-		case "mmchddb.ADDRESSES":
-			return "AD-";
-		case "mmchddb.OUTBREAKS":
-			return "OU-";
-		case "mmchddb.SURVEILLANCE_EVAL":
-			return "SE-";
-		case "mmchddb.PROGRAM_EVAL":
-			return "PE-";
-		case "mmchddb.PROGRAM_ACCOMPS":
-			return "PC-";
-	}
-	return undefined;
-}
-
-async function generateID(table, checkObj) {
-	let retObj = { exists: false, id: "" };
-	
-	try {
-		// checking for existence
-		if (table === "mmchddb.ADDRESSES") {
-			let rows = await db.findRows(table, checkObj);
-			if (rows.length > 0) {
-				retObj.exists = true;
-				retObj.id = rows[0].addressID;
-			}
-		} else if (table === "mmchddb.PATIENTS") {
-			// JOIN to addresses? well...
-			let rows = await db.findRows(table, checkObj);
-			if (rows.length > 0) {
-				retObj.exists = true;
-				retObj.id = rows[0].patientID;
-			}
-		}
-		
-		// generating for new object/row
-		if (!retObj.exists) {
-			let rowcount = await db.findRowCount(table);
-			let id = getPrefix(table);
-			for (let i = 0; i < 13 - rowcount.toString().length; i++)
-				id += '0';
-			id += rowcount.toString();
-			retObj.id = id;
-		}
-		console.log(retObj);
-		return retObj;
-	} catch (e) {
-		console.log(e);
-		return false;
-	}
-}
-
-async function generateIDs(table, numRows) {
-	try {
-		let rowcount = await db.findRowCount(table);
-		let ids = [];
-		if (numRows > 0) {
-			for (i = 0; i < numRows; i++) {
-				let tempID = getPrefix(table);
-				let suffix = rowcount + i;
-				for (let j = 0; j < 13 - suffix.toString().length; j++)
-					tempID += '0';
-				tempID += suffix.toString();
-				ids.push(tempID);
-			} return ids;
-		} else return false;
-	} catch(e) {
-		console.log(e);
-		return false;
-	}
-}
 
 function dateToString(date) {
 	let dateString = new Date(date);
@@ -270,7 +174,7 @@ function datetimeToString(date) {
 
 async function createCase(cases) {
 	try {
-		cases.caseID = (await generateID("mmchddb.CASES")).id;
+		cases.caseID = (await db.generateID("mmchddb.CASES")).id;
 		let r = await db.insertOne("mmchddb.CASES", cases);
 		return r;
 	} catch(e) {
@@ -282,7 +186,7 @@ async function createCase(cases) {
 async function sendBulkNotifs(userTypes, notificationType, message, caseID) {
 	try {
 		let userIDs = await db.findUserIDsWithType(userTypes);
-		let newNotifications = Object.entries(await generateIDs("mmchddb.NOTIFICATIONS", userIDs.length));
+		let newNotifications = Object.entries(await db.generateIDs("mmchddb.NOTIFICATIONS", userIDs.length));
 		let dateCreated = new Date();
 
 		newNotifications.forEach(function (element,index) {
@@ -320,7 +224,7 @@ async function createOutbreak(diseaseID, type) {
 			}
 			else return match[0];
 		} else {
-			let newOutbreak = new Outbreak((await generateID("mmchddb.OUTBREAKS")).id, diseaseID, 'Ongoing', new Date(), null, type, null);
+			let newOutbreak = new Outbreak((await db.generateID("mmchddb.OUTBREAKS")).id, diseaseID, 'Ongoing', new Date(), null, type, null);
 			let result = await db.insertOne("mmchddb.OUTBREAKS", newOutbreak);
 			return result;
 		}
@@ -602,42 +506,8 @@ const indexFunctions = {
 	
 	mkData: async function(req, res) {
 		try {
-			/*
-			let rows = await db.exec(`SELECT userID FROM mmchddb.USERS ORDER BY userID;`);
-			if (rows) rows = rows.map(e => e.userID);
 			let arr = [];
-			let rows = await db.exec(`SELECT SUM(rf.LSmoking), SUM(rf.LAlcoholism), SUM(rf.LDrugUse),
-					SUM(rf.LPhysicalInactivity), SUM(rf.CHereditary), SUM(rf.CAsthma), SUM(rf.HHeartDisease),
-					SUM(rf.HHypertension), SUM(rf.HObesity), SUM(rf.HDiabetes), SUM(rf.OCleanWater),
-					SUM(rf.OAirPollution), SUM(rf.OHealthFacility), SUM(rf.OWasteMgmt), SUM(rf.OVacCoverage),
-					SUM(rf.OHealthEdu), SUM(rf.OShelter), SUM(rf.OFlooding), SUM(rf.OPoverty)
-					FROM mmchddb.RISK_FACTORS rf
-					LEFT JOIN mmchddb.CASES c ON c.caseID = rf.caseID
-					WHERE c.diseaseID = 'DI-0000000000003';`);
-			for (let [key, val] of Object.entries(rows[0])) {
-				arr.push({key: /SUM\(rf\.(\w+)\)/.exec(key)[1], value: val});
-			}
-			arr.forEach(async (e) => await db.insertOne("mmchddb.RISK_FACTORS_C", e));
-			let risks = ["rf.LSmoking", "rf.LAlcoholism", "rf.LDrugUse", "rf.LPhysicalInactivity",
-					"rf.CHereditary", "rf.CAsthma", "rf.HHeartDisease", "rf.HHypertension", "rf.HObesity",
-					"rf.HDiabetes", "rf.OCleanWater", "rf.OAirPollution", "rf.OHealthFacility",
-					"rf.OWasteMgmt", "rf.OVacCoverage", "rf.OHealthEdu", "rf.OShelter", "rf.OFlooding",
-					"rf.OPoverty"], risk, rows;
-			for (let i = 0; i < risks.length; i++) {
-				risk = risks[i];
-				rows = await db.exec(`SELECT SUM(CASE WHEN ${risk} = 1 AND c.caseLevel LIKE '%Confirm%' THEN 1 ELSE 0 END) AS exposedDisease,
-						SUM(${risk}) AS totalExposed,
-						SUM(CASE WHEN ${risk} = 0 AND c.caseLevel LIKE '%Confirm%' THEN 1 ELSE 0 END) AS unexposedDisease,
-						SUM(CASE WHEN ${risk} = 0 THEN 1 ELSE 0 END) totalUnexposed, d.diseaseName, '${risk.substr(3)}' AS riskName
-						FROM mmchddb.RISK_FACTORS rf
-						LEFT JOIN mmchddb.CASES c ON c.caseID = rf.caseID
-						LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = c.diseaseID
-						GROUP BY d.diseaseName`);
-				console.log(rows);
-				await db.insertRows("mmchddb.RISK_FACTORS_D", Object.keys(rows[0]), rows.map(Object.values));
-			}
-			*/
-			res.status(200).send((new Date()).getWeek() + "");
+			res.status(200).send(arr);
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
@@ -801,6 +671,7 @@ const indexFunctions = {
 				havingClause = `HAVING cr.isPushed = 1 OR cr.userID = '${req.query.userID}'`;
 			} else havingClause = `HAVING cr.userID = '${req.query.userID}'`;
 			
+			// collect all CRFs with other joined data: diseases, user, DRU location
 			let match = await db.exec(`SELECT cr.*, d.diseaseName, a.city, COUNT(c.caseID) AS caseCount,
 					n.dateCreated AS submittedOn, MAX(c.reportDate) AS lastCase
 					FROM mmchddb.CRFS cr
@@ -812,12 +683,20 @@ const indexFunctions = {
 					GROUP BY cr.CRFID ${ havingClause }
 					ORDER BY cr.year DESC, cr.week DESC;`);
 			for (let i = 0; i < match.length; i++) {
+				// interpreting isPushed
 				match[i].submitStatus = match[i].isPushed > 0 ? "Pushed" : "Ongoing";
+				// transforming submitted date
 				match[i].submittedOn = match[i].submittedOn ? convDatePHT(new Date(match[i].submittedOn)) : "N/A";
+				// transforming last case date
 				match[i].lastCase = match[i].lastCase ? convDatePHT(new Date(match[i].lastCase)) : "N/A";
-				if (match[i].isPushed > 0) {
-					if (match[i].caseCount > 0) {
+				
+				// creating CRF status code
+				// current issue: missing visibility of submitted-but-late
+				// "no 'late cases submitted' report status"
+				if (match[i].isPushed > 0) { // pushed or not?
+					if (match[i].caseCount > 0) { // zero report or not?
 						if (match[i].lastCase >= new Date(match[i].year, 0, 1 + match[i].week * 7)) {
+							// late cases?
 							match[i].reportStatus = "Late Cases";
 						} else match[i].reportStatus = "Cases Submitted";
 					} else match[i].reportStatus = "Zero Report";
@@ -1186,7 +1065,7 @@ const indexFunctions = {
 					});
 				} else {
 					let thisDate = new Date(), firstCRF = {
-						CRFID: (await generateID("mmchddb.CRFS")).id,
+						CRFID: (await db.generateID("mmchddb.CRFS")).id,
 						diseaseID: req.query.diseaseID,
 						userID: req.query.userID,
 						week: thisDate.getWeek(),
@@ -1463,7 +1342,7 @@ const indexFunctions = {
 							for(let i = 0; i < notPushedCRFS.length; i++) {
 								updateCRF = await db.updateRows("mmchddb.CRFS",{CRFID:notPushedCRFS[i].CRFID}, {isPushed:1});
 							}
-							newCRF = Object.entries(await generateIDs("mmchddb.CRFS", notPushedCRFS.length));
+							newCRF = Object.entries(await db.generateIDs("mmchddb.CRFS", notPushedCRFS.length));
 							newCRF.forEach(function(element,index){
 								element.push(notPushedCRFS[index].diseaseID);
 								element.push(match[0].userID);
@@ -1489,7 +1368,7 @@ const indexFunctions = {
 		let { user } = req.body;
 		let resultAddr = false;
 		try {
-			user.userID = (await generateID("mmchddb.USERS")).id;
+			user.userID = (await db.generateID("mmchddb.USERS")).id;
 			// extracting address into an object
 			let addrObj = {
 				houseStreet: user.userHouseStreet,
@@ -1497,7 +1376,7 @@ const indexFunctions = {
 				city: user.userCity
 			};
 			// then generating an ID for the address
-			let addrID = await generateID("mmchddb.ADDRESSES", addrObj);
+			let addrID = await db.generateID("mmchddb.ADDRESSES", addrObj);
 			// set it to the user and address objects
 			addrObj.addressID = addrID.id;
 			user.addressID = addrID.id;
@@ -1537,7 +1416,7 @@ const indexFunctions = {
 		let { disease } = req.body;
 
 		try {
-			disease.diseaseID = (await generateID("mmchddb.DISEASES")).id;
+			disease.diseaseID = (await db.generateID("mmchddb.DISEASES")).id;
 			// let disease = new Disease(diseaseID, "Sample Disease", "Insert symptoms here",
 			// 							"Insert Suspected here", "Insert Probable here",
 			// 							"Insert Confirmed here", true, 100);
@@ -1557,7 +1436,7 @@ const indexFunctions = {
 		let { formData } = req.body, result;
 
 		try {
-			let genPatientID = await generateID("mmchddb.PATIENTS", {
+			let genPatientID = await db.generateID("mmchddb.PATIENTS", {
 				lastName: formData.patient.lastName,
 				firstName: formData.patient.firstName,
 				midName: formData.patient.midName
@@ -1577,9 +1456,11 @@ const indexFunctions = {
 	
 	postAddEvent: async function(req, res) {
 		let { event } = req.body;
+		console.log("event details:");
+		console.log(req.body);
 
 		try {
-			let currAddrID = await generateID("mmchddb.ADDRESSES", {
+			let currAddrID = await db.generateID("mmchddb.ADDRESSES", {
 				houseStreet: event.locHouseStreet,
 				brgy: event.locBrgy,
 				city: event.locCity
@@ -1592,7 +1473,7 @@ const indexFunctions = {
 				let result = await db.insertOne("mmchddb.ADDRESSES", currAddr);
 			}
 
-			event.eventID = (await generateID("mmchddb.EVENTS")).id;
+			event.eventID = (await db.generateID("mmchddb.EVENTS")).id;
 			event.dateCaptured = new Date(event.dateCaptured + ' ' + event.timeCaptured);
 			event.numCases = Number.parseInt(event.numCases);
 			event.numDeaths = Number.parseInt(event.numDeaths);
@@ -1627,7 +1508,7 @@ const indexFunctions = {
 		let occuresult = true;
 
 		try {
-			let currAddrID = await generateID("mmchddb.ADDRESSES", {
+			let currAddrID = await db.generateID("mmchddb.ADDRESSES", {
 				houseStreet: formData.patient.currHouseStreet,
 				brgy: formData.patient.currBrgy,
 				city: formData.patient.currCity
@@ -1635,7 +1516,7 @@ const indexFunctions = {
 			formData.patient.caddressID = currAddrID.id;
 
 			if(formData.patient.occuStreet != '' && formData.patient.occuBrgy != '' && formData.patient.occuCity != ''){
-				let occuAddrID = await generateID("mmchddb.ADDRESSES", {
+				let occuAddrID = await db.generateID("mmchddb.ADDRESSES", {
 					houseStreet: formData.patient.occuStreet,
 					brgy: formData.patient.occuBrgy,
 					city: formData.patient.occuCity
@@ -1655,7 +1536,7 @@ const indexFunctions = {
 			}
 			
 			if (result || currAddrID.exists) {
-				let permAddrID = await generateID("mmchddb.ADDRESSES", {
+				let permAddrID = await db.generateID("mmchddb.ADDRESSES", {
 					houseStreet: formData.patient.permHouseStreet,
 					brgy: formData.patient.permBrgy,
 					city: formData.patient.permCity
@@ -1679,7 +1560,7 @@ const indexFunctions = {
 					
 					// temp fix for occuAddr
 					formData.patient.occuAddrID = null;
-					let genPatientID = await generateID("mmchddb.PATIENTS", {
+					let genPatientID = await db.generateID("mmchddb.PATIENTS", {
 						lastName: formData.patient.lastName,
 						firstName: formData.patient.firstName,
 						midName: formData.patient.midName,
@@ -1691,7 +1572,7 @@ const indexFunctions = {
 					}
 					
 					if (result || genPatientID.exists) {
-						formData.cases.caseID = await generateID("mmchddb.CASES");
+						formData.cases.caseID = await db.generateID("mmchddb.CASES");
 						formData.cases.patientID = formData.patient.patientID;
 						// formData.cases.reportedBy = req.session.user.userID;
 						formData.cases.CRFID = CRFID ? CRFID : null;
@@ -1826,7 +1707,7 @@ const indexFunctions = {
 					let notification = new Notification(null, caseData[0].reportedBy, 'updateNotif',
 							'CASE UPDATE: The case level of ' + disease[0].diseaseName + ' Case ' + caseId + ' has been updated to ' + newStatus + '.',
 							caseId, caseAudit.dateModified, "http://localhost:3000/viewCIFMeasles?caseID=" + caseId, false);
-					notification.notificationID = (await generateID("mmchddb.NOTIFICATIONS")).id;
+					notification.notificationID = (await db.generateID("mmchddb.NOTIFICATIONS")).id;
 					let newNotif = await db.insertOne("mmchddb.NOTIFICATIONS", notification);
 					
 					if (newNotif) {
@@ -1869,7 +1750,7 @@ const indexFunctions = {
 					let notification = new Notification(null, eventData[0].userID, 'updateNotif',
 							'EVENT UPDATE: Health Event ' + eventID + ' has been updated from ' + eventData[0].eventStatus + ' to ' + newStatus + '.',
 							null, eventAudit.dateModified, "http://localhost:3000/viewHealthEvent?eventID=" + eventID, false);
-					notification.notificationID = (await generateID("mmchddb.NOTIFICATIONS")).id;
+					notification.notificationID = (await db.generateID("mmchddb.NOTIFICATIONS")).id;
 					let newNotif = await db.insertOne("mmchddb.NOTIFICATIONS", notification);
 					
 					if (newNotif) {
@@ -2018,7 +1899,7 @@ const indexFunctions = {
 			
 			// generate new CRF
 			await db.insertOne("mmchddb.CRFS", {
-				CRFID: (await generateID("mmchddb.CRFS")).id,
+				CRFID: (await db.generateID("mmchddb.CRFS")).id,
 				diseaseID: diseaseID,
 				userID: userID,
 				week: nextWeek.getWeek(),
@@ -2070,8 +1951,8 @@ const indexFunctions = {
 										WHERE p.patientID = '${patientID}';`);
 			
 			// checking both addresses
-			cAddress.addressID = (await generateID("mmchddb.ADDRESSES", cAddress)).id;
-			oAddress.addressID = (await generateID("mmchddb.ADDRESSES", oAddress)).id;
+			cAddress.addressID = (await db.generateID("mmchddb.ADDRESSES", cAddress)).id;
+			oAddress.addressID = (await db.generateID("mmchddb.ADDRESSES", oAddress)).id;
 			if (newPatientInfo.caddressID !== cAddress.addressID) {
 				newPatientInfo.caddressID = cAddress.addressID;
 				// insert new address obj
@@ -2194,7 +2075,7 @@ const indexFunctions = {
 			if (pushData) {
 				// generate new CRFs
 				for (let i = 0; i < crfs.length; i++) {
-					let newCRFID = (await generateID("mmchddb.CRFS")).id;
+					let newCRFID = (await db.generateID("mmchddb.CRFS")).id;
 					currWeek = new Date(crfs[i].year, 0, (1 + crfs[i].week * 7));
 					nextWeek = new Date(currWeek.getFullYear(), currWeek.getMonth(), currWeek.getDate() + 7);
 					await db.insertOne("mmchddb.CRFS", {
