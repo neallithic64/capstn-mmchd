@@ -454,6 +454,8 @@ export default {
         if (response.status === 200) {
           this.convertPDFToBase64(this.file, response.data);
           this.$toast.success('Feedback Report Submitted!', {duration: 4000, icon: 'check_circle'});
+		  this.popupOpen = false;
+		  window.location.href = '/allReports';
         }
       }
     },
