@@ -7,7 +7,7 @@
       <div v-show="isPrint" class=" paddingSide25">
         <div class="centerSide marginTop40 marginBottom-40 centerText"></div>
         <div class="centerSide"> <img src="~/assets/img/logo.png" style="height: 100px; marginBottom15"/> </div>
-        <hr class="marginTopBot10" id="1"/>
+        <hr id="1" class="marginTopBot10"/>
         
         <div class="centerSide space-inline marginTop5">
           <h3 class="weight500 size18"> {{report.title}} </h3>
@@ -19,7 +19,7 @@
         </div>
 
         <div class="marginTop20 width100" style="padding: 5px 10px;"> {{report.summary}} </div>
-        <hr class="marginTop20" id="2"/>
+        <hr id="2" class="marginTop20"/>
       </div>
 
       <div v-if="!isPrint" class="addReportInnerContainter">
@@ -87,19 +87,19 @@
                 </div>
                 <div v-for="(analysis, index) in reportsOption" :key="index"
                   class="analysisReportOption marginTopBot2">
-                  <input v-model="report.reportsIncluded" class="input-radio" type="checkbox"
-                    :value="analysis" :id="analysis" :disabled="!inputEdit()" :class="isOptionRequired()" @change="call" required/>
+                  <input :id="analysis" v-model="report.reportsIncluded" class="input-radio"
+                    type="checkbox" :value="analysis" :disabled="!inputEdit()" :class="isOptionRequired()" required @change="call"/>
                   <label :for="analysis"> {{analysis}} </label>
             </div> </div> </div>
           </div>
 
             <div>
               <legend for="summary" class="required"> Summary of Feedback Report </legend>
-              <textarea v-model="report.summary" id="summary" class="input-form-field marginTop10" :class="isRequired()" 
+              <textarea id="summary" v-model="report.summary" class="input-form-field marginTop10" :class="isRequired()" 
                 style="resize: vertical;width:100%; height: 100px; padding: 5px; 10px;" required/>
             </div>
 
-          <hr class="marginTop30 marginBottom10" id="2"/>
+          <hr id="2" class="marginTop30 marginBottom10"/>
         </div>
       </div>
       
@@ -130,14 +130,14 @@
                   style="resize: vertical;width:100%; height: 100px; padding: 5px; 10px;" required/>
             </div>
           </div>
-          <hr v-if="isPrint" class="marginTopBot5" id="3charts"/>
+          <hr v-if="isPrint" id="3charts" class="marginTopBot5"/>
           <div v-if=" isPrint && chartIndex != report.reportsIncluded.length - 1" class="space-inline size10 marginBottom85">
             <p> Department of Health - Metro Manila Center for Health Development </p>
             <p> {{report.title}} | Page {{chartIndex+1}}</p>
           </div>
         </div>
 
-        <hr v-if="!isPrint" class="marginBottom5 marginTop20" id="4"/>
+        <hr v-if="!isPrint" id="4" class="marginBottom5 marginTop20"/>
       </div>
 
       <div class="addReportInnerContainter">
@@ -191,7 +191,7 @@
                 </div>
                 <div v-if="isValidated & readyPrint" class="inlineFlex alignCenter marginTopBot2">
                   <legend for="reportType" class="inputLegend required"> Upload Report: </legend>
-                  <input type="file" ref="file" accept=".pdf" @change="addFile" required/>
+                  <input ref="file" type="file" accept=".pdf" required @change="addFile"/>
                 </div>
             </div>
             <!-- buttons -->
@@ -214,7 +214,7 @@
             Data Source: 2022  </span>
           </div>
         </div>
-        <hr v-show="isPrint" class="marginTopBot5" id="5"/>
+        <hr v-show="isPrint" id="5" class="marginTopBot5"/>
 
         <div v-show="isPrint" class="space-inline size10 marginBottom25">
           <p> Department of Health - Metro Manila Center for Health Development </p>
@@ -315,7 +315,7 @@ export default {
         "https://app.powerbi.com/view?r=eyJrIjoiYTdlYWJmYzEtMDliOC00NzBiLTlkYjEtNjViN2E1MjkxMjFlIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D",
         "https://app.powerbi.com/view?r=eyJrIjoiZjJjZDVhZDAtYjljZi00NzQzLWI4ZGMtN2Q0OTRhYWUxMGU3IiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D",
         "https://app.powerbi.com/view?r=eyJrIjoiMDBmMGUyNmItMjNmNy00OWM0LTkyNTctZTNhZGIwOGU2MzA5IiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D",
-        "https://app.powerbi.com/view?r=eyJrIjoiMmY3NjJhZTYtY2UxMS00NGJmLTk4ZDktYWU0MTYwYzdmYTE2IiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D",
+        "https://app.powerbi.com/view?r=eyJrIjoiY2MxOTA3ZDktZmU2Ny00MzYwLWFkYWQtNTJjOGY2MTFhYzRlIiwidCI6ImYzNGEzNWJkLWE2NWQtNDYwNS1iMGZhLWQyNTcxZjgzMWY1ZSIsImMiOjEwfQ%3D%3D",
       ]
 
     }
@@ -467,6 +467,8 @@ export default {
         if (response.status === 200) {
           this.convertPDFToBase64(this.file, response.data);
           this.$toast.success('Feedback Report Submitted!', {duration: 4000, icon: 'check_circle'});
+		  this.popupOpen = false;
+		  window.location.href = '/allReports';
         }
       }
     },
