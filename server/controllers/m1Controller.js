@@ -1503,7 +1503,7 @@ const indexFunctions = {
 	*/
 	postNewCase: async function(req, res) {
 		let { formData, CRFID } = req.body;
-		console.log(formData);
+		console.log(req.body);
 		let result;
 		let occuresult = true;
 
@@ -1515,7 +1515,7 @@ const indexFunctions = {
 			});
 			formData.patient.caddressID = currAddrID.id;
 
-			if(formData.patient.occuStreet != '' && formData.patient.occuBrgy != '' && formData.patient.occuCity != ''){
+			if (formData.patient.occuStreet != '' && formData.patient.occuBrgy != '' && formData.patient.occuCity != '') {
 				let occuAddrID = await db.generateID("mmchddb.ADDRESSES", {
 					houseStreet: formData.patient.occuStreet,
 					brgy: formData.patient.occuBrgy,
