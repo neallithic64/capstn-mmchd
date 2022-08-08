@@ -49,14 +49,26 @@ function sendReportEmail(email, reportID, status) {
 	});
 	
 	// email options
-	let mailOptions = {
-		from: `MM-CHD <${process.env.EMAIL_ADDR}>`,
-		to: email,
-		subject: "MMCHD: Report Status Update",
-		generateTextFromHTML: true,
-		html: `<table><tr><td><p style="text-align:center;margin-bottom:0pt;"><span style="font-size:11pt;font-family:Arial;color:rgb(0,0,0);background-color:transparent;font-weight:400;white-space:pre-wrap;"><img src="https://lh3.googleusercontent.com/TYYtawsNKSdENy0Lj69LkLY8a0Ud6XY-ZjEHvOZYG1PT9UKcGIzARXPEazUF7IWPSRnL6z0IKeXHa-FCOSi_ivPnu90AYHSKMLv4JSvkMD2tQwxtYfxdhAqFeXTRVzotbWqypZy_X08Qk3HX4w=s0" width="457" height="110"></span></p><p style="line-height:1.8;margin:0pt 36pt;"><span style="font-size:11pt;font-family:Arial;font-weight:400;white-space:pre-wrap;">Greetings!</span></p><p style="font-size:11pt;font-family:Arial;line-height:1.8;margin:0pt 36pt;text-align:justify;"><span style="font-weight:400;white-space:pre-wrap;">Report </span><span style="font-weight:700;white-space:pre-wrap;">${reportID}</span><span style="font-weight:400;white-space:pre-wrap;"> has been created/updated with status "${status}". Review it here:</span></p><p style="margin:0pt 36pt;text-align:center;"><a href="http://localhost:3000/viewReport?reportID=${reportID}" style="text-decoration:none;"><span style="white-space:pre-wrap;"><span style="display:inline-block;width:180px;"><img src="https://lh6.googleusercontent.com/DVzZw6L3BD1BFBheGI-BtQvKtGIFdsuFuGsDw6x10Ud6pWRdOlZ6L9c3TBlWbv_aNdIIB3QvPsDrylzZN-c3aAfSU1ESD7Iu1gJ4iFTRJhznKOMmWSY1Xq3zHJzk40RD3ViHuLwi8_zo7SbmiA=s0" width="180" height="54"></span></span></a></p><p style="line-height:1.8;margin:0pt 36pt;"><span style="font-size:11pt;font-family:Arial;">Thank you for your service!</span></p><p style="margin-top:0pt;margin-bottom:0pt;"><span style="white-space:pre-wrap;"><span style="display:inline-block;width:100%;"><img src="https://lh5.googleusercontent.com/eUK7pp6YgayfcGtmWdwaq3ht12zfBC2yz98bjn3aYAgFfygnvD8BCYf1iVKnYlbRgRqPc6039G-C935Xcx7HzOH-gkpQcXoijsIvuhhnXdV9sWlyqP0OvXc2USBvYV10J2s7OJUaOYJfEI3DVg=s0" width="100%" height="122"></span></span></p></td></tr></table>
-		<p style="color:gray;">DISCLAIMER AND CONFIDENTIALITY NOTICE</p><p style="color:gray;">The information contained in this e-mail, including those in its attachments, is confidential and intended only for the person(s) or entity(ies) to which it is addressed. If you are not an intended recipient, you must not read, copy, store, disclose, distribute this message, or act in reliance upon the information contained in it. If you received this e-mail in error, please contact the sender and delete the material from any computer or system. Any views expressed in this message are those of the individual sender and may not necessarily reflect the views of the Department of Health.</p>`
-	};
+	let mailOptions;
+	if (status === "Rejected") {
+		mailOptions = {
+			from: `MM-CHD <${process.env.EMAIL_ADDR}>`,
+			to: email,
+			subject: "MMCHD: Report Status Update",
+			generateTextFromHTML: true,
+			html: `<table><tr><td><p style="text-align:center;margin-bottom:0pt;"><span style="font-size:11pt;font-family:Arial;color:rgb(0,0,0);background-color:transparent;font-weight:400;white-space:pre-wrap;"><img src="https://lh3.googleusercontent.com/TYYtawsNKSdENy0Lj69LkLY8a0Ud6XY-ZjEHvOZYG1PT9UKcGIzARXPEazUF7IWPSRnL6z0IKeXHa-FCOSi_ivPnu90AYHSKMLv4JSvkMD2tQwxtYfxdhAqFeXTRVzotbWqypZy_X08Qk3HX4w=s0" width="457" height="110"></span></p><p style="line-height:1.8;margin:0pt 36pt;"><span style="font-size:11pt;font-family:Arial;font-weight:400;white-space:pre-wrap;">Greetings!</span></p><p style="font-size:11pt;font-family:Arial;line-height:1.8;margin:0pt 36pt;text-align:justify;"><span style="font-weight:400;white-space:pre-wrap;">Report </span><span style="font-weight:700;white-space:pre-wrap;">${reportID}</span><span style="font-weight:400;white-space:pre-wrap;"> has been rejected. Please submit a new report. Review it here:</span></p><p style="margin:0pt 36pt;text-align:center;"><a href="http://localhost:3000/viewReport?reportID=${reportID}" style="text-decoration:none;"><span style="white-space:pre-wrap;"><span style="display:inline-block;width:180px;"><img src="https://lh6.googleusercontent.com/DVzZw6L3BD1BFBheGI-BtQvKtGIFdsuFuGsDw6x10Ud6pWRdOlZ6L9c3TBlWbv_aNdIIB3QvPsDrylzZN-c3aAfSU1ESD7Iu1gJ4iFTRJhznKOMmWSY1Xq3zHJzk40RD3ViHuLwi8_zo7SbmiA=s0" width="180" height="54"></span></span></a></p><p style="line-height:1.8;margin:0pt 36pt;"><span style="font-size:11pt;font-family:Arial;">Thank you for your service!</span></p><p style="margin-top:0pt;margin-bottom:0pt;"><span style="white-space:pre-wrap;"><span style="display:inline-block;width:100%;"><img src="https://lh5.googleusercontent.com/eUK7pp6YgayfcGtmWdwaq3ht12zfBC2yz98bjn3aYAgFfygnvD8BCYf1iVKnYlbRgRqPc6039G-C935Xcx7HzOH-gkpQcXoijsIvuhhnXdV9sWlyqP0OvXc2USBvYV10J2s7OJUaOYJfEI3DVg=s0" width="100%" height="122"></span></span></p></td></tr></table>
+			<p style="color:gray;">DISCLAIMER AND CONFIDENTIALITY NOTICE</p><p style="color:gray;">The information contained in this e-mail, including those in its attachments, is confidential and intended only for the person(s) or entity(ies) to which it is addressed. If you are not an intended recipient, you must not read, copy, store, disclose, distribute this message, or act in reliance upon the information contained in it. If you received this e-mail in error, please contact the sender and delete the material from any computer or system. Any views expressed in this message are those of the individual sender and may not necessarily reflect the views of the Department of Health.</p>`
+		};
+	} else {
+		mailOptions = {
+			from: `MM-CHD <${process.env.EMAIL_ADDR}>`,
+			to: email,
+			subject: "MMCHD: Report Status Update",
+			generateTextFromHTML: true,
+			html: `<table><tr><td><p style="text-align:center;margin-bottom:0pt;"><span style="font-size:11pt;font-family:Arial;color:rgb(0,0,0);background-color:transparent;font-weight:400;white-space:pre-wrap;"><img src="https://lh3.googleusercontent.com/TYYtawsNKSdENy0Lj69LkLY8a0Ud6XY-ZjEHvOZYG1PT9UKcGIzARXPEazUF7IWPSRnL6z0IKeXHa-FCOSi_ivPnu90AYHSKMLv4JSvkMD2tQwxtYfxdhAqFeXTRVzotbWqypZy_X08Qk3HX4w=s0" width="457" height="110"></span></p><p style="line-height:1.8;margin:0pt 36pt;"><span style="font-size:11pt;font-family:Arial;font-weight:400;white-space:pre-wrap;">Greetings!</span></p><p style="font-size:11pt;font-family:Arial;line-height:1.8;margin:0pt 36pt;text-align:justify;"><span style="font-weight:400;white-space:pre-wrap;">Report </span><span style="font-weight:700;white-space:pre-wrap;">${reportID}</span><span style="font-weight:400;white-space:pre-wrap;"> has been created/updated with status "${status}". Review it here:</span></p><p style="margin:0pt 36pt;text-align:center;"><a href="http://localhost:3000/viewReport?reportID=${reportID}" style="text-decoration:none;"><span style="white-space:pre-wrap;"><span style="display:inline-block;width:180px;"><img src="https://lh6.googleusercontent.com/DVzZw6L3BD1BFBheGI-BtQvKtGIFdsuFuGsDw6x10Ud6pWRdOlZ6L9c3TBlWbv_aNdIIB3QvPsDrylzZN-c3aAfSU1ESD7Iu1gJ4iFTRJhznKOMmWSY1Xq3zHJzk40RD3ViHuLwi8_zo7SbmiA=s0" width="180" height="54"></span></span></a></p><p style="line-height:1.8;margin:0pt 36pt;"><span style="font-size:11pt;font-family:Arial;">Thank you for your service!</span></p><p style="margin-top:0pt;margin-bottom:0pt;"><span style="white-space:pre-wrap;"><span style="display:inline-block;width:100%;"><img src="https://lh5.googleusercontent.com/eUK7pp6YgayfcGtmWdwaq3ht12zfBC2yz98bjn3aYAgFfygnvD8BCYf1iVKnYlbRgRqPc6039G-C935Xcx7HzOH-gkpQcXoijsIvuhhnXdV9sWlyqP0OvXc2USBvYV10J2s7OJUaOYJfEI3DVg=s0" width="100%" height="122"></span></span></p></td></tr></table>
+			<p style="color:gray;">DISCLAIMER AND CONFIDENTIALITY NOTICE</p><p style="color:gray;">The information contained in this e-mail, including those in its attachments, is confidential and intended only for the person(s) or entity(ies) to which it is addressed. If you are not an intended recipient, you must not read, copy, store, disclose, distribute this message, or act in reliance upon the information contained in it. If you received this e-mail in error, please contact the sender and delete the material from any computer or system. Any views expressed in this message are those of the individual sender and may not necessarily reflect the views of the Department of Health.</p>`
+		};
+	}
 	
 	// sending email
 	smtpTransport.sendMail(mailOptions, (e, result) => {
@@ -263,6 +275,36 @@ const indexFunctions = {
 			} else {
 				res.status(200).send("Invalid user type!");
 			}
+		} catch (e) {
+			console.log(e);
+			res.status(500).send("Server error");
+		}
+	},
+	
+	postEditRejectReport: async function(req, res) {
+		let { reportID, userID, userEmail, remarks } = req.body;
+		let newDate = new Date();
+		try {
+			let updateObj = {
+				status: "Rejected",
+				notedBy: userID,
+				notedByDate: newDate.toISOString(),
+				recommBy: userID,
+				recommByDate: newDate.toISOString(),
+				approvedBy: userID,
+				approvedByDate: newDate.toISOString()
+			};
+			let audit = {
+				reportID: reportID,
+				dateModified: newDate.toISOString(),
+				modifiedBy: userID,
+				action: "Report is now " + newStatus + ".",
+				remarks: remarks
+			};
+			await db.updateRows("mmchddb.REPORTS", { reportID: reportID }, updateObj);
+			await db.insertOne("mmchddb.REPORT_AUDIT", audit);
+			sendReportEmail(userEmail, reportID, updateObj.status);
+			res.status(200).send("Report rejected!");
 		} catch (e) {
 			console.log(e);
 			res.status(500).send("Server error");
