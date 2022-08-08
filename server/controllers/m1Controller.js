@@ -1503,7 +1503,7 @@ const indexFunctions = {
 	*/
 	postNewCase: async function(req, res) {
 		let { formData, CRFID } = req.body;
-		console.log(formData);
+		console.log(req.body);
 		let result;
 		let occuresult = true;
 
