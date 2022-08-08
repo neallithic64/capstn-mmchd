@@ -5,6 +5,9 @@ const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
 const db = require("../models/db");
+const { report } = require("../routers/indexRouter");
+
+const DRUUserTypes = ['BHS','RHU','CHO', 'govtHosp', 'privHosp', 'clinic', 'privLab', 'airseaPort'];
 
 Date.prototype.getWeek = function() {
 	let d = new Date(Date.UTC(this.getFullYear(), this.getMonth(), this.getDate()));
@@ -81,6 +84,32 @@ function dateToString(date) {
 	let dateString = new Date(date);
 	let month = dateString.getMonth() + 1;
 	return dateString.getFullYear()+'-'+ month.toString().padStart(2,'0') +'-'+dateString.getDate().toString().padStart(2,'0');
+}
+
+async function sendBulkNotifs(userTypes, notificationType, message, caseID) {
+	try {
+		let userIDs = await db.findUserIDsWithType(userTypes);
+		let newNotifications = Object.entries(await db.generateIDs("mmchddb.NOTIFICATIONS", userIDs.length));
+		let dateCreated = new Date();
+
+		newNotifications.forEach(function (element,index) {
+			element.push(userIDs[index].userID);
+			element.push(notificationType);
+			element.push(message);
+			element.push(caseID);
+			element.push(dateCreated);
+			if (notificationType == 'updateNotif') element.push('http://localhost:3000/allReports');
+			else element.push('http://localhost:3000/bulletin');
+			element.push(false);
+			element.shift();
+		});
+
+		let result = await db.insertNotificationData(newNotifications);
+		return result;
+	} catch (error) {
+		console.log(error);
+		return false;
+	}
 }
 
 const indexFunctions = {
@@ -271,6 +300,20 @@ const indexFunctions = {
 				await db.updateRows("mmchddb.REPORTS", { reportID: reportID }, updateObj);
 				await db.insertOne("mmchddb.REPORT_AUDIT", audit);
 				sendReportEmail(toEmail, reportID, newStatus);
+				
+				if(userType == "chdDirector"){
+					let report = await db.exec(`SELECT r.*, d.diseaseName 
+												FROM mmchddb.REPORTS r
+												LEFT JOIN mmchddb.DISEASES d ON d.diseaseID = r.diseaseID
+												WHERE r.reportID = '${reportID}';`);
+					
+					await sendBulkNotifs(['pidsrStaff', 'fhsisStaff'], 'updateNotif', 'UPDATE: The feedback report for ' +
+										report[0].diseaseName + ' has been approved by' + userType, null);
+					await sendBulkNotifs(['BHS','RHU','CHO', 'govtHosp', 'privHosp', 'clinic', 'privLab', 'airseaPort', 'idpcStaff', 'eohStaff', 'hemStaff'],
+										'feedbackNotif', 
+										'A feedback report for ' + report[0].diseaseName + ' has been posted on the feedback bulletin.', null);
+				}
+				
 				res.status(200).send("Report approved!");
 			} else {
 				res.status(200).send("Invalid user type!");
