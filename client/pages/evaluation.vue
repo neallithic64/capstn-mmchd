@@ -181,7 +181,7 @@ export default {
       yearList: [2018, 2019, 2020, 2021, 2022],
       DRUEvalTableOptions: {
         tableName: 'SurveillanceEval',
-        sortKey: 'weekNo',
+        sortedKey: 'weekNo',
         columns: [
           {
             title: 'Year-Week No',
