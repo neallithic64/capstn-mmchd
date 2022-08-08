@@ -44,10 +44,14 @@ const indexFunctions = {
 	 */
 	
 	postMobCRF: async function(req, res) {
+		let { formData, CRFID } = req.body;
 		try {
-			
+			console.log("new case for CRF " + CRFID);
+			console.log(formData);
+			res.status(200).send("Done!");
 		} catch (e) {
-			
+			console.log(e);
+			res.status(500).send("Server error");
 		}
 	},
 };
