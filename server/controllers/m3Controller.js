@@ -298,7 +298,7 @@ const indexFunctions = {
 				reportID: reportID,
 				dateModified: newDate.toISOString(),
 				modifiedBy: userID,
-				action: "Report is now " + newStatus + ".",
+				action: "Report is now " + updateObj.status + ".",
 				remarks: remarks
 			};
 			await db.updateRows("mmchddb.REPORTS", { reportID: reportID }, updateObj);

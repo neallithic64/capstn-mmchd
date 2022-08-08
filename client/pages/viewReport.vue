@@ -291,11 +291,12 @@ export default {
       } else {
         // SUBMIT ASSESSMENT (drop down)
         this.validate();
+        let approvedData;
         if (!this.isValidated) this.$toast.error('Please select a status!', {duration: 4000, icon: 'error'});
         else { // eslint-disable-next-line no-lonely-if
           if (this.inputStatus === 'Approve') {
             this.report.status = 'Approved';
-            const approvedData = await axios.post("http://localhost:8080/api/editApproveReport", {
+            approvedData = await axios.post("http://localhost:8080/api/editApproveReport", {
               reportID: this.report.reportID,
               userID: this.$auth.user.userID,
               userType: this.$auth.user.userType,
@@ -304,7 +305,7 @@ export default {
           }
           else if (this.inputStatus === 'Reject') {
             this.report.status = 'Rejected';
-            const approvedData = await axios.post("http://localhost:8080/api/editRejectReport", {
+            approvedData = await axios.post("http://localhost:8080/api/editRejectReport", {
               reportID: this.report.reportID,
               userID: this.$auth.user.userID,
               userEmail: this.$auth.user.userEmail,
