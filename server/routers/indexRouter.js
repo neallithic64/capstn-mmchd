@@ -99,7 +99,7 @@ router.post("/newImmuProgEntry", m4Cont.postNewImmuProgEntry);
 router.post("/editPatientTCL", m4Cont.postEditPatientTCL);
 router.post("/submitTCL", m4Cont.postSubmitTCL);
 
-router.get("/postMobCRF", mobCont.postMobCRF);
+router.post("/postMobCRF", m1Cont.postNewCase);
 
 
 // CRON Routes

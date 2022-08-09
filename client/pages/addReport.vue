@@ -109,7 +109,7 @@
           <h3 v-if="isPrint" class="caps addRep-chartTitle marginBottom-15 blueC"> {{chart}} </h3>
           <div v-else class="caps addRep-chartTitle marginBottom-15 blueB whiteC paddingLeft10 marginRight10 marginLeft10"> {{chart}} </div>
           <div class="padding30" :class="getMinClass(chartIndex, report.reportsIncluded.length)">
-            <div class="addRep-chartContainer marginBottom5" :style="biSize()">
+            <div class="marginBottom5 addRep-chartContainer-print" :style="biSize()">
               <iframe v-if="chart === reportsOption[0]" class="addRep-report-powerbi-iframe" :src="getLink(0)"></iframe>
               <iframe v-else-if="chart === reportsOption[1]" class="addRep-report-powerbi-iframe" :src="getLink(1)"></iframe>
               <iframe v-else-if="chart === reportsOption[2]" class="addRep-report-powerbi-iframe" :src="getLink(2)"></iframe>
@@ -353,7 +353,8 @@ export default {
       else return true;
     },
     biSize() {
-      if (!this.isPrint) return 'min-height: 70vh; min-width: 70vh;';
+      if (!this.isPrint) return 'min-height: 70vh; min-width: 70vh; height: 80vh;';
+      else return '';
     },
     getDate() {
       const today = new Date();
@@ -379,6 +380,18 @@ export default {
       else if (index === reportCount-1) return 'fullHeightLast';
       else if (index === 0) return 'fullHeightFirst';
       else return 'fullHeightNotFirst';
+    },
+    getBIclass() {
+      // if (!this.print) return 'addRep-report-powerbi-iframe-printing';
+      // else return 'addRep-report-powerbi-iframe';
+      return 'addRep-report-powerbi-iframe';
+    },
+    getBIcontainerclass() {
+      // if (!this.print) return 'addRep-chartContainer-print';
+      // else return 'addRep-chartContainer';
+      // return 'addRep-chartContainer-print';
+      if (!this.print) return 'height: 80vh;'
+      else return '';
     },
     validate() {
       if (this.report.title!=='' && this.report.reportType!== '' && this.report.year!== '' &&
@@ -632,7 +645,13 @@ body {font-family:Arial, Helvetica, sans-serif}
 .addRep-chartContainer {
   border: lightgray solid 1px;
   width: 100%;
-  height: 415px;
+  height: 80vh;
+  background: lightgray;
+}
+
+.addRep-chartContainer-print {
+  border: lightgray solid 1px;
+  width: 100%;
   background: lightgray;
 }
 
@@ -649,9 +668,18 @@ body {font-family:Arial, Helvetica, sans-serif}
   height: 100%;
   background-color: gray;
   width: 100%;
+
+  min-width: 595px;
+  min-height: 370px;
   /* border-radius: 10px; */
   /* margin-left: 5px;
   margin-top: 5px; */
+}
+
+.addRep-report-powerbi-iframe-printing {
+  background-color: gray;
+  min-width: 595px;
+  min-height: 370px;
 }
 
 .addRep-approvalPeople {
