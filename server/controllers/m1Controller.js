@@ -1523,7 +1523,7 @@ const indexFunctions = {
 				});
 	
 				if (!occuAddrID.exists) {
-					let occuAddr = new Address(occuAddrID, formData.patient.occuStreet, formData.patient.occuBrgy, formData.patient.occuCity);
+					let occuAddr = new Address(occuAddrID.id, formData.patient.occuStreet, formData.patient.occuBrgy, formData.patient.occuCity);
 					occuresult = await db.insertOne("mmchddb.ADDRESSES", occuAddr);
 					if(occuresult)
 						formData.patient.occuAddrID = occuAddrID.id;
