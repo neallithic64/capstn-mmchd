@@ -2025,7 +2025,7 @@ const indexFunctions = {
 						SET ss.reportingDay = '${day}', ss.reportingHour = ${timeArr[0]},
 						ss.reportingMinute = ${timeArr[1]}
 						WHERE ss.settingID = 0;`);
-				if (typeof task.stop === "function") task.stop();
+				if (!!task) task.stop();
 				task = cron.schedule(timeArr[1] + " " + timeArr[0] + " * * " + day, indexFunctions.cronCRFPushData);
 			} else {
 				settingUpdate = await db.exec(`UPDATE mmchddb.USER_SETTINGS us
