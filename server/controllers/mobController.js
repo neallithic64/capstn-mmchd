@@ -31,7 +31,8 @@ const indexFunctions = {
 	
 	getMobCRFs: async function(req, res) {
 		try {
-			let r = await db.exec("SELECT * FROM mmchddb.CRFS c WHERE c.userID = '${req.query.userID}';");
+			let r = await db.exec(`SELECT c.CRFID FROM mmchddb.CRFS c WHERE c.userID = '${req.query.userID}';`);
+			for (let i = 0; i < r.length; i++) r[i] = r[i].CRFID;
 			res.status(200).send(r);
 		} catch (e) {
 			console.log(e);

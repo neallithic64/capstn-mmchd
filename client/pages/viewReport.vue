@@ -44,20 +44,23 @@
             </div>
             <div class="grid">
               <div class="inlineFlex alignCenter marginTopBot2">  <span class="width155"> Noted By: </span>
-                <img v-if="report.notedByDate && report.notedByDate !== 'N/A'" class="width20" src="~/assets/img/check.png">
+                <img v-if="report.status === 'Rejected'" class="width20" src="~/assets/img/x.png">
+                <img v-else-if="report.notedByDate && report.notedByDate !== 'N/A'" class="width20" src="~/assets/img/check.png">
                 <img v-else class="width20" src="~/assets/img/arrow.png" style="opacity: 0.75;">
                   <span class="approval-people"> <b> &nbsp;{{report.notedByFN}} {{report.notedByLN}}</b> </span>
                   <span v-if="report.notedByDate"> &nbsp;({{report.notedByDate}}) </span>
               </div>
               <div class="inlineFlex alignCenter marginTopBot2">  <span class="width155"> Recommended By: </span>
-                <img v-if="report.recommByDate && report.recommByDate !== 'N/A'" class="width20" src="~/assets/img/check.png">
+                <img v-if="report.status === 'Rejected'" class="width20" src="~/assets/img/x.png">
+                <img v-else-if="report.recommByDate && report.recommByDate !== 'N/A'" class="width20" src="~/assets/img/check.png">
                 <img v-else-if="report.notedByDate && report.notedByDate !== 'N/A'" class="width20" src="~/assets/img/arrow.png" style="opacity: 0.75;">
                 <img v-else class="width20" src="~/assets/img/circle.png" style="opacity: 0.3;">
                   <span class="approval-people"> <b> &nbsp;{{report.recommByFN}} {{report.recommByLN}}</b> </span>
                   <span v-if="report.recommByDate"> &nbsp;({{report.recommByDate}}) </span>
               </div>
               <div class="inlineFlex alignCenter marginTopBot2">  <span class="width155"> Approved By: </span>
-                <img v-if="report.approvedByDate && report.approvedByDate !== 'N/A'" class="width20" src="~/assets/img/check.png" >
+                <img v-if="report.status === 'Rejected'" class="width20" src="~/assets/img/x.png">
+                <img v-else-if="report.approvedByDate && report.approvedByDate !== 'N/A'" class="width20" src="~/assets/img/check.png" >
                 <img v-else-if="report.recommByDate && report.recommByDate !== 'N/A'" class="width20" src="~/assets/img/arrow.png" style="opacity: 0.75;">
                 <img v-else class="width20" src="~/assets/img/circle.png" style="opacity: 0.3;">
                   <span class="approval-people"> <b> &nbsp;{{report.approvedByFN}} {{report.approvedByLN}}</b></span>
@@ -288,22 +291,29 @@ export default {
       } else {
         // SUBMIT ASSESSMENT (drop down)
         this.validate();
+        let approvedData;
         if (!this.isValidated) this.$toast.error('Please select a status!', {duration: 4000, icon: 'error'});
         else { // eslint-disable-next-line no-lonely-if
           if (this.inputStatus === 'Approve') {
             this.report.status = 'Approved';
-            this.report.approvedByDate = this.today;
+            approvedData = await axios.post("http://localhost:8080/api/editApproveReport", {
+              reportID: this.report.reportID,
+              userID: this.$auth.user.userID,
+              userType: this.$auth.user.userType,
+              remarks: this.inputRemarks
+            });
           }
-          else if (this.inputStatus === 'Reject') this.report.status = 'Rejected';
-          // QUESTION: what happens pag nareject, does the 3 people sa lower part have to change (if so, use x.png)
+          else if (this.inputStatus === 'Reject') {
+            this.report.status = 'Rejected';
+            approvedData = await axios.post("http://localhost:8080/api/editRejectReport", {
+              reportID: this.report.reportID,
+              userID: this.$auth.user.userID,
+              userEmail: this.$auth.user.userEmail,
+              remarks: this.inputRemarks
+            });
+          }
           this.isAssess = false;
-
-          const approvedData = await axios.post("http://localhost:8080/api/editApproveReport", {
-            reportID: this.report.reportID,
-            userID: this.$auth.user.userID,
-            userType: this.$auth.user.userType,
-            remarks: this.inputRemarks
-          });
+          
           if (approvedData.status === 200) {
             this.$toast.success('Status saved!', {duration: 4000, icon: 'check_circle'});
             location.reload();

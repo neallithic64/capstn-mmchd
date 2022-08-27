@@ -100,7 +100,7 @@
         <hr v-show="isPrint && DRUselected" style="border-top: 2px solid black; margin: 20px 0"/>
 
         <div v-show="caseTab === 'healthprog' || isPrint" >
-          <div class="flexRow width100 justifyRight">
+          <!--div class="flexRow width100 justifyRight">
             <select
               v-model="HealthProgEvalMonth"
               class="marginLeft10"
@@ -113,7 +113,7 @@
               @change="filterYearMonth('hepr')">
               <option v-for="(year, i) in yearList" :key=i :value="year">{{year}}</option>
             </select>
-          </div>
+          </div-->
 
           <div v-show="isPrint" style="margin-top: 10px"></div>
           <h3 class="EvalTableTitle" :class="h3PrintClass()"> Health Program Evaluation </h3>
@@ -181,7 +181,7 @@ export default {
       yearList: [2018, 2019, 2020, 2021, 2022],
       DRUEvalTableOptions: {
         tableName: 'SurveillanceEval',
-        sortKey: 'weekNo',
+        sortedKey: 'weekNo',
         columns: [
           {
             title: 'Year-Week No',
