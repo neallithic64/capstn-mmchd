@@ -3128,7 +3128,6 @@ export default {
       this.patientExist = false;
     },
     autoFillPatient(patient) {
-      console.log(patient);
       this.formData.patient.patientID = patient.patientID;
       this.formData.patient.lastName = patient.lastName;
       this.formData.patient.firstName = patient.firstName;
