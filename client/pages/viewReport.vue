@@ -12,8 +12,7 @@
         <div class="space-inline marginTop5 centerSide">
           <h3 class="weight500 size18"> {{report.title}} </h3>
           <h3 class="weight500 size18">
-              {{report.reportType}} Report - {{report.year}}
-              <span v-if="report.duration!==''">, {{report.duration}} </span> 
+              {{report.reportType}} Report - {{report.year}}<span v-if="report.duration!==''">, {{report.duration}} </span> 
           </h3>
           <h3 class="weight500 size18"> {{report.diseaseName}} </h3>
         </div>

@@ -12,8 +12,7 @@
         <div class="centerSide space-inline marginTop5">
           <h3 class="weight500 size18"> {{report.title}} </h3>
           <h3 class="weight500 size18">
-              {{report.reportType}} Report - {{report.year}}
-              <span v-if="report.duration!==''">, {{report.duration}} </span> 
+              {{report.reportType}} Report - {{report.year}}<span v-if="report.duration!==''">, {{report.duration}} </span> 
           </h3>
           <h3 class="weight500 size18"> {{report.diseaseID}} </h3>
         </div>
@@ -210,7 +209,7 @@
           </div>
 
           <div v-show="isPrint" class="padding15 border margin20">
-            <span class="italics marginBottom115"> *NOTE: Case counts reported here do NOT represent the final number and are subject to change after inclusion of delayed reports and eview of cases.
+            <span class="italics marginBottom115"> *NOTE: Case counts reported here do NOT represent the final number and are subject to change after inclusion of delayed reports and review of cases.
             Data Source: 2022  </span>
           </div>
         </div>
@@ -451,7 +450,7 @@ export default {
             file: base64,
             reportID: newReportID
           }));
-		  // eslint-disable-next-line no-console
+          // eslint-disable-next-line no-console
           console.log(result);
         };
     },
@@ -464,8 +463,8 @@ export default {
         if (response.status === 200) {
           this.convertPDFToBase64(this.file, response.data);
           this.$toast.success('Feedback Report Submitted!', {duration: 4000, icon: 'check_circle'});
-		  this.popupOpen = false;
-		  window.location.href = '/allReports';
+          this.popupOpen = false;
+          setTimeout(() => (window.location.href = '/allReports'), 5000);
         }
       }
     },
