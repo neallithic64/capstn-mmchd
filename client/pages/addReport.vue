@@ -336,8 +336,8 @@ export default {
   },
   methods: {
     call() {
-      console.log(this.report.reportsIncluded);
-      console.log(this.chartRemarks);
+      // console.log(this.report.reportsIncluded);
+      // console.log(this.chartRemarks);
     },
     getLink(i) {
       return this.biLinks[i];
@@ -399,7 +399,6 @@ export default {
           this.report.reportsIncluded.length > 0 && this.report.chartRemarks.length > 0 &&
           this.report.reportsIncluded.length === this.report.chartRemarks.length) {
         this.isValidated = true;
-        console.log(this.isValidated)
         if (this.report.reportType !== 'Annual' && this.report.duration === '')
           this.isValidated = false;
         else {
@@ -438,7 +437,6 @@ export default {
     addFile(event) {
       this.readySubmit = true;
       this.file = event.target.files[0];      
-      // console.log(this.file);
     },
     convertPDFToBase64(fileToLoad, newReportID) {
         // FileReader function for read the file.
@@ -454,6 +452,7 @@ export default {
             file: base64,
             reportID: newReportID
           }));
+		  // eslint-disable-next-line no-console
           console.log(result);
         };
     },
@@ -463,7 +462,6 @@ export default {
         const response = (await axios.post('http://localhost:8080/api/postAddReport', {
           report: this.report
         }));
-        console.log(response);
         if (response.status === 200) {
           this.convertPDFToBase64(this.file, response.data);
           this.$toast.success('Feedback Report Submitted!', {duration: 4000, icon: 'check_circle'});

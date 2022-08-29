@@ -1638,7 +1638,6 @@ export default {
     } 
     this.today = yyyy+'-'+mm+'-'+dd;
     // document.getElementById('birthdate').setAttribute('max', today);
-    // console.log(today);
   },
   methods: {
     formpart(disease, pageNum) {
@@ -1655,12 +1654,8 @@ export default {
     getAge() {
       const today = new Date();
       const age = today.getFullYear() - parseInt(this.formData.patient.birthDate.substr(0,4));
-      console.log(today.getMonth()+1)
-      console.log(parseInt(this.formData.patient.birthDate.substr(5,2)))
       if (today.getMonth()+1>parseInt(this.formData.patient.birthDate.substr(5,2))) this.formData.patient.ageNo = age;
       else if (today.getMonth()+1===parseInt(this.formData.patient.birthDate.substr(5,2))) {
-        console.log(today)
-        console.log(parseInt(this.formData.patient.birthDate.substr(8,2)))
         if (today.getDate()>=parseInt(this.formData.patient.birthDate.substr(8,2))) this.formData.patient.ageNo = age;
         else this.formData.patient.ageNo = age-1;
       }
@@ -1674,9 +1669,7 @@ export default {
       this.formData.cases.reportedBy = this.$auth.user.userID;
       this.formData.cases.reportDate = now.getFullYear() + '-' + (now.getMonth()+1) + '-' + now.getDate();
       const result = await axios.post('http://localhost:8080/api/newCase', {formData: this.formData, CRFID: this.$route.query.CRFID});
-      console.log(result);
       if (result.status === 200) {
-        // alert('CRF case submitted!');
         this.$toast.success('Case saved!', {duration: 4000, icon: 'check_circle'});
         if(result.data.outbreakID){
           if(result.data.type === 'Alert'){
@@ -1751,7 +1744,6 @@ export default {
         this.$forceUpdate();
       }
       // console.log(this.pageDone)
-
       },
     validateForm(page) {
       switch (page) {
@@ -1969,8 +1961,6 @@ export default {
     },
     getLocBrgyList(city, element) {
       if (city) {
-        // eslint-disable-next-line no-console
-        console.log(city);
         const dropdown1 = document.getElementById(element);
         while (dropdown1.firstChild) dropdown1.removeChild(dropdown1.firstChild);
 

@@ -4,10 +4,10 @@
     <div class="bulletin-page">
 
       <div class="bulletin-filters">
-        <select class="filter" v-model="diseaseFilter" @change="filter()">
+        <select v-model="diseaseFilter" class="filter" @change="filter()">
             <option v-for="(name, i) in diseases" :key="i" :value="name"> {{ name }} </option>
         </select>
-        <select class="filter" v-model="typeFilter" @change="filter()">
+        <select v-model="typeFilter" class="filter" @change="filter()">
             <option v-for="(name, i) in reportTypes" :key="i" :value="name"> {{ name }} </option>
         </select>
       </div>
@@ -26,7 +26,6 @@
                   <div class="bulletin-header-bottom">
                     <span :class="reportTypeClass(report.reportType)"> {{ report.reportType }} Report </span>  
                     <span class="report-disease"> • {{ report.reportDisease }}</span>
-                    <!--span class="post-time"> • {{ report.dateString }}</span-->
                   </div>
                 </div>
               </div>
@@ -52,11 +51,6 @@
                   </div>
                 </a>
               </div>
-
-              <!--div class="bulletin-views">
-                <span> Report viewed by {{ report.reportViews }} </span>
-              </div-->
-
             </div>
           </div>
         </li>

@@ -162,7 +162,6 @@ export default {
         userID: this.$auth.user.userID
       }
     })).data;
-    console.log(rows);
     for (let i = 0; i < rows.crfData.length; i++) {
       rows.crfData[i].reportDate = this.convDatePHT(new Date(rows.crfData[i].reportDate));
       rows.crfData[i].updatedDate = this.convDatePHT(new Date(rows.crfData[i].updatedDate));

@@ -66,7 +66,7 @@
       <div class="viewCIF-component">
         <form v-if="pageNum == 1 || isPrint" id="measles1" type="submit">
           <div id="case-investigation-form" class="center">
-            <h2 class="viewCIFh2" id="form-header">
+            <h2 id="form-header" class="viewCIFh2">
               {{ Object.values(disease.formNames)[pageNum] }}
             </h2>
 

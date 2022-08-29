@@ -148,7 +148,6 @@ export default {
       if (settingsData.status === 200) {
         this.$toast.success(settingsData.data, {duration: 4000, icon: 'check_circle'});
       } else this.$toast.error("Error saving settings.", {duration: 4000, icon: 'error'});
-      console.log(settingsData);
     }
   }
 }

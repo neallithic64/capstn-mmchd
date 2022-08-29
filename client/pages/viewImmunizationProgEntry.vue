@@ -1231,7 +1231,6 @@ export default {
     const patientData = (await axios.get('http://localhost:8080/api/getPatientData', {
       params: { patientID: this.$route.query.patientID }
     })).data;
-    console.log(patientData);
     Object.keys(patientData.tclData).forEach((e, i) => {
       patientData.tclData[e] = this.convDatePHT(new Date(patientData.tclData[e]));
       if ((new Date(patientData.tclData[e])).getTime() < 0) patientData.tclData[e] = "";
@@ -1268,7 +1267,6 @@ export default {
     this.dataSets[0].Dengue2date = this.dateToString(this.loadedData[0].Dengue2date);
     this.dataSets[0].Dengue3date = this.dateToString(this.loadedData[0].Dengue3date);
 
-    console.log(this.dataSets[0]);
     this.$forceUpdate();
   },
   methods: {
@@ -1286,12 +1284,8 @@ export default {
     getAge() {
       const today = new Date();
       const age = today.getFullYear() - parseInt(this.formData.patient.birthDate.substr(0,4));
-      console.log(today.getMonth()+1)
-      console.log(parseInt(this.formData.patient.birthDate.substr(5,2)))
       if (today.getMonth()+1>parseInt(this.formData.patient.birthDate.substr(5,2))) this.formData.patient.ageNo = age;
       else if (today.getMonth()+1===parseInt(this.formData.patient.birthDate.substr(5,2))) {
-        console.log(today)
-        console.log(parseInt(this.formData.patient.birthDate.substr(8,2)))
         if (today.getDate()>=parseInt(this.formData.patient.birthDate.substr(8,2))) this.formData.patient.ageNo = age;
         else this.formData.patient.ageNo = age-1;
       }
@@ -1300,14 +1294,9 @@ export default {
     },
     async save() {
       this.saveData();
-      // required to finish all immunisations by then
-      // if (this.validate()) {
-        await this.submit();
-        // IF SUBMIT SUCCESSFUL
-        console.log('VALIDATED dates');
-        this.status = 'Complete';
-        this.action = 'view';
-      // }
+      await this.submit();
+      this.status = 'Complete';
+      this.action = 'view';
     },
     async submit() {
       const result = await axios.post('http://localhost:8080/api/editPatientTCL', {
@@ -1315,7 +1304,6 @@ export default {
         patientID: this.$route.query.patientID
       });
       if (result.status === 200) {
-        // alert('CRF case submitted!');
         this.$toast.success('Immunizations saved!', {duration: 4000, icon: 'check_circle'});
         window.location.href = '/allImmunizationProg';
       } else {
@@ -1435,9 +1423,6 @@ export default {
         this.formData.patient.permHouseStreet = this.formData.patient.currHouseStreet;
         this.formData.patient.permCity = this.formData.patient.currCity;
         this.getBrgy();
-        // this.getLocBrgyList(this.formData.patient.permCity,'permBarangay');
-        // this.formData.patient.permBrgy = this.formData.patient.currBrgy;
-        // console.log(this.formData.patient.permBrgy,this.formData.patient.currBrgy)
       }
       else {
         this.formData.patient.permHouseStreet = '';

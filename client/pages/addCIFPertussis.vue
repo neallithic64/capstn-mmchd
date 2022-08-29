@@ -2204,10 +2204,6 @@ export default {
         this.formData.patient.permHouseStreet = this.formData.patient.currHouseStreet;
         this.formData.patient.permCity = this.formData.patient.currCity;
         this.getBrgy();
-        // this.getLocBrgyList(this.formData.patient.permCity,'permBarangay');
-        // this.getLocBrgyList();
-        // this.formData.patient.permBrgy = this.formData.patient.currBrgy;
-        // console.log(this.formData.patient.permBrgy,this.formData.patient.currBrgy)
       }
       else {
         this.formData.patient.permHouseStreet = '';
@@ -2220,9 +2216,7 @@ export default {
       this.formData.cases.reportedBy = this.$auth.user.userID;
       this.formData.cases.caseLevel = this.formData.caseData.finalClassification;
       const result = await axios.post('http://localhost:8080/api/newCase', {formData: this.formData});
-      console.log(result);
       if (result.status === 200) {
-        // alert('Case submitted!');
         this.$toast.success('Case submitted!', {duration: 4000, icon: 'check_circle'});
         if(result.data.outbreakID){
           if(result.data.type === 'Alert'){
@@ -2230,10 +2224,7 @@ export default {
           } else
             window.open('http://localhost:3000/epiOutbreak?outbreakID='+ result.data.outbreakID);
         }
-
         window.location.href = '/allCases';
-
-        // TODO: add notif/alert checking here 
       } else {
         // eslint-disable-next-line no-console
         console.log(result);

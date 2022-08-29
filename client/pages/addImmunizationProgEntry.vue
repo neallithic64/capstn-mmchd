@@ -1409,7 +1409,6 @@ export default {
         TCLID: this.$route.query.TCLID
       });
       if (result.status === 200) {
-        // alert('CRF case submitted!');
         this.$toast.success('Case saved!', {duration: 4000, icon: 'check_circle'});
       } else {
         // eslint-disable-next-line no-console
@@ -1648,9 +1647,6 @@ export default {
         this.formData.patient.permHouseStreet = this.formData.patient.currHouseStreet;
         this.formData.patient.permCity = this.formData.patient.currCity;
         this.getBrgy();
-        // this.getLocBrgyList(this.formData.patient.permCity,'permBarangay');
-        // this.formData.patient.permBrgy = this.formData.patient.currBrgy;
-        // console.log(this.formData.patient.permBrgy,this.formData.patient.currBrgy)
       }
       else {
         this.formData.patient.permHouseStreet = '';

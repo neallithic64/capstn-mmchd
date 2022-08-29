@@ -1902,12 +1902,8 @@ export default {
     getAge() {
       const today = new Date();
       const age = today.getFullYear() - parseInt(this.formData.patient.birthDate.substr(0,4));
-      console.log(today.getMonth()+1)
-      console.log(parseInt(this.formData.patient.birthDate.substr(5,2)))
       if (today.getMonth()+1>parseInt(this.formData.patient.birthDate.substr(5,2))) this.formData.patient.ageNo = age;
       else if (today.getMonth()+1===parseInt(this.formData.patient.birthDate.substr(5,2))) {
-        console.log(today)
-        console.log(parseInt(this.formData.patient.birthDate.substr(8,2)))
         if (today.getDate()>=parseInt(this.formData.patient.birthDate.substr(8,2))) this.formData.patient.ageNo = age;
         else this.formData.patient.ageNo = age-1;
       }
@@ -1921,9 +1917,7 @@ export default {
       this.formData.cases.reportedBy = this.$auth.user.userID;
       this.formData.cases.reportDate = now.getFullYear() + '-' + (now.getMonth()+1) + '-' + now.getDate();
       const result = await axios.post('http://localhost:8080/api/newCase', {formData: this.formData, CRFID: this.$route.query.CRFID});
-      console.log(result);
       if (result.status === 200) {
-        // alert('CRF case submitted!');
         this.$toast.success('Case saved!', {duration: 4000, icon: 'check_circle'});
         if(result.data.outbreakID){
           if(result.data.type === 'Alert'){
@@ -1998,7 +1992,6 @@ export default {
         this.$forceUpdate();
       }
       // console.log(this.pageDone)
-
       },
     validateForm(page) {
       switch (page) {
@@ -2112,8 +2105,6 @@ export default {
           else this.pageDone[page] = false;
           break;
         case 6:
-          // console.log(this.formData.caseData.ns1Date!== '')
-          // console.log(this.formData.caseData.ns1Result!== '')
           if (this.hasLabTest!=='') {
             if (this.hasLabTest==='Processing') {this.pageDone[page] = true; this.errorLab = false;}
             else if (this.hasLabTest==='No' && this.formData.cases.investigatorLab!=='' && this.formData.cases.investigatorLab!==undefined)
@@ -2223,9 +2214,6 @@ export default {
         this.formData.patient.permHouseStreet = this.formData.patient.currHouseStreet;
         this.formData.patient.permCity = this.formData.patient.currCity;
         this.getBrgy();
-        // this.getLocBrgyList(this.formData.patient.permCity,'permBarangay');
-        // this.formData.patient.permBrgy = this.formData.patient.currBrgy;
-        // console.log(this.formData.patient.permBrgy,this.formData.patient.currBrgy)
       }
       else {
         this.formData.patient.permHouseStreet = '';
