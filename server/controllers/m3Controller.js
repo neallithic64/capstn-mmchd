@@ -5,7 +5,6 @@ const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
 const db = require("../models/db");
-const { report } = require("../routers/indexRouter");
 
 const DRUUserTypes = ['BHS','RHU','CHO', 'govtHosp', 'privHosp', 'clinic', 'privLab', 'airseaPort'];
 

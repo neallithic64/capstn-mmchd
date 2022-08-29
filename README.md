@@ -47,3 +47,6 @@ Making commits and pushing them is pretty simple. There is a checkmark icon at t
 
 ### First Stage Complete
 Date: 31/01/2022
+
+### Second Stage Complete
+Date: 09/08/2022
