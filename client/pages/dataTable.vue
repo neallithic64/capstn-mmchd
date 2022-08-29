@@ -535,7 +535,6 @@ export default {
     this.dataFiltered = this.datavalues;
     this.dataSearched = this.datavalues;
     this.dataSets = this.datavalues;
-    console.log(this.datavalues);
     
     this.requestParams.sortedKey = this.options.sortKey;
     this.requestParams.sortedType = this.options.sortType;
@@ -781,7 +780,6 @@ export default {
 
       this.currentPage = 1;
       this.totalCount = Object.keys(this.dataSets).length;
-      console.log('DATA:' + this.dataSets);
       this.getPages();
     },
     selectedDataAmount() {
@@ -791,7 +789,6 @@ export default {
       this.getStartEnd();
     },
     newPage(page) {
-      console.log("GOTO" + page);
       page = parseInt(page);
       if (page !== 0 && page <= this.totalPage) {
         // this.requestParams.skip = (page - 1) * this.requestParams.take;
